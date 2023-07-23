@@ -138,6 +138,53 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['dueDiligence', 'buyers']
         }),
+        getAllSuppliers: builder.query({
+            query: () => `/suppliers`,
+            providesTags: ['suppliers']
+        }),
+        addSupplier: builder.mutation({
+            query: ({body}) => ({
+                url: `/suppliers`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['suppliers']
+        }),
+        updateSupplier: builder.mutation({
+            query: ({body, supplierId}) => ({
+                url: `/suppliers/${supplierId}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['suppliers']
+        }),
+        getOneSupplier: builder.query({
+            query: ({supplierId}) => `/suppliers/${supplierId}`,
+            providesTags: ['suppliers']
+        }),
+        deleteSupplier: builder.mutation({
+            query: ({supplierId}) => ({
+                url: `/suppliers/${supplierId}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ['suppliers']
+        }),
+        getAllPayments: builder.query({
+            query: () => `/payments`,
+            providesTags: ['payments', 'entries']
+        }),
+        addPayment: builder.mutation({
+            query: ({body}) => ({
+                url: `/payments`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['payments']
+        }),
+        getOnePayment: builder.query({
+            query: ({paymentId}) => `/payments/${paymentId}`,
+            providesTags: ['payments']
+        }),
         getAllShipments: builder.query({
             query: () => `/shipments`,
             providesTags: ['shipments', 'buyers']
@@ -172,5 +219,13 @@ export const {
     useDownloadDueDiligenceMutation,
     useUpdateDueDiligenceMutation,
     useDeleteDueDiligenceMutation,
+    useGetAllSuppliersQuery,
+    useGetOneSupplierQuery,
+    useAddSupplierMutation,
+    useUpdateSupplierMutation,
+    useDeleteSupplierMutation,
+    useGetAllPaymentsQuery,
+    useAddPaymentMutation,
+    useGetOnePaymentQuery,
     useGetAllShipmentsQuery,
     useAddShipmentMutation}=apiSlice
