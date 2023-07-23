@@ -24,6 +24,8 @@ import DefaultPages from './Pages/DefaultPages';
 import EditUserPage from './Pages/EditUserPage';
 import StoreKeeperData from './Pages/StoreKeeperData';
 import TrecabilityData from './Pages/TrecabilityData';
+import RequireAuth from './Authentications/requireAuth';
+import  MyContextProvider  from './context files/MycontextProvider';
 
 
 
@@ -36,11 +38,14 @@ function App() {
     <BrowserRouter>
     <Routes>
     <Route  element={<ListTestContainer/>}>
+      <Route element={<MyContextProvider/>}>
+      
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/products' element={<ProductsList/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
     <Route  path='/purchases' element={<PurchasesListPage/>}/>
     <Route  path='/users' element={<UsersListPage/>}/>
+    <Route  path='/profile' element={<UsersListPage/>}/>
     <Route  path='/suppliers' element={<SuppliersListPage/>}/>
     <Route  path='/entry/storekeeper' element={<StoreKeeperData/>}/>
     <Route  path='/entry/trecability' element={<TrecabilityData/>}/>
@@ -56,6 +61,8 @@ function App() {
     <Route  path='/password/forgot' element={<ForgotPasswordPage/>}/>
     <Route  path='/framer' element={<Framer/>}/>
     <Route  path='/wee' element={<RoleBasedRoute/>}/>
+    
+    </Route>
     </Route>
       {/* <Route element={<Layout/>}>
         <Route  path='/' element={<ListContainer/>}/>
