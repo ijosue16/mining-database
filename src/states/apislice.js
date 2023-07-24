@@ -3,16 +3,16 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/",
-        prepareHeaders: (headers, {getState}) => {
-            const token = getState.auth.token;
-            if (token) {
-                headers.append('Authorization', `Bearer ${token}`)
-            }
-            return headers;
-        }
+        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        // prepareHeaders: (headers, {getState}) => {
+        //     const token = getState.auth.token;
+        //     if (token) {
+        //         headers.append('Authorization', `Bearer ${token}`)
+        //     }
+        //     return headers;
+        // }
     }),
-    tagTypes:['buyers', 'contracts', 'shipments', 'dueDiligence'],
+    tagTypes:['buyers', 'contracts', 'shipments', 'dueDiligence','payments'],
     endpoints:(builder)=>({
 
         endpointname: builder.query({
@@ -48,7 +48,7 @@ export const apiSlice = createApi({
                 url: `/buyers/${buyerId}`,
                 method: 'DELETE'
             }),
-            providesTags: ['buyers', 'contracts']
+            invalidatesTags: ['buyers', 'contracts']
         }),
         getAllContracts: builder.query({
             query: () => `/contracts`,

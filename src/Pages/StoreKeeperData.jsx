@@ -10,13 +10,14 @@ const StoreKeeperData = () => {
     const [extrafom, setExtraform] = useState(false);
     const handleAddproduct = (e) => {
         setFormval((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
-
+        if (e.target.name === 'mineralType') {
         if (e.target.value === 'mixed') {
             setExtraform(!extrafom);
         }
         else {
             setExtraform(false);
         }
+    }
 
     };
     const handleAddDate = (e) => {
@@ -83,7 +84,7 @@ const StoreKeeperData = () => {
                                     <option value="lithium">Lithium</option>
                                     <option value="mixed">Mixed</option>
                                 </select>
-                                <input type="text" required autoComplete="off" className={`focus:outline-none p-2 border rounded-md w-full ${extrafom ? 'block' : 'hidden'}`} name="extaForm" id="extaForm" onChange={handleExtraForm} />
+                                <input type="text" required autoComplete="off" className={`focus:outline-none p-2 border rounded-md w-full ${extrafom ? 'block' : 'hidden'}`} name="extraForm" id="extraForm" onChange={handleExtraForm} />
                             </li>
                             <li className=" space-y-1">
                                 <p className="pl-1">Mine tags Number</p>

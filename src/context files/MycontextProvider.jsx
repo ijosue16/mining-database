@@ -10,7 +10,7 @@ export function useMyContext() {
 
 
 export default function MyContextProvider() {
-  const [sharedData, setSharedData] = useState('My nigga');
+  const [sharedData, setSharedData] = useState('yoola');
   const updateSharedData = (newValue) => {
     setSharedData(newValue);
   };
