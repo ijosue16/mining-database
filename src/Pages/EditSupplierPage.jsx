@@ -1,17 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
 import AddComponent from "../components/Actions components/AddComponent";
 import { PiEyeSlashFill, PiEyeFill } from "react-icons/pi";
 import { MdOutlineAdd } from "react-icons/md";
-import { useAddSupplierMutation } from "../states/apislice";
-import { useNavigate } from "react-router-dom";
+import { useUpdateSupplierMutation,useGetOneSupplierQuery } from "../states/apislice";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddSuplierPage = () => {
+const EditSuplierPage = () => {
+    const{supplierId}=useParams();
     const navigate=useNavigate();
+    const{data,isLoading,isSuccess,isError}=useGetOneSupplierQuery({supplierId});
     const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
     const [show, setShow] = useState(false);
     const [addressFields, setAddresField] = useState(false);
-    const [createNewSupplier, { isSuccess, isLoading, isError, error }] = useAddSupplierMutation();
+    const [updateSupplier, { isSuccess:isDone, isLoading:isUpdating, isError:isFailed, error:problem }] = useUpdateSupplierMutation();
+
     const handleAddproduct = (e) => {
 
         if (e.target.name.startsWith("address.")) {
@@ -57,20 +60,33 @@ const AddSuplierPage = () => {
 
     const handleProductSubmit = async (e) => {
         e.preventDefault();
-        const body = { ...formval };
-        await createNewSupplier({...formval,body});
+        const body = {...formval };
+        await updateSupplier({body,supplierId});
         navigate(-1);
         console.log(formval);
     }
     const handleCancel = () => {
         setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' })
     }
+    
+    useEffect(()=>{
+        if(isSuccess){
+            const {data:dt}=data;
+            const {supplier:sup}=dt;
+            const{address:adr}=sup;
+            const{mineSites:mns}=sup;
+            setFormval({companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals, phoneNumber: sup.phoneNumber, mineSites: [{ coordinates: { lat: mns[0].coordinates.lat, long: mns[0].coordinates.long, }, name: mns[0].name, code: mns[0].code, }], address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters });
+            console.log(mns);
+        }
+    
+    },[isSuccess]);
     return (
         <div>
-            <ActionsPagesContainer title={'Add Supplier'}
-                subTitle={'Add/Update supplier'}
+            <ActionsPagesContainer title={'Edit Supplier'}
+                subTitle={'Edit/Update supplier'}
                 actionsContainer={<AddComponent component={
                     <div className="flex flex-col gap-4">
+                    { isLoading? 'loading':(  <>
                         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center">
                             <li>
                                 <p className="mb-1">Company Name</p>
@@ -179,13 +195,13 @@ const AddSuplierPage = () => {
                             </li>
                             {/* ******* */}
                         </ul>
-
+                        </>)}
                     </div>
                 }
                     Add={handleProductSubmit}
                     Cancel={handleCancel}
-                    isloading={isLoading} />} />
+                    isloading={isUpdating} />} />
         </div>
     )
 }
-export default AddSuplierPage;
+export default EditSuplierPage;

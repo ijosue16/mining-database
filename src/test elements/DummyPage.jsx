@@ -4,15 +4,14 @@ import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
 import { RiEditLine } from "react-icons/ri"
 import SalesListContainer from "../components/Listcomponents/SalesListContainer";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
 
 const DummyPage = () => {
     return (
         <>
-            <SalesListContainer title={'dummy page'}
-                subTitle={'dummy page'}
-                navLinktext={'dummy page'}
-                navtext={'Add new payment'}
-                table={
+            <ActionsPagesContainer title={'Edit Payment'}
+                subTitle={'Edit/Update Payment'}
+                actionsContainer={
                     <div className="w-full space-y-4">
                         <div className="w-full flex flex-col sm:flex-row justify-between items-center mb-4 gap-3 border-b-[1px]">
                             <span className="flex w-fit justify-end items-center gap-6 pr-1 pb-3">
@@ -22,17 +21,17 @@ const DummyPage = () => {
                                 <HiOutlinePrinter className=" text-2xl justify-self-end" />
                             </span>
                         </div>
-                        <ul className=" list-none grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                        <ul className=" list-none grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                             <li className=" space-y-1">
-                                <p className=" text-lg text-indigo-500 pb-1">info</p>
-                                <p>heloo</p>
-                                <p>there</p>
+                                <p className=" text-md text-indigo-500 pb-[1px]">supplier info</p>
+                                <p>name:COPEMINYA</p>
+                                <p>representative:Bernard</p>
                                 <p>heloo</p>
                                 <p>heloo</p>
 
                             </li>
                         </ul>
-                        <table class="table-fixed w-full">
+                        <table className="table-fixed w-full">
                             <thead className=" bg-slate-100 text-left">
                                 <tr className=" border-b-[1px]">
                                     <th className="py-2 pl-1 text-base font-semibold">Song</th>

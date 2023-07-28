@@ -32,9 +32,15 @@ import AddBuyerPage from './Pages/AddBuyerPage';
 import PaymentsListPage from './Pages/PaymentsListPage';
 import AddPaymentPage from './Pages/AddPaymentPage';
 import EditBuyerPage from './Pages/EditBuyerPage';
-import DummyPage from './Pages/DummyPage';
+import DummyPage from './test elements/DummyPage';
 import BuyerDetailsPage from './Pages/BuyerDetails';
 import EditPaymentPage from './Pages/EditPaymentPage';
+import HookForm from './test elements/ReactHookForm';
+import YourFormComponent from './test elements/CustomForm';
+import EditSuplierPage from './Pages/EditSupplierPage';
+import ListPopupContainer from './components/Listcomponents/ListWithPopupContainer';
+import ListPopupContainerHeader from './components/Listcomponents/ListWithPopupContainer';
+import SupplierDetailsPage from './Pages/SupplierDetailsPage';
 
 
 
@@ -51,19 +57,22 @@ function App() {
       
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/products' element={<ProductsList/>}/>
-    <Route  path='/dummy' element={<DummyPage/>}/>
+    <Route  path='/dummy' element={<SupplierDetailsPage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
     <Route  path='/purchases' element={<PurchasesListPage/>}/>
     <Route  path='/users' element={<UsersListPage/>}/>
     <Route  path='/profile' element={<UsersListPage/>}/>
     <Route  path='/suppliers' element={<SuppliersListPage/>}/>
+    <Route  path='/add/supplier' element={<AddSuplierPage/>}/>
+    <Route  path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
+    <Route  path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
     <Route  path='/payments' element={<PaymentsListPage/>}/>
-    <Route  path='//edit/payment/:paymentId' element={<EditPaymentPage/>}/>
+    <Route  path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
     <Route  path='/add/payment' element={<AddPaymentPage/>}/>
     <Route  path='/buyers' element={<BuyersListPage/>}/>
+    <Route  path='/edit/buyer/:buyerId' element={<EditBuyerPage/>}/>
     <Route  path='/buyer/details/:buyerId' element={<BuyerDetailsPage/>}/>
     <Route  path='/add/buyer' element={<AddBuyerPage/>}/>
-    <Route  path='/edit/buyer/:buyerId' element={<EditBuyerPage/>}/>
     <Route  path='/entry/storekeeper' element={<StoreKeeperData/>}/>
     <Route  path='/entry/trecability' element={<TrecabilityData/>}/>
     <Route  path='/add/product' element={<AddProductPage/>}/>
