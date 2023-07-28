@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes:['buyers', 'contracts', 'shipments', 'dueDiligence','payments'],
+    tagTypes:['buyers', 'contracts', 'shipments', 'dueDiligence','payments', 'entries'],
     endpoints:(builder)=>({
 
         endpointname: builder.query({
@@ -86,7 +86,7 @@ export const apiSlice = createApi({
         }),
         signup: builder.mutation({
             query: ({body}) => ({
-                url: `/users/login`,
+                url: `/users/signup`,
                 method: 'POST',
                 body,
             })
@@ -184,6 +184,37 @@ export const apiSlice = createApi({
         getOnePayment: builder.query({
             query: ({paymentId}) => `/payments/${paymentId}`,
             providesTags: ['payments']
+        }),
+        getAllEntries: builder.query({
+            query: () => `/entries`,
+            providesTags: ['entries', 'payments', 'buyers']
+        }),
+        getOneEntry: builder.query({
+            query: ({entryId, model}) => `/entries/${model}/${entryId}`,
+            providesTags: ['entries', 'payments', 'buyers']
+        }),
+        createEntry: builder.mutation({
+            query: ({body, model}) => ({
+                url: `/entries/${model}`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+        }),
+        updateEntry: builder.mutation({
+            query: ({body, model, entryId}) => ({
+                url: `/entries/${model}/${entryId}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+        }),
+        deleteEntry: builder.mutation({
+            query: ({model, entryId}) => ({
+                url: `/entries/${model}/${entryId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
         }),
         getAllShipments: builder.query({
             query: () => `/shipments`,

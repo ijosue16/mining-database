@@ -1,19 +1,36 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {PiEnvelopeBold,PiEyeFill,PiEyeSlashFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
+import { useLoginMutation } from "../states/apislice";
+import { setAuthToken, setUserData } from "../states/slice";
+import { useDispatch } from "react-redux";
 
 
 const LoginPage=()=>{
+    const [ login, { isLoading, isSuccess, isError, error } ] = useLoginMutation();
     const[show,setShow]=useState(false);
     const [user, setUser] = useState({ email: "", password: "" })
     const navigate=useNavigate();
-    const handleSubmit = (e) => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        if (isSuccess) {
+            console.log('Logged in successfully');
+        } else if (isError) {
+            console.log(error);
+        }
+    }, [isSuccess, isError, error]);
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(user)
-
+        const response = await login({body: user});
+        if (response) {
+            const { token } = response.data;
+            const { user } = response.data.data;
+            dispatch(setAuthToken(token));
+            dispatch(setUserData(user));
+        }
     };
     const handleChange = (e) => {
-        setUser({ ...user, [e.target.name]: e.target.value })
+        setUser({ ...user, [e.target.name]: e.target.value });
     };
     return(
         <>
@@ -37,7 +54,7 @@ const LoginPage=()=>{
                 </span>
                </span>
                <p className="mb-2 hover:underline " onClick={()=>navigate('/password/forgot')}>Forgot password ?</p>
-               <button type="submit" className="w-full px-2 py-3 bg-amber-200 rounded">Sign Up</button>
+               <button type="submit" className="w-full px-2 py-3 bg-amber-200 rounded">Login</button>
 
               <span className="flex items-center justify-center gap-2">
               <p>Don’t have an account?</p>
@@ -46,7 +63,7 @@ const LoginPage=()=>{
             </form>
             </div>
 
-            <div className=" col-span-3 sm:col-span-3 lg:col-span-4 hidden sm:block h-full bg-origin-border bg-center bg-no-repeat bg-cover bg-[url('https://media.istockphoto.com/id/527547684/vector/city-street-with-pharmacy-modern-architecture-in-line-style.jpg?s=612x612&w=0&k=20&c=nYzcHEQBkc0V44RIMv-aU1sWnysyWUH_pNzV7CNq3IM=')]"></div>
+            <div className=" col-span-3 sm:col-span-3 lg:col-span-4 hidden sm:block h-full bg-origin-border bg-center bg-no-repeat bg-cover bg-[url('https://media.istockphoto.com/id/527547684/vector/city-street-with-pharmacy-modern-architecture-in-line-style.jpg?s=612x612&w=0&k=20&c=nYzcHEQBkc0V44RIMv-aU1sWnysyWUH_pNzV7CNq3IM=')]"/>
             </div></>
     )
 }
