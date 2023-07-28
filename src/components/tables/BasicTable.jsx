@@ -29,7 +29,7 @@ const BasicTable = () => {
 
         });
         return transformedArray
-    };
+    }
     const handleDelete = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id)

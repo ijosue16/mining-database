@@ -1,9 +1,5 @@
-import { Component, useState } from 'react';
-import { BrowserRouter,Route,Routes } from 'react-router-dom';
-import Layout from './Layout/Layout';
-import ProductListContainer from './components/Listcomponents/ProductListContainer';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import ListTestContainer from './components/ListTestContainer';
-import ActionsPagesContainer from './components/Actions components/ActionsComponent container';
 import ProductsList from './Pages/ProductsList';
 import AddProductPage from './Pages/AddProductPage';
 import SalesListPage from './Pages/SalesListPage';
@@ -24,8 +20,7 @@ import DefaultPages from './Pages/DefaultPages';
 import EditUserPage from './Pages/EditUserPage';
 import StoreKeeperData from './Pages/StoreKeeperData';
 import TrecabilityData from './Pages/TrecabilityData';
-import RequireAuth from './Authentications/requireAuth';
-import  MyContextProvider  from './context files/MycontextProvider';
+import MyContextProvider from './context files/MycontextProvider';
 import ContractsistPage from './Pages/ContractListPage';
 import BuyersListPage from './Pages/BuyersListPage';
 import AddBuyerPage from './Pages/AddBuyerPage';
@@ -96,10 +91,10 @@ function App() {
         <Route  path='/add/product' element={<ActionsPagesContainer/>}/>
        
       </Route> */}
-    </Routes>
-    </BrowserRouter>
-    </>
-  )
+                </Routes>
+            </BrowserRouter>
+        </>
+    )
 }
 
 export default App
