@@ -34,7 +34,8 @@ useEffect(()=>{
         navigate(-1);
     }
     const handleCancel=()=>{
-        setFormval({supplierName:'',companyRepresentative:'',nationalId:'',licenseNumber:'',phoneNumber:'',TINNumber:'',email:'',location:'',amountReceived:'',currency:''})
+        setFormval({supplierName:'',companyRepresentative:'',nationalId:'',licenseNumber:'',phoneNumber:'',TINNumber:'',email:'',location:'',amountReceived:'',currency:''});
+        navigate(-1);
     }
     return (
         <div>

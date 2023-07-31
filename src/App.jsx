@@ -36,6 +36,7 @@ import EditSuplierPage from './Pages/EditSupplierPage';
 import ListPopupContainer from './components/Listcomponents/ListWithPopupContainer';
 import ListPopupContainerHeader from './components/Listcomponents/ListWithPopupContainer';
 import SupplierDetailsPage from './Pages/SupplierDetailsPage';
+import EditMinesitePage from './Pages/EditMinesitePage';
 
 
 
@@ -52,7 +53,7 @@ function App() {
       
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/products' element={<ProductsList/>}/>
-    <Route  path='/dummy' element={<SupplierDetailsPage/>}/>
+    <Route  path='/dummy' element={<EditMinesitePage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
     <Route  path='/purchases' element={<PurchasesListPage/>}/>
     <Route  path='/users' element={<UsersListPage/>}/>
@@ -61,6 +62,7 @@ function App() {
     <Route  path='/add/supplier' element={<AddSuplierPage/>}/>
     <Route  path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
     <Route  path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
+    <Route  path='/edit/supplier/minesite/:supplierId' element={<EditMinesitePage/>}/>
     <Route  path='/payments' element={<PaymentsListPage/>}/>
     <Route  path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
     <Route  path='/add/payment' element={<AddPaymentPage/>}/>

@@ -3,7 +3,6 @@ import { BiSolidFilePdf } from "react-icons/bi"
 import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
 import { RiEditLine } from "react-icons/ri"
-import SalesListContainer from "../components/Listcomponents/SalesListContainer";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
 
 const DummyPage = () => {

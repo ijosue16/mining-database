@@ -1,13 +1,11 @@
 import { useState } from "react";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
 import AddComponent from "../components/Actions components/AddComponent";
-import { PiEyeSlashFill, PiEyeFill } from "react-icons/pi";
-import { MdOutlineAdd } from "react-icons/md";
 import { useAddSupplierMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
 
 const AddSuplierPage = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
     const [show, setShow] = useState(false);
     const [addressFields, setAddresField] = useState(false);
@@ -58,9 +56,8 @@ const AddSuplierPage = () => {
     const handleProductSubmit = async (e) => {
         e.preventDefault();
         const body = { ...formval };
-        await createNewSupplier({...formval,body});
+        await createNewSupplier({ ...formval, body });
         navigate(-1);
-        console.log(formval);
     }
     const handleCancel = () => {
         setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' })
