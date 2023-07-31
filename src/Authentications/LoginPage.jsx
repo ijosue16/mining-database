@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {PiEnvelopeBold,PiEyeFill,PiEyeSlashFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../states/apislice";
-import { setAuthToken, setUserData } from "../states/slice";
+import { setAuthToken, setUserData, setPermissions } from "../states/slice";
 import { useDispatch } from "react-redux";
 
 
@@ -27,6 +27,7 @@ const LoginPage=()=>{
             const { user } = response.data.data;
             dispatch(setAuthToken(token));
             dispatch(setUserData(user));
+            dispatch(setPermissions(user.permissions));
         }
     };
     const handleChange = (e) => {
