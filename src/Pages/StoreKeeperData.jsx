@@ -22,12 +22,12 @@ const StoreKeeperData = () => {
     const [admin, setAdmin] = useState({ role: 'admin' });
     const handleSearch = (e) => {
         setSearch(e.target.value);
-        // const clickedBook = sup.find((sup) => sup._id === e.target.value);
-        // if (clickedBook) {
-        //     setFormval({ companyName: clickedBook.companyName, licenseNumber: clickedBook.licenseNumber, TINNumber: clickedBook.TINNumber, email: clickedBook.email });
-        //     setBeneficial(clickedBook.companyName);
-        // };
-        // setchecked(false);
+        const clickedBook = sup.find((sup) => sup._id === e.target.value);
+        if (clickedBook) {
+            setFormval({ companyName: clickedBook.companyName, licenseNumber: clickedBook.licenseNumber, TINNumber: clickedBook.TINNumber, email: clickedBook.email });
+            setBeneficial(clickedBook.companyName);
+        };
+        setchecked(false);
     };
     const handleSearchCancel = () => {
         setSearch("");
@@ -66,26 +66,33 @@ const StoreKeeperData = () => {
         }
     }
 
-    useEffect(() => {
-        if (isSuccess) {
-            const { data: dt } = data;
-            const { suppliers: sups } = dt;
-            sup = sups;
-            console.log(sup);
-            if (search === '' || search !== '') {
-                console.log(searchData)
-                const newfilteredData=sup.filter((rcp)=>{
-                   return rcp.companyName.toLowerCase().includes(search.toLowerCase())
-                });
-                setSearchData(newfilteredData)
-            }
-            else{
-                setSearchData([]);
-            }
-        }
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         const { data: dt } = data;
+    //         const { suppliers: sups } = dt;
+    //         sup = sups;
+    //         console.log(sup);
+    //         if (search === '' || search !== '') {
+    //             console.log(searchData)
+    //             const newfilteredData=sup.filter((rcp)=>{
+    //                return rcp.companyName.toLowerCase().includes(search.toLowerCase())
+    //             });
+    //             setSearchData(newfilteredData)
+    //         }
+    //         else{
+    //             setSearchData([]);
+    //         }
+    //     }
        
-    }, [search,isSuccess]);
+    // }, [search,isSuccess]);
 
+    if (isSuccess) {
+        const { data: dt } = data;
+        const { suppliers: sups } = dt;
+        sup = sups;
+        console.log(sup);
+       
+    }
 
     const handleEntry = (e) => {
         setFormval((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
@@ -136,7 +143,7 @@ const StoreKeeperData = () => {
                 actionsContainer={<AddComponent component={
                     <div className="grid grid-cols-1 gap-1">
                         <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
-                            <li className="space-y-2 relative">
+                            {/* <li className="space-y-2 relative">
                                 <p className="pl-1">Trade in Company</p>
                                 <span className="flex items-center border w-full rounded-md p-2">
                                     <input type="text" name="search" id="search" autoComplete="off" placeholder="search supplier" className=" focus:outline-none  w-full" value={search || ''} onChange={handleSearch}
@@ -153,7 +160,7 @@ const StoreKeeperData = () => {
                                     )}
                                 </ul>}
 
-
+ */}
 
                                 {/* <input list="suppliers" name="search" id="search" autoComplete="off" placeholder="search supplier" className=" py-1 focus:outline-none  w-full" />
                             <datalist id="suppliers" className="w-full h-full bg-slate-100 max-w-[240px] p-2 rounded-md shadow-md">
@@ -163,21 +170,23 @@ const StoreKeeperData = () => {
                                 <option value="Safari"></option>
                                 <option value="Microsoft Edge"></option>
                             </datalist> */}
-                            </li>
+                            {/* </li> */}
                             {/* <ul className=" bg-slate-100 max-w-[240px] p-2 rounded-md shadow-md">
       {sup.map(({companyName,_id}) => (
         <li key={_id}>{companyName}</li>
       ))}
     </ul> */}
-{/* 
+
                           <li className=" space-y-2">
                           <p>Trade in Company</p>
                           <select autoComplete="off" required name="search supplier" id="search supplier" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleSearch} >
-                                {sup.map(({ companyName},index) => (
-                                    <option value={_id} key={index} >{companyName}</option>
-                                ))}
+                                {sup.map(({ companyName,_id},index) => {
+                                    return(
+                                        <option value={_id} key={index} >{companyName}</option>
+                                    )
+                                    })}
                             </select>
-                          </li>  */}
+                          </li> 
                             {/* **** */}
                             <li className=" space-y-2">
                                 <p className="pl-1">Minerals Types</p>
