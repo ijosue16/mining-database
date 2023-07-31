@@ -3,7 +3,8 @@ import {createSlice} from "@reduxjs/toolkit";
 const initialState = {
     userData: null,
     role: null,
-    token: null
+    token: null,
+    permissions: null
 }
 const userList = [
     {fullName: "josue iradukunda", role: "admin"},
@@ -28,7 +29,10 @@ export const globalSlice = createSlice({
             state.userData = action.payload
             state.role = state.userData.role
         },
+        setPermissions: (state, action) => {
+            state.permissions = action.payload;
+        }
     }
 })
-export const {setName, setUserData, setAuthToken} = globalSlice.actions;
+export const {setName, setUserData, setAuthToken, setPermissions} = globalSlice.actions;
 export default globalSlice.reducer;
