@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import dayjs from "dayjs";
 import { Input, Modal, Table } from "antd";
 import { motion } from "framer-motion";
 import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold, PiClipboardDuotone,PiEyeDuotone, PiTrashFill, PiPencilCircleDuotone } from "react-icons/pi";
@@ -6,68 +7,83 @@ import { BiSolidFilePdf } from "react-icons/bi"
 import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
 import SalesListContainer from "../components/Listcomponents/SalesListContainer";
-import { useGetAllBuyersQuery,useDeleteBuyerMutation } from "../states/apislice";
+import { useGetAllEntriesQuery,useDeleteEntryMutation, useDeleteSupplierMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
 
 const EntriesListPage = () => {
     let dataz = [];
-    const { data, isLoading, isSuccess, isError, error } = useGetAllBuyersQuery();
-    const[deleteBuyer,{isLoading:isDeleting,isSuccess:isdone,isError:isproblem}]=useDeleteBuyerMutation();
+    const { data, isLoading, isSuccess, isError, error } = useGetAllEntriesQuery();
+    const[deleteBuyer,{isLoading:isDeleting,isSuccess:isdone,isError:isproblem}]=useDeleteEntryMutation();
 
     const navigate=useNavigate();
     const [searchText, SetSearchText] = useState("");
     const [showActions, SetShowActions] = useState(false);
     const [selectedRow, SetSelectedRow] = useState(null);
+    const [model, Setmodel] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
 
     if (isSuccess) {
         const { data: dt } = data;
-        const { buyers: byrz } = dt;
-        console.log(byrz);
-        dataz = byrz;
+        const { entries: entrz } = dt;
+        console.log(entrz);
+        dataz = entrz;
     };
     const handleActions = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id)
         console.log('Deleted ID:', id);
     };
-    const handleDelete = async() => {
+    const handleDelete = async () => {
         // console.log(selectedRow);
-        const buyerId= selectedRow;
-        await deleteBuyer({buyerId});
+        const entryId= selectedRow;
+        await useDeleteEntryMutation({entryId});
         setShowmodal(!showmodal);
     
     };
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'companyName',
+            dataIndex: 'companyName',
+            key: 'companyName',
+            sorter: (a, b) => a.companyName.localeCompare(b.companyName),
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
-            key: 'email',
-            sorter: (a, b) => a.email.localeCompare(b.email),
+            title: 'TINNumber',
+            dataIndex: 'TINNumber',
+            key: 'TINNumber',
+            sorter: (a, b) => a.TINNumber.localeCompare(b.TINNumber),
         },
         {
-            title: 'Country',
-            dataIndex: 'country',
-            key: 'country',
-            sorter: (a, b) => a.country.localeCompare(b.country),
+            title: 'mineralType',
+            dataIndex: 'mineralType',
+            key: 'mineralType',
+            sorter: (a, b) => a.mineralType.localeCompare(b.mineralType),
         },
         {
-            title: 'Address',
-            dataIndex: 'address',
-            key: 'address',
-            sorter: (a, b) => a.address.localeCompare(b.address),
+            title: 'status',
+            dataIndex: 'status',
+            key: 'status',
+            sorter: (a, b) => a.status.localeCompare(b.status),
+            render:(text)=>{
+                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
+                let color =( text === 'in stock') ? 'bg-green-500' :( (text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
+                return(
+                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
+                )
+            }
         },
         {
-            title: 'Destination',
-            dataIndex: 'destination',
-            key: 'destination',
-            sorter: (a, b) => a.destination.localeCompare(b.destination),
+            title: 'supplyDate',
+            dataIndex: 'supplyDate',
+            key: 'supplyDate',
+            sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
+            render:(text)=>{
+                return(
+                    <>
+                    <p>{dayjs(text).format('MMM/DD/YYYY')}</p>
+                    </>
+                )
+            }
         },
 
         {
@@ -82,13 +98,7 @@ const EntriesListPage = () => {
                                 <PiDotsThreeVerticalBold onClick={() => handleActions(record._id)} />
                                 {selectedRow === record._id && (
                                     <motion.ul animate={showActions ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
-                                        <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {
-                                            console.log('Action 1 :', record._id, record.name);
-                                            SetShowActions(!showActions)
-                                        }}>
-                                            <PiClipboardDuotone className=" text-xl" />
-                                            <p>shedule</p>
-                                        </li>
+                                       
                                         <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {navigate(`/buyer/details/${record._id}`)}}>
                                             <PiEyeDuotone className=" text-xl" />
                                             <p>details</p>
@@ -126,10 +136,10 @@ const EntriesListPage = () => {
 
     return (
         <>
-            <SalesListContainer title={'Buyers list'}
-                subTitle={'Manage your buyers'}
-                navLinktext={'add/buyer'}
-                navtext={'Add new Buyer'}
+            <SalesListContainer title={'Entries list'}
+                subTitle={'Manage your Entries'}
+                navLinktext={'entry/storekeeper'}
+                navtext={'Add new Entry'}
                 table={
                     <>
                         <Modal

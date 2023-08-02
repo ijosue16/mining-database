@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import { useAddSupplierMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";

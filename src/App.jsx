@@ -18,7 +18,7 @@ import Framer from './Framer';
 import RoleBasedRoute from './routes authentication/RoleBasedRoute';
 import DefaultPages from './Pages/DefaultPages';
 import EditUserPage from './Pages/EditUserPage';
-import StoreKeeperData from './Pages/StoreKeeperData';
+import StoreKeeperData from './Pages/TransactionEntry';
 import TrecabilityData from './Pages/TrecabilityData';
 import MyContextProvider from './context files/MycontextProvider';
 import ContractsistPage from './Pages/ContractListPage';
@@ -37,6 +37,15 @@ import ListPopupContainer from './components/Listcomponents/ListWithPopupContain
 import ListPopupContainerHeader from './components/Listcomponents/ListWithPopupContainer';
 import SupplierDetailsPage from './Pages/SupplierDetailsPage';
 import EditMinesitePage from './Pages/EditMinesitePage';
+import PermissionsPage from './Pages/PermisionsPage';
+import EntriesListPage from './Pages/EntriesListPage';
+import TransactionEntry from './Pages/TransactionEntry';
+import ColtanEntryForm from './Pages/coltan/entry/ColtanEntryForm';
+import CassiteriteEntryForm from './Pages/cassiterite/entry/CassiteriteEntryForm';
+import WolframiteEntryForm from './Pages/wolframite/entry/WolframiteEntryForm';
+import LithiumEntryForm from './Pages/lithium/entry/LithiumEntryForm';
+import BerylliumEntryForm from './Pages/beryllium/entry/BerylliumEntryForm';
+import MixedEntryForm from './Pages/mixed/entry/MixedEntryForm';
 
 
 
@@ -53,7 +62,8 @@ function App() {
       
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/products' element={<ProductsList/>}/>
-    <Route  path='/dummy' element={<EditMinesitePage/>}/>
+    <Route  path='/dummy' element={<MixedEntryForm/>}/>
+    <Route  path='/test' element={<EditMinesitePage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
     <Route  path='/purchases' element={<PurchasesListPage/>}/>
     <Route  path='/users' element={<UsersListPage/>}/>
@@ -70,7 +80,7 @@ function App() {
     <Route  path='/edit/buyer/:buyerId' element={<EditBuyerPage/>}/>
     <Route  path='/buyer/details/:buyerId' element={<BuyerDetailsPage/>}/>
     <Route  path='/add/buyer' element={<AddBuyerPage/>}/>
-    <Route  path='/entry/storekeeper' element={<StoreKeeperData/>}/>
+    <Route  path='/entry/storekeeper' element={<TransactionEntry/>}/>
     <Route  path='/entry/trecability' element={<TrecabilityData/>}/>
     <Route  path='/add/product' element={<AddProductPage/>}/>
     <Route  path='/add/sale' element={<AddSalesPage/>}/>

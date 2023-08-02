@@ -1,5 +1,5 @@
  import { useParams } from "react-router-dom";
-import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import { useGetOneBuyerQuery } from "../states/apislice";
  const BuyerDetailsPage=()=>{
     let info=[];

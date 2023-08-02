@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Spin } from 'antd';
-import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import { useGetOneSupplierQuery } from "../states/apislice";
 import { useNavigate, useParams } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import { PiEyeSlashFill,PiEyeFill } from "react-icons/pi";
 import { useAddPaymentMutation } from "../states/apislice";
@@ -35,53 +35,56 @@ const AddPaymentPage = () => {
                             <li>
                                 <p className="mb-1">Supplier Name</p>
                               
-                                <input type="text" name="supplierName" id="supplierName" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.supplierName || ''} onChange={handleAddproduct} />
+                                <input type="text" required name="supplierName" id="supplierName" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.supplierName || ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Company representative</p>
                               
-                                <input type="text" name="companyRepresentative" id="companyRepresentative" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.companyRepresentative || ''} onChange={handleAddproduct} />
+                                <input type="text" required name="companyRepresentative" id="companyRepresentative" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.companyRepresentative || ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">National ID</p>
-                                <input type="text" name="nationalId" id="nationalId" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.nationalId|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="nationalId" id="nationalId" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.nationalId|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">License number</p>
-                                <input type="text" name="licenseNumber" id="licenseNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.licenseNumber|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="licenseNumber" id="licenseNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.licenseNumber|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Phone number</p>
-                                <input type="text" name="phoneNumber" id="phoneNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.phoneNumber|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="phoneNumber" id="phoneNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.phoneNumber|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">TIN number</p>
-                                <input type="text" name="TINNumber" id="TINNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.TINNumber|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="TINNumber" id="TINNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.TINNumber|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Email</p>
-                                <input type="email" name="email" id="email" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.email|| ''} onChange={handleAddproduct} />
+                                <input type="email" required name="email" id="email" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.email|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Location</p>
-                                <input type="text" name="location" id="location" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.location|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="location" id="location" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.location|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Amount received</p>
-                                <input type="text" name="amountReceived" id="amountReceived" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.amountReceived|| ''} onChange={handleAddproduct} />
+                                <input type="text" required name="amountReceived" id="amountReceived" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.amountReceived|| ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
                                 <p className="mb-1">Currency</p>
-                                <input type="text" name="currency" id="currency" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.currency|| ''} onChange={handleAddproduct} />
+                                <select type="select" required name="currency" id="currency" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.currency|| ''} onChange={handleAddproduct} >
+                                <option value="RWF">RWF</option>
+                                    <option value="USD">USD</option>
+                                </select>
                             </li>
                             {/* ******* */}
  

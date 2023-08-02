@@ -53,7 +53,7 @@ const PaymentsListPage=()=>{
             sorter: (a, b) => a.companyRepresentative.localeCompare(b.companyRepresentative),
         },
         {
-            title: 'TIn nbr',
+            title: 'TIN number',
             dataIndex: 'TINNumber',
             key: 'TINNumber',
             sorter: (a, b) => a.TINNumber.localeCompare(b.TINNumber),

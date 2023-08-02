@@ -15,3 +15,9 @@ fields:
 
 // add new beryllium/lithium entry
 - They don't have number of tags field
+supplier 
+phone nbr
+mineral type
+wieght in
+weight out
+

@@ -1,21 +1,25 @@
 import React, { useEffect, useState } from "react";
 import dayjs from 'dayjs';
-import { DatePicker } from 'antd';
+import { DatePicker,TimePicker,Spin } from 'antd';
 import mData from "../MOCK_DATA.json"
-import ActionsPagesContainer from "../components/Actions components/ActionsComponent container";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
-import { useGetAllSuppliersQuery } from "../states/apislice";
+import { useGetAllSuppliersQuery,useCreateEntryMutation } from "../states/apislice";
+import { useNavigate } from "react-router-dom";
 
 
-const StoreKeeperData = () => {
+const TransactionEntry = () => {
     let sup = [''];
+    const navigate=useNavigate();
     const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
-    const [formval, setFormval] = useState({ grossQty: "", netQty: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', companyRepresentative: "", representativeId: "", representativePhoneNbr: "", date: "", mineTagsNbr: "", mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', Beneficiary: '' });
+    const [createEntry,{ isLoading:isSending, isError:isFailed, error:Fail, isSuccess:isDone }] = useCreateEntryMutation()
+    const [formval, setFormval] = useState({ grossQuantity: "", netQuantity: "", companyName: "", licenseNumber: "", TINNumber: '', email: '',supplierId:'', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "",time:"", numberOfTags: null, mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '',isSupplierBeneficiary:false });
     const [checked, setchecked] = useState(false);
     const [openlist, setOpenlist] = useState(false);
     const [search, setSearch] = useState("");
+    const [model, setModel] = useState("");
     const [searchData, setSearchData] = useState([]);
     const [selectedItem, setSelectedItem] = useState(-1);
     const [beneficial, setBeneficial] = useState("");
@@ -24,7 +28,7 @@ const StoreKeeperData = () => {
         setSearch(e.target.value);
         const clickedBook = sup.find((sup) => sup._id === e.target.value);
         if (clickedBook) {
-            setFormval({ companyName: clickedBook.companyName, licenseNumber: clickedBook.licenseNumber, TINNumber: clickedBook.TINNumber, email: clickedBook.email });
+            setFormval({ companyName: clickedBook.companyName, licenseNumber: clickedBook.licenseNumber, TINNumber: clickedBook.TINNumber, email: clickedBook.email,supplierId:clickedBook._id });
             setBeneficial(clickedBook.companyName);
         };
         setchecked(false);
@@ -97,34 +101,45 @@ const StoreKeeperData = () => {
     const handleEntry = (e) => {
         setFormval((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
         if (e.target.name === 'mineralType') {
-            if (e.target.value === 'mixed') {
-                setExtraform(!extrafom);
-            }
-            else {
-                setExtraform(false);
-            }
+            setModel(e.target.value)
+            // if (e.target.value === 'mixed') {
+            //     setExtraform(!extrafom);
+            // }
+            // else {
+            //     setExtraform(false);
+            // }
         }
 
     };
     const handleAddDate = (e) => {
-        setFormval((prevState) => ({ ...prevState, date: dayjs(e).format('MMM/DD/YYYY') }));
+        setFormval((prevState) => ({ ...prevState, supplyDate: dayjs(e).format('MMM/DD/YYYY') }));
     };
+
+    const handleAddTime = (e) => {
+        setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
+    };
+
     const handleCheck = () => {
         setchecked((prev)=>!prev);
         console.log(checked)
         if (Boolean(checked) === false ) {
-            setFormval({ ...formval, Beneficiary: beneficial });
+            setFormval({ ...formval, beneficiary: beneficial,isSupplierBeneficiary:true });
         }
         else if(Boolean(checked) === true ) {
-            setFormval({ ...formval, Beneficiary: '' });
+            setFormval({ ...formval, beneficiary: '',isSupplierBeneficiary:false });
         }
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        const body={...formval};
+        createEntry({body,model});
         console.log(formval);
+        console.log(model);
+        // navigate(-1);
     };
     const handleCancel = () => {
-        setFormval({ grossQty: "", netQty: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', companyRepresentative: "", representativeId: "", representativePhoneNbr: "", date: "", mineTagsNbr: "", mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', Beneficiary: '' })
+        setFormval({ grossQuantity: "", netQuantity: "", companyName: "", licenseNumber: "", TINNumber: '', email: '',supplierId:'', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", date: "",time:"", numberOfTags: null, mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '',isSupplierBeneficiary:false })
         console.log(checked)
     };
     // useEffect(()=>{
@@ -180,6 +195,7 @@ const StoreKeeperData = () => {
                           <li className=" space-y-2">
                           <p>Trade in Company</p>
                           <select autoComplete="off" required name="search supplier" id="search supplier" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleSearch} >
+                            
                                 {sup.map(({ companyName,_id},index) => {
                                     return(
                                         <option value={_id} key={index} >{companyName}</option>
@@ -191,10 +207,10 @@ const StoreKeeperData = () => {
                             <li className=" space-y-2">
                                 <p className="pl-1">Minerals Types</p>
                                 <select autoComplete="off" name="mineralType" id="mineralType" className="focus:outline-none p-2 border rounded-md w-full" value={formval.mineralType || ''} onChange={handleEntry} >
-                                    <option value="casiterite">Casiterite</option>
+                                    <option value="cassiterite">Cassiterite</option>
                                     <option value="coltan">Coltan</option>
                                     <option value="wolframite">Wolframite</option>
-                                    <option value="berlyium">Berlyium</option>
+                                    <option value="beryllium">Beryllium</option>
                                     <option value="lithium">Lithium</option>
                                     <option value="mixed">Mixed</option>
                                 </select>
@@ -235,35 +251,37 @@ const StoreKeeperData = () => {
                                 </li>
                                 <li className=" space-y-1">
                                     <p className="pl-1">Representative phone nbr</p>
-                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="representativePhoneNbr" id="representativePhoneNbr" value={formval.representativePhoneNbr || ''} onChange={handleEntry} />
+                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="representativePhoneNumber" id="representativePhoneNumber" value={formval.representativePhoneNumber || ''} onChange={handleEntry} />
                                 </li>
                                 <li className=" space-y-1">
                                     <p className="pl-1">Date</p>
-                                    <DatePicker onChange={handleAddDate} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
-                                </li>
-                                <li className=" space-y-2">
-                                    <p className="pl-1">Minerals Types</p>
-                                    <select autoComplete="off" name="mineralType" id="mineralType" className="focus:outline-none p-2 border rounded-md w-full" value={formval.mineralType || ''} onChange={handleEntry} >
-                                        <option value="casiterite">Casiterite</option>
-                                        <option value="coltan">Coltan</option>
-                                        <option value="wolframite">Wolframite</option>
-                                        <option value="berlyium">Berlyium</option>
-                                        <option value="lithium">Lithium</option>
-                                        <option value="mixed">Mixed</option>
-                                    </select>
-                                    {/* <input type="text" required autoComplete="off" className={`focus:outline-none p-2 border rounded-md w-full ${extrafom ? 'block' : 'hidden'}`} name="extraForm" id="extraForm" onChange={handleExtraForm} /> */}
+                                    <DatePicker onChange={handleAddDate} id="supplyDate" name="supplyDate" className=" focus:outline-none p-2 border rounded-md w-full" />
                                 </li>
                                 <li className=" space-y-1">
+                                    <p className="pl-1">Time</p>
+                                    <TimePicker onChange={handleAddTime} format={'HH:mm'} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                </li>
+                               
+                                <li className=" space-y-1">
                                     <p className="pl-1">Weight in</p>
-                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="grossQty" id="grossQty" value={formval.grossQty || ''} onChange={handleEntry} />
+                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="grossQuantity" id="grossQuantity" value={formval.grossQuantity || ''} onChange={handleEntry} />
                                 </li>
                                 <li className=" space-y-1">
                                     <p className="pl-1">Weight out</p>
-                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="netQty" id="netQty" value={formval.netQty || ''} onChange={handleEntry} />
+                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="netQuantity" id="netQuantity" value={formval.netQuantity || ''} onChange={handleEntry} />
+                                </li>
+
+                                <li className=" space-y-1">
+                                    <p className="pl-1">coltan Weight out</p>
+                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="coltan" id="coltan" value={formval.coltan || ''} onChange={handleEntry} />
+                                </li>
+                                <li className=" space-y-1">
+                                    <p className="pl-1">cassiterite Weight out</p>
+                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="cassiterite" id="cassiterite" value={formval.cassiterite || ''} onChange={handleEntry} />
                                 </li>
                                 <li className=" space-y-1">
                                     <p className="pl-1">Mine tags Number</p>
-                                    <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="mineTagsNbr" id="mineTagsNbr" value={formval.mineTagsNbr || ''} onChange={handleEntry} />
+                                    <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onChange={handleEntry} />
                                 </li>
                                 <li className=" space-y-1">
                                     <span className=" flex gap-2 items-center">
@@ -272,7 +290,7 @@ const StoreKeeperData = () => {
                                             <span className={` w-4 h- border bg-white rounded-full `}></span>
                                         </span>
                                     </span>
-                                    <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="Beneficiary" id="Beneficiary" value={formval.Beneficiary || ''} onChange={handleEntry} />
+                                    <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={formval.beneficiary || ''} onChange={handleEntry} />
                                 </li>
                             </>) : null}
 
@@ -319,8 +337,9 @@ const StoreKeeperData = () => {
                     </div>
                 }
                     Add={handleSubmit}
-                    Cancel={handleCancel} />} />
+                    Cancel={handleCancel}
+                    isloading={isSending} />} />
         </>
     )
 }
-export default StoreKeeperData;
+export default TransactionEntry;

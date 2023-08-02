@@ -9,46 +9,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import MineSiteCard from "../Cards/MineSiteCard";
 
 
-const SupplierDetailsPage = () => {
+const PermissionsPage = () => {
     const { supplierId } = useParams();
     const navigate = useNavigate();
-
-    const { data, isLoading, isError, isSuccess, error } = useGetOneSupplierQuery({ supplierId });
-    const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
-    const [suply, setSuply] = useState([]);
-    const [show, setShow] = useState(false);
-    const handleAddSite = (e) => {
-        setFormval({ ...formval, [e.target.name]: e.target.value })
-    }
-    const handleSiteSubmit = async (e) => {
-        e.preventDefault();
-        const body = { ...formval };
-        // await updateBuyer({ body, buyerId });
-        console.log(formval);
-        setFormval({ lat: '', long: '', name: '', code: '' });
-        // navigate(-1);
-    }
-    const handleCancel = () => {
-        setFormval({ lat: '', long: '', name: '', code: '' });
-        navigate(-1);
-    }
-
-    useEffect(() => {
-        if (isSuccess) {
-            const { data: info } = data;
-            const { supplier: sup } = info;
-            setSuply(sup);
-
-        }
-    }, [isSuccess]);
-    console.log(suply);
     return (
         <div>
-            <ActionsPagesContainer title={'Supplier Details'}
-                subTitle={'View Supplier detailes'}
+            <ActionsPagesContainer title={'Edit Permission'}
+                subTitle={'Manage Edit Permissions'}
                 actionsContainer={
                     <>
-                        {isLoading ? <Spin /> : (<div className="grid grid-cols-1 gap-3 w-full">
+                     <div className="grid grid-cols-1 gap-3 w-full">
 
 
                             <div className="w-full bg-slate-50 grid grid-cols-2 py-2 border-b items-center justify-between">
@@ -128,10 +98,10 @@ const SupplierDetailsPage = () => {
 
                                 </div>
                             </div>
-                        </div>)}
+                        </div>
 
                     </>} />
         </div>
     )
 }
-export default SupplierDetailsPage;
+export default PermissionsPage;
