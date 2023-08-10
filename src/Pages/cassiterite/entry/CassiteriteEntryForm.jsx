@@ -100,9 +100,19 @@ const CassiteriteEntryForm = () => {
     const handleAddTime = (e) => {
         setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
     };
+    const updateLotNumbers = () => {
+        setlotDetails((prevLotDetails) => {
+          return prevLotDetails.map((lot, index) => ({
+            ...lot,
+            lotNumber: index + 1,
+          }));
+        });
+      };
     const handleAddLot = () => {
-        setlotDetails([...lotDetails, { lotNumber: '', weightOut: '' }]);
+        setlotDetails((prevLotDetails) => [...prevLotDetails, { lotNumber: "", weightOut: "" }]);
+        updateLotNumbers();
     };
+
 
     const handleLotEntry = (index, e) => {
         const values = [...lotDetails];
@@ -135,10 +145,8 @@ const CassiteriteEntryForm = () => {
         e.preventDefault();
         const body = { ...formval, output: lotDetails };
         await createCassiteriteEntry({ body });
-        // console.log(formval);
         console.log(body);
-        // console.log(lotDetails);
-        // navigate(-1);
+        navigate(-1);
     };
     const handleCancel = () => {
         setFormval({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'cassiterite', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });

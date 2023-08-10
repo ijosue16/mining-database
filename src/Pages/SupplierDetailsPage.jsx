@@ -18,8 +18,9 @@ const SupplierDetailsPage = () => {
     const [suply, setSuply] = useState([]);
     const [show, setShow] = useState(false);
     const handleAddSite = (e) => {
-        setFormval({ ...formval, [e.target.name]: e.target.value })
+        setFormval({ ...formval, [e.target.name]: e.target.value }) 
     }
+    
     const handleSiteSubmit = async (e) => {
         e.preventDefault();
         const body = { ...formval };
@@ -87,7 +88,7 @@ const SupplierDetailsPage = () => {
                                     <p className=" font-semibold">minesites</p>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full gap-3">
-                                    <div className="pb-6">
+                                    <div className="pb-6 col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                         {suply.mineSites?.map(({ name, code, _id, coordinates }) => (
 
                                             <MineSiteCard key={_id}
@@ -99,12 +100,12 @@ const SupplierDetailsPage = () => {
 
                                         ))}
                                     </div>
-                                    <div className="col-span-full ">
+                                    {/* <div className="col-span-full ">
                                         <span className="flex items-center gap-2 bg-slate-50 w-fit p-1 rounded-md px-4 border" onClick={() => { setShow(!show) }}>
                                             <button>Add new site</button>
                                             <MdAddLocationAlt />
                                         </span>
-                                    </div>
+                                    </div> */}
                                     {show ? <motion.form onSubmit={handleSiteSubmit} animate={show ? { opacity: 1, y: -10, display: "grid" } : { opacity: 0, y: 0, display: "none", }} action="" className="grid grid-cols-1 sm:grid-cols-2 col-span-full gap-3 pb-9">
                                         <span>
                                             <label htmlFor="code">name</label>

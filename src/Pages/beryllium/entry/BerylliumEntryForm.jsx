@@ -16,7 +16,7 @@ const BerylliumEntryForm = () => {
     const navigate = useNavigate();
     const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
     const [createBerylliumEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateBerylliumEntryMutation()
-    const [formval, setFormval] = useState({ weightIn: "",weightOut:'', supplier: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'beryllium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+    const [formval, setFormval] = useState({ weightIn: "", weightOut: '', supplier: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'beryllium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
     const [lotDetails, setlotDetails] = useState([
         { lotNumber: "", weightOut: "" },
     ]);
@@ -135,13 +135,11 @@ const BerylliumEntryForm = () => {
         e.preventDefault();
         const body = { ...formval, output: lotDetails };
         await createBerylliumEntry({ body });
-        // console.log(formval);
         console.log(body);
-        // console.log(lotDetails);
-        // navigate(-1);
+        navigate(-1);
     };
     const handleCancel = () => {
-        setFormval({ weightIn: "", weightOut:'', supplier: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'beryllium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+        setFormval({ weightIn: "", weightOut: '', supplier: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'beryllium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
         setlotDetails([{ lotNumber: "", weightOut: "" },])
         console.log(checked)
     };
@@ -176,7 +174,7 @@ const BerylliumEntryForm = () => {
                                 <p className="pl-1">Supplier</p>
                                 <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplier" id="supplier" value={formval.supplier || ''} onChange={handleEntry} />
                             </li>
-                           
+
                             <li className=" space-y-1">
                                 <p className="pl-1">Phone number</p>
                                 <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={formval.phoneNumber || ''} onChange={handleEntry} />
@@ -215,7 +213,7 @@ const BerylliumEntryForm = () => {
                                 </span>
                                 <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={formval.beneficiary || ''} onChange={handleEntry} />
                             </li> */}
-{/* 
+                            {/* 
                             <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
                                     <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot number (output)</p>

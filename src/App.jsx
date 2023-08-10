@@ -46,6 +46,11 @@ import WolframiteEntryForm from './Pages/wolframite/entry/WolframiteEntryForm';
 import LithiumEntryForm from './Pages/lithium/entry/LithiumEntryForm';
 import BerylliumEntryForm from './Pages/beryllium/entry/BerylliumEntryForm';
 import MixedEntryForm from './Pages/mixed/entry/MixedEntryForm';
+import ColtanListPage from './Pages/coltan/ColtanList';
+import ColtanEditForm from './Pages/coltan/entry/ColtanEditForm';
+import ColtanEntryCompletePage from './Pages/coltan/entry/ColtanEntryComplete';
+import ColtanPaymentsPage from './Pages/coltan/payment/ColtanPaymentsPage';
+import Layout from './Layout/Layout';
 
 
 
@@ -57,12 +62,24 @@ function App() {
     <>
     <BrowserRouter>
     <Routes>
-    <Route  element={<ListTestContainer/>}>
+    <Route  element={<Layout/>}>
       <Route element={<MyContextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/products' element={<ProductsList/>}/>
-    <Route  path='/dummy' element={<MixedEntryForm/>}/>
+    <Route  path='/dummy' element={<Layout/>}/>
+
+    <Route  path='/coltan' element={<ColtanListPage/>}/>
+    <Route  path='/cassiterite' element={<ProductsList/>}/>
+    <Route  path='/wolframite' element={<ProductsList/>}/>
+    <Route  path='/lithium' element={<ProductsList/>}/>
+    <Route  path='/beryllium' element={<ProductsList/>}/>
+    <Route  path='/mixed' element={<ProductsList/>}/>
+
+    <Route  path='/entry/add/coltan' element={<ColtanEntryForm/>}/>
+
+    <Route  path='/edit/coltan/:entryId' element={<ColtanEditForm/>}/>
+    <Route  path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
+
     <Route  path='/test' element={<EditMinesitePage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
     <Route  path='/purchases' element={<PurchasesListPage/>}/>

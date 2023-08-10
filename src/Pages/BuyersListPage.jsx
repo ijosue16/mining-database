@@ -5,7 +5,7 @@ import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold, PiClipboardDuotone,P
 import { BiSolidFilePdf } from "react-icons/bi"
 import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
-import SalesListContainer from "../components/Listcomponents/SalesListContainer";
+import SalesListContainer from "../components/Listcomponents/ListContainer";
 import { useGetAllBuyersQuery,useDeleteBuyerMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
 

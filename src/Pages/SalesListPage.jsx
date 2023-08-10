@@ -1,5 +1,5 @@
 import React from "react";
-import SalesListContainer from "../components/Listcomponents/SalesListContainer";
+import SalesListContainer from "../components/Listcomponents/ListContainer";
 
 const SalesListPage=()=>{
     return(

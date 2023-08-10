@@ -1,24 +1,26 @@
 import React, { useState } from "react";
 import dayjs from "dayjs";
-import { Input, Modal, Table } from "antd";
+import { Input, Modal, Spin, Table } from "antd";
 import { motion } from "framer-motion";
-import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold, PiClipboardDuotone,PiEyeDuotone, PiTrashFill, PiPencilCircleDuotone } from "react-icons/pi";
-import { BiSolidFilePdf } from "react-icons/bi"
+import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold } from "react-icons/pi";
+import { BiSolidFilePdf, BiSolidEditAlt } from "react-icons/bi"
 import { BsCardList } from "react-icons/bs"
+import { MdDelete } from "react-icons/md"
+import { RiFileEditFill, RiFileListFill } from "react-icons/ri"
 import { HiOutlinePrinter } from "react-icons/hi"
-import SalesListContainer from "../components/Listcomponents/ListContainer";
-import { useGetAllEntriesQuery,useDeleteEntryMutation, useDeleteSupplierMutation } from "../states/apislice";
+import ListContainer from "../../components/Listcomponents/ListContainer";
+import { useGetAllColtanEntriesQuery, useDeleteColtanEntryMutation } from "../../states/apislice";
 import { useNavigate } from "react-router-dom";
 
-const EntriesListPage = () => {
+const ColtanListPage = () => {
     let dataz = [];
-    const { data, isLoading, isSuccess, isError, error } = useGetAllEntriesQuery();
-    const[deleteBuyer,{isLoading:isDeleting,isSuccess:isdone,isError:isproblem}]=useDeleteEntryMutation();
+    const { data, isLoading, isSuccess, isError, error } = useGetAllColtanEntriesQuery();
+    const [deleteColtan, { isLoading: isDeleting, isSuccess: isdone, isError: isproblem }] = useDeleteColtanEntryMutation();
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
     const [showActions, SetShowActions] = useState(false);
-    const [selectedRow, SetSelectedRow] = useState(null);
+    const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
     const [model, Setmodel] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
 
@@ -34,11 +36,11 @@ const EntriesListPage = () => {
         console.log('Deleted ID:', id);
     };
     const handleDelete = async () => {
-        // console.log(selectedRow);
-        const entryId= selectedRow;
-        await useDeleteEntryMutation({entryId});
+        const entryId = selectedRow.id;
+        await deleteColtan({ entryId });
+        SetSelectedRow({ id: null, name: '', date: '' });
         setShowmodal(!showmodal);
-    
+
     };
     const columns = [
         {
@@ -64,10 +66,10 @@ const EntriesListPage = () => {
             dataIndex: 'status',
             key: 'status',
             sorter: (a, b) => a.status.localeCompare(b.status),
-            render:(text)=>{
+            render: (text) => {
                 // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color =( text === 'in stock') ? 'bg-green-500' :( (text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
-                return(
+                let color = (text === 'in stock') ? 'bg-green-500' : ((text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
+                return (
                     <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
                 )
             }
@@ -77,10 +79,10 @@ const EntriesListPage = () => {
             dataIndex: 'supplyDate',
             key: 'supplyDate',
             sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-            render:(text)=>{
-                return(
+            render: (text) => {
+                return (
                     <>
-                    <p>{dayjs(text).format('MMM/DD/YYYY')}</p>
+                        <p>{dayjs(text).format('MMM/DD/YYYY')}</p>
                     </>
                 )
             }
@@ -98,28 +100,32 @@ const EntriesListPage = () => {
                                 <PiDotsThreeVerticalBold onClick={() => handleActions(record._id)} />
                                 {selectedRow === record._id && (
                                     <motion.ul animate={showActions ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
-                                       
-                                        <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {navigate(`/buyer/details/${record._id}`)}}>
-                                            <PiEyeDuotone className=" text-xl" />
-                                            <p>details</p>
+
+                                        <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { navigate(`/buyer/details/${record._id}`) }}>
+                                            <RiFileListFill className=" text-lg" />
+                                            <p>more details</p>
                                         </li>
-                                        <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {{navigate(`/edit/buyer/${record._id}`)} }}>
-                                            <PiPencilCircleDuotone className=" text-xl" />
+                                        <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/coltan/${record._id}`) } }}>
+                                            <BiSolidEditAlt className=" text-lg" />
                                             <p>edit</p>
                                         </li>
-                                        <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {
+                                        <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/complete/coltan/${record._id}`) } }}>
+                                            <RiFileEditFill className=" text-lg" />
+                                            <p>complete entry</p>
+                                        </li>
+                                        <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => {
                                             console.log('Action 4 :', record._id);
                                             SetShowActions(!showActions)
                                         }}>
-                                            <PiClipboardDuotone className=" text-xl" />
-                                            <p>shedule</p>
+                                            <MdDelete className=" text-lg" />
+                                            <p>delete</p>
                                         </li>
                                     </motion.ul>)}
                             </span>
 
                             <span>
-                                <PiTrashFill onClick={() => {
-                                    SetSelectedRow(record._id);
+                                <MdDelete onClick={() => {
+                                    SetSelectedRow({ ...selectedRow, id: record.id, name: record.companyName, date: record.supplyDate });
                                     setShowmodal(!showmodal);
                                 }} />
 
@@ -136,9 +142,9 @@ const EntriesListPage = () => {
 
     return (
         <>
-            <SalesListContainer title={'Entries list'}
-                subTitle={'Manage your Entries'}
-                navLinktext={'entry/storekeeper'}
+            <ListContainer title={'Coltan entries list'}
+                subTitle={'Manage your coltan  entries'}
+                navLinktext={'entry/add/coltan'}
                 navtext={'Add new Entry'}
                 table={
                     <>
@@ -146,14 +152,19 @@ const EntriesListPage = () => {
 
                             open={showmodal}
                             onOk={() => handleDelete(selectedRow)}
-                            onCancel={() => setShowmodal(!showmodal)}
+                            onCancel={() => {
+                                setShowmodal(!showmodal);
+                                SetSelectedRow({ id: null, name: '', date: '' })
+                            }}
                             destroyOnClose
                             footer={[
                                 <span key="actions" className=" flex w-full justify-center gap-4 text-base text-white">
-                                    <button key="back" className=" bg-green-400 p-2 rounded-lg" onClick={handleDelete}>
+                                    {isDeleting ? <Spin className="bg-green-400 p-2 rounded-lg" /> : (<button key="back" className=" bg-green-400 p-2 rounded-lg" onClick={handleDelete}>
                                         Confirm
-                                    </button>
-                                    <button key="submit" className=" bg-red-400 p-2 rounded-lg" type="primary" onClick={() => setShowmodal(!showmodal)}>
+                                    </button>)}
+                                    <button key="submit" className=" bg-red-400 p-2 rounded-lg" type="primary" onClick={() => {
+                                        setShowmodal(!showmodal); SetSelectedRow({ id: null, name: '', date: '' })
+                                    }}>
                                         Cancel
                                     </button>
                                 </span>
@@ -162,7 +173,11 @@ const EntriesListPage = () => {
                         >
 
                             <h2 className="modal-title text-center font-bold text-xl">Confirm Delete</h2>
-                            <p className="text-center text-lg">{`Are you sure you want to delete ${selectedRow}`}.</p>
+                            <p className=" text-lg">Are you sure you want to delete transaction with:</p>
+                            <li className=" text-lg">{`company name: ${selectedRow.name}`}</li>
+                            <li className=" text-lg">{`Supply date: ${dayjs(selectedRow.date).format('MMM/DD/YYYY')}`}</li>
+
+
                         </Modal>
                         <div className=" w-full overflow-x-auto h-full min-h-[320px]">
                             <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
@@ -190,4 +205,4 @@ const EntriesListPage = () => {
         </>
     )
 }
-export default EntriesListPage;
+export default ColtanListPage;

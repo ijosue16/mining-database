@@ -3,9 +3,9 @@ import ListContainerHeader from "./ListContainerHeader";
 
 
 
-const SalesListContainer = ({ title, subTitle, navLinktext, table, navtext }) => {
+const ListContainer = ({ title, subTitle, navLinktext, table, navtext }) => {
 
-    return (
+    return ( 
         <>
             <section className="">
                 <ListContainerHeader title={title}
@@ -21,4 +21,4 @@ const SalesListContainer = ({ title, subTitle, navLinktext, table, navtext }) =>
     )
 
 }
-export default SalesListContainer;
+export default ListContainer;

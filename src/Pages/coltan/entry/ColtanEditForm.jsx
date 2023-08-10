@@ -1,22 +1,23 @@
 import React, { Fragment, useEffect, useState } from "react";
 import dayjs from 'dayjs';
+import moment from 'moment';
 import { motion } from "framer-motion";
 import { DatePicker, TimePicker, Spin } from 'antd';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
-import { useGetAllSuppliersQuery, useCreateWolframiteEntryMutation } from "../../../states/apislice";
+import { useCreateColtanEntryMutation, useGetOneColtanEntryQuery } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 
-const WolframiteEntryForm = () => {
-    let sup = [''];
+const ColtanEditForm = () => {
+    const { entryId } = useParams();
     const navigate = useNavigate();
-    const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
-    const [createWolframiteEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateWolframiteEntryMutation()
-    const [formval, setFormval] = useState({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'wolframite', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+    const { data, isLoading, isError, error, isSuccess } = useGetOneColtanEntryQuery({ entryId });
+    const [createColtanEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateColtanEntryMutation()
+    const [formval, setFormval] = useState({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
     const [lotDetails, setlotDetails] = useState([
         { lotNumber: "", weightOut: "" },
     ]);
@@ -29,13 +30,18 @@ const WolframiteEntryForm = () => {
     const [beneficial, setBeneficial] = useState("");
     const [admin, setAdmin] = useState({ role: 'admin' });
 
-    if (isSuccess) {
-        const { data: dt } = data;
-        const { suppliers: sups } = dt;
-        sup = sups;
-        console.log(sup);
+    useEffect(() => {
 
-    }
+        if (isSuccess) {
+            const { data: dt } = data;
+            const { entry: entr } = dt;
+            // sup = sups;
+            console.log(entr);
+            setFormval({ ...formval, weightIn: entr.weightIn, companyName: entr.companyName, licenseNumber: entr.licenseNumber, TINNumber: entr.TINNumber, email: entr.email, supplierId: entr.supplierId, companyRepresentative: entr.companyRepresentative, representativeId: entr.representativeId, representativePhoneNumber: entr.representativePhoneNumber, supplyDate: dayjs(entr.supplyDate), time: dayjs(entr.time, 'HH:mm'), numberOfTags: entr.numberOfTags, mineTags: entr.mineTags, negociantTags: '', mineralType: entr.mineralType, mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+            setlotDetails(entr.output);
+            console.log(entr.output);
+        }
+    }, [isSuccess])
 
 
     const handleSearch = (e) => {
@@ -93,41 +99,68 @@ const WolframiteEntryForm = () => {
 
     };
 
-    const handleAddDate = (e) => {
-        setFormval((prevState) => ({ ...prevState, supplyDate: dayjs(e).format('MMM/DD/YYYY') }));
+
+    const handleAddDate = (date, dateString) => {
+        setFormval((prevState) => ({
+            ...prevState,
+            supplyDate: dateString,
+        }));
     };
 
-    const handleAddTime = (e) => {
-        setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
+    const handleAddTime = (time, timeString) => {
+        setFormval((prevState) => ({
+            ...prevState,
+            time: timeString,
+        }));
     };
     const updateLotNumbers = () => {
         setlotDetails((prevLotDetails) => {
-          return prevLotDetails.map((lot, index) => ({
-            ...lot,
-            lotNumber: index + 1,
-          }));
+            return prevLotDetails.map((lot, index) => ({
+                ...lot,
+                lotNumber: index + 1,
+            }));
         });
-      };
+    };
     const handleAddLot = () => {
         setlotDetails((prevLotDetails) => [...prevLotDetails, { lotNumber: "", weightOut: "" }]);
         updateLotNumbers();
     };
 
-
     const handleLotEntry = (index, e) => {
-        const values = [...lotDetails];
-        values[index][e.target.name] = e.target.value;
-        values[index].lotNumber = index + 1;
-        setlotDetails(values);
+        setlotDetails((prevLotDetails) => {
+            const updatedLotDetails = prevLotDetails.map((lot, i) => {
+                if (i === index) {
+                    return {
+                        ...lot,
+                        [e.target.name]: e.target.value,
+                    };
+                }
+                return lot;
+            });
+
+            // If the lot doesn't exist in the previous state (i.e., it's a new lot)
+            if (index === prevLotDetails.length) {
+                return [
+                    ...updatedLotDetails,
+                    { lotNumber: prevLotDetails.length + 1, [e.target.name]: e.target.value },
+                ];
+            }
+
+            return updatedLotDetails;
+        });
+
     };
 
     const handleLRemoveLot = (index) => {
         const values = [...lotDetails];
         values.splice(index, 1);
-        values.forEach((lot, i) => {
-            lot.lotNumber = i + 1;
+        const updatedValues = values.map((lot, i) => {
+            return {
+                ...lot,
+                lotNumber: i + 1,
+            };
         });
-        setlotDetails(values);
+        setlotDetails(updatedValues);
     };
 
     const handleCheck = () => {
@@ -144,23 +177,23 @@ const WolframiteEntryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = { ...formval, output: lotDetails };
-        await createWolframiteEntry({ body });
+        // await createColtanEntry({ body });
         console.log(body);
-        navigate(-1);
+        // navigate(-1);
     };
     const handleCancel = () => {
-        setFormval({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'wolframite', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+        setFormval({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
         setlotDetails([{ lotNumber: "", weightOut: "" },])
-        console.log(checked)
+        navigate(-1);
     };
 
     return (
         <>
-            <ActionsPagesContainer title={'Register wolframite entry'}
-                subTitle={'Add new wolframite entry'}
+            <ActionsPagesContainer title={'Edit coltan entry'}
+                subTitle={'Edit/Update coltan entry'}
                 actionsContainer={<AddComponent component={
                     <div className="grid grid-cols-1 gap-1">
-                        <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
+                        {/* <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
 
 
                             <li className=" space-y-2">
@@ -174,9 +207,9 @@ const WolframiteEntryForm = () => {
                                     })}
                                 </select>
                             </li>
-                            {/* **** */}
+                            
 
-                        </ul>
+                        </ul> */}
 
                         <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
@@ -214,11 +247,11 @@ const WolframiteEntryForm = () => {
                             </li>
                             <li className=" space-y-1">
                                 <p className="pl-1">Date</p>
-                                <DatePicker onChange={handleAddDate} id="supplyDate" name="supplyDate" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                <DatePicker value={formval.supplyDate ? dayjs(formval.supplyDate) : null} onChange={handleAddDate} id="supplyDate" name="supplyDate" className=" focus:outline-none p-2 border rounded-md w-full" />
                             </li>
                             <li className=" space-y-1">
                                 <p className="pl-1">Time</p>
-                                <TimePicker onChange={handleAddTime} format={'HH:mm'} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                <TimePicker value={formval.time ? dayjs(formval.time, 'HH:mm') : null} onChange={handleAddTime} format={'HH:mm'} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
                             </li>
 
                             <li className=" space-y-1">
@@ -232,9 +265,9 @@ const WolframiteEntryForm = () => {
                             <li className=" space-y-1">
                                 <span className=" flex gap-2 items-center">
                                     <p>Beneficiary</p>
-                                    <span className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${checked ? ' justify-end bg-green-400' : ' justify-start bg-slate-400'}`} onClick={handleCheck}>
+                                    {/* <span className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${checked ? ' justify-end bg-green-400' : ' justify-start bg-slate-400'}`} onClick={handleCheck}>
                                         <span className={` w-4 h- border bg-white rounded-full `}></span>
-                                    </span>
+                                    </span> */}
                                 </span>
                                 <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={formval.beneficiary || ''} onChange={handleEntry} />
                             </li>
@@ -266,4 +299,4 @@ const WolframiteEntryForm = () => {
         </>
     )
 }
-export default WolframiteEntryForm;
+export default ColtanEditForm;

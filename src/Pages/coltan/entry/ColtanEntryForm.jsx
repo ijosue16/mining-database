@@ -100,9 +100,19 @@ const ColtanEntryForm = () => {
     const handleAddTime = (e) => {
         setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
     };
+    const updateLotNumbers = () => {
+        setlotDetails((prevLotDetails) => {
+          return prevLotDetails.map((lot, index) => ({
+            ...lot,
+            lotNumber: index + 1,
+          }));
+        });
+      };
     const handleAddLot = () => {
-        setlotDetails([...lotDetails, { lotNumber: '', weightOut: '' }]);
+        setlotDetails((prevLotDetails) => [...prevLotDetails, { lotNumber: "", weightOut: "" }]);
+        updateLotNumbers();
     };
+
 
     const handleLotEntry = (index, e) => {
         const values = [...lotDetails];
@@ -135,10 +145,8 @@ const ColtanEntryForm = () => {
         e.preventDefault();
         const body = { ...formval, output: lotDetails };
         await createColtanEntry({ body });
-        // console.log(formval);
         console.log(body);
-        // console.log(lotDetails);
-        // navigate(-1);
+        navigate(-1);
     };
     const handleCancel = () => {
         setFormval({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'coltan', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
@@ -150,11 +158,10 @@ const ColtanEntryForm = () => {
         <>
             <ActionsPagesContainer title={'Register coltan entry'}
                 subTitle={'Add new coltan entry'}
-                actionsContainer={<AddComponent component={
+                actionsContainer={
+                <AddComponent component={
                     <div className="grid grid-cols-1 gap-1">
-                        <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
-
-
+                        <ul className="grid grid-cols-1 items-center gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
                             <li className=" space-y-2">
                                 <p>Trade in Company</p>
                                 <select autoComplete="off" name="search supplier" id="search supplier" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleSearch} >
@@ -166,8 +173,9 @@ const ColtanEntryForm = () => {
                                     })}
                                 </select>
                             </li>
-                            {/* **** */}
-
+                                <li className=" self-end">
+                                    <button className=" bg-red-400 px-3 py-1 rounded-md" onClick={()=>navigate('/add/supplier')}>New supplier</button>
+                                </li>
                         </ul>
 
                         <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

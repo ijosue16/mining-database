@@ -24,10 +24,10 @@ const MineSiteCard=({onclick,name,code,lat,long})=>{
                 <p>{long}</p>
             </li>
         </ul>
-        <span className="flex gap-2 self-end items-center py-1 px-3 rounded-lg hover:bg-pink-100" onClick={onclick}>
+        {/* <span className="flex gap-2 self-end items-center py-1 px-3 rounded-lg hover:bg-pink-100" onClick={onclick}>
             <p>edit</p>
             <RiEditLine />
-        </span>
+        </span> */}
     </div>
     )
 }

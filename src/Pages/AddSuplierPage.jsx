@@ -3,13 +3,55 @@ import ActionsPagesContainer from "../components/Actions components/ActionsCompo
 import AddComponent from "../components/Actions components/AddComponent";
 import { useAddSupplierMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
+import { HiPlus, HiMinus } from "react-icons/hi";
 
 const AddSuplierPage = () => {
     const navigate = useNavigate();
     const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+    const [mineSitesDetails, setmineSitesDetails] = useState([
+        { coordinates: { lat: '', long: '', }, name: '', code: '' },
+    ]);
     const [show, setShow] = useState(false);
     const [addressFields, setAddresField] = useState(false);
     const [createNewSupplier, { isSuccess, isLoading, isError, error }] = useAddSupplierMutation();
+
+    const updateLotNumbers = () => {
+        setmineSitesDetails((prevmineSitesDetails) => {
+            return prevmineSitesDetails.map((lot, index) => ({
+                ...lot,
+                lotNumber: index + 1,
+            }));
+        });
+    };
+
+    const handleAddSite = () => {
+        setmineSitesDetails((prevmineSitesDetails) => [...prevmineSitesDetails, { coordinates: { lat: '', long: '', }, name: '', code: '', }]);
+        updateLotNumbers();
+    };
+
+
+    const handleSiteEntry = (index, e) => {
+        const values = [...mineSitesDetails];
+        console.log(`change value ${index}`, values[index]);
+        if (e.target.name.startsWith("coordinates.")) {
+            const cordsFields = e.target.name.split(".")[1];
+            values[index].coordinates[cordsFields] = e.target.value;
+            // console.log(cords)
+        }
+        values[index][e.target.name] = e.target.value;
+        // values[index].lotNumber = index + 1;
+        setmineSitesDetails(values);
+    };
+
+    const handleSiteRemoveLot = (index) => {
+        const values = [...mineSitesDetails];
+        values.splice(index, 1);
+        values.forEach((lot, i) => {
+            // lot.lotNumber = i + 1;
+        });
+        setmineSitesDetails(values);
+    };
+
     const handleAddproduct = (e) => {
 
         if (e.target.name.startsWith("address.")) {
@@ -55,12 +97,16 @@ const AddSuplierPage = () => {
 
     const handleProductSubmit = async (e) => {
         e.preventDefault();
-        const body = { ...formval };
+        const body = { ...formval, mineSites: mineSitesDetails, typeOfMinerals: formval.typeOfMinerals.split(' ') };
+        console.log(body)
         await createNewSupplier({ ...formval, body });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+        setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
         navigate(-1);
     }
     const handleCancel = () => {
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' })
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+        setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
     }
     return (
         <div>
@@ -105,14 +151,8 @@ const AddSuplierPage = () => {
 
                             <li>
                                 <p className="mb-1">Type Of Minerals</p>
-                                <select autoComplete="off" required name="typeOfMinerals" id="typeOfMinerals" className="focus:outline-none p-2 border rounded-md w-full" value={formval.typeOfMinerals || ''} onChange={handleAddproduct} >
-                                    <option value="casiterite">Casiterite</option>
-                                    <option value="coltan">Coltan</option>
-                                    <option value="wolframite">Wolframite</option>
-                                    <option value="berlyium">Berlyium</option>
-                                    <option value="lithium">Lithium</option>
-                                    <option value="mixed">Mixed</option>
-                                </select>
+                                <input type="text" autoComplete="off" name="typeOfMinerals" id="typeOfMinerals" className="focus:outline-none p-2 border rounded-md w-full" value={formval.typeOfMinerals || ''} onChange={handleAddproduct} />
+
                             </li>
                             {/* ******* */}
                             <li>
@@ -133,29 +173,38 @@ const AddSuplierPage = () => {
                             {/* ******* */}
 
                         </ul>
-                        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2">
+                        <ul className="grid grid-cols-1 gap-9 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2">
                             <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Minesite</p>
+                            {mineSitesDetails.map((site, index) => (
+                                <ul className=" col-span-full grid grid-cols-1 mt-3 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center border-t-4 relative p-2" key={index}>
+                                    <span className="flex items-center gap-2 col-span-full justify-end">
+                                        <p className=" font-semibold justify-self-start">Site {index + 1}</p>
+                                        <HiMinus onClick={() => handleSiteRemoveLot(index)} className={`${mineSitesDetails.length - 1 == 0 ? 'hidden' : ''}`} />
+                                        <HiPlus onClick={handleAddSite} className={`${mineSitesDetails.length - 1 !== index ? 'hidden' : ''}`} />
+                                    </span>
+                                    <li>
+                                        <p className="mb-1">Name</p>
+                                        <input type="text" name="name" id="name" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.name || ''} onChange={e => handleSiteEntry(index, e)} />
+                                    </li>
+                                    {/* ******* */}
+                                    <li>
+                                        <p className="mb-1">code</p>
+                                        <input type="text" name="code" id="code" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.code || ''} onChange={e => handleSiteEntry(index, e)} />
+                                    </li>
+                                    {/* ******* */}
+                                    <li>
+                                        <p className="mb-1">Latitude</p>
+                                        <input type="text" name="coordinates.lat" id="coordinates.lat" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleSiteEntry(index, e)} />
+                                    </li>
+                                    {/* ******* */}
+                                    <li>
+                                        <p className="mb-1">Longitude</p>
+                                        <input type="text" name="coordinates.long" id="coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.long || ''} onChange={e => handleSiteEntry(index, e)} />
+                                    </li>
+                                    {/* ******* */}
+                                </ul>
+                            ))}
 
-                            <li>
-                                <p className="mb-1">Name</p>
-                                <input type="text" name="mineSites.name" id="mineSites.name" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.mineSites[0].name || ''} onChange={handleAddproduct} />
-                            </li>
-                            {/* ******* */}
-                            <li>
-                                <p className="mb-1">code</p>
-                                <input type="text" name="mineSites.code" id="mineSites.code" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.mineSites[0].code || ''} onChange={handleAddproduct} />
-                            </li>
-                            {/* ******* */}
-                            <li>
-                                <p className="mb-1">Latitude</p>
-                                <input type="text" name="mineSites.coordinates.lat" id="mineSites.coordinates.lat" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.mineSites[0].coordinates.lat || ''} onChange={handleAddproduct} />
-                            </li>
-                            {/* ******* */}
-                            <li>
-                                <p className="mb-1">Longitude</p>
-                                <input type="text" name="mineSites.coordinates.long" id="mineSites.coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.mineSites[0].coordinates.long || ''} onChange={handleAddproduct} />
-                            </li>
-                            {/* ******* */}
                         </ul>
                         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2">
                             <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Address</p>

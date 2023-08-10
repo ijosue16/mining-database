@@ -34,14 +34,14 @@ const ListTestContainer = () => {
             ]
         },
         {
-            heading: "Products", hId: 7, subHeaders: [
-                { title: "Products", icon: <PiCubeDuotone />, id: 8 },
-                { title: "Create Products", icon: <PiPlusSquareDuotone />, id: 9 },
-                { title: "Category", icon: <PiCubeTransparentDuotone />, id: 10 },
-                { title: "Brands", icon: <PiTagDuotone />, id: 11 },
-                { title: "Sub Category", icon: <PiSpeakerHifiDuotone />, id: 12 },
-                { title: "Print Barcode", icon: <PiBarcodeDuotone />, id: 13 },
-                { title: "Import Products", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14 },]
+            heading: "Entry", hId: 7, subHeaders: [
+                { title: "Coltan", icon: <PiCubeDuotone />, id: 8 },
+                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 9 },
+                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 10 },
+                { title: "Lithium", icon: <PiTagDuotone />, id: 11 },
+                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 12 },
+                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 13 },
+                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14 },]
         },
         {
             heading: "sales", hId: 15, subHeaders: [
