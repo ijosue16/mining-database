@@ -84,6 +84,7 @@ const ColtanEntryCompletePage = () => {
             ...record
         });
         setEditRowKey(record._id);
+        setShow(false);
     };
     const save = async (key) => {
 
@@ -130,20 +131,20 @@ const ColtanEntryCompletePage = () => {
             key: 'weightOut',
             editTable: true,
 
-            sorter: (a, b) => a.weightOut.localeCompare(b.weightOut),
+            sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
             title: 'paid',
             dataIndex: 'paid',
             key: 'paid',
             editTable: true,
-            sorter: (a, b) => a.paid.localeCompare(b.paid),
+            sorter: (a, b) => a.paid - b.paid,
         },
         {
             title: 'cummulative A',
             dataIndex: 'cumulativeAmount',
             key: 'cumulativeAmount',
-            sorter: (a, b) => a.cumulativeAmount.localeCompare(b.cumulativeAmount),
+            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
         {
             title: 'rmaFee',

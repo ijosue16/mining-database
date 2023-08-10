@@ -51,6 +51,7 @@ import ColtanEditForm from './Pages/coltan/entry/ColtanEditForm';
 import ColtanEntryCompletePage from './Pages/coltan/entry/ColtanEntryComplete';
 import ColtanPaymentsPage from './Pages/coltan/payment/ColtanPaymentsPage';
 import Layout from './Layout/Layout';
+import AccountantHistoryPage from './Pages/AccountantHistoryPage';
 
 
 
@@ -66,7 +67,7 @@ function App() {
       <Route element={<MyContextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/dummy' element={<Layout/>}/>
+    <Route  path='/dummy' element={<AccountantHistoryPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
     <Route  path='/cassiterite' element={<ProductsList/>}/>
