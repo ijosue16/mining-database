@@ -35,7 +35,7 @@ const ColtanEntryCompletePage = () => {
             const { entry: entr } = info;
             setSuply(entr);
             setLotInfo(entr.output)
-            console.log(entr.output);
+            console.log(entr);
             // console.log(lotInfo);
         }
     }, [isSuccess]);
@@ -63,8 +63,8 @@ const ColtanEntryCompletePage = () => {
         console.log(lotInfo);
         // navigate(-1);
     };
-    const handleModelAdvance =() => {
-        
+    const handleModelAdvance = () => {
+
         console.log('backend done');
         navigate('/dummy');
     };
@@ -161,38 +161,38 @@ const ColtanEntryCompletePage = () => {
             sorter: (a, b) => a.status.localeCompare(b.status),
             render: (text) => {
                 // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color='';
+                let color = '';
                 // const value='non-sell agreement'
-             switch(text){
-                case 'in stock':{
-                    color='bg-green-500';
-                    break;
+                switch (text) {
+                    case 'in stock': {
+                        color = 'bg-green-500';
+                        break;
+                    }
+                    case 'partially exported': {
+                        color = 'bg-gradient-to-r from-slate-500 shadow-md';
+                        break;
+                    }
+                    case 'fully exported': {
+                        color = 'bg-slate-600';
+                        break;
+                    }
+                    case 'in progress': {
+                        color = 'bg-orange-400';
+                        break;
+                    }
+                    case 'rejected': {
+                        color = 'bg-red-500';
+                        break;
+                    }
+                    case 'non-sell agreement': {
+                        color = 'bg-indigo-400';
+                        break;
+                    }
+                    default: {
+                        color = 'bg-green-300'
+                    }
+
                 }
-                case 'partially exported':{
-                    color='bg-gradient-to-r from-slate-500 shadow-md';
-                    break;
-                }
-                case 'fully exported':{
-                    color='bg-slate-600';
-                    break;
-                }
-                case 'in progress':{
-                    color='bg-orange-400';
-                    break;
-                }
-                case 'rejected':{
-                    color='bg-red-500';
-                    break;
-                }
-                case 'non-sell agreement':{
-                    color='bg-indigo-400';
-                    break;
-                }
-                default:{
-                    color='bg-green-300'
-                }
-                    
-             }
                 return (
                     <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
                 )
@@ -232,6 +232,8 @@ const ColtanEntryCompletePage = () => {
                                         </li>
                                     </motion.ul>)}
                             </span>
+
+                            <MdPayments className=" text-xl" onClick={() => setShowPayModel(true)} />
 
                             {/* 
                             <BiSolidEditAlt className=" text-xl" onClick={() => {

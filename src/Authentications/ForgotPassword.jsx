@@ -31,7 +31,7 @@ const ForgotPasswordPage=()=>{
             </form>
             </div>
 
-            <div className=" col-span-3 sm:col-span-3 lg:col-span-4 hidden sm:block h-full bg-origin-border bg-center bg-no-repeat bg-cover bg-[url('https://media.istockphoto.com/id/527547684/vector/city-street-with-pharmacy-modern-architecture-in-line-style.jpg?s=612x612&w=0&k=20&c=nYzcHEQBkc0V44RIMv-aU1sWnysyWUH_pNzV7CNq3IM=')]"></div>
+            <div className=" col-span-3 sm:col-span-3 lg:col-span-4 hidden sm:block h-full bg-origin-border bg-center bg-no-repeat bg-cover bg-[url('https://img.freepik.com/free-vector/landscape-coal-mining-scene-with-crane-trucks_1308-55217.jpg?w=2000')]"></div>
             </div></>
     )
 }

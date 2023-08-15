@@ -57,19 +57,19 @@ const Appbar = ({userSubmenu,handleUserSubmenu}) => {
                                 </div>
                                 <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
 
-                                <ul className="p-2 list-none">
-                                    <li className="flex gap-2 items-center">
+                                <ul className=" list-none">
+                                    <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
                                         <PiUser />
                                         <p className="text-[14px]">My profile</p>
                                     </li>
-                                    <li className="flex gap-2 items-center">
+                                    <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
                                         <PiUser />
                                         <p className="text-[14px]">Settings</p>
                                     </li>
                                 </ul>
                                 <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
-                                <ul className="p-2 list-none">
-                                    <li className="flex gap-2 items-center">
+                                <ul className="list-none">
+                                    <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
                                         <PiUser />
                                         <p className="text-[14px]">My profile</p>
                                     </li>

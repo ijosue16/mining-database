@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
-import { Spin, Table, Form, Input, Button, Modal } from 'antd';
+import { Spin, Table, Form, Input, Button, Modal, DatePicker } from 'antd';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 // import AddComponent from "../../../components/Actions components/AddComponent";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri"
 import { PiDotsThreeVerticalBold } from "react-icons/pi"
-import { MdDelete} from "react-icons/md"
-import {GrHistory} from "react-icons/gr"
+import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { GrHistory } from "react-icons/gr";
 import { useNavigate, useParams } from "react-router-dom";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
-import { BiSolidFilePdf, BiSolidEditAlt } from "react-icons/bi"
-import { BsCardList } from "react-icons/bs"
-import { HiOutlinePrinter } from "react-icons/hi"
+import { MdClose } from "react-icons/md"
+import { BsCheck2 } from "react-icons/bs"
+import { IoAdd } from "react-icons/io5"
 
 
 const ColtanPaymentsPage = () => {
@@ -20,6 +20,7 @@ const ColtanPaymentsPage = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm()
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
+    const [payment, setPayement] = useState({ date: '', beneficiary: '', amount: '' });
     const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
     const [suply, setSuply] = useState([]);
     const [lotInfo, setLotInfo] = useState(null);
@@ -36,7 +37,7 @@ const ColtanPaymentsPage = () => {
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
         {
-            title: 'DATE',
+            title: 'date',
             dataIndex: 'supplyDate',
             key: 'supplyDate',
             sorter: (a, b) => a.supplyDate - b.supplyDate,
@@ -125,7 +126,7 @@ const ColtanPaymentsPage = () => {
             //                         </motion.ul>)}
             //                 </span>
 
-                            
+
             //                 <BiSolidEditAlt className=" text-xl" onClick={() => {
             //                     setEditingRow(record._id);
             //                     form.setFieldsValue({
@@ -159,9 +160,27 @@ const ColtanPaymentsPage = () => {
         },
     ];
 
-    const testInfo=[{cumulativeAmount: 70,exportedAmount:0,lotNumber: 1,paid: 150000,rmaFee: 8750,rmaFeeDecision: "pending",settled: false,status: "in progress",weightOut:  70,_id: "64ccaff3669d584e8ff70bbc"},{
-        cumulativeAmount:40,exportedAmount: 0,id: "64ca67b1492ba72b23596c5a",lotNumber: 2,paid: 120000,rmaFee: 5000,rmaFeeDecision: "pending",settled: false,status: "in progress",weightOut: 40,_id: "64ca67b1492ba72b23596c5a",
+    const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
+        cumulativeAmount: 40, exportedAmount: 0, id: "64ca67b1492ba72b23596c5a", lotNumber: 2, paid: 120000, rmaFee: 5000, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 40, _id: "64ca67b1492ba72b23596c5a",
     }];
+    const total = testInfo.reduce((total, obj) => total + obj.cumulativeAmount, 0);
+    const handlePayment = (e) => {
+        setPayement((prevpay) => ({ ...prevpay, [e.target.name]: e.target.value }));
+    };
+
+
+    const handleAddDate = (e) => {
+        setPayement((prevpay) => ({ ...prevpay, date: dayjs(e).format('MMM/DD/YYYY') }));
+    };
+    const handleCancel = () => {
+        setPayement({ date: '', beneficiary: '', amount: '' });
+    };
+
+    const handlePaymentSubmit = (e) => {
+        e.preventDefault();
+        console.log(payment);
+    };
+
 
     return (
         <div>
@@ -172,33 +191,68 @@ const ColtanPaymentsPage = () => {
                     <>
 
                         <div className="w-full space-y-4">
-                        <p className=" font-bold text-lg">Total Amount: 750,000</p>
-                        <div className="flex gap-2 items-center pb-9">
-                        <GrHistory/>
+                            <p className=" font-bold text-lg">Total Amount: 750,000</p>
+                            <div className="flex gap-2 items-center pb-9">
+                                <GrHistory />
                                 <p className=" text-lg font-semibold">Payments history</p>
                             </div>
-                        <span>
-                        <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
-                                <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
-                                    <PiMagnifyingGlassDuotone className="h-4 w-4" />
-                                    <input type="text" className=" w-full focus:outline-none" name="tableFilter" id="tableFilter" placeholder="Search..." onChange={(e) => SetSearchText(e.target.value)} />
-                                </span>
+                            <span>
+                                <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
+                                    <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
+                                        <PiMagnifyingGlassDuotone className="h-4 w-4" />
+                                        <input type="text" className=" w-full focus:outline-none" name="tableFilter" id="tableFilter" placeholder="Search..." onChange={(e) => SetSearchText(e.target.value)} />
+                                    </span>
 
-                                {/* <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
+                                    {/* <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
                                     <BiSolidFilePdf className=" text-2xl" />
                                     <BsCardList className=" text-2xl" />
                                     <HiOutlinePrinter className=" text-2xl" />
                                 </span> */}
+                                </div>
+                                <Table className=" overflow-x-auto"
+                                    columns={columns}
+                                    dataSource={testInfo}
+                                    pagination={false}
+                                    rowKey={"lotNumber"} />
+                            </span>
+                            <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
+                                <p className=" font-semibold text-lg">Sum(Paid):</p>
+                                <p>{total}</p>
                             </div>
-                        <Table className=" overflow-x-auto"
-                        columns={columns}
-                        dataSource={testInfo}
-                        pagination={false}/>
-                        </span>
-                        <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
-                            <p className=" font-semibold text-lg">Sum(Paid):</p>
-                            <p>270,000</p>
-                        </div>
+
+                            <div className="w-full space-y-2">
+                                <button type="button" className="flex gap-2 bg-slate-300 rounded-md items-end justify-center p-2" >
+                                    <IoAdd className=" text-xl" />
+                                    <p className="">Add payment</p>
+                                </button>
+
+
+                                <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2">
+                                    <span className=" space-y-1">
+                                        <p className="pl-1">Date</p>
+                                        <DatePicker value={payment.date ? dayjs(payment.date) : ''} onChange={handleAddDate} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                    </span>
+                                    <span className=" space-y-1">
+                                        <p className="pl-1">Beneficiary</p>
+                                        <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={payment.beneficiary || ''} onChange={handlePayment} />
+                                    </span>
+                                    <span className=" space-y-1">
+                                        <p className="pl-1">Amount</p>
+                                        <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="amount" id="amount" value={payment.amount || ''} onWheelCapture={e => { e.target.blur() }} onChange={handlePayment} />
+                                    </span>
+                                    <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
+                                        <button type="submit" className="flex gap-2 bg-slate-300 rounded-md items-end p-2 justify-center">
+                                            <BsCheck2 className=" text-lg" />
+                                            <p type="submit" className="">Confirm</p>
+                                        </button>
+
+                                        <button type="button" className="flex gap-2 bg-orange-300 rounded-md items-end justify-center p-2" onClick={handleCancel}>
+                                            <MdClose className=" text-lg" />
+                                            <p className="">Cancel</p>
+                                        </button>
+                                    </span>
+                                </form>
+                            </div>
                         </div>
 
 

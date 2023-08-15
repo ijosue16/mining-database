@@ -227,7 +227,7 @@ const ColtanEntryForm = () => {
                             </li>
                             <li className=" space-y-1">
                                 <p className="pl-1">Number of Tags</p>
-                                <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onChange={handleEntry} />
+                                <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onWheelCapture={e => { e.target.blur() }}  onChange={handleEntry} />
                             </li>
                             <li className=" space-y-1">
                                 <span className=" flex gap-2 items-center">

@@ -1,195 +1,355 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight } from "react-icons/pi";
-import { LuBarChart2 } from "react-icons/lu"
-import { TbArrowsCross } from "react-icons/tb"
-import Appbar from "../Layout/Appbar";
-import Sidebar from "../Layout/sidebar";
+import React, { useState,useEffect, useMemo } from 'react';
+import { Table, Checkbox, Input, Form } from 'antd';
+import { BiSolidEditAlt } from "react-icons/bi"
+import { FaSave } from "react-icons/fa"
+import { MdOutlineClose } from "react-icons/md"
 
-const ListTestContainer = () => {
-    const [open, setOpen] = useState(false);
-    const [userSubmenu, setUserSubmenu] = useState(false);
-    const navigate = useNavigate();
+const YourComponent = () => {
+  const initialData = [
+    { supplierName: 'COPEMINYA', companyRepresentative: 'Joseph M.', district:"KIREHE", TINNumber: 2231, weight:850, grade:23,supplyDate:"12/04/2023",lots:[{weight:400,paidStatus:'paid'},{weight:450,paidStatus:'paid'}],payDate:"14/04/2023",ascTags:2 },
+    { supplierName: 'ABC GEMS', companyRepresentative: 'Ernest K.', district:"GICUMBI", TINNumber: 1001, weight:650, grade:19,supplyDate:"22/05/2023",lots:[{weight:500,paidStatus:'paid'},{weight:150,paidStatus:'paid'}],payDate:"25/05/2023",ascTags:2 },
+    { supplierName: 'DEMIKARU', companyRepresentative: 'Laurent B.', district:"KARONGI", TINNumber: 8964, weight:500, grade:25,supplyDate:"07/06/2023",lots:[{weight:250,paidStatus:'paid'},{weight:250,paidStatus:'paid'}],payDate:"10/07/2023",ascTags:2 },
+  ];
+  const [totalWeight,setTotalWeight]=useState(null);
+  const [avg,setAvg]=useState(null);
 
-    const opennav = () => {
-        setOpen(!open),
-            console.log(open)
+  const [sourceData, setSourceData] = useState(initialData);
+  const [selectedData, setSelectedData] = useState([]);
+  const [editRowKey, setEditRowKey] = useState("");
+  const [form] = Form.useForm()
+
+  useEffect(() => {
+    const newTotalWeight = selectedData.reduce((total, item) => total + item.weight, 0);
+    setTotalWeight(newTotalWeight);
+
+    const averageGrade = () => {
+      if (selectedData.length === 0) {
+        return 0; 
+      }
+      const totalGrade = selectedData.reduce((total, item) => total + item.grade, 0);
+      return totalGrade / selectedData.length;
+    } ;
+    setAvg(averageGrade);
+
+  }, [selectedData]);
+
+
+  const isEditing = (record) => {
+    return record.TINNumber === editRowKey;
+  }
+  const edit = (record) => {
+    form.setFieldsValue({
+      supplierName: record.supplierName,
+      companyRepresentative: record.companyRepresentative,
+      TINNumber: record.TINNumber,
+      weight: record.weight,
+      ...record
+    });
+    setEditRowKey(record.TINNumber);
+  };
+  const save = async (key) => {
+    const row = await form.validateFields();
+    const newData = [...selectedData];
+    const index = newData.findIndex((item) => key === item.TINNumber);
+    if (index > -1) {
+      const item = newData[index];
+      newData.splice(index, 1, { ...item, ...row, weight: parseFloat(row.weight) });
+      setSelectedData(newData);
+      const newTotalWeight = newData.reduce((total, item) => total + item.weight, 0);
+      const averageGrade = useMemo(() => {
+        if (selectedData.length === 0) {
+          return 0; 
+        }
+        const totalGrade = selectedData.reduce((total, item) => total + item.grade, 0);
+        return totalGrade / selectedData.length;
+      }, [selectedData]);
+      setTotalWeight(newTotalWeight);
+      setAvg(averageGrade);
+      setEditRowKey("");
     }
-
-    const handleUserSubmenu = () => {
-        setUserSubmenu(!userSubmenu);
-    }
-
-    const menu = [
-        {
-            heading: "Main", hId: 1, subHeaders: [
-                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 2 },
-                {
-                    title: "Application", id: 3, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
-                    submenuItems: [
-                        { title: "Chat", id: 4 },
-                        { title: "Calender", id: 5 },
-                        { title: "Email", id: 6 }], line: true
-                }
-            ]
-        },
-        {
-            heading: "Entry", hId: 7, subHeaders: [
-                { title: "Coltan", icon: <PiCubeDuotone />, id: 8 },
-                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 9 },
-                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 10 },
-                { title: "Lithium", icon: <PiTagDuotone />, id: 11 },
-                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 12 },
-                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 13 },
-                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14 },]
-        },
-        {
-            heading: "sales", hId: 15, subHeaders: [
-                { title: "sales", icon: <PiShoppingCartSimpleDuotone />, id: 16 },
-                { title: "Invoices", icon: <PiFileTextDuotone />, id: 17 },
-                { title: "Sales Return", icon: <PiFilesDuotone />, id: 18 },
-                { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19 },
-                {
-                    title: "Transfer", icon: <TbArrowsCross />, submenu: true, id: 57, submenuItems: [
-                        { title: "transfer List", id: 20 },
-                        { title: "Import Transfer", id: 21 }
-                    ]
-                },
-                {
-                    title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 58, submenuItems: [
-                        { title: "Sales Return", id: 22 },
-                        { title: "Purchases Return", id: 23 }
-                    ], line: true
-                }]
-        },
-
-        {
-            heading: "Purchases", hId: 24, subHeaders: [
-                { title: "Purchases", icon: <PiShoppingBagDuotone />, id: 25 },
-                { title: "Import Purchases", icon: <PiArrowsInSimpleDuotone />, id: 26 },
-                { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27 },
-                { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28 },]
-        },
-        {
-            heading: "Finance & acconts", hId: 29, subHeaders: [
-                {
-                    title: "Expenses", icon: <PiFileTextDuotone />, submenu: true, submenuItems: [
-                        { title: "Expenses", id: 30 },
-                        { title: "Expenses Category", id: 31 }
-                    ], line: true
-                }]
-        },
-        {
-            heading: "Peoples", hId: 32, subHeaders: [
-                { title: "Customers", icon: <PiUserDuotone />, id: 33 },
-                { title: "Suppliers", icon: <PiUsersDuotone />, id: 34 },
-                { title: "Users", icon: <PiUserDuotone />, id: 35 },
-                { title: "Stores", icon: <PiHouseDuotone />, line: true, id: 36 },
-            ]
-        },
-        {
-            heading: "Reports", hId: 37, subHeaders: [
-                { title: "Sales Report", icon: <LuBarChart2 />, id: 38 },
-                { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 39 },
-                { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 40 },
-                { title: "Invoice Report", icon: <PiFileDuotone />, id: 41 },
-                { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 42 },
-                { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 43 }
-            ]
-        },
-        {
-            heading: "User Management", hId: 44, subHeaders: [
-                {
-                    title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 45, submenuItems: [
-                        { title: "New User", id: 46 },
-                        { title: "Users List", id: 47 }
-                    ], line: true
-                },]
-        },
-        {
-            heading: "Settings", hId: 48, subHeaders: [
-                {
-                    title: "Settings", icon: <PiGearDuotone />, submenu: true, id: 49, submenuItems: [
-                        { title: "General Settings", id: 50 },
-                        { title: "Email Settings", id: 51 },
-                        { title: "Payment Settings", id: 52 },
-                        { title: "Currency Settings", id: 53 },
-                        { title: "Group Permissions", id: 54 },
-                        { title: "Tax Rates", id: 55 },
-                    ],
-                },
-                { title: "Logout", icon: <PiSignInDuotone />, id: 56 },]
-        },
-
-    ]
-
-    // Define the roles and their associated menu item IDs and restricted item IDs
-    const roleMenus = {
-        admin: {
-            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48],
-            restrictedItems: {
-                7: [11, 12], // For section with hId 7, restrict items 11 and 12
-                15: [19, 58], // For section with hId 15, restrict items 19 and 58
-                // Add more restricted items for specific sections as needed
-            }
-        },
-        ceo: {
-            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48],
-            restrictedItems: {
-                15: [19, 58], // For section with hId 15, restrict items 19 and 58
-                // Add more restricted items for specific sections as needed
-            }
-        },
-        employee: {
-            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48],
-            restrictedItems: {
-                // Define restricted items for employee role if needed
-            }
-        },
-        // Add more roles and associated menu item IDs and restrictions as needed
-    };
-
-    // Define the user's role and user ID (change these values as needed)
-    const userRole = 'ceo'; // Change this to 'ceo', 'employee', etc.
-    const userId = 123; // Change this to the actual user ID
-
-    // Filter the original menu based on the user's role and restrictions
-    const filteredMenu = menu.filter(section => roleMenus[userRole].allowedSections.includes(section.hId))
-        .map(section => {
-            if (section.subHeaders && section.subHeaders.length > 0) {
-                const restrictedItems = roleMenus[userRole].restrictedItems[section.hId];
-                if (restrictedItems) {
-                    section.subHeaders = section.subHeaders.filter(item => !restrictedItems.includes(item.id));
-                }
-            }
-            return section;
-        });
-
-    // Output the filtered menu
-    console.log(filteredMenu);
+  };
 
 
-    return (
-        <>
 
-            <>
-                {/* App bar */}
-                <Appbar userSubmenu={userSubmenu}
-                    handleUserSubmenu={handleUserSubmenu} />
+  const columns = [
+    {
+      title: 'Supplier Name',
+      dataIndex: 'supplierName',
+      key: 'supplierName',
+      editTable: true,
+    },
+    {
+      title: 'Representative',
+      dataIndex: 'companyRepresentative',
+      key: 'companyRepresentative',
+      editTable: true,
+    },
+    { title: 'TIN Number',
+     dataIndex: 'TINNumber',
+      key: 'TINNumber',
+      editTable: true,
+    },
+    { title: 'weight',
+     dataIndex: 'weight',
+      key: 'weight',
+      editTable: true,
+     
+    },
+    { title: 'grade',
+     dataIndex: 'grade',
+      key: 'grade',
+  
+    },
+    {
+      title: 'Select',
+      key: 'select',
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedData.length > 0 && selectedData.some((selected) => selected.TINNumber === record.TINNumber)}
+          onChange={() => handleRowToggle(record)}
 
-                {/* side bar */}
-                <Sidebar filteredMenu={filteredMenu}
-                    opennav={opennav}
-                    open={open} />
-                <div className={`content ml-14 -translate-x-0  transform ease-in-out duration-700 pt-20 px-2 h-screen md:px-5 pb-4 ${open && ' ml-[194px]'}`}>
-                    <Outlet />
+        />
+
+      ),
+    },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return (
+          <>
+            <div className="flex items-center gap-1">
+
+              {editable ? (
+                <div className="flex items-center gap-3">
+                  <FaSave className=" text-xl" onClick={() => save(record.TINNumber)} />
+                  <MdOutlineClose className=" text-xl" onClick={() => setEditRowKey("")} />
+
                 </div>
 
-            </>
+              ) : (
+
+                <BiSolidEditAlt className=" text-xl" onClick={() => edit(record)} />
+
+              )}
 
 
 
-        </>
-    )
-}
-export default ListTestContainer;
+
+            </div>
+
+
+          </>
+        )
+      }
+    },
+  ];
+  const columns2 = [
+    {
+      title: 'supplyDate',
+      dataIndex: 'supplyDate',
+      key: 'supplyDate',
+     
+    },
+    {
+      title: 'Supplier Name',
+      dataIndex: 'supplierName',
+      key: 'supplierName',
+      editTable: true,
+    },
+    {
+      title: 'Representative',
+      dataIndex: 'companyRepresentative',
+      key: 'companyRepresentative',
+      editTable: true,
+    },
+    { title: 'TIN Number',
+     dataIndex: 'TINNumber',
+      key: 'TINNumber',
+      editTable: true,
+    },
+    { title: 'weight',
+    dataIndex: 'weight',
+     key: 'weight',
+    
+   },
+   { title: 'grade',
+    dataIndex: 'grade',
+     key: 'grade',
+ 
+   },
+    {
+      title: 'Select',
+      key: 'select',
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedData.length > 0 && selectedData.some((selected) => selected.TINNumber === record.TINNumber)}
+          onChange={() => handleRowToggle(record)}
+
+        />
+
+      ),
+    },
+    
+    // {
+    //   title: 'Action',
+    //   dataIndex: 'action',
+    //   key: 'action',
+    //   render: (_, record) => {
+    //     const editable = isEditing(record);
+    //     return (
+    //       <>
+    //         <div className="flex items-center gap-1">
+             
+    //           {editable ? (
+    //             <div className="flex items-center gap-3">
+    //               <FaSave className=" text-xl" onClick={() => save(record.TINNumber)} />
+    //               <MdOutlineClose className=" text-xl" onClick={() => setEditRowKey("")} />
+
+    //             </div>
+
+    //           ) : (
+
+    //             <BiSolidEditAlt className=" text-xl" onClick={() => edit(record)} />
+
+    //           )}
+
+
+
+
+    //         </div>
+
+
+    //       </>
+    //     )
+    //   }
+    // },
+  ];
+
+  const subcolumnsLots = [
+    {
+      title: 'weight',
+      dataIndex: 'weight',
+      key: 'weight',
+     
+    },
+    { title: 'paidStatus',
+     dataIndex: 'paidStatus',
+      key: 'paidStatus',
+      render: (_,record) => (
+        <p className=' bg-green-500 py-2 px-4 rounded-md text-white'>{record.paidStatus}</p>
+        )
+    },
+
+  ];
+
+  const mergedColumns = columns.map((col) => {
+    if (!col.editTable) {
+      return col;
+    }
+    return {
+
+      ...col,
+      onCell: (record) => ({
+        record,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        editing: isEditing(record),
+      }),
+
+    }
+
+  });
+
+
+  const EditableCell = ({ editing, dataIndex, title, record, children, ...restProps }) => {
+    const input = <Input style={{ margin: 0 }} type="text" />;
+    return (
+      <td {...restProps}>
+        {editing ? (
+          <Form.Item name={dataIndex} style={{ margin: 0 }}>
+            {input}
+          </Form.Item>
+        ) : (
+          children
+        )}
+      </td>
+    );
+  }
+
+  const handleRowToggle = (record) => {
+    if (selectedData.some((selected) => selected.TINNumber === record.TINNumber)) {
+      setSelectedData((prevSelectedData) =>
+        prevSelectedData.filter((selected) => selected.TINNumber !== record.TINNumber)
+      );
+    } else {
+      setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
+    }
+  };
+
+  return (
+    <div>
+     
+      <Table className=' overflow-x-auto' dataSource={sourceData} columns={columns2}
+        rowKey="TINNumber"
+    />
+        <div className='w-full bg-slate-200 py-4 px-2 space-y-3'>
+        <Form form={form} component={false}>
+      <Table className=' overflow-x-auto' dataSource={selectedData} columns={mergedColumns}
+       components={{
+        body: {
+          cell: EditableCell,
+        },
+      }}
+      pagination={false}
+        expandable={{
+          expandedRowRender: (record) => (
+
+            <div className=' space-y-3 w-full'>
+              <p className=' text-lg font-bold'>More Details</p>
+              <div className=' w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
+                <span className=' space-y-2'>
+                  <p className='text-md font-semibold'>Supply Date {record.supplyDate}</p>
+                  <p className='text-md font-semibold'>From {record.district}</p>
+                </span>
+                <span className=' space-y-2'>
+                  <p className='text-md font-semibold'>Tags {record.ascTags}</p>
+                  <p className='text-md font-semibold'>Pay Date {record.payDate}</p>
+                </span>
+              </div>
+            </div>
+          ),
+          rowExpandable: (record) => record.supplierName !== "not expandale"
+        }}
+
+        rowKey="TINNumber" />
+        </Form>
+
+        <div className='w-full flex flex-col items-end bg-white rounded-md p-2 space-y-2'>
+          <span className='flex gap-1 items-center md:w-1/2 justify-end'>
+            <p className=' font-semibold'>Weight(Kgs):</p>
+            <p className=' font-medium'>{totalWeight}</p>
+          </span>
+          <span className='flex gap-1 items-center md:w-1/2 justify-end border-b-2'>
+            <p className=' font-semibold'>Avg:</p>
+            <p className=' font-medium'>{avg}$</p>
+          </span>
+          <span className='flex gap-1 items-center md:w-1/2 justify-end'>
+            <p className=' font-semibold'>Total:</p>
+            <p className=' font-medium'>{totalWeight* avg}$ (dont change)</p>
+          </span>
+          
+        </div>
+        </div>
+      <button className=' bg-orange-500 text-white py-2 px-4 rounded-md' onClick={() => {
+         console.log(selectedData);
+         console.log("total Weight:" + totalWeight);
+         console.log("average grade:" + avg);
+         console.log("total:" + totalWeight* avg) }}>submitt</button>
+    </div>
+  );
+};
+
+export default YourComponent;

@@ -52,6 +52,11 @@ import ColtanEntryCompletePage from './Pages/coltan/entry/ColtanEntryComplete';
 import ColtanPaymentsPage from './Pages/coltan/payment/ColtanPaymentsPage';
 import Layout from './Layout/Layout';
 import AccountantHistoryPage from './Pages/AccountantHistoryPage';
+import ShipmentPage from './Pages/ShipmentPage';
+import DragableContainer from './test elements/Dragablecontainer';
+import DraggableResizableContainer from './test elements/Dragablecontainer';
+import ResizableHandles from './test elements/Dragablecontainer';
+import UserProfilePage from './Pages/UserProfilePage';
 
 
 
@@ -67,7 +72,8 @@ function App() {
       <Route element={<MyContextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/dummy' element={<AccountantHistoryPage/>}/>
+    <Route  path='/dummy' element={<DummyPage/>}/>
+    <Route  path='/ship' element={<ShipmentPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
     <Route  path='/cassiterite' element={<ProductsList/>}/>
