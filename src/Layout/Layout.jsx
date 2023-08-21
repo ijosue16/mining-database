@@ -9,6 +9,7 @@ import Sidebar from "./sidebar";
 const Layout = () => {
     const [open, setOpen] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
+    const [userSubmenuMobile, setUserSubmenuMobile] = useState(false);
     const navigate = useNavigate();
 
     const opennav = () => {
@@ -18,6 +19,9 @@ const Layout = () => {
 
     const handleUserSubmenu = () => {
         setUserSubmenu(!userSubmenu);
+    }
+    const handleUserSubmenuMobile = () => {
+        setUserSubmenuMobile(!userSubmenuMobile);
     }
 
     const menu = [
@@ -175,7 +179,9 @@ const Layout = () => {
             <>
                 {/* App bar */}
                 <Appbar userSubmenu={userSubmenu}
-                    handleUserSubmenu={handleUserSubmenu} />
+                userSubmenuMobile={userSubmenuMobile}
+                    handleUserSubmenu={handleUserSubmenu}
+                    handleUserSubmenuMobile={handleUserSubmenuMobile} />
 
                 {/* side bar */}
                 <Sidebar filteredMenu={filteredMenu}

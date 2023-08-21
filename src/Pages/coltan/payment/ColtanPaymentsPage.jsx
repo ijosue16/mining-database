@@ -26,7 +26,7 @@ const ColtanPaymentsPage = () => {
     const [lotInfo, setLotInfo] = useState(null);
     const [editingRow, setEditingRow] = useState(null);
     const [editRowKey, setEditRowKey] = useState("");
-    const [show, setShow] = useState(false);
+    const [showForm, setShowForm] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
 
     const columns = [
@@ -91,73 +91,73 @@ const ColtanPaymentsPage = () => {
                 )
             }
         },
-        {
-            title: 'Action',
-            dataIndex: 'action',
-            key: 'action',
-            // render: (_, record) => {
-            //     const editable = isEditing(record);
-            //     return (
-            //         <>
-            //             <div className="flex items-center gap-1">
-            //                 <span className="relative">
-            //                     <PiDotsThreeVerticalBold className=" text-xl"
-            //                         onClick={() => handleActions(record._id)}
-            //                     />
-            //                     {selectedRow === record._id && (
-            //                         <motion.ul animate={show ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
+        // {
+        //     title: 'Action',
+        //     dataIndex: 'action',
+        //     key: 'action',
+        //     render: (_, record) => {
+        //         const editable = isEditing(record);
+        //         return (
+        //             <>
+        //                 <div className="flex items-center gap-1">
+        //                     <span className="relative">
+        //                         <PiDotsThreeVerticalBold className=" text-xl"
+        //                             onClick={() => handleActions(record._id)}
+        //                         />
+        //                         {selectedRow === record._id && (
+        //                             <motion.ul animate={show ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
 
-            //                             <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { navigate(`/buyer/details/${record._id}`) }}>
-            //                                 <RiFileListFill className=" text-lg" />
-            //                                 <p>more details</p>
-            //                             </li>
-            //                             <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/coltan/${record._id}`) } }}>
-            //                                 <BiSolidEditAlt className=" text-lg" />
-            //                                 <p>edit</p>
-            //                             </li>
-            //                             <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/complete/coltan/${record._id}`) } }}>
-            //                                 <RiFileEditFill className=" text-lg" />
-            //                                 <p>complete entry</p>
-            //                             </li>
-            //                             <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => setShowPayModel(true)} >
-            //                                 <MdPayments className=" text-lg" />
-            //                                 <p>Pay</p>
-            //                             </li>
-            //                         </motion.ul>)}
-            //                 </span>
-
-
-            //                 <BiSolidEditAlt className=" text-xl" onClick={() => {
-            //                     setEditingRow(record._id);
-            //                     form.setFieldsValue({
-            //                         weightOut: record.weightOut,
-            //                         rmaFee: record.rmaFee,
-            //                     })
-            //                 }} />
-
-            //                 {editable ? (
-            //                     <div className="flex items-center gap-3">
-            //                         <FaSave className=" text-xl" onClick={() => save(record._id)} />
-            //                         <MdOutlineClose className=" text-xl" onClick={() => setEditRowKey("")} />
-
-            //                     </div>
-
-            //                 ) : (
-
-            //                     <BiSolidEditAlt className=" text-xl" onClick={() => edit(record)} />
-
-            //                 )}
+        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { navigate(`/buyer/details/${record._id}`) }}>
+        //                                     <RiFileListFill className=" text-lg" />
+        //                                     <p>more details</p>
+        //                                 </li>
+        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/coltan/${record._id}`) } }}>
+        //                                     <BiSolidEditAlt className=" text-lg" />
+        //                                     <p>edit</p>
+        //                                 </li>
+        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/complete/coltan/${record._id}`) } }}>
+        //                                     <RiFileEditFill className=" text-lg" />
+        //                                     <p>complete entry</p>
+        //                                 </li>
+        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => setShowPayModel(true)} >
+        //                                     <MdPayments className=" text-lg" />
+        //                                     <p>Pay</p>
+        //                                 </li>
+        //                             </motion.ul>)}
+        //                     </span>
 
 
+        //                     <BiSolidEditAlt className=" text-xl" onClick={() => {
+        //                         setEditingRow(record._id);
+        //                         form.setFieldsValue({
+        //                             weightOut: record.weightOut,
+        //                             rmaFee: record.rmaFee,
+        //                         })
+        //                     }} />
+
+        //                     {editable ? (
+        //                         <div className="flex items-center gap-3">
+        //                             <FaSave className=" text-xl" onClick={() => save(record._id)} />
+        //                             <MdOutlineClose className=" text-xl" onClick={() => setEditRowKey("")} />
+
+        //                         </div>
+
+        //                     ) : (
+
+        //                         <BiSolidEditAlt className=" text-xl" onClick={() => edit(record)} />
+
+        //                     )}
 
 
-            //             </div>
 
 
-            //         </>
-            //     )
-            // }
-        },
+        //                 </div>
+
+
+        //             </>
+        //         )
+        //     }
+        // },
     ];
 
     const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
@@ -179,6 +179,10 @@ const ColtanPaymentsPage = () => {
     const handlePaymentSubmit = (e) => {
         e.preventDefault();
         console.log(payment);
+    };
+
+    const handleShowForm = () => {
+        setShowForm(!showForm);
     };
 
 
@@ -221,13 +225,13 @@ const ColtanPaymentsPage = () => {
                             </div>
 
                             <div className="w-full space-y-2">
-                                <button type="button" className="flex gap-2 bg-slate-300 rounded-md items-end justify-center p-2" >
+                                <button type="button" className="flex gap-2 bg-slate-300 rounded-md items-end justify-center p-2" onClick={handleShowForm} >
                                     <IoAdd className=" text-xl" />
                                     <p className="">Add payment</p>
                                 </button>
 
 
-                                <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2">
+                               {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2">
                                     <span className=" space-y-1">
                                         <p className="pl-1">Date</p>
                                         <DatePicker value={payment.date ? dayjs(payment.date) : ''} onChange={handleAddDate} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
@@ -251,7 +255,7 @@ const ColtanPaymentsPage = () => {
                                             <p className="">Cancel</p>
                                         </button>
                                     </span>
-                                </form>
+                                </form> : null}
                             </div>
                         </div>
 

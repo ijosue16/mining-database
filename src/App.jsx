@@ -72,7 +72,7 @@ function App() {
       <Route element={<MyContextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/dummy' element={<DummyPage/>}/>
+    <Route  path='/dummy' element={<ColtanPaymentsPage/>}/>
     <Route  path='/ship' element={<ShipmentPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>

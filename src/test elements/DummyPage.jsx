@@ -27,7 +27,7 @@ const YourComponent = () => {
         return 0; 
       }
       const totalGrade = selectedData.reduce((total, item) => total + item.grade, 0);
-      return totalGrade / selectedData.length;
+      return (totalGrade / selectedData.length).toFixed(3);
     } ;
     setAvg(averageGrade);
 
@@ -56,13 +56,13 @@ const YourComponent = () => {
       newData.splice(index, 1, { ...item, ...row, weight: parseFloat(row.weight) });
       setSelectedData(newData);
       const newTotalWeight = newData.reduce((total, item) => total + item.weight, 0);
-      const averageGrade = useMemo(() => {
+      const averageGrade = () => {
         if (selectedData.length === 0) {
           return 0; 
         }
         const totalGrade = selectedData.reduce((total, item) => total + item.grade, 0);
-        return totalGrade / selectedData.length;
-      }, [selectedData]);
+        return (totalGrade / selectedData.length).toFixed(3);
+      };
       setTotalWeight(newTotalWeight);
       setAvg(averageGrade);
       setEditRowKey("");
