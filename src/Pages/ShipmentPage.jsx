@@ -460,7 +460,7 @@ const ShipmentPage = () => {
             destroyOnClose
             width={"100%"}
             closable={false}
-            style={{ top: 0,padding:"0px 0px", minHeight:"100%"}}
+            style={{ top: 0, padding: "0px 0px", minHeight: "100%" }}
             footer={[
               <span
                 key="actions"
@@ -493,7 +493,6 @@ const ShipmentPage = () => {
               </p>
 
               <div className="w-full py-4 space-y-3 text-end">
-              
                 {/* <div className=" w-full space-y-2 overflow-y-auto" key="item1">
                   <Form form={form} component={false}>
                     <Table

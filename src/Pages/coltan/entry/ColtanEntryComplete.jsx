@@ -218,7 +218,8 @@ const ColtanEntryCompletePage = () => {
         return (
           <>
             <div className="flex items-center gap-1">
-              <span className="relative">
+{editable ?  null:<>
+  <span className="relative">
                 <PiDotsThreeVerticalBold
                   className=" text-xl"
                   onClick={() => handleActions(record._id)}
@@ -279,14 +280,12 @@ const ColtanEntryCompletePage = () => {
                 onClick={() => setShowPayModel(true)}
               />
 
-              {/* 
-                            <BiSolidEditAlt className=" text-xl" onClick={() => {
-                                setEditingRow(record._id);
-                                form.setFieldsValue({
-                                    weightOut: record.weightOut,
-                                    rmaFee: record.rmaFee,
-                                })
-                            }} /> */}
+              <BiSolidEditAlt
+                className=" text-xl"
+                onClick={() => edit(record)}
+              />
+
+</>}
 
               {editable ? (
                 <div className="flex items-center gap-3">
@@ -299,12 +298,7 @@ const ColtanEntryCompletePage = () => {
                     onClick={() => setEditRowKey("")}
                   />
                 </div>
-              ) : (
-                <BiSolidEditAlt
-                  className=" text-xl"
-                  onClick={() => edit(record)}
-                />
-              )}
+              ) : null}
             </div>
           </>
         );
@@ -369,12 +363,9 @@ const ColtanEntryCompletePage = () => {
                   <Spin />
                 ) : (
                   <div className="flex flex-col gap-3 w-full">
-                    <div className="w-full bg-slate-50 grid grid-cols-2 py-2 border-b items-center justify-between">
+                    <div className="w-full bg-slate-50 grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
                       <p className=" font-semibold">supplier details</p>
-                      <RiEditLine
-                        className=" text-2xl pb-1 justify-self-end"
-                        onClick={() => navigate(`/edit/supplier/${supplierId}`)}
-                      />
+                     
                     </div>
 
                     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
@@ -491,10 +482,11 @@ const ColtanEntryCompletePage = () => {
                   ]}
                 >
                   <h2 className="modal-title text-center font-bold text-xl">
-                    Confirm Delete
+                    Proceed Payment
                   </h2>
                   <p className="text-center text-lg">
-                    {`Are you sure you want to delete ${selectedRow}`}.
+                    {`Please verify all the information before proceeding ${selectedRow}`}
+                    .
                   </p>
                 </Modal>
               </>

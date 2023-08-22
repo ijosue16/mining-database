@@ -13,8 +13,7 @@ const Layout = () => {
     const navigate = useNavigate();
 
     const opennav = () => {
-        setOpen(!open),
-            console.log(open)
+        setOpen(!open)
     }
 
     const handleUserSubmenu = () => {

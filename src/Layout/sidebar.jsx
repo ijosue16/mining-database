@@ -99,7 +99,7 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                 </ul>
             </div>
             {/* small sidebar menu */}
-            <ul className={`mini mt-20 flex flex-col space-y-2 w-full list-none ${open && 'hidden'}`} onMouseEnter={() => setOpen(!open)}
+            <ul className={`mini mt-20 flex flex-col space-y-2 w-full list-none ${open && 'hidden'}`} onMouseEnter={opennav}
             >
                 {filteredMenu.map(({ subHeaders }, index) => {
                     return (
