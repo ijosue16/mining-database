@@ -405,8 +405,11 @@ export const apiSlice = createApi({
         }),
         shipmentReport: builder.mutation({
             query: ({shipmentId}) => ({
-                url: `/shipments/${shipmentId}`,
-                method: "POST"
+                url: `/shipments/report/${shipmentId}`,
+                method: "POST",
+                responseHandler:(response)=>{
+                   return response.blob();
+                },
             })
         }),
     })
@@ -471,5 +474,8 @@ export const {
     useDeleteWolframiteEntryMutation,
     useCreateMixedEntryMutation,
     useGetAllShipmentsQuery,
-    useAddShipmentMutation
+    useAddShipmentMutation,
+    useUpdateShipmentMutation,
+    useShipmentReportMutation,
+    useDetailedStockQuery
 } = apiSlice

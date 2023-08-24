@@ -253,7 +253,7 @@ const ColtanEntryCompletePage = () => {
                       <BiSolidEditAlt className=" text-lg" />
                       <p>edit</p>
                     </li>
-                    <li
+                    {/* <li
                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
                         {
@@ -263,7 +263,7 @@ const ColtanEntryCompletePage = () => {
                     >
                       <RiFileEditFill className=" text-lg" />
                       <p>complete entry</p>
-                    </li>
+                    </li> */}
                     <li
                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                       onClick={() => setShowPayModel(true)}
@@ -485,7 +485,7 @@ const ColtanEntryCompletePage = () => {
                     Proceed Payment
                   </h2>
                   <p className="text-center text-lg">
-                    {`Please verify all the information before proceeding ${selectedRow}`}
+                    {`Please verify all the information before proceeding`}
                     .
                   </p>
                 </Modal>

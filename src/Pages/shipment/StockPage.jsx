@@ -3,7 +3,7 @@ import { Responsive, WidthProvider } from "react-grid-layout";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { BsClipboard2MinusFill } from "react-icons/bs";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
-import { Table, Tooltip, Checkbox, Input, Form, Modal } from "antd";
+import { Table, Tooltip, Checkbox, Input, Form, Modal, Spin } from "antd";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
@@ -30,6 +30,7 @@ const StockPage = () => {
     averageGrade: "",
     averagePrice: "",
     totalShipmentQuantity: "",
+    model: model,
   });
   const [totalWeight, setTotalWeight] = useState(null);
   const [avg, setAvg] = useState(null);
@@ -55,13 +56,12 @@ const StockPage = () => {
     setOpenBill(!openBill);
     console.log("koko corona!!!");
   };
-  let avgr = 0;
+
   useMemo(() => {
     const newTransformedData = selectedData.map((item) => ({
       entryId: item._id,
       lotNumber: item.lotNumber,
       quantity: item.cumulativeAmount,
-      model: model,
     }));
 
     const newTotalWeight = selectedData.reduce(
@@ -77,8 +77,6 @@ const StockPage = () => {
     const averagegrade =
       newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
-    // avgr=(totalGrade / newTotalWeight).toFixed(3);
-
     setAvg(averagegrade);
     console.log(avg);
     setAvgPrice(newTotalWeight); //TO ADD  AVG PRICE FORMULA
@@ -86,7 +84,7 @@ const StockPage = () => {
     setShipmentInfo((prevState) => ({
       ...prevState,
       entries: newTransformedData,
-      averageGrade: avg,
+      averageGrade: averagegrade,
       averagePrice: "22",
       totalShipmentQuantity: newTotalWeight,
     }));
@@ -140,8 +138,6 @@ const StockPage = () => {
       const averagegrade =
         newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
-      // return (totalGrade / newTotalWeight).toFixed(3);
-
       setTotalWeight(newTotalWeight);
       setAvg(averagegrade);
       setEditRowKey("");
@@ -150,13 +146,12 @@ const StockPage = () => {
         entryId: item._id,
         lotNumber: item.lotNumber,
         quantity: item.cumulativeAmount,
-        model: model,
       }));
       setTransformedData(newTransformedData);
       setShipmentInfo((prevState) => ({
         ...prevState,
         entries: newTransformedData,
-        averageGrade: avg,
+        averageGrade: averagegrade,
         averagePrice: "22",
         totalShipmentQuantity: newTotalWeight,
       }));
@@ -353,9 +348,6 @@ const StockPage = () => {
     await AddShipment({ body });
     setSelectedData([]);
     console.log("Shipment Info After Update:", {
-      entries: transformedData,
-      averageGrade: avg,
-      totalShipmentQuantity: totalWeight,
       body,
     });
   };
@@ -487,10 +479,10 @@ const StockPage = () => {
                   <button
                     className=" bg-orange-500 text-white py-2 px-4 rounded-md"
                     onClick={() => {
-                      handleShipmentSubmit();
+                      handleConfirmModal();
                     }}
                   >
-                    {isSending ? "sending wait" : "submitt "}
+                    submit
                   </button>
                 </div>
               </div>
@@ -507,10 +499,11 @@ const StockPage = () => {
               >
                 <button
                   key="back"
-                  className=" bg-green-400 p-2 rounded-lg"
-                  onClick={handleConfirmModal}
+                  disabled={isSending}
+                  className=" bg-green-400 p-2 rounded-lg flex items-center gap-2 justify-center"
+                  onClick={handleShipmentSubmit}
                 >
-                  Confirm
+                  {isSending ? <Spin /> : "Confirm"}
                 </button>
                 <button
                   key="submit"

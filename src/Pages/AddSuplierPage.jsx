@@ -184,22 +184,22 @@ const AddSuplierPage = () => {
                                     </span>
                                     <li>
                                         <p className="mb-1">Name</p>
-                                        <input type="text" name="name" id="name" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.name || ''} onChange={e => handleSiteEntry(index, e)} />
+                                        <input type="text" name="name"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.name || ''} onChange={e => handleSiteEntry(index, e)} />
                                     </li>
                                     {/* ******* */}
                                     <li>
                                         <p className="mb-1">code</p>
-                                        <input type="text" name="code" id="code" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.code || ''} onChange={e => handleSiteEntry(index, e)} />
+                                        <input type="text" name="code"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.code || ''} onChange={e => handleSiteEntry(index, e)} />
                                     </li>
                                     {/* ******* */}
                                     <li>
                                         <p className="mb-1">Latitude</p>
-                                        <input type="text" name="coordinates.lat" id="coordinates.lat" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleSiteEntry(index, e)} />
+                                        <input type="text" name="coordinates.lat${index}"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleSiteEntry(index, e)} />
                                     </li>
                                     {/* ******* */}
                                     <li>
                                         <p className="mb-1">Longitude</p>
-                                        <input type="text" name="coordinates.long" id="coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.long || ''} onChange={e => handleSiteEntry(index, e)} />
+                                        <input type="text" name="coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.long || ''} onChange={e => handleSiteEntry(index, e)} />
                                     </li>
                                     {/* ******* */}
                                 </ul>
