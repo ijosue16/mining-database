@@ -8,21 +8,34 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
 import { useParams } from "react-router-dom";
-import { useDetailedStockQuery,useAddShipmentMutation } from "../../states/apislice";
+import {
+  useDetailedStockQuery,
+  useAddShipmentMutation,
+} from "../../states/apislice";
 import dayjs from "dayjs";
 
 const StockPage = () => {
   const { model } = useParams();
-  const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({ model});
-  const [AddShipment,{isLoading:isSending,isError:isFailed,isSuccess:isSent,error:fail}]=useAddShipmentMutation();
+  const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({
+    model,
+  });
+  const [
+    AddShipment,
+    { isLoading: isSending, isError: isFailed, isSuccess: isSent, error: fail },
+  ] = useAddShipmentMutation();
   const [openBill, setOpenBill] = useState(false);
   const [confirmModal, setConfirmModal] = useState(false);
-  const [shipmentInfo, setShipmentInfo] = useState({entries:"",averageGrade:"",averagePrice:"",totalShipmentQuantity:""});
+  const [shipmentInfo, setShipmentInfo] = useState({
+    entries: "",
+    averageGrade: "",
+    averagePrice: "",
+    totalShipmentQuantity: "",
+  });
   const [totalWeight, setTotalWeight] = useState(null);
   const [avg, setAvg] = useState(null);
   const [avgPrice, setAvgPrice] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [sourceData, setSourceData] = useState('');
+  const [sourceData, setSourceData] = useState("");
   const [selectedData, setSelectedData] = useState([]);
   const [transformedData, setTransformedData] = useState([]);
   const [editRowKey, setEditRowKey] = useState("");
@@ -42,16 +55,15 @@ const StockPage = () => {
     setOpenBill(!openBill);
     console.log("koko corona!!!");
   };
-  let avgr=0;
+  let avgr = 0;
   useMemo(() => {
-
-    const newTransformedData = selectedData.map(item => ({
+    const newTransformedData = selectedData.map((item) => ({
       entryId: item._id,
       lotNumber: item.lotNumber,
       quantity: item.cumulativeAmount,
       model: model,
     }));
-  
+
     const newTotalWeight = selectedData.reduce(
       (total, item) => total + item.cumulativeAmount,
       0
@@ -62,17 +74,22 @@ const StockPage = () => {
       (total, item) => total + item.cumulativeAmount * item.mineralGrade,
       0
     );
-    const averagegrade = (totalGrade / newTotalWeight).toFixed(3)
-  
+    const averagegrade =
+      newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
-      // avgr=(totalGrade / newTotalWeight).toFixed(3);
-      
-   
+    // avgr=(totalGrade / newTotalWeight).toFixed(3);
+
     setAvg(averagegrade);
     console.log(avg);
-    setAvgPrice(newTotalWeight) ;//TO ADD  AVG PRICE FORMULA
+    setAvgPrice(newTotalWeight); //TO ADD  AVG PRICE FORMULA
     setTransformedData(newTransformedData);
-    setShipmentInfo((prevState) => ({ ...prevState,entries:newTransformedData, averageGrade:avg, averagePrice:"22", totalShipmentQuantity:newTotalWeight, }));
+    setShipmentInfo((prevState) => ({
+      ...prevState,
+      entries: newTransformedData,
+      averageGrade: avg,
+      averagePrice: "22",
+      totalShipmentQuantity: newTotalWeight,
+    }));
   }, [selectedData]);
 
   const handleOpenModal = () => {
@@ -120,28 +137,33 @@ const StockPage = () => {
         0
       );
 
-     const averagegrade =(totalGrade / newTotalWeight).toFixed(3);
-        
-        // return (totalGrade / newTotalWeight).toFixed(3);
+      const averagegrade =
+        newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
+
+      // return (totalGrade / newTotalWeight).toFixed(3);
 
       setTotalWeight(newTotalWeight);
       setAvg(averagegrade);
       setEditRowKey("");
       setSelectedData(newData);
-      const newTransformedData = newData.map(item => ({
+      const newTransformedData = newData.map((item) => ({
         entryId: item._id,
         lotNumber: item.lotNumber,
         quantity: item.cumulativeAmount,
         model: model,
       }));
       setTransformedData(newTransformedData);
-      setShipmentInfo((prevState) => ({ ...prevState,entries:newTransformedData, averageGrade:avg, averagePrice:"22", totalShipmentQuantity:newTotalWeight, }));
-    };
+      setShipmentInfo((prevState) => ({
+        ...prevState,
+        entries: newTransformedData,
+        averageGrade: avg,
+        averagePrice: "22",
+        totalShipmentQuantity: newTotalWeight,
+      }));
+    }
 
-    
     console.log(newData);
   };
-  
 
   const columns = [
     {
@@ -310,7 +332,7 @@ const StockPage = () => {
     }
   };
 
-  const handleShipmentSubmit= async ()=>{
+  const handleShipmentSubmit = async () => {
     // const transformedArray = selectedData.map((item) => ({
     //   entryId: item._id,
     //   lotNumber: item.lotNumber,
@@ -318,26 +340,24 @@ const StockPage = () => {
     //   model,
     // }));
 
-  //   setShipmentInfo({
-  //     ...shipmentInfo,
-  //     entries:transformedArray,
-  //     averageGrade:avg,
-  //     averagePrice:"22",
-  //     totalShipmentQuantity:totalWeight,
+    //   setShipmentInfo({
+    //     ...shipmentInfo,
+    //     entries:transformedArray,
+    //     averageGrade:avg,
+    //     averagePrice:"22",
+    //     totalShipmentQuantity:totalWeight,
 
-  // });
+    // });
 
-  const body= shipmentInfo;
-   await AddShipment({body});
+    const body = shipmentInfo;
+    await AddShipment({ body });
     setSelectedData([]);
-  console.log("Shipment Info After Update:", {
-    entries: transformedData,
-    averageGrade: avg,
-    totalShipmentQuantity: totalWeight,
-    body,
-  });
-
-
+    console.log("Shipment Info After Update:", {
+      entries: transformedData,
+      averageGrade: avg,
+      totalShipmentQuantity: totalWeight,
+      body,
+    });
   };
   return (
     <ActionsPagesContainer
@@ -361,7 +381,6 @@ const StockPage = () => {
               dataSource={initialData}
               loading={isLoading}
               columns={columns2}
-              
               rowKey="index"
             />
             <div
@@ -372,14 +391,13 @@ const StockPage = () => {
             </div>
           </div>
 
-
           <Modal
             open={openModal}
             onCancel={handleOpenModal}
             destroyOnClose
             width={"100%"}
             closable={false}
-            style={{ top: 0, padding: "0px 0px",height:"100%"}}
+            style={{ top: 0, padding: "0px 0px", height: "100%" }}
             footer={[
               <span
                 key="actions"
@@ -472,7 +490,7 @@ const StockPage = () => {
                       handleShipmentSubmit();
                     }}
                   >
-                    {isSending? 'sending wait':'submitt '}
+                    {isSending ? "sending wait" : "submitt "}
                   </button>
                 </div>
               </div>
