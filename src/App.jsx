@@ -74,10 +74,11 @@ function App() {
       <Route element={<MyContextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/dummy' element={<ColtanPaymentsPage/>}/>
+    <Route  path='/coltan/payment/:entryId' element={<ColtanPaymentsPage/>}/>
     <Route  path='/shipment/add/:model' element={<StockPage/>}/>
-    <Route  path='/shipment' element={<ShipmentPage/>}/>
+    <Route  path='/shipments' element={<ShipmentPage/>}/>
     <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
+    <Route  path='/payment' element={<ColtanPaymentsPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
     <Route  path='/cassiterite' element={<ProductsList/>}/>

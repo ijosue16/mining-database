@@ -78,7 +78,7 @@ const ColtanEntryCompletePage = () => {
   };
   const handleModelAdvance = () => {
     console.log("backend done");
-    navigate("/dummy");
+    navigate(`/coltan/payment/${suply._id}`);
   };
 
   const handleCancel = () => {

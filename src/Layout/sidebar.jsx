@@ -40,8 +40,8 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                         return (
                             <Fragment key={hId}>
                                 <p key={hId} className="px-4 pb-1">{heading}</p>
-                                {subHeaders.map(({ title, icon, submenu, submenuItems, line, id }, index) => {
-                                    const navtext = title.toLowerCase().replace(/\s/g, '');
+                                {subHeaders.map(({ title, icon, submenu, submenuItems, line, id,navtext }, index) => {
+                                    // const navtext = title.toLowerCase().replace(/\s/g, '');
                                     return (
                                         <Fragment key={index}>
                                             {!submenu && (<li key={id} className={`flex flex-row items-center p-2 pl-6 space-x-3  hover:text-amber-500 hover:bg-amber-50 h-full w-full text-black transform ease-in-out duration-300  ${line && ' border-b mb-2'} ${active === navtext && ' bg-amber-100 text-amber-500 rounded'}`}
@@ -71,8 +71,8 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                                                     </div>
                                                     {submenu && id === choseNav && (
                                                         <ul className={` pl-12 space-y-4 list-disc pb-2  ${openSubmenu ? 'block' : 'hidden'}`}>
-                                                            {submenuItems.map(({ id, title }) => {
-                                                                const navtext = title.toLowerCase().replace(/\s/g, '')
+                                                            {submenuItems.map(({ id, title,navtext }) => {
+                                                                // const navtext = title.toLowerCase().replace(/\s/g, '')
                                                                 return (
                                                                     <li key={id} className="hover:text-amber-500"
                                                                         onClick={() => { navigate(`/${navtext}`) }}

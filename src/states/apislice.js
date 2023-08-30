@@ -189,6 +189,10 @@ export const apiSlice = createApi({
             query: () => `/advance-payment`,
             providesTags: ["advance-payment", "payments", "entries"]
         }),
+        getAllAdvancePaymentsBySupplier: builder.query({
+            query: () => `/advance-payment/${supplierId}`,
+            providesTags: ["advance-payment", "payments", "entries"]
+        }),
         addAdvancePayment: builder.mutation({
             query: ({body}) => ({
                 url: "/advance-payment",
@@ -196,7 +200,7 @@ export const apiSlice = createApi({
                 body
             }),
             invalidatesTags: ["advance-payment", "payments", "entries"]
-            // beneficiaryName, beneficiaryNationalId, phoneNumber, email, paymentAmount, currency, location, paymentDate, contractFile
+            // beneficiaryName, beneficiaryNationalId, phoneNumber, email, paymentAmount, currency, location, paymentDate, contractFile supplierId
         }),
         getOneAdvancePayment: builder.query({
             query: (paymentId) => `/advance-payment/${paymentId}`,

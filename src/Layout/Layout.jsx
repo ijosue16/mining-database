@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight } from "react-icons/pi";
+import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight } from "react-icons/pi";
 import { LuBarChart2 } from "react-icons/lu"
 import { TbArrowsCross } from "react-icons/tb"
 import Appbar from "./Appbar";
@@ -38,40 +38,48 @@ const Layout = () => {
         },
         {
             heading: "Entry", hId: 7, subHeaders: [
-                { title: "Coltan", icon: <PiCubeDuotone />, id: 8 },
-                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 9 },
-                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 10 },
-                { title: "Lithium", icon: <PiTagDuotone />, id: 11 },
-                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 12 },
-                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 13 },
-                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14 },]
+                { title: "Coltan", icon: <PiCubeDuotone />, id: 8,navtext:'coltan' },
+                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 9,navtext:'cassiterite' },
+                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 10,navtext:'wolframite' },
+                { title: "Lithium", icon: <PiTagDuotone />, id: 11,navtext:'lithium' },
+                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 12,navtext:'beryllium' },
+                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 13,navtext:'mixed' },
+                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14,navtext:'special' },]
         },
         {
             heading: "Shipments", hId: 15, subHeaders: [
-                { title: "shipment", icon: <PiShoppingCartSimpleDuotone />, id: 16 },
-                { title: "Invoices", icon: <PiFileTextDuotone />, id: 17 },
-                { title: "Sales Return", icon: <PiFilesDuotone />, id: 18 },
-                { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19 },
-                {
-                    title: "Transfer", icon: <TbArrowsCross />, submenu: true, id: 57, submenuItems: [
-                        { title: "transfer List", id: 20 },
-                        { title: "Import Transfer", id: 21 }
-                    ]
-                },
+                { title: "Shipments list", icon: <PiShoppingCartSimpleDuotone />, id: 16,navtext:"shipments",},
+                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 17,navtext:"",submenuItems: [
+                    { title: "Coltan", id: 60,navtext:"shipment/add/coltan" },
+                    { title: "Cassiterite", id: 61,navtext:"shipment/add/cassiterite" },
+                    { title: "Wolframite", id: 62,navtext:"shipment/add/wolframite" },
+                    { title: "Lithium", id: 63,navtext:"shipment/add/lithium" },
+                    { title: "Beryllium", id: 64,navtext:"shipment/add/beryllium" }
+                ],line: true },
+                // { title: "Sales Return", icon: <PiFilesDuotone />, id: 18,navtext:"" },
+                // { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19,navtext:"" },
+                // {
+                //     title: "Transfer", icon: <TbArrowsCross />, submenu: true, id: 57, submenuItems: [
+                //         { title: "transfer List", id: 20 },
+                //         { title: "Import Transfer", id: 21 }
+                //     ]
+                // },
                 {
                     title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 58, submenuItems: [
                         { title: "Sales Return", id: 22 },
                         { title: "Purchases Return", id: 23 }
                     ], line: true
-                }]
+                }
+            ]
         },
 
         {
-            heading: "Purchases", hId: 24, subHeaders: [
-                { title: "Purchases", icon: <PiShoppingBagDuotone />, id: 25 },
-                { title: "Import Purchases", icon: <PiArrowsInSimpleDuotone />, id: 26 },
-                { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27 },
-                { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28 },]
+            heading: "Suppliers", hId: 24, subHeaders: [
+                { title: "Suppliers List", icon: <PiUsersDuotone />, id: 25,navtext:"suppliers" },
+                { title: "Add", icon: <PiUserPlusDuotone />, id: 26,navtext:"add/supplier", line: true, },
+                // { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27,navtext:"" },
+                // { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28,navtext:"" },
+            ]
         },
         {
             heading: "Finance & acconts", hId: 29, subHeaders: [

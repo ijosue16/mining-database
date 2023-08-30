@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import { Spin, Table, Form, Input, Button, Modal, DatePicker } from 'antd';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
+import { useGetOneColtanEntryQuery } from "../../../states/apislice";
 // import AddComponent from "../../../components/Actions components/AddComponent";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri"
 import { PiDotsThreeVerticalBold } from "react-icons/pi"
@@ -10,15 +11,16 @@ import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { GrHistory } from "react-icons/gr";
 import { useNavigate, useParams } from "react-router-dom";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
-import { MdClose } from "react-icons/md"
-import { BsCheck2 } from "react-icons/bs"
-import { IoAdd } from "react-icons/io5"
+import { MdClose } from "react-icons/md";
+import { BsCheck2 } from "react-icons/bs";
+import { IoAdd } from "react-icons/io5";
 
 
 const ColtanPaymentsPage = () => {
     const { entryId } = useParams();
     const navigate = useNavigate();
     const [form] = Form.useForm()
+    const{data,isLoading,isSuccess,isError,error}=useGetOneColtanEntryQuery({entryId});
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
     const [payment, setPayement] = useState({ date: '', beneficiary: '', amount: '' });
     const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
@@ -29,6 +31,14 @@ const ColtanPaymentsPage = () => {
     const [showForm, setShowForm] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
 
+    if(isSuccess){
+       
+        const{data:dt}=data;
+        const{entry:entr}=dt;
+        const{output:pt}=entr;
+        const{paymentHistory:pHist}=pt;
+        console.log(pHist);
+    }
     const columns = [
         {
             title: '#',
