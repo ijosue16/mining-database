@@ -40,6 +40,7 @@ const StockPage = () => {
   const [selectedData, setSelectedData] = useState([]);
   const [transformedData, setTransformedData] = useState([]);
   const [editRowKey, setEditRowKey] = useState("");
+  const [emptyError, setEmptyError] = useState("");
   const [form] = Form.useForm();
   let initialData = [];
 
@@ -96,6 +97,7 @@ const StockPage = () => {
 
   const handleConfirmModal = () => {
     setConfirmModal(!confirmModal);
+    setEmptyError("");
   };
 
   const isEditing = (record) => {
@@ -262,24 +264,6 @@ const StockPage = () => {
     },
   ];
 
-  const subcolumnsLots = [
-    {
-      title: "weight",
-      dataIndex: "weight",
-      key: "weight",
-    },
-    {
-      title: "paidStatus",
-      dataIndex: "paidStatus",
-      key: "paidStatus",
-      render: (_, record) => (
-        <p className=" bg-green-500 py-2 px-4 rounded-md text-white">
-          {record.paidStatus}
-        </p>
-      ),
-    },
-  ];
-
   const mergedColumns = columns.map((col) => {
     if (!col.editTable) {
       return col;
@@ -328,28 +312,19 @@ const StockPage = () => {
   };
 
   const handleShipmentSubmit = async () => {
-    // const transformedArray = selectedData.map((item) => ({
-    //   entryId: item._id,
-    //   lotNumber: item.lotNumber,
-    //   quantity: item.weightOut,
-    //   model,
-    // }));
-
-    //   setShipmentInfo({
-    //     ...shipmentInfo,
-    //     entries:transformedArray,
-    //     averageGrade:avg,
-    //     averagePrice:"22",
-    //     totalShipmentQuantity:totalWeight,
-
-    // });
-
-    const body = shipmentInfo;
-    await AddShipment({ body });
-    setSelectedData([]);
-    console.log("Shipment Info After Update:", {
-      body,
-    });
+    if (
+      shipmentInfo.totalShipmentQuantity !== 0 &&
+      shipmentInfo.totalShipmentQuantity !== null &&
+      shipmentInfo.entries.length > 0
+    ) {
+      const body = shipmentInfo;
+      await AddShipment({ body });
+      setSelectedData([]);
+      console.log("Shipment Info After Update:", { body });
+      setConfirmModal(!confirmModal);
+    } else {
+      setEmptyError("you can not send empty shipment slip");
+    }
   };
   return (
     <ActionsPagesContainer
@@ -360,14 +335,14 @@ const StockPage = () => {
           {/* <div className='w-full flex items-center justify-end'> */}
 
           <div className=" space-y-2 w-full block">
-            <Tooltip title="Shipment details">
+            {/* <Tooltip title="Shipment details">
               <div
                 className=" w-fit p-2 bg-orange-500 rounded-md"
                 onClick={handleOpenModal}
               >
                 <BsClipboard2MinusFill className=" text-white text-lg" />
               </div>
-            </Tooltip>
+            </Tooltip> */}
             <Table
               className=" overflow-x-auto w-full"
               dataSource={initialData}
@@ -415,10 +390,10 @@ const StockPage = () => {
           >
             <div className=" bg-slate-100 p-2">
               <h2 className="modal-title text-center font-bold text-xl">
-                Confirm Shipment
+                Shipment details
               </h2>
               <p className="text-center text-lg">
-                {`Are you sure you want to confirm this Shipment transaction `}.
+                slots detailed information. Make sure to confirm shipment.
               </p>
 
               <div className="w-full py-4 space-y-3 text-end">
@@ -523,6 +498,7 @@ const StockPage = () => {
               <p className="text-center text-lg">
                 {`Are you sure you want to confirm this Shipment transaction `}.
               </p>
+              {emptyError!==""?<p className=" text-red-400 text-center text-md">{emptyError}</p>:null}
             </div>
           </Modal>
         </div>

@@ -29,30 +29,21 @@ const ShipmentCompletionPage = () => {
     },
   ] = useCreateColtanEntryMutation();
   const [shipmentDetails, setShipmentDetails] = useState({
-    weightIn: "",
-    companyName: "",
-    licenseNumber: "",
-    TINNumber: "",
-    email: "",
-    supplierId: "",
-    companyRepresentative: "",
-    representativeId: "",
-    representativePhoneNumber: "",
-    supplyDate: "",
-    time: "",
+    shipmentGrade: "",
+    shipmentPrice: "",
+    shipmentMinerals: "",
+    buyerId: "",
+    shipmentSamplingDate: "",
+    shipmentContainerLoadingDate: "",
+    totalShipmentQuantity: "",
+    averageGrade: "",
+    averagePrice: "",
+    shipmentNumber: "",
     numberOfTags: "",
     mineTags: "",
     negociantTags: "",
     mineralType: "coltan",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
-    beneficiary: "",
-    isSupplierBeneficiary: false,
   });
-  const [lotDetails, setlotDetails] = useState([
-    { lotNumber: "", weightOut: "" },
-  ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
   const [search, setSearch] = useState("");
@@ -152,10 +143,16 @@ const ShipmentCompletionPage = () => {
     }
   };
 
-  const handleAddDate = (e) => {
+  const handleAddSamplingDate = (e) => {
     setShipmentDetails((prevState) => ({
       ...prevState,
-      supplyDate: dayjs(e).format("MMM/DD/YYYY"),
+      shipmentSamplingDate: dayjs(e).format("MMM/DD/YYYY"),
+    }));
+  };
+  const handleAddLoadingDate = (e) => {
+    setShipmentDetails((prevState) => ({
+      ...prevState,
+      shipmentContainerLoadingDate: dayjs(e).format("MMM/DD/YYYY"),
     }));
   };
 
@@ -213,33 +210,27 @@ const ShipmentCompletionPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = { ...shipmentDetails, output: lotDetails };
-    await createColtanEntry({ body });
+    const body = { ...shipmentDetails,};
+    // await createColtanEntry({ body });
     console.log(body);
-    navigate(-1);
+    // navigate(-1);
   };
   const handleCancel = () => {
     setShipmentDetails({
-      weightIn: "",
-      companyName: "",
-      licenseNumber: "",
-      TINNumber: "",
-      email: "",
-      supplierId: "",
-      companyRepresentative: "",
-      representativeId: "",
-      representativePhoneNumber: "",
-      supplyDate: "",
-      time: "",
+      shipmentGrade: "",
+      shipmentPrice: "",
+      shipmentMinerals: "",
+      buyerId: "",
+      shipmentSamplingDate: "",
+      shipmentContainerLoadingDate: "",
+      totalShipmentQuantity: "",
+      averageGrade: "",
+      averagePrice: "",
+      shipmentNumber: "",
       numberOfTags: "",
       mineTags: "",
       negociantTags: "",
       mineralType: "coltan",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
-      beneficiary: "",
-      isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
     console.log(checked);
@@ -312,7 +303,7 @@ const ShipmentCompletionPage = () => {
                           ? dayjs(shipmentDetails.shipmentSamplingDate)
                           : null
                       }
-                      onChange={handleAddDate}
+                      onChange={handleAddSamplingDate}
                       id="shipmentSamplingDate"
                       name="shipmentSamplingDate"
                       className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
@@ -327,7 +318,7 @@ const ShipmentCompletionPage = () => {
                           ? dayjs(shipmentDetails.shipmentContainerLoadingDate)
                           : null
                       }
-                      onChange={handleAddDate}
+                      onChange={handleAddLoadingDate}
                       id="shipmentContainerLoadingDate"
                       name="shipmentContainerLoadingDate"
                       className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
