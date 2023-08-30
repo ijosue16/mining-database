@@ -38,9 +38,9 @@ const ColtanPaymentsPage = () => {
         },
         {
             title: 'date',
-            dataIndex: 'supplyDate',
-            key: 'supplyDate',
-            sorter: (a, b) => a.supplyDate - b.supplyDate,
+            dataIndex: 'paymentDate',
+            key: 'paymentDate',
+            sorter: (a, b) => a.paymentDate - b.paymentDate,
             render: (text) => {
                 return (
                     <>
@@ -50,47 +50,47 @@ const ColtanPaymentsPage = () => {
             }
         },
         {
-            title: 'weightOut',
-            dataIndex: 'weightOut',
-            key: 'weightOut',
+            title: 'payment amount',
+            dataIndex: 'paymentAmount',
+            key: 'paymentAmount',
             editTable: true,
 
-            sorter: (a, b) => a.weightOut.localeCompare(b.weightOut),
+            sorter: (a, b) => a.paymentAmount- b.paymentAmount,
         },
         {
-            title: 'paid',
-            dataIndex: 'paid',
-            key: 'paid',
+            title: 'beneficiary',
+            dataIndex: 'beneficiary',
+            key: 'beneficiary',
             editTable: true,
-            sorter: (a, b) => a.paid.localeCompare(b.paid),
+            sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
         },
         {
-            title: 'cummulative A',
-            dataIndex: 'cumulativeAmount',
-            key: 'cumulativeAmount',
-            sorter: (a, b) => a.cumulativeAmount.localeCompare(b.cumulativeAmount),
+            title: 'phoneNumber',
+            dataIndex: 'phoneNumber',
+            key: 'phoneNumber',
+            sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),
         },
         {
-            title: 'rmaFee',
-            dataIndex: 'rmaFee',
-            key: 'rmaFee',
+            title: 'currency',
+            dataIndex: 'currency',
+            key: 'currency',
             editTable: true,
 
-            sorter: (a, b) => a.rmaFee - b.rmaFee,
+            sorter: (a, b) => a.currency.localeCompare(b.currency),
         },
-        {
-            title: 'status',
-            dataIndex: 'status',
-            key: 'status',
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            render: (text) => {
-                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color = (text === 'in stock') ? 'bg-green-500' : ((text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
-                return (
-                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
-                )
-            }
-        },
+        // {
+        //     title: 'status',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        //     sorter: (a, b) => a.status.localeCompare(b.status),
+        //     render: (text) => {
+        //         // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
+        //         let color = (text === 'in stock') ? 'bg-green-500' : ((text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
+        //         return (
+        //             <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
+        //         )
+        //     }
+        // },
         // {
         //     title: 'Action',
         //     dataIndex: 'action',

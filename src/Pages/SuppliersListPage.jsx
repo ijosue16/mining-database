@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input, Modal, Table } from "antd";
 import { motion } from "framer-motion";
 import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold, PiClipboardDuotone, PiEyeDuotone, PiTrashFill, PiPencilCircleDuotone } from "react-icons/pi";
-import { BiSolidFilePdf,BiSolidEditAlt } from "react-icons/bi"
+import { BiSolidFilePdf,BiSolidEditAlt,BiSolidDetail } from "react-icons/bi"
 import {MdDelete } from "react-icons/md"
 import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
@@ -80,19 +80,15 @@ const SuppliersListPage = () => {
             render: (_, record) => {
                 return (
                     <>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-4">
                             <span className="relative">
                                 <PiDotsThreeVerticalBold onClick={() => handleActions(record._id)} />
                                 {selectedRow === record._id && (
                                     <motion.ul animate={showActions ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[170px] w-[170px] space-y-2`}>
 
                                         <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => { navigate(`/supplier/details/${record._id}`) }}>
-                                            <PiEyeDuotone className=" text-xl" />
+                                            <BiSolidDetail className=" text-xl" />
                                             <p>details</p>
-                                        </li>
-                                        <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/add/supplier/minesite/${record._id}`) } }}>
-                                            <PiPencilCircleDuotone className=" text-xl" />
-                                            <p>New minesite</p>
                                         </li>
                                         <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/supplier/${record._id}`) } }}>
                                             <BiSolidEditAlt className=" text-xl" />

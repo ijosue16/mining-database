@@ -114,7 +114,7 @@ const AddSuplierPage = () => {
             <ActionsPagesContainer title={'Add Supplier'}
                 subTitle={'Add/Update supplier'}
                 actionsContainer={<AddComponent component={
-                    <div className="flex flex-col gap-4">
+                    <div className="grid grid-cols-1 gap-y-10 pb-10">
                         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center">
                             <li>
                                 <p className="mb-1">Company Name</p>
@@ -149,7 +149,7 @@ const AddSuplierPage = () => {
                                 <input type="text" name="phoneNumber" id="phoneNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.phoneNumber || ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
-                            
+
                             <li>
                                 <p className="mb-1">Company representative</p>
                                 <input type="text" name="companyRepresentative" id="companyRepresentative" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.companyRepresentative || ''} onChange={handleAddproduct} />
@@ -180,10 +180,10 @@ const AddSuplierPage = () => {
                             {/* ******* */}
 
                         </ul>
-                        <ul className="grid grid-cols-1 gap-9 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2">
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
                             <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Minesite</p>
                             {mineSitesDetails.map((site, index) => (
-                                <ul className=" col-span-full grid grid-cols-1 mt-3 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center border-t-4 relative p-2" key={index}>
+                                <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4" key={index}>
                                     <span className="flex items-center gap-2 col-span-full justify-end">
                                         <p className=" font-semibold justify-self-start">Site {index + 1}</p>
                                         <HiMinus onClick={() => handleSiteRemoveLot(index)} className={`${mineSitesDetails.length - 1 == 0 ? 'hidden' : ''}`} />
@@ -213,7 +213,7 @@ const AddSuplierPage = () => {
                             ))}
 
                         </ul>
-                        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2">
+                        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
                             <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Address</p>
 
                             <li>

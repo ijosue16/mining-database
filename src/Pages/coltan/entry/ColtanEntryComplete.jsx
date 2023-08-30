@@ -371,15 +371,6 @@ const ColtanEntryCompletePage = () => {
                     <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
                       <li>
                         <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                          company info
-                        </p>
-                        <p>Name:{suply?.companyName}</p>
-                        <p>Email:{suply.email}</p>
-                        <p>TIN Number:{suply.TINNumber}</p>
-                        <p>License Number:{suply.licenseNumber}</p>
-                      </li>
-                      <li>
-                        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
                           Entry details
                         </p>
                         <p>Weight in: {suply?.weightIn}</p>
@@ -395,6 +386,15 @@ const ColtanEntryCompletePage = () => {
                         <p>Nbr of Digers:{suply.numberOfDiggers}</p>
                         <p>Nbr of washers:{suply.numberOfWashers}</p>
                         <p>Nbr of Transporters:{suply.numberOfTransporters}</p>
+                      </li>
+                      <li>
+                        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
+                          company info
+                        </p>
+                        <p>Name:{suply?.companyName}</p>
+                        <p>Email:{suply.email}</p>
+                        <p>TIN Number:{suply.TINNumber}</p>
+                        <p className=" shrink">License Number:{suply.licenseNumber}</p>
                       </li>
                     </ul>
 

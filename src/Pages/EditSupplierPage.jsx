@@ -158,7 +158,8 @@ const EditSuplierPage = () => {
                 subTitle={'Edit/Update supplier'}
                 actionsContainer={<AddComponent component={
                     <div className="flex flex-col gap-4">
-                        {isLoading ? 'loading' : (<>
+                        {isLoading ? 'loading' : (
+                        <div className="grid grid-cols-1 gap-y-10 pb-10">
                             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center">
                                 <li>
                                     <p className="mb-1">Company Name</p>
@@ -250,10 +251,10 @@ const EditSuplierPage = () => {
                             
                         </ul> */}
 
-                            <ul className="grid grid-cols-1 gap-9 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2">
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
                                 <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Minesite</p>
                                 {mineSites.map((site, index) => (
-                                    <ul className=" col-span-full grid grid-cols-1 mt-3 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center border-t-4 relative p-2" key={index}>
+                                    <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4" key={index}>
                                         <span className="flex items-center gap-2 col-span-full justify-end">
                                             <p className=" font-semibold justify-self-start">Site {index + 1}</p>
                                             <HiMinus onClick={() => handleLRemoveLot(index)} className={`${mineSites.length - 1 == 0 ? 'hidden' : ''}`} />
@@ -261,29 +262,29 @@ const EditSuplierPage = () => {
                                         </span>
                                         <li>
                                             <p className="mb-1">Name</p>
-                                            <input type="text" name="name" id="name" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.name || ''} onChange={e => handleMineEntry(index, e)} />
+                                            <input type="text" name="name"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.name || ''} onChange={e => handleMineEntry(index, e)} />
                                         </li>
 
                                         <li>
                                             <p className="mb-1">code</p>
-                                            <input type="text" name="code" id="code" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.code || ''} onChange={e => handleMineEntry(index, e)} />
+                                            <input type="text" name="code" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.code || ''} onChange={e => handleMineEntry(index, e)} />
                                         </li>
 
                                         <li>
                                             <p className="mb-1">Latitude</p>
-                                            <input type="text" name="coordinates.lat" id="coordinates.lat" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleMineEntry(index, e)} />
+                                            <input type="text" name="coordinates.lat" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleMineEntry(index, e)} />
                                         </li>
 
                                         <li>
                                             <p className="mb-1">Longitude</p>
-                                            <input type="text" name="coordinates.long" id="coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.long || ''} onChange={e => handleMineEntry(index, e)} />
+                                            <input type="text" name="coordinates.long" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.long || ''} onChange={e => handleMineEntry(index, e)} />
                                         </li>
 
                                     </ul>
                                 ))}
 
                             </ul>
-                            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative py-2">
+                            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
                                 <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Address</p>
 
                                 <li>
@@ -302,7 +303,7 @@ const EditSuplierPage = () => {
                                 </li>
                                 {/* ******* */}
                             </ul>
-                        </>)}
+                        </div>)}
                     </div>
                 }
                     Add={handleProductSubmit}

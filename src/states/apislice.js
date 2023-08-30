@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'shipments', 'dueDiligence', 'payments', 'entries'],
+    tagTypes: ['buyers', 'contracts', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers'],
     endpoints: (builder) => ({
 
         endpointname: builder.query({

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Spin } from 'antd';
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
-import { RiEditLine } from "react-icons/ri"
+import { BiSolidEditAlt } from "react-icons/bi"
 import { MdAddLocationAlt } from "react-icons/md"
 import { useGetOneSupplierQuery } from "../states/apislice";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,7 +15,8 @@ const SupplierDetailsPage = () => {
 
     const { data, isLoading, isError, isSuccess, error } = useGetOneSupplierQuery({ supplierId });
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
-    const [suply, setSuply] = useState([]);
+    let suply = [];
+    let suplyMinesites=[];
     const [show, setShow] = useState(false);
     const handleAddSite = (e) => {
         setFormval({ ...formval, [e.target.name]: e.target.value }) 
@@ -34,14 +35,14 @@ const SupplierDetailsPage = () => {
         navigate(-1);
     }
 
-    useEffect(() => {
         if (isSuccess) {
             const { data: info } = data;
             const { supplier: sup } = info;
-            setSuply(sup);
+            suply= sup;
+            suplyMinesites =sup.mineSites;
 
         }
-    }, [isSuccess]);
+
     console.log(suply);
     return (
         <div>
@@ -54,7 +55,7 @@ const SupplierDetailsPage = () => {
 
                             <div className="w-full bg-slate-50 grid grid-cols-2 py-2 border-b items-center justify-between">
                                 <p className=" font-semibold">supplier details</p>
-                                <RiEditLine className=" text-2xl pb-1 justify-self-end" onClick={() => navigate(`/edit/supplier/${supplierId}`)} />
+                                <BiSolidEditAlt className=" text-2xl pb-1 justify-self-end" onClick={() => navigate(`/edit/supplier/${supplierId}`)} />
                             </div>
 
 
@@ -89,7 +90,7 @@ const SupplierDetailsPage = () => {
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full gap-3">
                                     <div className="pb-6 col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                        {suply.mineSites?.map(({ name, code, _id, coordinates }) => (
+                                        {suplyMinesites.map(({ name, code, _id, coordinates }) => (
 
                                             <MineSiteCard key={_id}
                                                 name={name}
