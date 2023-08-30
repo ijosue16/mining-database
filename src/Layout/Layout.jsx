@@ -47,8 +47,8 @@ const Layout = () => {
                 { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14 },]
         },
         {
-            heading: "sales", hId: 15, subHeaders: [
-                { title: "sales", icon: <PiShoppingCartSimpleDuotone />, id: 16 },
+            heading: "Shipments", hId: 15, subHeaders: [
+                { title: "shipment", icon: <PiShoppingCartSimpleDuotone />, id: 16 },
                 { title: "Invoices", icon: <PiFileTextDuotone />, id: 17 },
                 { title: "Sales Return", icon: <PiFilesDuotone />, id: 18 },
                 { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19 },
