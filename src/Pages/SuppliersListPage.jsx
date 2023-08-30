@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Input, Modal, Table } from "antd";
 import { motion } from "framer-motion";
 import { PiMagnifyingGlassDuotone, PiDotsThreeVerticalBold, PiClipboardDuotone, PiEyeDuotone, PiTrashFill, PiPencilCircleDuotone } from "react-icons/pi";
-import { BiSolidFilePdf } from "react-icons/bi"
+import { BiSolidFilePdf,BiSolidEditAlt } from "react-icons/bi"
+import {MdDelete } from "react-icons/md"
 import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
 import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
@@ -42,7 +43,7 @@ const SuppliersListPage = () => {
     };
     const columns = [
         {
-            title: 'Company Name',
+            title: 'Company name',
             dataIndex: 'companyName',
             key: 'companyName',
             sorter: (a, b) => a.companyName.localeCompare(b.companyName),
@@ -54,19 +55,19 @@ const SuppliersListPage = () => {
             sorter: (a, b) => a.email.localeCompare(b.email),
         },
         {
-            title: 'TINNumber',
+            title: 'TIN number',
             dataIndex: 'TINNumber',
             key: 'TINNumber',
             sorter: (a, b) => a.TINNumber.localeCompare(b.TINNumber),
         },
         {
-            title: 'License Number',
+            title: 'License number',
             dataIndex: 'licenseNumber',
             key: 'licenseNumber',
             sorter: (a, b) => a.licenseNumber.localeCompare(b.licenseNumber),
         },
         {
-            title: 'phoneNumber',
+            title: 'Phone number',
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
             sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),
@@ -94,7 +95,7 @@ const SuppliersListPage = () => {
                                             <p>New minesite</p>
                                         </li>
                                         <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/supplier/${record._id}`) } }}>
-                                            <PiClipboardDuotone className=" text-xl" />
+                                            <BiSolidEditAlt className=" text-xl" />
                                             <p>Edit</p>
                                         </li>
 
@@ -102,7 +103,7 @@ const SuppliersListPage = () => {
                             </span>
 
                             <span>
-                                <PiTrashFill onClick={() => {
+                                <MdDelete onClick={() => {
                                     SetSelectedRow(record._id);
                                     setShowmodal(!showmodal);
                                 }} />

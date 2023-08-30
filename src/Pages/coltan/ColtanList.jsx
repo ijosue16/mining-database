@@ -106,7 +106,7 @@ let modalRef = useRef();
 
   const columns = [
     {
-      title: "supplyDate",
+      title: "Supply date",
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
@@ -119,7 +119,7 @@ let modalRef = useRef();
       },
     },
     {
-      title: "companyName",
+      title: "Company name",
       dataIndex: "companyName",
       key: "companyName",
       sorter: (a, b) => a.companyName.localeCompare(b.companyName),
@@ -137,7 +137,7 @@ let modalRef = useRef();
     //     sorter: (a, b) => a.TINNumber.localeCompare(b.TINNumber),
     // },
     {
-      title: "mineralType",
+      title: "Mineral type",
       dataIndex: "mineralType",
       key: "mineralType",
       sorter: (a, b) => a.mineralType.localeCompare(b.mineralType),

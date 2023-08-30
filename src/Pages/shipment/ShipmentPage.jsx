@@ -190,7 +190,7 @@ useEffect(()=>{
                     <li
                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
-                        edit(record);
+                        navigate(`/shipment/complete`)
                       }}
                     >
                       <RiFileEditFill className=" text-lg" />
@@ -445,6 +445,7 @@ useEffect(()=>{
                 <select
                   name="mineralType"
                   id="mineralType"
+                  autoComplete="off"
                   className="focus:outline-none p-2 border rounded-md w-full"
                   defaultValue="mintype"
                   onChange={handleSelect}

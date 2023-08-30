@@ -10,7 +10,7 @@ const EditSuplierPage = () => {
     const { supplierId } = useParams();
     const navigate = useNavigate();
     const { data, isLoading, isSuccess, isError } = useGetOneSupplierQuery({ supplierId });
-    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites:null, address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites:null, address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
     const [mineSites, SetMineSites] = useState([{ coordinates: { lat: '', long: '', }, name: '', code: '' }]);
     const [show, setShow] = useState(false);
     const [addressFields, setAddresField] = useState(false);
@@ -22,7 +22,7 @@ const EditSuplierPage = () => {
             const { data: dt } = data;
             const { supplier: sup } = dt;
             const { address: adr } = sup;
-            setFormval({ companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals, phoneNumber: sup.phoneNumber, address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters });
+            setFormval({ companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals, phoneNumber: sup.phoneNumber, address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters,companyRepresentative:sup.companyRepresentative });
             SetMineSites(sup.mineSites)
             console.log(sup);
         }
@@ -144,12 +144,12 @@ const EditSuplierPage = () => {
         const body = { ...formval,mineSites:mineSites };
         await updateSupplier({ body, supplierId });
         console.log(body);
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         SetMineSites([{ coordinates: { lat: '', long: '', }, name: '', code: '' }]);
         navigate(-1);
     }
     const handleCancel = () => {
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' })
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" })
     }
 
     return (
@@ -188,6 +188,12 @@ const EditSuplierPage = () => {
                                     <input type="text" name="phoneNumber" id="phoneNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.phoneNumber || ''} onChange={handleAddproduct} />
                                 </li>
                                 {/* ******* */}
+
+                                <li>
+                                <p className="mb-1">Company representative</p>
+                                <input type="text" name="companyRepresentative" id="companyRepresentative" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.companyRepresentative || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
 
                                 <li>
                                     <p className="mb-1">Type Of Minerals</p>

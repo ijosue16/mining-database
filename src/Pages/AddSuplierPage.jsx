@@ -7,7 +7,7 @@ import { HiPlus, HiMinus } from "react-icons/hi";
 
 const AddSuplierPage = () => {
     const navigate = useNavigate();
-    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
     const [mineSitesDetails, setmineSitesDetails] = useState([
         { coordinates: { lat: '', long: '', }, name: '', code: '' },
     ]);
@@ -100,13 +100,14 @@ const AddSuplierPage = () => {
         const body = { ...formval, mineSites: mineSitesDetails, typeOfMinerals: formval.typeOfMinerals.split(' ') };
         console.log(body)
         await createNewSupplier({ ...formval, body });
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
         navigate(-1);
     }
     const handleCancel = () => {
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '' });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
+        navigate(-1);
     }
     return (
         <div>
@@ -146,6 +147,12 @@ const AddSuplierPage = () => {
                             <li>
                                 <p className="mb-1">Phone Number</p>
                                 <input type="text" name="phoneNumber" id="phoneNumber" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.phoneNumber || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            
+                            <li>
+                                <p className="mb-1">Company representative</p>
+                                <input type="text" name="companyRepresentative" id="companyRepresentative" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.companyRepresentative || ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
 

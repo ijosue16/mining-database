@@ -380,16 +380,17 @@ const ColtanEntryCompletePage = () => {
                       </li>
                       <li>
                         <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                          Adress
+                          Entry details
                         </p>
-                        <p>Province:{suply.address?.province}</p>
-                        <p>District:{suply.address?.district}</p>
-                        <p>Sector:{suply.address?.sector}</p>
-                        <p>Phone Number:{suply.phoneNumber}</p>
+                        <p>Weight in: {suply?.weightIn}</p>
+                        <p>Mineral type: {suply?.mineralType}</p>
+                        <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p>
+                        <p>Number of tags: {suply?.numberOfTags}</p>
+                        <p>Beneficiary: {suply?.beneficiary}</p>
                       </li>
                       <li>
                         <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                          Additional
+                          Representative info
                         </p>
                         <p>Nbr of Digers:{suply.numberOfDiggers}</p>
                         <p>Nbr of washers:{suply.numberOfWashers}</p>
