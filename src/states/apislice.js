@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers'],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', "dd-reports"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -184,6 +184,23 @@ export const apiSlice = createApi({
         getOnePayment: builder.query({
             query: ({paymentId}) => `/payments/${paymentId}`,
             providesTags: ['payments']
+        }),
+        getAllAdvancePayments: builder.query({
+            query: () => `/advance-payment`,
+            providesTags: ["advance-payment", "payments", "entries"]
+        }),
+        addAdvancePayment: builder.mutation({
+            query: ({body}) => ({
+                url: "/advance-payment",
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ["advance-payment", "payments", "entries"]
+            // beneficiaryName, beneficiaryNationalId, phoneNumber, email, paymentAmount, currency, location, paymentDate, contractFile
+        }),
+        getOneAdvancePayment: builder.query({
+            query: (paymentId) => `/advance-payment/${paymentId}`,
+            providesTags: ["advance-payment", "payments", "entries"]
         }),
         getAllEntries: builder.query({
             query: () => `/entries`,
@@ -395,6 +412,10 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['shipments', 'buyers', "entries"]
         }),
+        getOneShipment: builder.query({
+            query: (shipmentId) => `/shipments/${shipmentId}`,
+            providesTags: ["shipments", "buyers", "entries"]
+        }),
         updateShipment: builder.mutation({
             query: ({body, shipmentId}) => ({
                 url: `/shipments/${shipmentId}`,
@@ -412,6 +433,10 @@ export const apiSlice = createApi({
                 },
             })
         }),
+        getFileStructure: builder.query({
+            query: () => `/file-structure`,
+            providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
+        })
     })
 });
 export const {
@@ -442,6 +467,9 @@ export const {
     useGetAllPaymentsQuery,
     useAddPaymentMutation,
     useGetOnePaymentQuery,
+    useGetAllAdvancePaymentsQuery,
+    useGetOneAdvancePaymentQuery,
+    useAddAdvancePaymentMutation,
     useGetAllEntriesQuery,
     useGetOneEntryQuery,
     useUpdateEntryMutation,
@@ -476,6 +504,7 @@ export const {
     useGetAllShipmentsQuery,
     useAddShipmentMutation,
     useUpdateShipmentMutation,
+    useGetOneShipmentQuery,
     useShipmentReportMutation,
-    useDetailedStockQuery
+    useDetailedStockQuery,
 } = apiSlice
