@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', "dd-reports"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', "dd-reports", "statistics", "settings"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -171,7 +171,7 @@ export const apiSlice = createApi({
         }),
         getAllPayments: builder.query({
             query: () => `/payments`,
-            providesTags: ['payments', 'entries']
+            providesTags: ['payments', 'entries', "statistics", "advance-payment"]
         }),
         addPayment: builder.mutation({
             query: ({body}) => ({
@@ -179,19 +179,19 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['payments']
+            invalidatesTags: ['payments', "statistics", "advance-payment"]
         }),
         getOnePayment: builder.query({
             query: ({paymentId}) => `/payments/${paymentId}`,
-            providesTags: ['payments']
+            providesTags: ['payments', "statistics", "advance-payment"]
         }),
         getAllAdvancePayments: builder.query({
             query: () => `/advance-payment`,
-            providesTags: ["advance-payment", "payments", "entries"]
+            providesTags: ["advance-payment", "payments", "entries", "statistics"]
         }),
         getAllAdvancePaymentsBySupplier: builder.query({
             query: () => `/advance-payment/${supplierId}`,
-            providesTags: ["advance-payment", "payments", "entries"]
+            providesTags: ["advance-payment", "payments", "entries", "statistics"]
         }),
         addAdvancePayment: builder.mutation({
             query: ({body}) => ({
@@ -199,12 +199,12 @@ export const apiSlice = createApi({
                 method: "POST",
                 body
             }),
-            invalidatesTags: ["advance-payment", "payments", "entries"]
+            invalidatesTags: ["advance-payment", "payments", "entries", "statistics"]
             // beneficiaryName, beneficiaryNationalId, phoneNumber, email, paymentAmount, currency, location, paymentDate, contractFile supplierId
         }),
         getOneAdvancePayment: builder.query({
             query: (paymentId) => `/advance-payment/${paymentId}`,
-            providesTags: ["advance-payment", "payments", "entries"]
+            providesTags: ["advance-payment", "payments", "entries", "statistics"]
         }),
         getAllEntries: builder.query({
             query: () => `/entries`,
@@ -437,6 +437,10 @@ export const apiSlice = createApi({
                 },
             })
         }),
+        getPaymentHistory: builder.query({
+            query: ({entryId, model, lotNumber}) => `/stock/payment-history/${model}/${entryId}/${lotNumber}`,
+            providesTags: ["payments", "advance-payment", "statistics"]
+        }),
         getFileStructure: builder.query({
             query: () => `/file-structure`,
             providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
@@ -510,5 +514,6 @@ export const {
     useUpdateShipmentMutation,
     useGetOneShipmentQuery,
     useShipmentReportMutation,
+    useGetPaymentHistoryQuery,
     useDetailedStockQuery,
 } = apiSlice
