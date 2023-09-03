@@ -8,7 +8,7 @@ import { BsCardList } from "react-icons/bs"
 import { HiOutlinePrinter } from "react-icons/hi"
 import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
 import { useGetAllSuppliersQuery, useDeleteSupplierMutation } from "../states/apislice";
-import { useMyContext } from "../context files/MycontextProvider";
+import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 
 const SuppliersListPage = () => {

@@ -20,7 +20,7 @@ import DefaultPages from './Pages/DefaultPages';
 import EditUserPage from './Pages/EditUserPage';
 import StoreKeeperData from './Pages/TransactionEntry';
 import TrecabilityData from './Pages/TrecabilityData';
-import MyContextProvider from './context files/MycontextProvider';
+import LoginDatacontextProvider from './context files/LoginDatacontextProvider';
 import ContractsistPage from './Pages/ContractListPage';
 import BuyersListPage from './Pages/BuyersListPage';
 import AddBuyerPage from './Pages/AddBuyerPage';
@@ -59,6 +59,10 @@ import ResizableHandles from './test elements/Dragablecontainer';
 import UserProfilePage from './Pages/UserProfilePage';
 import ShipmentPage from './Pages/shipment/ShipmentPage';
 import ShipmentCompletionPage from './Pages/shipment/ShipmentCompletionPage';
+import FilesytemManger from './test elements/FilesytemManager';
+import Appis from './test elements/FilesytemManager';
+import FileExplorerApp from './test elements/FileExplore';
+import FilesytemMangerSample from './test elements/FileExploreSample2';
 
 
 
@@ -71,7 +75,7 @@ function App() {
     <BrowserRouter>
     <Routes>
     <Route  element={<Layout/>}>
-      <Route element={<MyContextProvider/>}>
+      <Route element={<LoginDatacontextProvider/>}>
       
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/coltan/payment/:entryId' element={<ColtanPaymentsPage/>}/>
@@ -79,6 +83,9 @@ function App() {
     <Route  path='/shipments' element={<ShipmentPage/>}/>
     <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
     <Route  path='/payment' element={<ColtanPaymentsPage/>}/>
+    <Route  path='/dummy' element={<DummyPage/>}/>
+    <Route  path='/dummy2' element={<FileExplorerApp/>}/>
+    <Route  path='/dummy3' element={<FilesytemMangerSample/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
     <Route  path='/cassiterite' element={<ProductsList/>}/>
