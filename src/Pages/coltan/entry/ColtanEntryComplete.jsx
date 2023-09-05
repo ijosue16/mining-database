@@ -162,6 +162,7 @@ const ColtanEntryCompletePage = () => {
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
+
         {
             title: "paid",
             dataIndex: "paid",
@@ -175,6 +176,13 @@ const ColtanEntryCompletePage = () => {
             key: "unpaid",
             editTable: true,
             sorter: (a, b) => a.unpaid - b.unpaid,
+        },
+        {
+            title: "Tantal",
+            dataIndex: "tantalum",
+            key: "tantalum",
+            editTable: true,
+            sorter: (a, b) => a.tantalum - b.tantalum,
         },
         {
             title: "Grade",
