@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import { Spin, Table, Form, Input, Button, Modal, DatePicker } from 'antd';
+import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
-import { useGetOneColtanEntryQuery } from "../../../states/apislice";
+import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation } from "../../../states/apislice";
 // import AddComponent from "../../../components/Actions components/AddComponent";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri"
 import { PiDotsThreeVerticalBold } from "react-icons/pi"
@@ -17,12 +18,14 @@ import { IoAdd } from "react-icons/io5";
 
 
 const ColtanPaymentsPage = () => {
-    const { entryId } = useParams();
+    const { entryId, model, lotNumber} = useParams();
+    const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber});
+    const [addPayment, {isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()
     const{data,isLoading,isSuccess,isError,error}=useGetOneColtanEntryQuery({entryId});
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
-    const [payment, setPayement] = useState({ date: '', beneficiary: '', amount: '' });
+    const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, currency: "" });
     const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
     const [suply, setSuply] = useState([]);
     const [lotInfo, setLotInfo] = useState(null);
@@ -30,9 +33,24 @@ const ColtanPaymentsPage = () => {
     const [editRowKey, setEditRowKey] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
+    let paymentHistory = [];
+    if (isPaymentHistoryReady) {
+        console.log('-----------------------------------------------------------');
+        console.log(paymentHistoryData.data);
+        const { lotPaymentHistory } = paymentHistoryData.data;
+        paymentHistory = lotPaymentHistory;
+    }
+
+    useEffect(() => {
+        if (isPaymentSuccess) {
+            toast.success("Payment Completed Successfully");
+        } else if (isPaymentError) {
+            const { message } = paymentError.data;
+            toast.error(message);
+        }
+    }, [isPaymentError, isPaymentSuccess, paymentError]);
 
     if(isSuccess){
-       
         const{data:dt}=data;
         const{entry:entr}=dt;
         const{output:pt}=entr;
@@ -40,12 +58,12 @@ const ColtanPaymentsPage = () => {
         console.log(pHist);
     }
     const columns = [
-        {
-            title: '#',
-            dataIndex: 'lotNumber',
-            key: 'lotNumber',
-            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
-        },
+        // {
+        //     title: '#',
+        //     dataIndex: 'lotNumber',
+        //     key: 'lotNumber',
+        //     sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
+        // },
         {
             title: 'date',
             dataIndex: 'paymentDate',
@@ -60,14 +78,6 @@ const ColtanPaymentsPage = () => {
             }
         },
         {
-            title: 'payment amount',
-            dataIndex: 'paymentAmount',
-            key: 'paymentAmount',
-            editTable: true,
-
-            sorter: (a, b) => a.paymentAmount- b.paymentAmount,
-        },
-        {
             title: 'beneficiary',
             dataIndex: 'beneficiary',
             key: 'beneficiary',
@@ -75,10 +85,24 @@ const ColtanPaymentsPage = () => {
             sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
         },
         {
-            title: 'phoneNumber',
+            title: 'Phone number',
             dataIndex: 'phoneNumber',
             key: 'phoneNumber',
             sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),
+        },
+        {
+            title: 'location',
+            dataIndex: 'location',
+            key: 'location',
+            sorter: (a, b) => a.location.localeCompare(b.location),
+        },
+        {
+            title: 'payment amount',
+            dataIndex: 'paymentAmount',
+            key: 'paymentAmount',
+            editTable: true,
+
+            sorter: (a, b) => a.paymentAmount- b.paymentAmount,
         },
         {
             title: 'currency',
@@ -173,22 +197,28 @@ const ColtanPaymentsPage = () => {
     const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
         cumulativeAmount: 40, exportedAmount: 0, id: "64ca67b1492ba72b23596c5a", lotNumber: 2, paid: 120000, rmaFee: 5000, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 40, _id: "64ca67b1492ba72b23596c5a",
     }];
-    const total = testInfo.reduce((total, obj) => total + obj.cumulativeAmount, 0);
+    // totals
+    const total = paymentHistory.reduce((total, obj) => total + obj.paymentAmount, 0);
     const handlePayment = (e) => {
         setPayement((prevpay) => ({ ...prevpay, [e.target.name]: e.target.value }));
     };
 
 
     const handleAddDate = (e) => {
-        setPayement((prevpay) => ({ ...prevpay, date: dayjs(e).format('MMM/DD/YYYY') }));
+        setPayement((prevpay) => ({ ...prevpay, paymentDate: dayjs(e).format('MMM/DD/YYYY') }));
     };
     const handleCancel = () => {
-        setPayement({ date: '', beneficiary: '', amount: '' });
+        setPayement({beneficiary: '', paymentAmount: null, location: "", phoneNumber: "", paymentDate: "", currency: ""});
     };
 
-    const handlePaymentSubmit = (e) => {
+    const handlePaymentSubmit = async (e) => {
         e.preventDefault();
-        console.log(payment);
+        const body = {...payment, entryId, lotNumber, model};
+        await addPayment({body});
+        console.log('after payment');
+        console.log(body);
+        handleCancel();
+        handleShowForm();
     };
 
     const handleShowForm = () => {
@@ -205,7 +235,7 @@ const ColtanPaymentsPage = () => {
                     <>
 
                         <div className="w-full space-y-4">
-                            <p className=" font-bold text-lg">Total Amount: 750,000</p>
+                            {/*<p className=" font-bold text-lg">Total Amount: 750,000</p>*/}
                             <div className="flex gap-2 items-center pb-9">
                                 <GrHistory />
                                 <p className=" text-lg font-semibold">Payments history</p>
@@ -225,9 +255,9 @@ const ColtanPaymentsPage = () => {
                                 </div>
                                 <Table className=" overflow-x-auto"
                                     columns={columns}
-                                    dataSource={testInfo}
+                                    dataSource={paymentHistory}
                                     pagination={false}
-                                    rowKey={"lotNumber"} />
+                                    rowKey="paymentId" />
                             </span>
                             <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
                                 <p className=" font-semibold text-lg">Sum(Paid):</p>
@@ -244,7 +274,7 @@ const ColtanPaymentsPage = () => {
                                {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2 bg-slate-50 p-2 shadow-lg shadow-zinc-200">
                                     <span className=" space-y-1">
                                         <p className="pl-1">Date</p>
-                                        <DatePicker value={payment.date ? dayjs(payment.date) : ''} onChange={handleAddDate} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                        <DatePicker value={payment.paymentDate ? dayjs(payment.paymentDate) : ''} onChange={handleAddDate} id="paymentDate" name="paymentDate" className=" focus:outline-none p-2 border rounded-md w-full" />
                                     </span>
                                     <span className=" space-y-1">
                                         <p className="pl-1">Beneficiary</p>
@@ -252,7 +282,19 @@ const ColtanPaymentsPage = () => {
                                     </span>
                                     <span className=" space-y-1">
                                         <p className="pl-1">Amount</p>
-                                        <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="amount" id="amount" value={payment.amount || ''} onWheelCapture={e => { e.target.blur() }} onChange={handlePayment} />
+                                        <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="paymentAmount" id="paymentAmount" value={payment.paymentAmount || ''} onWheelCapture={e => { e.target.blur() }} onChange={handlePayment} />
+                                    </span>
+                                   <span className=" space-y-1">
+                                        <p className="pl-1">Location</p>
+                                        <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="location" id="location" value={payment.location || ''} onChange={handlePayment} />
+                                    </span>
+                                   <span className=" space-y-1">
+                                        <p className="pl-1">Phone number</p>
+                                        <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={payment.phoneNumber || ''} onChange={handlePayment} />
+                                    </span>
+                                   <span className=" space-y-1">
+                                        <p className="pl-1">Currency</p>
+                                        <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="currency" id="currency" value={payment.currency || ''} onChange={handlePayment} />
                                     </span>
                                     <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
                                         <button type="submit" className="flex gap-2 bg-slate-300 rounded-md items-end p-2 justify-center">

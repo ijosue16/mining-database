@@ -63,6 +63,8 @@ import FilesytemManger from './test elements/FilesytemManager';
 import Appis from './test elements/FilesytemManager';
 import FileExplorerApp from './test elements/FileExplore';
 import FilesytemMangerSample from './test elements/FileExploreSample2';
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
 
 
@@ -73,13 +75,17 @@ function App() {
   return (
     <>
     <BrowserRouter>
+      <ToastContainer
+          pauseOnHover
+          autoClose={3000}
+      />
     <Routes>
     <Route element={<LoginDatacontextProvider/>}>
     <Route  element={<Layout/>}>
      
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/coltan/payment/:entryId' element={<ColtanPaymentsPage/>}/>
+    <Route  path='/coltan/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
     <Route  path='/shipment/add/:model' element={<StockPage/>}/>
     <Route  path='/shipments' element={<ShipmentPage/>}/>
     <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
