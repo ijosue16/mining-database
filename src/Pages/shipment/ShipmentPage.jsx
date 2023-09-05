@@ -40,6 +40,7 @@ const ShipmentPage = () => {
         if (isSuccess) {
             const {data: dt} = data;
             const {shipments: ships} = dt;
+            console.log('-----------------------------------------------------');
             console.log(ships);
             SetDataz(ships);
         }
@@ -116,7 +117,7 @@ const ShipmentPage = () => {
         //     },
         // },
         {
-            title: "model",
+            title: "Mineral type",
             dataIndex: "model",
             key: "model",
             sorter: (a, b) => a.model.localeCompare(b.model),
