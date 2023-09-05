@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../states/apislice";
 import { setAuthToken, setUserData, setPermissions } from "../states/slice";
 import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+
 
 
 const LoginPage=()=>{
@@ -14,22 +16,27 @@ const LoginPage=()=>{
     const dispatch = useDispatch();
     useEffect(() => {
         if (isSuccess) {
-            console.log('Logged in successfully');
+            toast.success("Logged in Successfully");
         } else if (isError) {
-            console.log(error);
+            const { message } = error.data;
+            toast.error(message);
         }
     }, [isSuccess, isError, error]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const response = await login({body: user});
-        if (response) {
+        if (response.data) {
             const { token } = response.data;
             const { user } = response.data.data;
             dispatch(setAuthToken(token));
             dispatch(setUserData(user));
             dispatch(setPermissions(user.permissions));
+            localStorage.setItem('profile', JSON.stringify(user));
+            localStorage.setItem('role', user.role);
         }
     };
+
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
