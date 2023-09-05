@@ -136,7 +136,7 @@ const ColtanEntryCompletePage = () => {
       },
     },
     {
-      title: "weightOut",
+      title: "weight out",
       dataIndex: "weightOut",
       key: "weightOut",
       editTable: true,
@@ -144,20 +144,20 @@ const ColtanEntryCompletePage = () => {
       sorter: (a, b) => a.weightOut - b.weightOut,
     },
     {
-      title: "paid",
+      title: "Paid",
       dataIndex: "paid",
       key: "paid",
       editTable: true,
       sorter: (a, b) => a.paid - b.paid,
     },
     {
-      title: "cummulative A",
+      title: "Cummulative A",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
       sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
     },
     {
-      title: "rmaFee",
+      title: "rma Fee",
       dataIndex: "rmaFee",
       key: "rmaFee",
       editTable: true,
@@ -217,9 +217,9 @@ const ColtanEntryCompletePage = () => {
         const editable = isEditing(record);
         return (
           <>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
 {editable ?  null:<>
-  <span className="relative">
+  {/* <span className="relative">
                 <PiDotsThreeVerticalBold
                   className=" text-xl"
                   onClick={() => handleActions(record._id)}
@@ -253,7 +253,7 @@ const ColtanEntryCompletePage = () => {
                       <BiSolidEditAlt className=" text-lg" />
                       <p>edit</p>
                     </li>
-                    {/* <li
+                    <li
                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
                         {
@@ -263,7 +263,7 @@ const ColtanEntryCompletePage = () => {
                     >
                       <RiFileEditFill className=" text-lg" />
                       <p>complete entry</p>
-                    </li> */}
+                    </li>
                     <li
                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                       onClick={() => setShowPayModel(true)}
@@ -273,7 +273,7 @@ const ColtanEntryCompletePage = () => {
                     </li>
                   </motion.ul>
                 )}
-              </span>
+              </span> */}
 
               <MdPayments
                 className=" text-xl"
@@ -364,7 +364,7 @@ const ColtanEntryCompletePage = () => {
                 ) : (
                   <div className="flex flex-col gap-3 w-full">
                     <div className="w-full bg-slate-50 grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                      <p className=" font-semibold">supplier details</p>
+                      <p className=" font-semibold">Entry details</p>
                      
                     </div>
 
@@ -375,7 +375,7 @@ const ColtanEntryCompletePage = () => {
                         </p>
                         <p>Weight in: {suply?.weightIn}</p>
                         <p>Mineral type: {suply?.mineralType}</p>
-                        <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p>
+                        {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
                         <p>Number of tags: {suply?.numberOfTags}</p>
                         <p>Beneficiary: {suply?.beneficiary}</p>
                       </li>

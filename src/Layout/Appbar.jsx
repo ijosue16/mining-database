@@ -1,10 +1,27 @@
-import React, { useState } from "react";
+import React, { useState,useRef,useEffect,useMemo } from "react";
 import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
 import { FiChevronsLeft, } from "react-icons/fi"
 
-const Appbar = ({ userSubmenu, handleUserSubmenu,handleUserSubmenuMobile,userSubmenuMobile }) => {
+const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userMenu, setUserMenu] = useState(false);
+    const [userSubmenu, setUserSubmenu] = useState(false);
+    let modalRef = useRef();
+  const handleClickOutside = useMemo(
+    () => (event) => {
+      if (!modalRef.current.contains(event.target)) {
+        setUserSubmenu(false);
+      }
+    },
+    [userMenu]
+  );
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [handleClickOutside]);
 
     return (
         <>
@@ -35,7 +52,7 @@ const Appbar = ({ userSubmenu, handleUserSubmenu,handleUserSubmenuMobile,userSub
                         </li>
 
 
-                        <li className="flex space-x-3 items-center"  >
+                        <li className="flex space-x-3 items-center">
                             <span className="flex-none flex justify-center">
                                 <div className="w-8 h-8 flex ">
                                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShta_GXR2xdnsxSzj_GTcJHcNykjVKrCBrZ9qouUl0usuJWG2Rpr_PbTDu3sA9auNUH64&usqp=CAU" alt="profile" className="shadow rounded-full object-cover" />
@@ -43,9 +60,9 @@ const Appbar = ({ userSubmenu, handleUserSubmenu,handleUserSubmenuMobile,userSub
                             </span>
 
                             <p className="hidden md:block text-sm md:text-md text-black dark:text-white">John Doe</p>
-                            <PiCaretRightLight className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={handleUserSubmenu} />
+                            <PiCaretRightLight  className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={()=>{setUserSubmenu(!userSubmenu)}} />
                         </li>
-                        <div className={` absolute right-6 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`}>
+                        <div className={` absolute right-6 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`} ref={modalRef}>
 
                             <div className=" flex gap-2 items-center py-2">
                                 <img className=" w-[36px] h-[36px] object-cover rounded" src="https://img.freepik.com/free-icon/boy_318-858292.jpg" alt="user profile" />

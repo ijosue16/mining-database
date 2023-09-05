@@ -95,26 +95,26 @@ const ShipmentPage = () => {
             key: "averageGrade",
             sorter: (a, b) => a.averageGrade - b.averageGrade,
         },
-        {
-            title: "status",
-            dataIndex: "status",
-            key: "status",
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            render: (text) => {
-                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color =
-                    text === "in stock"
-                        ? "bg-green-500"
-                        : text === "ordered"
-                        ? "bg-amber-500"
-                        : "bg-red-500";
-                return (
-                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
-                        {text}
-                    </p>
-                );
-            },
-        },
+        // {
+        //     title: "status",
+        //     dataIndex: "status",
+        //     key: "status",
+        //     sorter: (a, b) => a.status.localeCompare(b.status),
+        //     render: (text) => {
+        //         // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
+        //         let color =
+        //             text === "in stock"
+        //                 ? "bg-green-500"
+        //                 : text === "ordered"
+        //                 ? "bg-amber-500"
+        //                 : "bg-red-500";
+        //         return (
+        //             <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
+        //                 {text}
+        //             </p>
+        //         );
+        //     },
+        // },
         {
             title: "model",
             dataIndex: "model",

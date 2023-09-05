@@ -161,24 +161,26 @@ const StockPage = () => {
 
     console.log(newData);
   };
-
+   const handleshipmentNumber=(e)=>{
+    console.log(e.target.value)
+   }
   const columns = [
     {
-      title: "supplyDate",
+      title: "Supply date",
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
     },
-    { title: "supplierName", dataIndex: "supplierName", key: "supplierName" },
+    { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
     {
-      title: "cumulativeAmount",
+      title: "Cumulative amount",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
       editTable: true,
     },
     {
-      title: "mineralGrade",
+      title: "Mineral grade",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
     },
@@ -231,20 +233,20 @@ const StockPage = () => {
 
   const columns2 = [
     {
-      title: "supplyDate",
+      title: "Supply date",
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
     },
-    { title: "supplierName", dataIndex: "supplierName", key: "supplierName" },
+    { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
     {
-      title: "cumulativeAmount",
+      title: "Cumulative amount",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
     },
     {
-      title: "mineralGrade",
+      title: "Mineral grade",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
     },
@@ -437,20 +439,25 @@ const StockPage = () => {
                     />
                   </Form>
 
-                  <div className="w-full flex flex-col items-end bg-white rounded-md p-2 space-y-2">
-                    <span className="flex gap-1 items-center md:w-1/2 justify-end">
-                      <p className=" font-semibold">Weight:</p>
-                      <p className=" font-medium">{totalWeight} Kgs</p>
+                  <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+                    <span className="grid grid-cols-2 items-center justify-between w-full md:w-1/2  rounded-sm">
+                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Weight (Kgs):</p>
+                      <p className=" font-medium col-span-1 p-2 w-full border ">{totalWeight}</p>
                     </span>
-                    <span className="flex gap-1 items-center md:w-1/2 justify-end border-b-2">
-                      <p className=" font-semibold">Avg:</p>
-                      <p className=" font-medium">{avg}</p>
+                    <span className="flex items-center justify-between w-full md:w-1/2  rounded-sm">
+                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Avg:</p>
+                      <p className=" font-medium p-2 border sm:border-t-0 w-1/2 h-full">{avg}</p>
                     </span>
-                    <span className="flex gap-1 items-center md:w-1/2 justify-end">
-                      <p className=" font-semibold">Total:</p>
-                      <p className=" font-medium">{avgPrice}$</p>
+                    <span className="flex items-center justify-between w-full md:w-1/2  rounded-sm">
+                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Total ($):</p>
+                      <p className=" font-medium p-2 border sm:border-t-0 w-1/2 h-full">{avgPrice}</p>
                     </span>
+                    
                   </div>
+                      <div className="w-full space-y-2">
+                      <p className=" font-semibold">Shipment number</p>
+                  <input type="text" name="shipmentNbr" id="" className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleshipmentNumber}/>
+                      </div>
                   <button
                     className=" bg-orange-500 text-white py-2 px-4 rounded-md"
                     onClick={() => {

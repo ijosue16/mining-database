@@ -234,14 +234,14 @@ const ColtanPaymentsPage = () => {
                                 <p>{total}</p>
                             </div>
 
-                            <div className="w-full space-y-2">
+                            <div className="w-full space-y-6">
                                 <button type="button" className="flex gap-2 bg-slate-300 rounded-md items-end justify-center p-2" onClick={handleShowForm} >
                                     <IoAdd className=" text-xl" />
                                     <p className="">Add payment</p>
                                 </button>
 
 
-                               {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2">
+                               {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2 bg-slate-50 p-2 shadow-lg shadow-zinc-200">
                                     <span className=" space-y-1">
                                         <p className="pl-1">Date</p>
                                         <DatePicker value={payment.date ? dayjs(payment.date) : ''} onChange={handleAddDate} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />

@@ -74,8 +74,9 @@ function App() {
     <>
     <BrowserRouter>
     <Routes>
+    <Route element={<LoginDatacontextProvider/>}>
     <Route  element={<Layout/>}>
-      <Route element={<LoginDatacontextProvider/>}>
+     
       
     <Route  path='*' element={<DefaultPages/>}/>
     <Route  path='/coltan/payment/:entryId' element={<ColtanPaymentsPage/>}/>

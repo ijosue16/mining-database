@@ -26,35 +26,35 @@ const Layout = () => {
     const menu = [
         {
             heading: "Main", hId: 1, subHeaders: [
-                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 2 },
+                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10 },
                 {
-                    title: "Application", id: 3, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
+                    title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
                     submenuItems: [
-                        { title: "Chat", id: 4 },
-                        { title: "Calender", id: 5 },
-                        { title: "Email", id: 6 }], line: true
+                        { title: "Chat", id: 12 },
+                        { title: "Calender", id: 13 },
+                        { title: "Email", id: 14 }], line: true
                 }
             ]
         },
         {
-            heading: "Entry", hId: 7, subHeaders: [
-                { title: "Coltan", icon: <PiCubeDuotone />, id: 8,navtext:'coltan' },
-                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 9,navtext:'cassiterite' },
-                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 10,navtext:'wolframite' },
-                { title: "Lithium", icon: <PiTagDuotone />, id: 11,navtext:'lithium' },
-                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 12,navtext:'beryllium' },
-                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 13,navtext:'mixed' },
-                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 14,navtext:'special' },]
+            heading: "Entry", hId:2 , subHeaders: [
+                { title: "Coltan", icon: <PiCubeDuotone />, id: 15,navtext:'coltan' },
+                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 16,navtext:'cassiterite' },
+                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 17,navtext:'wolframite' },
+                { title: "Lithium", icon: <PiTagDuotone />, id: 18,navtext:'lithium' },
+                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 19,navtext:'beryllium' },
+                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 20,navtext:'mixed' },
+                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },]
         },
         {
-            heading: "Shipments", hId: 15, subHeaders: [
-                { title: "Shipments list", icon: <PiShoppingCartSimpleDuotone />, id: 16,navtext:"shipments",},
-                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 17,navtext:"",submenuItems: [
-                    { title: "Coltan", id: 60,navtext:"shipment/add/coltan" },
-                    { title: "Cassiterite", id: 61,navtext:"shipment/add/cassiterite" },
-                    { title: "Wolframite", id: 62,navtext:"shipment/add/wolframite" },
-                    { title: "Lithium", id: 63,navtext:"shipment/add/lithium" },
-                    { title: "Beryllium", id: 64,navtext:"shipment/add/beryllium" }
+            heading: "Shipments", hId: 3, subHeaders: [
+                { title: "Shipments list", icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
+                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 23,navtext:"",submenuItems: [
+                    { title: "Coltan", id: 24,navtext:"shipment/add/coltan" },
+                    { title: "Cassiterite", id: 25,navtext:"shipment/add/cassiterite" },
+                    { title: "Wolframite", id: 26,navtext:"shipment/add/wolframite" },
+                    { title: "Lithium", id: 27,navtext:"shipment/add/lithium" },
+                    { title: "Beryllium", id: 28,navtext:"shipment/add/beryllium" }
                 ],line: true },
                 // { title: "Sales Return", icon: <PiFilesDuotone />, id: 18,navtext:"" },
                 // { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19,navtext:"" },
@@ -65,60 +65,60 @@ const Layout = () => {
                 //     ]
                 // },
                 {
-                    title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 58, submenuItems: [
-                        { title: "Sales Return", id: 22 },
-                        { title: "Purchases Return", id: 23 }
+                    title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 29, submenuItems: [
+                        { title: "Sales Return", id: 30 },
+                        { title: "Purchases Return", id: 31 }
                     ], line: true
                 }
             ]
         },
 
         {
-            heading: "Suppliers", hId: 24, subHeaders: [
-                { title: "Suppliers List", icon: <PiUsersDuotone />, id: 25,navtext:"suppliers" },
-                { title: "Add", icon: <PiUserPlusDuotone />, id: 26,navtext:"add/supplier", line: true, },
+            heading: "Suppliers", hId: 4, subHeaders: [
+                { title: "Suppliers List", icon: <PiUsersDuotone />, id: 32,navtext:"suppliers" },
+                { title: "Add", icon: <PiUserPlusDuotone />, id: 33,navtext:"add/supplier", line: true, },
                 // { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27,navtext:"" },
                 // { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28,navtext:"" },
             ]
         },
         {
-            heading: "Finance & acconts", hId: 29, subHeaders: [
+            heading: "Finance & acconts", hId: 5, subHeaders: [
                 {
                     title: "Expenses", icon: <PiFileTextDuotone />, submenu: true, submenuItems: [
-                        { title: "Expenses", id: 30 },
-                        { title: "Expenses Category", id: 31 }
+                        { title: "Expenses", id: 34 },
+                        { title: "Expenses Category", id: 35 }
                     ], line: true
                 }]
         },
         {
-            heading: "Peoples", hId: 32, subHeaders: [
-                { title: "Customers", icon: <PiUserDuotone />, id: 33 },
-                { title: "Suppliers", icon: <PiUsersDuotone />, id: 34 },
-                { title: "Users", icon: <PiUserDuotone />, id: 35 },
-                { title: "Stores", icon: <PiHouseDuotone />, line: true, id: 36 },
+            heading: "Peoples", hId: 6, subHeaders: [
+                { title: "Customers", icon: <PiUserDuotone />, id: 36 },
+                { title: "Suppliers", icon: <PiUsersDuotone />, id: 37 },
+                { title: "Users", icon: <PiUserDuotone />, id: 38, navtext:'users' },
+                { title: "Stores", icon: <PiHouseDuotone />, line: true, id: 39 },
             ]
         },
         {
-            heading: "Reports", hId: 37, subHeaders: [
-                { title: "Sales Report", icon: <LuBarChart2 />, id: 38 },
-                { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 39 },
-                { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 40 },
-                { title: "Invoice Report", icon: <PiFileDuotone />, id: 41 },
-                { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 42 },
-                { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 43 }
+            heading: "Reports", hId: 7, subHeaders: [
+                { title: "Sales Report", icon: <LuBarChart2 />, id: 40 },
+                { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
+                { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
+                { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
+                { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
+                { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
             ]
         },
         {
-            heading: "User Management", hId: 44, subHeaders: [
+            heading: "User Management", hId: 8, subHeaders: [
                 {
-                    title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 45, submenuItems: [
-                        { title: "New User", id: 46 },
-                        { title: "Users List", id: 47 }
+                    title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 46, submenuItems: [
+                        { title: "New User", id: 47 },
+                        { title: "Users List", id: 48 }
                     ], line: true
                 },]
         },
         {
-            heading: "Settings", hId: 48, subHeaders: [
+            heading: "Settings", hId: 9, subHeaders: [
                 {
                     title: "Settings", icon: <PiGearDuotone />, submenu: true, id: 49, submenuItems: [
                         { title: "General Settings", id: 50 },
@@ -145,7 +145,7 @@ const Layout = () => {
             }
         },
         ceo: {
-            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48],
+            allowedSections: [1, 2,3,4,5,6,7,8,9],
             restrictedItems: {
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
                 // Add more restricted items for specific sections as needed
@@ -187,7 +187,7 @@ const Layout = () => {
                 {/* App bar */}
                 <Appbar userSubmenu={userSubmenu}
                 userSubmenuMobile={userSubmenuMobile}
-                    handleUserSubmenu={handleUserSubmenu}
+                    // handleUserSubmenu={handleUserSubmenu}
                     handleUserSubmenuMobile={handleUserSubmenuMobile} />
 
                 {/* side bar */}
