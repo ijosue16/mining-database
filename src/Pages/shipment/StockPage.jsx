@@ -174,13 +174,25 @@ const StockPage = () => {
     },
     { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
     {
-      title: "Cumulative amount",
+      title: "balance (KG)",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
       editTable: true,
     },
     {
-      title: "Mineral grade",
+      title: "weight out (KG)",
+      dataIndex: "weightOut",
+      key: "weightOut",
+      editTable: true,
+    },
+    {
+      title: "Exported (KG)",
+      dataIndex: "exportedAmount",
+      key: "exportedAmount",
+      editTable: true,
+    },
+    {
+      title: "Grade (%)",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
     },
@@ -233,6 +245,11 @@ const StockPage = () => {
 
   const columns2 = [
     {
+      title: "Lot number",
+      dataIndex: "lotNumber",
+      key: "lotNumber",
+    },
+    {
       title: "Supply date",
       dataIndex: "supplyDate",
       key: "supplyDate",
@@ -241,12 +258,30 @@ const StockPage = () => {
     },
     { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
     {
-      title: "Cumulative amount",
-      dataIndex: "cumulativeAmount",
-      key: "cumulativeAmount",
+      title: "Beneficiary",
+      dataIndex: "beneficiary",
+      key: "beneficiary",
     },
     {
-      title: "Mineral grade",
+      title: "weight out (KG)",
+      dataIndex: "weightOut",
+      key: "weightOut",
+      editTable: true,
+    },
+    {
+      title: "Exported (KG)",
+      dataIndex: "exportedAmount",
+      key: "exportedAmount",
+      editTable: true,
+    },
+    {
+      title: "balance (KG)",
+      dataIndex: "cumulativeAmount",
+      key: "cumulativeAmount",
+      editTable: true,
+    },
+    {
+      title: "Grade (%)",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
     },

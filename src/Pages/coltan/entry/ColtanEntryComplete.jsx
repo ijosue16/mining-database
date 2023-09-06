@@ -8,8 +8,9 @@ import { BiSolidEditAlt } from "react-icons/bi";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri";
 import { FaSave } from "react-icons/fa";
+import { toast} from "react-toastify";
 import { MdOutlineClose, MdPayments } from "react-icons/md";
-import { useGetOneColtanEntryQuery } from "../../../states/apislice";
+import { useGetOneColtanEntryQuery , useUpdateColtanEntryMutation} from "../../../states/apislice";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMyContext } from "../../../context files/LoginDatacontextProvider";
 
@@ -21,6 +22,15 @@ const ColtanEntryCompletePage = () => {
   const [selectedLotNumber, setSelectedLotNumber] = useState(null);
   const { data, isLoading, isError, isSuccess, error } =
     useGetOneColtanEntryQuery({ entryId });
+    const [ updateColtanEntry, { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError}] = useUpdateColtanEntryMutation();
+    useEffect( () => {
+        if (isUpdateSuccess) {
+            toast.success("Entry updated successfully");
+        } else if (isUpdateError) {
+            const { message } = updateError.data;
+            toast.error(message);
+        }
+    }, [isUpdateError, isUpdateSuccess, updateError]);
   const [formval, setFormval] = useState({
     lat: "",
     long: "",
@@ -68,6 +78,7 @@ const ColtanEntryCompletePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...suply, output: lotInfo };
+        await updateColtanEntry({body, entryId});
     // await updateBuyer({ body, buyerId });
     // console.log(suply);
     console.log(lotInfo);
@@ -111,101 +122,101 @@ const ColtanEntryCompletePage = () => {
     SetSelectedRow(id);
   };
 
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "lotNumber",
-      key: "lotNumber",
-      sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
-    },
-    {
-      title: "Date",
-      dataIndex: "supplyDate",
-      key: "supplyDate",
-      sorter: (a, b) => a.supplyDate - b.supplyDate,
-      render: (text) => {
-        return (
-          <>
-            <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-          </>
-        );
-      },
-    },
-    {
-      title: "weight out",
-      dataIndex: "weightOut",
-      key: "weightOut",
-      editTable: true,
+    const columns = [
+        {
+            title: "#",
+            dataIndex: "lotNumber",
+            key: "lotNumber",
+            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
+        },
+        {
+            title: "Date",
+            dataIndex: "supplyDate",
+            key: "supplyDate",
+            sorter: (a, b) => a.supplyDate - b.supplyDate,
+            render: (text) => {
+                return (
+                    <>
+                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+                    </>
+                );
+            },
+        },
+        {
+            title: "weight out (KG)",
+            dataIndex: "weightOut",
+            key: "weightOut",
+            editTable: true,
 
-      sorter: (a, b) => a.weightOut - b.weightOut,
-    },
-    // {
-    //   title: "Paid",
-    //   dataIndex: "paid",
-    //   key: "paid",
-    //   editTable: true,
-    //   sorter: (a, b) => a.paid - b.paid,
-    // },
-    // {
-    //   title: "Cummulative A",
-    //   dataIndex: "cumulativeAmount",
-    //   key: "cumulativeAmount",
-    //   sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-    // },
-    // {
-    //   title: "rma Fee",
-    //   dataIndex: "rmaFee",
-    //   key: "rmaFee",
-    //   editTable: true,
-    //         sorter: (a, b) => a.weightOut - b.weightOut,
-    //     },
-    {
-      title: "balance",
-      dataIndex: "cumulativeAmount",
-      key: "cumulativeAmount",
-      sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-    },
+            sorter: (a, b) => a.weightOut - b.weightOut,
+        },
+        // {
+        //   title: "Paid",
+        //   dataIndex: "paid",
+        //   key: "paid",
+        //   editTable: true,
+        //   sorter: (a, b) => a.paid - b.paid,
+        // },
+        // {
+        //   title: "Cummulative A",
+        //   dataIndex: "cumulativeAmount",
+        //   key: "cumulativeAmount",
+        //   sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        // },
+        // {
+        //   title: "rma Fee",
+        //   dataIndex: "rmaFee",
+        //   key: "rmaFee",
+        //   editTable: true,
+        //         sorter: (a, b) => a.weightOut - b.weightOut,
+        //     },
+        {
+            title: "balance (KG)",
+            dataIndex: "cumulativeAmount",
+            key: "cumulativeAmount",
+            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        },
 
-    {
-      title: "paid",
-      dataIndex: "paid",
-      key: "paid",
-      editTable: true,
-      sorter: (a, b) => a.paid - b.paid,
-    },
-    {
-      title: "unpaid",
-      dataIndex: "unpaid",
-      key: "unpaid",
-      editTable: true,
-      sorter: (a, b) => a.unpaid - b.unpaid,
-    },
-    {
-      title: "Tantal",
-      dataIndex: "tantalum",
-      key: "tantalum",
-      editTable: true,
-      sorter: (a, b) => a.tantalum - b.tantalum,
-    },
-    {
-      title: "Grade",
-      dataIndex: "mineralGrade",
-      key: "mineralGrade",
-      editTable: true,
-      sorter: (a, b) => a.mineralgrade - b.mineralgrade,
-    },
-    {
-      title: "Price",
-      dataIndex: "mineralPrice",
-      key: "mineralPrice",
-      editTable: true,
-      sorter: (a, b) => a.mineralPrice - b.mineralPrice,
-    },
-    {
-      title: "rmaFee",
-      dataIndex: "rmaFee",
-      key: "rmaFee",
-      editTable: true,
+        {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            editTable: true,
+            sorter: (a, b) => a.paid - b.paid,
+        },
+        {
+            title: "unpaid ($)",
+            dataIndex: "unpaid",
+            key: "unpaid",
+            editTable: true,
+            sorter: (a, b) => a.unpaid - b.unpaid,
+        },
+        {
+            title: "Tantal ($)",
+            dataIndex: "tantalum",
+            key: "tantalum",
+            editTable: true,
+            sorter: (a, b) => a.tantalum - b.tantalum,
+        },
+        {
+            title: "Grade (%)",
+            dataIndex: "mineralGrade",
+            key: "mineralGrade",
+            editTable: true,
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+        },
+        {
+            title: "Price ($)",
+            dataIndex: "mineralPrice",
+            key: "mineralPrice",
+            editTable: true,
+            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
+        },
+        {
+            title: "RMA Fee (RWF)",
+            dataIndex: "rmaFee",
+            key: "rmaFee",
+            editTable: true,
 
       sorter: (a, b) => a.rmaFee - b.rmaFee,
     },
