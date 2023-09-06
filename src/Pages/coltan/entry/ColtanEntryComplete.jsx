@@ -5,8 +5,9 @@ import ActionsPagesContainer from "../../../components/Actions components/Action
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {FaSave} from "react-icons/fa";
+import { toast} from "react-toastify";
 import {MdOutlineClose, MdPayments,} from "react-icons/md";
-import {useGetOneColtanEntryQuery} from "../../../states/apislice";
+import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 
 const ColtanEntryCompletePage = () => {
@@ -16,6 +17,15 @@ const ColtanEntryCompletePage = () => {
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
         useGetOneColtanEntryQuery({entryId});
+    const [ updateColtanEntry, { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError}] = useUpdateColtanEntryMutation();
+    useEffect( () => {
+        if (isUpdateSuccess) {
+            toast.success("Entry updated successfully");
+        } else if (isUpdateError) {
+            const { message } = updateError.data;
+            toast.error(message);
+        }
+    }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
         lat: "",
         long: "",
@@ -63,6 +73,7 @@ const ColtanEntryCompletePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...suply};
+        await updateColtanEntry({body, entryId});
         // await updateBuyer({ body, buyerId });
         // console.log(suply);
         console.log(lotInfo);
@@ -129,7 +140,7 @@ const ColtanEntryCompletePage = () => {
             },
         },
         {
-            title: "weight out",
+            title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
             editTable: true,
@@ -157,49 +168,49 @@ const ColtanEntryCompletePage = () => {
         //         sorter: (a, b) => a.weightOut - b.weightOut,
         //     },
         {
-            title: "balance",
+            title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
 
         {
-            title: "paid",
+            title: "paid ($)",
             dataIndex: "paid",
             key: "paid",
             editTable: true,
             sorter: (a, b) => a.paid - b.paid,
         },
         {
-            title: "unpaid",
+            title: "unpaid ($)",
             dataIndex: "unpaid",
             key: "unpaid",
             editTable: true,
             sorter: (a, b) => a.unpaid - b.unpaid,
         },
         {
-            title: "Tantal",
+            title: "Tantal ($)",
             dataIndex: "tantalum",
             key: "tantalum",
             editTable: true,
             sorter: (a, b) => a.tantalum - b.tantalum,
         },
         {
-            title: "Grade",
+            title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             editTable: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         {
-            title: "Price",
+            title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
             editTable: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         {
-            title: "rmaFee",
+            title: "RMA Fee (RWF)",
             dataIndex: "rmaFee",
             key: "rmaFee",
             editTable: true,
