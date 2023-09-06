@@ -454,7 +454,7 @@ const ColtanEntryForm = () => {
                           key={index}
                           className="flex gap-2 items-center w-full"
                         >
-                          <p className=" font-semibold">{lot.lotNumber}</p>
+                          <p className=" font-semibold">{index+1}</p>
                           <input
                             animate={{}}
                             type="number"

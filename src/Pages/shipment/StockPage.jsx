@@ -337,14 +337,6 @@ const StockPage = () => {
           {/* <div className='w-full flex items-center justify-end'> */}
 
           <div className=" space-y-2 w-full block">
-            {/* <Tooltip title="Shipment details">
-              <div
-                className=" w-fit p-2 bg-orange-500 rounded-md"
-                onClick={handleOpenModal}
-              >
-                <BsClipboard2MinusFill className=" text-white text-lg" />
-              </div>
-            </Tooltip> */}
             <Table
               className=" overflow-x-auto w-full"
               dataSource={initialData}
@@ -372,13 +364,7 @@ const StockPage = () => {
                 key="actions"
                 className=" flex w-full justify-center gap-4 text-base text-white"
               >
-                {/* <button
-                  key="back"
-                  className=" bg-green-400 p-2 rounded-lg"
-                  onClick={handleOpenModal}
-                >
-                  Confirm
-                </button> */}
+
                 <button
                   key="submit"
                   className=" bg-red-400 p-2 rounded-lg"

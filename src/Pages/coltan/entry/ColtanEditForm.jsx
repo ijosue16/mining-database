@@ -96,8 +96,14 @@ const ColtanEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      setmineTags(entr.mineTags);
-      setnegociantTags(entr.negociantTags);
+      if(entr.mineTags.length >0 && entr.negociantTags.length >0){
+        setmineTags(entr.mineTags);
+        setnegociantTags(entr.negociantTags);
+      }
+      else{
+        setmineTags(mineTags);
+        setnegociantTags(negociantTags);
+      }
       console.log(entr.output);
     }
   }, [isSuccess]);
@@ -734,7 +740,7 @@ const ColtanEditForm = () => {
                           onChange={(e) => handleMinesTagEntry(index, e)}
                         >
                           <option value="defaultstatus" hidden>
-                            {tag.status}
+                          {tag.status? `${tag.status}`:'status'}
                           </option>
                           <option value="inStock">In stock</option>
                           <option value="exported">Exported</option>

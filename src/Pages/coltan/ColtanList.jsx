@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect,useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import dayjs from "dayjs";
 import { Input, Modal, Spin, Table } from "antd";
 import { motion } from "framer-motion";
@@ -17,9 +17,11 @@ import {
   useDeleteColtanEntryMutation,
 } from "../../states/apislice";
 import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../../context files/LoginDatacontextProvider";
 
 const ColtanListPage = () => {
   let dataz = [];
+  const { loginData } = useMyContext();
   const { data, isLoading, isSuccess, isError, error } =
     useGetAllColtanEntriesQuery();
   const [
@@ -30,35 +32,39 @@ const ColtanListPage = () => {
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
   const [showActions, SetShowActions] = useState(false);
-  const [selectedRowInfo, SetSelectedRowInfo]=useState({ name:"",date:""});
+  const [selectedRowInfo, SetSelectedRowInfo] = useState({
+    name: "",
+    date: "",
+  });
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
-  
-//   let useClickOutside = (handler) => {
-//     let domNode = useRef();
-  
-//     useEffect(() => {
-//       let actionsContainerHandler = (event) => {
-//         if (!domNode.current.contains(event.target)) {
-//           handler();
-//         }
-//         else if(domNode.current.contains(event.target)){
-//             console.log("uri ikibwa");
-//             // handler();
-//         }
-//       };
-  
-//       document.addEventListener("mousedown", actionsContainerHandler);
-  
-//       return () => {
-//         document.removeEventListener("mousedown", actionsContainerHandler);
-//       };
-//     });
-  
-//     return domNode;
-//   };
-let modalRef = useRef();
+  console.log(loginData);
+
+  //   let useClickOutside = (handler) => {
+  //     let domNode = useRef();
+
+  //     useEffect(() => {
+  //       let actionsContainerHandler = (event) => {
+  //         if (!domNode.current.contains(event.target)) {
+  //           handler();
+  //         }
+  //         else if(domNode.current.contains(event.target)){
+  //             console.log("uri ikibwa");
+  //             // handler();
+  //         }
+  //       };
+
+  //       document.addEventListener("mousedown", actionsContainerHandler);
+
+  //       return () => {
+  //         document.removeEventListener("mousedown", actionsContainerHandler);
+  //       };
+  //     });
+
+  //     return domNode;
+  //   };
+  let modalRef = useRef();
   // const handleClickOutside = useMemo(
   //   () => (event) => {
   //     if (!modalRef.current.contains(event.target)) {
@@ -80,29 +86,28 @@ let modalRef = useRef();
     const { entries: entrz } = dt;
     console.log(entrz);
     dataz = entrz;
-  };
+  }
 
   const handleActions = (id) => {
-    if(selectedRow === id){
-        console.log("uri muduki sha");
-        SetShowActions(!showActions);
-    }else{
-        SetShowActions(true);
-        
+    if (selectedRow === id) {
+      console.log("uri muduki sha");
+      SetShowActions(!showActions);
+    } else {
+      SetShowActions(true);
     }
     SetSelectedRow(id);
     console.log("Clicked ID:", id);
-  };  
-  
+  };
+
   const handleDelete = async () => {
     const entryId = selectedRow;
     await deleteColtan({ entryId });
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
-//   let domNode = useClickOutside(() => {
-//     SetShowActions(false);
-//   });
+  //   let domNode = useClickOutside(() => {
+  //     SetShowActions(false);
+  //   });
 
   const columns = [
     {
@@ -157,76 +162,79 @@ let modalRef = useRef();
         return (
           <>
             <div className="flex items-center gap-4">
-                <span ref={modalRef} >
-              <span className="relative" >
-                <PiDotsThreeVerticalBold 
-                  onClick={() => handleActions(record._id)}
-                />
-                {selectedRow === record._id ?
-                  <motion.ul
-                    animate={
-                      showActions
-                        ? { opacity: 1, x: -10, y:1, display: "block" }
-                        : { opacity: 0, x: 0, y:0, display: "none" }
-                    }
-                    className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                  >
-                    <li
-                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        navigate(`/buyer/details/${record._id}`);
-                      }}
+              <span ref={modalRef}>
+                <span className="relative">
+                  <PiDotsThreeVerticalBold
+                    onClick={() => handleActions(record._id)}
+                  />
+                  {selectedRow === record._id ? (
+                    <motion.ul
+                      animate={
+                        showActions
+                          ? { opacity: 1, x: -10, y: 1, display: "block" }
+                          : { opacity: 0, x: 0, y: 0, display: "none" }
+                      }
+                      className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                     >
-                      <RiFileListFill className=" text-lg" />
-                      <p>more details</p>
-                    </li>
-                    <li
-                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {navigate(`/edit/coltan/${record._id}`);
-                      }}
-                    >
-                      <BiSolidEditAlt className=" text-lg" />
-                      <p>edit</p>
-                    </li>
-                    <li
-                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        {
-                          navigate(`/complete/coltan/${record._id}`);
-                        }
-                      }}
-                    >
-                      <RiFileEditFill className=" text-lg" />
-                      <p>complete entry</p>
-                    </li>
-                    <li
-                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        console.log("Action 4 :", record._id);
-                        SetShowActions(!showActions);
-                      }}
-                    >
-                      <MdDelete className=" text-lg" />
-                      <p>delete</p>
-                    </li>
-                  </motion.ul>:null
-                }
-              </span>
+                      <li
+                        className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                        onClick={() => {
+                          navigate(`/edit/coltan/${record._id}`);
+                        }}
+                      >
+                        <BiSolidEditAlt className=" text-lg" />
+                        <p>edit</p>
+                      </li>
+                      {loginData !== "storekeeper" && "traceabilityOfficer" && "managingDirector" && "operationsManager "  ? (
+                        <>
+                          <li
+                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              {
+                                navigate(`/complete/coltan/${record._id}`);
+                              }
+                            }}
+                          >
+                            <RiFileEditFill className=" text-lg" />
+                            <p>complete entry</p>
+                          </li>
+                          <li
+                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              SetSelectedRow(record._id);
+                              SetSelectedRowInfo({
+                                ...selectedRowInfo,
+                                name: record.companyName,
+                                date: record.supplyDate,
+                              });
+                              setShowmodal(!showmodal);
+                            }}
+                          >
+                            <MdDelete className=" text-lg" />
+                            <p>delete</p>
+                          </li>
+                        </>
+                      ) : null}
+                    </motion.ul>
+                  ) : null}
+                </span>
               </span>
 
-              <span>
-                <MdDelete
-                  onClick={() => {
-                    SetSelectedRow(record._id);
-                    SetSelectedRowInfo({
-                      ...selectedRowInfo,
-                      name: record.companyName,
-                      date: record.supplyDate,
-                    });
-                    setShowmodal(!showmodal);
-                  }}
-                />
-              </span>
+              {loginData !== "storekeeper" && "traceabilityOfficer" && "managingDirector" && "operationsManager " ? (
+                <span>
+                  <MdDelete
+                    onClick={() => {
+                      SetSelectedRow(record._id);
+                      SetSelectedRowInfo({
+                        ...selectedRowInfo,
+                        name: record.companyName,
+                        date: record.supplyDate,
+                      });
+                      setShowmodal(!showmodal);
+                    }}
+                  />
+                </span>
+              ) : null}
             </div>
           </>
         );

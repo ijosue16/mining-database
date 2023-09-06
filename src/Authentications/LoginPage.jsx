@@ -34,6 +34,7 @@ const LoginPage=()=>{
             dispatch(setPermissions(user.permissions));
             localStorage.setItem('profile', JSON.stringify(user));
             localStorage.setItem('role', user.role);
+            navigate('/coltan')
         }
     };
 
