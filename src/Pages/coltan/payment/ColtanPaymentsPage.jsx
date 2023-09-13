@@ -15,12 +15,13 @@ import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { MdClose } from "react-icons/md";
 import { BsCheck2 } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
+import { ImSpinner2 } from "react-icons/im";
 
 
 const ColtanPaymentsPage = () => {
     const { entryId, model, lotNumber} = useParams();
     const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber});
-    const [addPayment, {isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
+    const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()
     const{data,isLoading,isSuccess,isError,error}=useGetOneColtanEntryQuery({entryId});
@@ -271,7 +272,7 @@ const ColtanPaymentsPage = () => {
                                 </button>
 
 
-                               {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2 bg-slate-50 p-2 shadow-lg shadow-zinc-200">
+                               {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2 bg-gray-100 rounded-md p-2 shadow-lg shadow-zinc-300">
                                     <span className=" space-y-1">
                                         <p className="pl-1">Date</p>
                                         <DatePicker value={payment.paymentDate ? dayjs(payment.paymentDate) : ''} onChange={handleAddDate} id="paymentDate" name="paymentDate" className=" focus:outline-none p-2 border rounded-md w-full" />
@@ -297,12 +298,17 @@ const ColtanPaymentsPage = () => {
                                         <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="currency" id="currency" value={payment.currency || ''} onChange={handlePayment} />
                                     </span>
                                     <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
-                                        <button type="submit" className="flex gap-2 bg-slate-300 rounded-md items-end p-2 justify-center">
+                                        {isSending ?
+                                        <button type="submit" className="flex gap-1 bg-green-200 rounded-md items-end p-2 justify-center">
+                                        <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                                            <p type="submit" className="">Sending</p>
+                                        </button>:
+                                        <button type="submit" className="flex gap-1 bg-green-300 rounded-md items-end p-2 justify-center">
                                             <BsCheck2 className=" text-lg" />
                                             <p type="submit" className="">Confirm</p>
-                                        </button>
+                                        </button>}
 
-                                        <button type="button" className="flex gap-2 bg-orange-300 rounded-md items-end justify-center p-2" onClick={handleCancel}>
+                                        <button type="button" className="flex gap-1 bg-orange-300 text-gray-800 items-center rounded-md  justify-center p-2" onClick={handleCancel}>
                                             <MdClose className=" text-lg" />
                                             <p className="">Cancel</p>
                                         </button>

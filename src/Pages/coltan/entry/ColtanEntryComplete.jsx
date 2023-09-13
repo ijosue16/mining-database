@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { Form, Input, Modal, Spin, Table } from "antd";
@@ -24,6 +24,22 @@ const ColtanEntryCompletePage = () => {
   const { data, isLoading, isError, isSuccess, error } =
     useGetOneColtanEntryQuery({ entryId });
     const [ updateColtanEntry, { isSuccess: isUpdateSuccess,isLoading:isSending, isError: isUpdateError, error: updateError}] = useUpdateColtanEntryMutation();
+
+    let modalRef = useRef();
+
+  const handleClickOutside = (event) => {
+    if (!modalRef.current || !modalRef.current.contains(event.target)) {
+      setShow(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, []);
+
     useEffect( () => {
         if (isUpdateSuccess) {
             toast.success("Entry updated successfully");
@@ -69,9 +85,11 @@ const ColtanEntryCompletePage = () => {
     console.log(lotInfo);
     // navigate(-1);
   };
-  const handleModelAdvance = () => {
+  const handleModelAdvance =async () => {
     console.log("backend done");
-    navigate(`/coltan/payment/coltan/${suply._id}/${selectedLotNumber}`);
+    const body = { ...suply, output: lotInfo };
+    await updateColtanEntry({body, entryId});
+    navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
   };
 
   const handleCancel = () => {
@@ -254,6 +272,7 @@ const ColtanEntryCompletePage = () => {
                     />
                     {selectedRow === record._id && (
                       <motion.ul
+                      ref={modalRef}
                         animate={
                           show
                             ? { opacity: 1, x: -10, display: "block" }
@@ -366,12 +385,12 @@ const ColtanEntryCompletePage = () => {
                   <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
               </div>
                 ) : (
-                  <div className="flex flex-col gap-3 w-full">
-                    <div className="w-full bg-slate-50 grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                      <p className=" font-semibold">Entry details</p>
+                  <div className="flex flex-col gap-6 w-full">
+                    <div className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
+                      <p className=" font-semibold text-lg">Entry details</p>
                     </div>
 
-                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full">
+                    <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
                       <li>
                         <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
                           Entry details
@@ -430,13 +449,21 @@ const ColtanEntryCompletePage = () => {
                       key="actions"
                       className=" flex w-full justify-center gap-4 text-base text-white"
                     >
+                      {isSending?
                       <button
+                      key="back"
+                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                    >
+                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                      Sending
+                    </button>: <button
                         key="back"
                         className=" bg-green-400 p-2 rounded-lg"
                         onClick={() => handleModelAdvance()}
                       >
                         Confirm
-                      </button>
+                      </button>}
+                      
                       <button
                         key="submit"
                         className=" bg-red-400 p-2 rounded-lg"

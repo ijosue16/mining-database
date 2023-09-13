@@ -262,7 +262,7 @@ const ColtanEntryForm = () => {
                   </li>
                   <li className=" self-end">
                     <button
-                      className=" bg-orange-400 text-white px-3 py-1 rounded-md"
+                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
                       onClick={() => navigate("/add/supplier")}
                     >
                       New supplier
