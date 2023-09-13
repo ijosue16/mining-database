@@ -67,6 +67,12 @@ import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import ReportPage from './Pages/ReportPage';
 import FetchingPage from './Pages/FetchingPage';
+import LithiumListPage from './Pages/lithium/LithiumList';
+import WolframiteListPage from './Pages/wolframite/WolframiteList';
+import CassiteriteListPage from './Pages/cassiterite/CassiteriteList';
+import BerylliumListPage from './Pages/beryllium/BerylliumList';
+import CassiteriteEditForm from './Pages/cassiterite/entry/CassiteriteEditForm';
+import WolframiteEditForm from './Pages/wolframite/entry/WolframiteEditForm';
 
 
 
@@ -87,7 +93,7 @@ function App() {
      
       
     <Route  path='*' element={<DefaultPages/>}/>
-    <Route  path='/coltan/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
+    <Route  path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
     <Route  path='/shipment/add/:model' element={<StockPage/>}/>
     <Route  path='/shipments' element={<ShipmentPage/>}/>
     <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
@@ -98,16 +104,24 @@ function App() {
     <Route  path='/report' element={<ReportPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
-    <Route  path='/cassiterite' element={<ProductsList/>}/>
-    <Route  path='/wolframite' element={<ProductsList/>}/>
-    <Route  path='/lithium' element={<ProductsList/>}/>
-    <Route  path='/beryllium' element={<ProductsList/>}/>
+    <Route  path='/cassiterite' element={<CassiteriteListPage/>}/>
+    <Route  path='/wolframite' element={<WolframiteListPage/>}/>
+    <Route  path='/lithium' element={<LithiumListPage/>}/>
+    <Route  path='/beryllium' element={<BerylliumListPage/>}/>
     <Route  path='/mixed' element={<ProductsList/>}/>
 
     <Route  path='/entry/add/coltan' element={<ColtanEntryForm/>}/>
+    <Route  path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
+    <Route  path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
+    <Route  path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
+    <Route  path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
+  
 
-    <Route  path='/edit/coltan/:entryId' element={<ColtanEditForm/>}/>
-    <Route  path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
+    <Route  path='/entry/edit/coltan/:entryId' element={<ColtanEditForm/>}/>
+    <Route  path='/entry/edit/cassiterite/:entryId' element={<CassiteriteEditForm/>}/>
+    <Route  path='/entry/edit/wolframite/:entryId' element={<WolframiteEditForm/>}/>
+    <Route  path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
+    <Route  path='/complete/beryllium/:entryId' element={<ColtanEntryCompletePage/>}/>
 
     <Route  path='/test' element={<EditMinesitePage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
