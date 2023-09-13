@@ -16,7 +16,7 @@ const LithiumEntryForm = () => {
     const navigate = useNavigate();
     const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
     const [createLithiumEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateLithiumEntryMutation()
-    const [formval, setFormval] = useState({ weightIn: "", weightOut: '', supplier: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+    const [formval, setFormval] = useState({ weightIn: "", weightOut: '', supplierName: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
     const [lotDetails, setlotDetails] = useState([
         { lotNumber: "", weightOut: "" },
     ]);
@@ -139,7 +139,7 @@ const LithiumEntryForm = () => {
         navigate(-1);
     };
     const handleCancel = () => {
-        setFormval({ weightIn: "", weightOut: '', supplier: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
+        setFormval({ weightIn: "", weightOut: '', supplierName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
         setlotDetails([{ lotNumber: "", weightOut: "" },])
         console.log(checked)
     };
@@ -172,7 +172,7 @@ const LithiumEntryForm = () => {
 
                             <li className=" space-y-1">
                                 <p className="pl-1">Supplier</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplier" id="supplier" value={formval.supplier || ''} onChange={handleEntry} />
+                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplierName" id="supplierName" value={formval.supplierName || ''} onChange={handleEntry} />
                             </li>
 
                             <li className=" space-y-1">
