@@ -160,23 +160,44 @@ const WolframiteEntryForm = () => {
                 subTitle={'Add new wolframite entry'}
                 actionsContainer={<AddComponent component={
                     <div className="grid grid-cols-1 gap-1">
-                        <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
-
-
-                            <li className=" space-y-2">
-                                <p>Trade in Company</p>
-                                <select autoComplete="off" name="search supplier" id="search supplier" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleSearch} >
-
-                                    {sup.map(({ companyName, _id }, index) => {
-                                        return (
-                                            <option value={_id} key={index} >{companyName}</option>
-                                        )
-                                    })}
-                                </select>
-                            </li>
-                            {/* **** */}
-
-                        </ul>
+                <ul className="grid grid-cols-1 items-center gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
+                  <li className=" space-y-2">
+                    <p>Trade in Company</p>
+                    <select
+                      autoComplete="off"
+                      defaultValue="defaultSupplier"
+                      name="search supplier"
+                      id="search supplier"
+                      className="focus:outline-none p-2 border rounded-md w-full"
+                      onChange={handleSearch}
+                    >
+                      {isLoading ? (
+                        <option>Loading suppliers...</option>
+                      ) : (
+                        <>
+                          <option value="defaultSupplier" hidden>
+                            Select a supplier
+                          </option>
+                          {sup.map(({ companyName, _id }, index) => {
+                            return (
+                              <option value={_id} key={index}>
+                                {companyName}
+                              </option>
+                            );
+                          })}
+                        </>
+                      )}
+                    </select>
+                  </li>
+                  <li className=" self-end">
+                    <button
+                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                      onClick={() => navigate("/add/supplier")}
+                    >
+                      New supplier
+                    </button>
+                  </li>
+                </ul>
 
                         <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
@@ -227,7 +248,9 @@ const WolframiteEntryForm = () => {
                             </li>
                             <li className=" space-y-1">
                                 <p className="pl-1">Number of Tags</p>
-                                <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onChange={handleEntry} />
+                                <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''}       onWheelCapture={(e) => {
+                        e.target.blur();
+                      }} onChange={handleEntry} />
                             </li>
                             <li className=" space-y-1">
                                 <span className=" flex gap-2 items-center">
@@ -241,13 +264,13 @@ const WolframiteEntryForm = () => {
 
                             <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot number (output)</p>
+                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lots</p>
                                 </span>
                                 <div className="col-span-1 space-y-3">
                                     {lotDetails.map((lot, index) => (
                                         <div key={index} className="flex gap-2 items-center w-full">
                                             <p className=" font-semibold">{lot.lotNumber}</p>
-                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={lot.weightOut || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleLotEntry(index, e)} />
+                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="" value={lot.weightOut || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleLotEntry(index, e)} />
                                             <HiMinus onClick={() => handleLRemoveLot(index)} className={`${lotDetails.length - 1 == 0 ? 'hidden' : ''}`} />
                                             <HiPlus onClick={handleAddLot} className={`${lotDetails.length - 1 !== index ? 'hidden' : ''}`} />
                                         </div>
