@@ -65,6 +65,8 @@ import FileExplorerApp from './test elements/FileExplore';
 import FilesytemMangerSample from './test elements/FileExploreSample2';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
+import ReportPage from './Pages/ReportPage';
+import FetchingPage from './Pages/FetchingPage';
 
 
 
@@ -91,8 +93,9 @@ function App() {
     <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
     <Route  path='/payment' element={<ColtanPaymentsPage/>}/>
     <Route  path='/dummy' element={<DummyPage/>}/>
-    <Route  path='/dummy2' element={<FileExplorerApp/>}/>
+    <Route  path='/dummy2' element={<FetchingPage/>}/>
     <Route  path='/dummy3' element={<FilesytemMangerSample/>}/>
+    <Route  path='/report' element={<ReportPage/>}/>
 
     <Route  path='/coltan' element={<ColtanListPage/>}/>
     <Route  path='/cassiterite' element={<ProductsList/>}/>

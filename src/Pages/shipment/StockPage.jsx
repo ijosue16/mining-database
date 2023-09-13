@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { BsClipboard2MinusFill } from "react-icons/bs";
+import {ImSpinner2 } from "react-icons/im";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import { Table, Tooltip, Checkbox, Input, Form, Modal, Spin } from "antd";
 import { BiSolidEditAlt } from "react-icons/bi";
@@ -75,6 +76,11 @@ const StockPage = () => {
       (total, item) => total + item.cumulativeAmount * item.mineralGrade,
       0
     );
+
+    // const totalPrice = selectedData.reduce(
+    //   (total, item) => total + item.cumulativeAmount * item.mineralGrade,
+    //   0
+    // );
     const averagegrade =
       newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
@@ -373,9 +379,9 @@ const StockPage = () => {
 
           <div className=" space-y-2 w-full block">
             <Table
-              className=" overflow-x-auto w-full"
+              className=" overflow-x-auto w-full bg-white"
               dataSource={initialData}
-              loading={isLoading}
+              loading={{indicator:< ImSpinner2 style={{width:'60px',height:'60px'}} className="animate-spin text-gray-500"/>, spinning:isLoading}}
               columns={columns2}
               rowKey="index"
             />

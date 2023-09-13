@@ -14,10 +14,7 @@ export default function LoginDatacontextProvider() {
   const role = localStorage.getItem('role');
   console.log(role)
   console.log(profile)
-  const [loginData, setLoginData] = useState(role);
-  useEffect(()=>{
-
-  },[]);
+  const [loginData, setLoginData] = useState('role');
  
   const updateLoginData = (accessibility) => {
     setLoginData({accessibility});

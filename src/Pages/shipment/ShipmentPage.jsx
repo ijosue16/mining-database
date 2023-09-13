@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState,useRef} from "react";
 import dayjs from "dayjs";
 import {Form, Input, Modal, Spin, Table} from "antd";
 import {motion} from "framer-motion";
@@ -6,6 +6,7 @@ import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi
 import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
 import {BsCardList, BsDownload} from "react-icons/bs";
 import {MdDelete, MdOutlineClose} from "react-icons/md";
+import {ImSpinner2 } from "react-icons/im";
 import {FaSave} from "react-icons/fa";
 import {RiFileEditFill, RiFileListFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
@@ -35,6 +36,23 @@ const ShipmentPage = () => {
     const [model, Setmodel] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
     const [editRowKey, setEditRowKey] = useState("");
+
+    let modalRef = useRef();
+ 
+    const handleClickOutside = (event) => {
+        if (!modalRef.current ||!modalRef.current.contains(event.target)) {
+          SetShowActions(false);
+        }
+      };
+  
+  
+    useEffect(() => {
+      document.addEventListener("click", handleClickOutside, true);
+      return () => {
+        document.removeEventListener("click", handleClickOutside, true);
+      };
+  
+    }, []);
 
     useEffect(() => {
         if (isSuccess) {
@@ -166,6 +184,7 @@ const ShipmentPage = () => {
                 )}
                   {selectedRow === record._id && (
                       <motion.ul
+                      ref={modalRef}
                           animate={
                               showActions
                                   ? {opacity: 1, x: -10, display: "block"}
@@ -173,7 +192,7 @@ const ShipmentPage = () => {
                           }
                           className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                       >
-                          <li
+                          {/* <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
                                   navigate(`/buyer/details/${record._id}`);
@@ -181,7 +200,7 @@ const ShipmentPage = () => {
                           >
                               <RiFileListFill className=" text-lg"/>
                               <p>more details</p>
-                          </li>
+                          </li> */}
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
@@ -198,9 +217,9 @@ const ShipmentPage = () => {
                               }}
                           >
                               <RiFileEditFill className=" text-lg"/>
-                              <p>complete entry</p>
+                              <p>complete shipment</p>
                           </li>
-                          <li
+                          {/* <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
                                   edit(record);
@@ -208,7 +227,7 @@ const ShipmentPage = () => {
                           >
                               <MdDelete className=" text-lg"/>
                               <p>delete</p>
-                          </li>
+                          </li> */}
                       </motion.ul>
                   )}
               </span>
@@ -340,7 +359,7 @@ const ShipmentPage = () => {
                             <Form form={form} component={false}>
                                 <Table
                                     className=" w-full"
-                                    loading={isLoading}
+                                    loading={{indicator:< ImSpinner2 style={{width:'60px',height:'60px'}} className="animate-spin text-gray-500"/>, spinning:isLoading}}
                                     dataSource={dataz}
                                     columns={mergedColumns}
                                     components={{

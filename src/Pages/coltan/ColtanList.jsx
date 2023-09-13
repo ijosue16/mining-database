@@ -1,23 +1,24 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { Input, Modal, Spin, Table } from "antd";
+import { Modal, Spin, Table } from "antd";
 import { motion } from "framer-motion";
-import {
-  PiMagnifyingGlassDuotone,
-  PiDotsThreeVerticalBold,
-} from "react-icons/pi";
-import { BiSolidFilePdf, BiSolidEditAlt } from "react-icons/bi";
-import { BsCardList } from "react-icons/bs";
-import { MdDelete } from "react-icons/md";
-import { RiFileEditFill, RiFileListFill } from "react-icons/ri";
-import { HiOutlinePrinter } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
   useGetAllColtanEntriesQuery,
   useDeleteColtanEntryMutation,
 } from "../../states/apislice";
-import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
+import {
+  PiMagnifyingGlassDuotone,
+  PiDotsThreeVerticalBold,
+} from "react-icons/pi";
+import { BiSolidFilePdf, BiSolidEditAlt } from "react-icons/bi";
+import { ImSpinner2 } from "react-icons/im";
+import { BsCardList } from "react-icons/bs";
+import { MdDelete } from "react-icons/md";
+import { RiFileEditFill } from "react-icons/ri";
+import { HiOutlinePrinter } from "react-icons/hi";
 
 const ColtanListPage = () => {
   let dataz = [];
@@ -41,45 +42,20 @@ const ColtanListPage = () => {
   const [showmodal, setShowmodal] = useState(false);
   console.log(loginData);
 
-  //   let useClickOutside = (handler) => {
-  //     let domNode = useRef();
-
-  //     useEffect(() => {
-  //       let actionsContainerHandler = (event) => {
-  //         if (!domNode.current.contains(event.target)) {
-  //           handler();
-  //         }
-  //         else if(domNode.current.contains(event.target)){
-  //             console.log("uri ikibwa");
-  //             // handler();
-  //         }
-  //       };
-
-  //       document.addEventListener("mousedown", actionsContainerHandler);
-
-  //       return () => {
-  //         document.removeEventListener("mousedown", actionsContainerHandler);
-  //       };
-  //     });
-
-  //     return domNode;
-  //   };
   let modalRef = useRef();
-  // const handleClickOutside = useMemo(
-  //   () => (event) => {
-  //     if (!modalRef.current.contains(event.target)) {
-  //       SetShowActions(false);
-  //     }
-  //   },
-  //   [SetShowActions]
-  // );
 
-  // useEffect(() => {
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [handleClickOutside]);
+  const handleClickOutside = (event) => {
+    if (!modalRef.current || !modalRef.current.contains(event.target)) {
+      SetShowActions(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, []);
 
   if (isSuccess) {
     const { data: dt } = data;
@@ -91,12 +67,13 @@ const ColtanListPage = () => {
   const handleActions = (id) => {
     if (selectedRow === id) {
       console.log("uri muduki sha");
-      SetShowActions(!showActions);
+      SetShowActions(false);
+      SetSelectedRow("");
     } else {
+      SetSelectedRow(id);
       SetShowActions(true);
+      console.log("Clicked ID:", id);
     }
-    SetSelectedRow(id);
-    console.log("Clicked ID:", id);
   };
 
   const handleDelete = async () => {
@@ -105,9 +82,6 @@ const ColtanListPage = () => {
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
-  //   let domNode = useClickOutside(() => {
-  //     SetShowActions(false);
-  //   });
 
   const columns = [
     {
@@ -128,6 +102,24 @@ const ColtanListPage = () => {
       dataIndex: "companyName",
       key: "companyName",
       sorter: (a, b) => a.companyName.localeCompare(b.companyName),
+      filteredValue: [searchText],
+      onFilter: (value, record) => {
+        return (
+          String(record.companyName)
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          String(record.beneficiary)
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          String(record.mineralType)
+            .toLowerCase()
+            .includes(value.toLowerCase()) ||
+          String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
+          String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        );
+      },
     },
     {
       title: "Beneficiary",
@@ -135,12 +127,6 @@ const ColtanListPage = () => {
       key: "beneficiary",
       sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
     },
-    // {
-    //     title: 'TINNumber',
-    //     dataIndex: 'TINNumber',
-    //     key: 'TINNumber',
-    //     sorter: (a, b) => a.TINNumber.localeCompare(b.TINNumber),
-    // },
     {
       title: "Mineral type",
       dataIndex: "mineralType",
@@ -162,13 +148,15 @@ const ColtanListPage = () => {
         return (
           <>
             <div className="flex items-center gap-4">
-              <span ref={modalRef}>
+              <span>
                 <span className="relative">
                   <PiDotsThreeVerticalBold
+                    className="text-lg"
                     onClick={() => handleActions(record._id)}
                   />
                   {selectedRow === record._id ? (
                     <motion.ul
+                      ref={modalRef}
                       animate={
                         showActions
                           ? { opacity: 1, x: -10, y: 1, display: "block" }
@@ -185,7 +173,10 @@ const ColtanListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {loginData !== "storekeeper" && "traceabilityOfficer" && "managingDirector" && "operationsManager "  ? (
+                      {loginData !== "storekeeper" &&
+                      "traceabilityOfficer" &&
+                      "managingDirector" &&
+                      "operationsManager " ? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -220,9 +211,13 @@ const ColtanListPage = () => {
                 </span>
               </span>
 
-              {loginData !== "storekeeper" && "traceabilityOfficer" && "managingDirector" && "operationsManager " ? (
+              {loginData !== "storekeeper" &&
+              "traceabilityOfficer" &&
+              "managingDirector" &&
+              "operationsManager " ? (
                 <span>
                   <MdDelete
+                    className="text-lg"
                     onClick={() => {
                       SetSelectedRow(record._id);
                       SetSelectedRowInfo({
@@ -265,14 +260,20 @@ const ColtanListPage = () => {
                   className=" flex w-full justify-center gap-4 text-base text-white"
                 >
                   {isDeleting ? (
-                    <Spin className="bg-green-400 p-2 rounded-lg" />
+                    <button
+                      key="back"
+                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                    >
+                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                      Deleting
+                    </button>
                   ) : (
                     <button
                       key="back"
                       className=" bg-green-400 p-2 rounded-lg"
                       onClick={handleDelete}
                     >
-                      Confirm
+                      Delete
                     </button>
                   )}
                   <button
@@ -322,7 +323,15 @@ const ColtanListPage = () => {
               </div>
               <Table
                 className=" w-full"
-                loading={isLoading}
+                loading={{
+                  indicator: (
+                    <ImSpinner2
+                      style={{ width: "60px", height: "60px" }}
+                      className="animate-spin text-gray-500"
+                    />
+                  ),
+                  spinning: isLoading,
+                }}
                 dataSource={dataz}
                 columns={columns}
                 rowKey="_id"

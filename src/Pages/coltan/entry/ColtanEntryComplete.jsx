@@ -7,6 +7,7 @@ import AddComponent from "../../../components/Actions components/AddComponent";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { PiDotsThreeVerticalBold } from "react-icons/pi";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri";
+import { ImSpinner2 } from "react-icons/im";
 import { FaSave } from "react-icons/fa";
 import { toast} from "react-toastify";
 import { MdOutlineClose, MdPayments } from "react-icons/md";
@@ -22,7 +23,7 @@ const ColtanEntryCompletePage = () => {
   const [selectedLotNumber, setSelectedLotNumber] = useState(null);
   const { data, isLoading, isError, isSuccess, error } =
     useGetOneColtanEntryQuery({ entryId });
-    const [ updateColtanEntry, { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError}] = useUpdateColtanEntryMutation();
+    const [ updateColtanEntry, { isSuccess: isUpdateSuccess,isLoading:isSending, isError: isUpdateError, error: updateError}] = useUpdateColtanEntryMutation();
     useEffect( () => {
         if (isUpdateSuccess) {
             toast.success("Entry updated successfully");
@@ -60,27 +61,11 @@ const ColtanEntryCompletePage = () => {
     }
   }, [isSuccess]);
 
-  // const onFinish = (values) => {
-  //     console.log('onFinish:', values);
-  //     const editingRowIndex = lotInfo.findIndex((item) => item._id === editingRow);
-
-  //     if (editingRowIndex !== -1) {
-  //         const updatedDataSource = [...lotInfo];
-  //         updatedDataSource[editingRowIndex] = { ...values };
-
-  //         console.log('updatedDataSource:', updatedDataSource);
-
-  //         setLotInfo(updatedDataSource);
-  //         setEditingRow(null);
-  //     }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...suply, output: lotInfo };
         await updateColtanEntry({body, entryId});
-    // await updateBuyer({ body, buyerId });
-    // console.log(suply);
+
     console.log(lotInfo);
     // navigate(-1);
   };
@@ -112,7 +97,12 @@ const ColtanEntryCompletePage = () => {
     const index = newData.findIndex((item) => key === item._id);
     if (index > -1) {
       const item = newData[index];
-      newData.splice(index, 1, { ...item, ...row });
+      const updatedItem = {
+        ...item,
+        ...row,
+        mineralPrice: (row.tantalum * row.mineralGrade).toFixed(3),
+      };
+      newData.splice(index, 1, updatedItem);
       setLotInfo(newData);
       setEditRowKey("");
     }
@@ -150,26 +140,7 @@ const ColtanEntryCompletePage = () => {
 
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
-        // {
-        //   title: "Paid",
-        //   dataIndex: "paid",
-        //   key: "paid",
-        //   editTable: true,
-        //   sorter: (a, b) => a.paid - b.paid,
-        // },
-        // {
-        //   title: "Cummulative A",
-        //   dataIndex: "cumulativeAmount",
-        //   key: "cumulativeAmount",
-        //   sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        // },
-        // {
-        //   title: "rma Fee",
-        //   dataIndex: "rmaFee",
-        //   key: "rmaFee",
-        //   editTable: true,
-        //         sorter: (a, b) => a.weightOut - b.weightOut,
-        //     },
+     
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
@@ -391,7 +362,9 @@ const ColtanEntryCompletePage = () => {
             component={
               <>
                 {isLoading ? (
-                  <Spin />
+                  <div className="flex h-32 w-full items-center justify-center bg-white">
+                  <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
+              </div>
                 ) : (
                   <div className="flex flex-col gap-3 w-full">
                     <div className="w-full bg-slate-50 grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
@@ -435,7 +408,7 @@ const ColtanEntryCompletePage = () => {
                   <Form form={form} component={false}>
                     <Table
                       className="overflow-x-auto w-full"
-                      loading={isLoading}
+                      loading={{indicator: (<ImSpinner2 style={{ width: "60px", height: "60px" }}className="animate-spin text-gray-500"/>),spinning: isLoading}}
                       dataSource={lotInfo}
                       columns={mergedColumns}
                       components={{
@@ -486,7 +459,7 @@ const ColtanEntryCompletePage = () => {
             }
             Add={handleSubmit}
             Cancel={handleCancel}
-            // isloading={isSending}
+            isloading={isSending}
           />
         }
       />

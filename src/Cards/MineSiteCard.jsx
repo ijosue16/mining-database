@@ -5,7 +5,7 @@ import { RiEditLine } from "react-icons/ri";
 const MineSiteCard=({onclick,name,code,lat,long})=>{
 
     return(
-        <div className="p-2 flex flex-col gap-3 rounded-lg shadow-lg bg-gray-50">
+        <div className="p-2 flex flex-col gap-3 rounded-lg shadow-xl bg-gray-100">
         <div className=" grid grid-cols-2 gap-2 items-center">
             <MdLocationOn className=" text-3xl text-gray-500" />
             <p className=" justify-self-end text-md font-semibold">{name}</p>

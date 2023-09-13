@@ -50,11 +50,11 @@ const SupplierDetailsPage = () => {
                 subTitle={'View Supplier detailes'}
                 actionsContainer={
                     <>
-                        {isLoading ? <Spin /> : (<div className="grid grid-cols-1 gap-3 w-full">
+                        {isLoading ? <Spin /> : (<div className="grid grid-cols-1 gap-12 w-full">
 
 
-                            <div className="w-full bg-slate-50 grid grid-cols-2 py-2 border-b items-center justify-between">
-                                <p className=" font-semibold">supplier details</p>
+                            <div className="w-full  grid grid-cols-2 py-2 border-b items-center justify-between">
+                                <p className="text-lg font-semibold">Supplier details</p>
                                 <BiSolidEditAlt className=" text-2xl pb-1 justify-self-end" onClick={() => navigate(`/edit/supplier/${supplierId}`)} />
                             </div>
 
@@ -85,11 +85,11 @@ const SupplierDetailsPage = () => {
 
 
                             <div className="grid grid-cols-1 gap-2">
-                                <div className=" bg-slate-50 relative py-2 border-b grid items-center">
-                                    <p className=" font-semibold">minesites</p>
+                                <div className="  relative py-2 border-b grid items-center">
+                                    <p className="text-lg font-semibold">Minesites</p>
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full gap-3">
-                                    <div className="pb-6 col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                    <div className="pb-6 col-span-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                                         {suplyMinesites.map(({ name, code, _id, coordinates }) => (
 
                                             <MineSiteCard key={_id}

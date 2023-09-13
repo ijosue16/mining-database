@@ -251,8 +251,8 @@ const EditSuplierPage = () => {
                             
                         </ul> */}
 
-                            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
-                                <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Minesite</p>
+                            <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t  relative p-2 pb-9 shadow-lg rounded-md bg-gray-100">
+                                <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 rounded-md p-0 font-semibold">Minesite</p>
                                 {mineSites.map((site, index) => (
                                     <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4" key={index}>
                                         <span className="flex items-center gap-2 col-span-full justify-end">
@@ -284,8 +284,8 @@ const EditSuplierPage = () => {
                                 ))}
 
                             </ul>
-                            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
-                                <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Address</p>
+                            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-lg rounded-md bg-gray-100">
+                                <p className=" col-span-full absolute -top-[13px] bg-white rounded-md left-4 px-2 p-0 font-semibold">Address</p>
 
                                 <li>
                                     <p className="mb-1">Province</p>

@@ -7,21 +7,22 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userMenu, setUserMenu] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
     let modalRef = useRef();
-  const handleClickOutside = useMemo(
-    () => (event) => {
-      if (!modalRef.current.contains(event.target)) {
-        setUserSubmenu(false);
-      }
-    },
-    [userMenu]
-  );
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [handleClickOutside]);
+
+    const handleClickOutside = (event) => {
+        if (!modalRef.current ||!modalRef.current.contains(event.target)) {
+            setUserSubmenu(false);
+        }
+      };
+  
+  
+    useEffect(() => {
+      document.addEventListener("click", handleClickOutside, true);
+      return () => {
+        document.removeEventListener("click", handleClickOutside, true);
+      };
+  
+    }, []);
 
     return (
         <>
@@ -32,7 +33,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                 </div>
 
 
-                <div className="hidden flex-none h-full text-center sm:flex items-center justify-center">
+                <div className="hidden relative flex-none h-full text-center sm:flex items-center justify-center">
                     <ul className="flex items-center justify-evenly gap-4">
                         <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiGlobeSimpleLight className="text-xl text-gray-500" />
@@ -52,7 +53,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                         </li>
 
 
-                        <li className="flex space-x-3 items-center">
+                        <li className="flex space-x-3 items-center ">
                             <span className="flex-none flex justify-center">
                                 <div className="w-8 h-8 flex ">
                                     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShta_GXR2xdnsxSzj_GTcJHcNykjVKrCBrZ9qouUl0usuJWG2Rpr_PbTDu3sA9auNUH64&usqp=CAU" alt="profile" className="shadow rounded-full object-cover" />
@@ -60,9 +61,9 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             </span>
 
                             <p className="hidden md:block text-sm md:text-md text-black dark:text-white">John Doe</p>
-                            <PiCaretRightLight  className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={()=>{setUserSubmenu(!userSubmenu)}} />
+                            <PiCaretRightLight  className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={()=>{setUserSubmenu((prev)=>!prev)}} />
                         </li>
-                        <div className={` absolute right-6 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`} ref={modalRef}>
+                        <div className={`absolute right-6 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`} ref={modalRef}>
 
                             <div className=" flex gap-2 items-center py-2">
                                 <img className=" w-[36px] h-[36px] object-cover rounded" src="https://img.freepik.com/free-icon/boy_318-858292.jpg" alt="user profile" />
