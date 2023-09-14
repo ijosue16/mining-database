@@ -121,7 +121,8 @@ function App() {
     <Route  path='/entry/edit/cassiterite/:entryId' element={<CassiteriteEditForm/>}/>
     <Route  path='/entry/edit/wolframite/:entryId' element={<WolframiteEditForm/>}/>
     <Route  path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
-    <Route  path='/complete/beryllium/:entryId' element={<ColtanEntryCompletePage/>}/>
+    
+    <Route  path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
 
     <Route  path='/test' element={<EditMinesitePage/>}/>
     <Route  path='/sales'element={<SalesListPage/>}/>
