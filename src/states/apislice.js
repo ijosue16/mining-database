@@ -444,6 +444,36 @@ export const apiSlice = createApi({
         getFileStructure: builder.query({
             query: () => `/file-structure`,
             providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
+        }),
+        downloadFile: builder.mutation({
+            query: ({body}) => ({
+                url: "/file-structure",
+                method: "POST",
+                body,
+                responseHandler: response => {
+                    response.blob();
+                }
+            })
+        }),
+        getSettings: builder.query({
+            query: () => `/settings`,
+            providesTags: ["settings"]
+        }),
+        updateSettings: builder.mutation({
+            query: ({body}) => ({
+                url: "/settings",
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ["settings"]
+        }),
+        getSupplierProductionHistory: builder.mutation({
+            query: ({body, supplierId}) => ({
+                url: `/suppliers/history/${supplierId}`,
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ["suppliers", "entries", "shipments"]
         })
     })
 });
@@ -516,4 +546,8 @@ export const {
     useShipmentReportMutation,
     useGetPaymentHistoryQuery,
     useDetailedStockQuery,
+    useDownloadFileMutation,
+    useUpdateSettingsMutation,
+    useGetSettingsQuery,
+    useGetSupplierProductionHistoryMutation
 } = apiSlice
