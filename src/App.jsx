@@ -96,7 +96,7 @@ function App() {
     <Route  path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
     <Route  path='/shipment/add/:model' element={<StockPage/>}/>
     <Route  path='/shipments' element={<ShipmentPage/>}/>
-    <Route  path='/shipment/complete' element={<ShipmentCompletionPage/>}/>
+    <Route  path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
     <Route  path='/payment' element={<ColtanPaymentsPage/>}/>
     <Route  path='/dummy' element={<DummyPage/>}/>
     <Route  path='/dummy2' element={<FetchingPage/>}/>
@@ -108,7 +108,7 @@ function App() {
     <Route  path='/wolframite' element={<WolframiteListPage/>}/>
     <Route  path='/lithium' element={<LithiumListPage/>}/>
     <Route  path='/beryllium' element={<BerylliumListPage/>}/>
-    <Route  path='/mixed' element={<ProductsList/>}/>
+    <Route  path='/mixed' element={<MixedEntryForm/>}/>
 
     <Route  path='/entry/add/coltan' element={<ColtanEntryForm/>}/>
     <Route  path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
