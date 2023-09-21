@@ -154,7 +154,6 @@ const ColtanEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-            editTable: true,
 
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
@@ -170,14 +169,12 @@ const ColtanEntryCompletePage = () => {
             title: "paid ($)",
             dataIndex: "paid",
             key: "paid",
-            editTable: true,
             sorter: (a, b) => a.paid - b.paid,
         },
         {
             title: "unpaid ($)",
             dataIndex: "unpaid",
             key: "unpaid",
-            editTable: true,
             sorter: (a, b) => a.unpaid - b.unpaid,
         },
         {
@@ -205,7 +202,6 @@ const ColtanEntryCompletePage = () => {
             title: "RMA Fee (RWF)",
             dataIndex: "rmaFee",
             key: "rmaFee",
-            editTable: true,
 
       sorter: (a, b) => a.rmaFee - b.rmaFee,
     },

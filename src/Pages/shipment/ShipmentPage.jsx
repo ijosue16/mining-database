@@ -213,7 +213,7 @@ const ShipmentPage = () => {
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
-                                  navigate(`/shipment/complete`)
+                                  navigate(`/shipment/complete/${record._id}`)
                               }}
                           >
                               <RiFileEditFill className=" text-lg"/>

@@ -2,6 +2,8 @@ import React, { Fragment, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { DatePicker, TimePicker, Spin } from "antd";
+import { BsChevronDown } from "react-icons/bs";
+import { HiOutlineSearch } from "react-icons/hi";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
@@ -54,6 +56,9 @@ const ColtanEntryForm = () => {
   ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState("");
   const [search, setSearch] = useState("");
   const [model, setModel] = useState("");
   const [searchData, setSearchData] = useState([]);
@@ -222,6 +227,26 @@ const ColtanEntryForm = () => {
     console.log(checked);
   };
 
+  // const suppliers = [
+  //   'Supplier 1',
+  //   'Supplier 2',
+  //   'Supplier 3',
+  //   // Add more suppliers here
+  // ];
+
+  // const handleSearchInputChange = (e) => {
+  //   setSearchText(e.target.value);
+  // };
+
+  // const handleSupplierSelect = (supplier) => {
+  //   setSelectedSupplier(supplier);
+  //   setDropdownOpen(false);
+  // };
+
+  // const filteredSuppliers = sup.filter(({companyName}) =>
+  //  companyName.toLowerCase().includes(searchText.toLowerCase())
+  // );
+
   return (
     <>
       <ActionsPagesContainer
@@ -259,6 +284,25 @@ const ColtanEntryForm = () => {
                         </>
                       )}
                     </select>
+
+                    {/* <div className='w-fit h-fit relative '>
+      <div className='border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white'  onClick={()=>{setDropdownOpen((prev)=>!prev)}}>
+      <p className=' '>Select supplier</p>
+      <BsChevronDown className={`text-md ${dropdownOpen ? 'rotate-180 transition duration-300':null}`}/>
+      </div>
+      <div className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl ${dropdownOpen ? 'block':'hidden'}`}>
+        <div className='w-full flex items-center gap-2 px-2 py-1 rounded border' >
+          <HiOutlineSearch className={`text-lg `}/>
+          <input type="text" name="" id="" placeholder='Search' className='w-full focus:outline-none' value={searchText} onChange={handleSearchInputChange}/>
+        </div>
+        <ul className={`list-none  overflow-auto `}>
+
+        {filteredSuppliers.map((supplier,index) => (
+              <li key={index} className=' hover:bg-slate-100 rounded-md p-2' onClick={() => handleSupplierSelect(supplier)}>{supplier}</li> ))}
+        
+        </ul>
+      </div>
+      </div> */}
                   </li>
                   <li className=" self-end">
                     <button
@@ -454,7 +498,7 @@ const ColtanEntryForm = () => {
                           key={index}
                           className="flex gap-2 items-center w-full"
                         >
-                          <p className=" font-semibold">{index+1}</p>
+                          <p className=" font-semibold">{index + 1}</p>
                           <input
                             animate={{}}
                             type="number"

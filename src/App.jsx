@@ -57,6 +57,7 @@ import BerylliumListPage from './Pages/beryllium/BerylliumList';
 import CassiteriteEditForm from './Pages/cassiterite/entry/CassiteriteEditForm';
 import WolframiteEditForm from './Pages/wolframite/entry/WolframiteEditForm';
 import Settings from "./Pages/Settings";
+import UsePermissionPage from './Pages/UsePermissionPage';
 
 
 function App() {
@@ -138,6 +139,7 @@ function App() {
                             <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
+                            <Route path="/user" element={<UsePermissionPage/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
 
                         </Route>

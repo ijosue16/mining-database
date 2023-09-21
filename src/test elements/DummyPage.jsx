@@ -2,7 +2,9 @@ import React, { useState,useEffect, useMemo } from 'react';
 import { Table, Checkbox, Input, Form } from 'antd';
 import { BiSolidEditAlt } from "react-icons/bi"
 import { FaSave } from "react-icons/fa"
+import { BsChevronDown } from "react-icons/bs"
 import { MdOutlineClose } from "react-icons/md"
+import { HiOutlineSearch} from "react-icons/hi"
 import { useMyContext } from '../context files/LoginDatacontextProvider';
 
 const YourComponent = () => {
@@ -14,6 +16,9 @@ const YourComponent = () => {
   ];
   const [totalWeight,setTotalWeight]=useState(null);
   const [avg,setAvg]=useState(null);
+  const [dropdownOpen,setDropdownOpen]=useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [selectedSupplier, setSelectedSupplier] = useState('');
 
   const [sourceData, setSourceData] = useState(initialData);
   const [selectedData, setSelectedData] = useState([]);
@@ -291,19 +296,48 @@ const YourComponent = () => {
     }
   };
 
+
+  const suppliers = [
+    'Supplier 1',
+    'Supplier 2',
+    'Supplier 3',
+    // Add more suppliers here
+  ];
+
+  const handleSearchInputChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSupplierSelect = (supplier) => {
+    setSelectedSupplier(supplier);
+    setDropdownOpen(false);
+  };
+
+  const filteredSuppliers = suppliers.filter((supplier) =>
+    supplier.toLowerCase().includes(searchText.toLowerCase())
+  );
   return (
     <>
-     <div className=' bg-red-500 w-14 h-11 fixed top-20 overflow-y-hidden'></div>
-    <div className='w-full text-start'>
+    <div className='w-full h-full'>
+      <div className='w-fit h-fit space-y-3 '>
+      <div className='border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white'  onClick={()=>{setDropdownOpen((prev)=>!prev)}}>
+      <p className=' '>Select supplier</p>
+      <BsChevronDown className={`text-md ${dropdownOpen ? 'rotate-180 transition duration-300':null}`}/>
+      </div>
+      <div className={`p-2 space-y-3 bg-white w-fit rounded shadow-lg`}>
+        <div className='w-full flex items-center gap-2 px-2 py-1 rounded border' >
+          <HiOutlineSearch className={`text-lg `}/>
+          <input type="text" name="" id="" placeholder='Search' className='w-full focus:outline-none' value={searchText} onChange={handleSearchInputChange}/>
+        </div>
+        <ul className={`list-none h-28 overflow-auto ${dropdownOpen ? 'block':'hidden'}`}>
 
-     
-<div className=' space-y-4'>
-<p className=' overflow-y-auto max-h-[80vh]'>
-os, in perfercabo modi harum suscipit commodi obcaecati quae beatae? Minima explicabo magni voluptate molestiae quisquam. Dolores, nulla perspiciatis inventore accusantium magnam illo quidem officia, ex sed natus modi libero suscipit sunt unde amet pariatur obcaecati quaerat, aspernatur provident magni laborum officiis cumque repudiandae voluptas. Magni fugit nihil ab saepe dignissimos quasi eius ipsa omnis praesentium iste,</p>
+        {filteredSuppliers.map((supplier,index) => (
+              <li key={index} className=' hover:bg-slate-100 rounded-md p-2'>{supplier}</li> ))}
+        
+        </ul>
+      </div>
+      </div>
 
-<p className=' text-lg text-red-800 text-bold'>{loginData.accessibility}</p>
-</div>
-<div className='w-full p-11 bg-gray-900'></div>
     </div>
     </>
   );
