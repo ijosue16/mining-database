@@ -59,7 +59,6 @@ import WolframiteEditForm from './Pages/wolframite/entry/WolframiteEditForm';
 import Settings from "./Pages/Settings";
 import UsePermissionPage from './Pages/UsePermissionPage';
 
-
 function App() {
 
 
@@ -141,7 +140,6 @@ function App() {
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/user" element={<UsePermissionPage/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
-
                         </Route>
                     </Route>
                     {/* <Route element={<Layout/>}>

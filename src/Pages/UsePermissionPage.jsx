@@ -2,9 +2,70 @@ import React, { useState } from "react";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import {BiEditAlt} from "react-icons/bi";
+import { useSelector } from "react-redux";
 
 const UsePermissionPage = () => {
+  const store = useSelector(state => {
+      console.log(state.global);
+  })
   const[isEdit,setIsEdit]=useState(false);
+
+  const initialPermissions = {
+    entry: {
+      view: true,
+      create: true,
+      edit: true,
+      delete: false
+    },
+    suppliers: {
+      view: true,
+      create: true,
+      edit: true,
+      delete: false
+    },
+    buyers: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: true
+    },
+    payments: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false
+    },
+    shipments: {
+      view: false,
+      create: false,
+      edit: false,
+      delete: false
+    }
+  }
+
+  const [permissions, setPermissions] = useState(initialPermissions);
+
+  const handlePermissionChange = (category, action) => {
+    // Create a copy of the current permissions state
+    const updatedPermissions = { ...permissions };
+
+    // Toggle the action (e.g., view, create, edit, delete)
+    updatedPermissions[category][action] = !permissions[category][action];
+
+    // Update the state with the new permissions
+    setPermissions(updatedPermissions);
+    console.log(permissions);
+  };
+
+  const handleSubmit = () => {
+      console.log(permissions);
+  }
+  const handleCancel = () => {
+
+  }
+
+
+
   return (
     <>
       <ActionsPagesContainer
@@ -46,7 +107,7 @@ const UsePermissionPage = () => {
                         value=""
                         className=""
                       />
-                      <label for="view"> view</label>
+                      <label htmlFor="view"> view</label>
                     </li>
                     <li className="flex items-center gap-2 justify-start">
                       <input
@@ -56,7 +117,7 @@ const UsePermissionPage = () => {
                         value=""
                         className=""
                       />
-                      <label for="create"> Create</label>
+                      <label htmlFor="create"> Create</label>
                     </li>
                     <li className="flex items-center gap-2 justify-start">
                       <input
@@ -174,12 +235,42 @@ const UsePermissionPage = () => {
                   {/* *** */}
 
                 </div>
+                <div>
+                  {Object.keys(permissions).map((category) => (
+                      <div key={category} className="w-full grid grid-cols-1 lg:grid-cols-12 items-center">
+                        <div className=" col-span-1 lg:col-span-4 md:border p-2">
+                          <p>{category} Management</p>
+                        </div>
+                        <ul className="col-span-1 lg:col-span-8 md:border sm:flex sm:justify-between sm:items-center py-2 px-6">
+                          {Object.keys(permissions[category]).map((action) => (
+                              <li key={action} className="flex items-center gap-2 justify-start">
+                                <input
+                                    type="checkbox"
+                                    id={`${category}-${action}`}
+                                    name={`${category}-${action}`}
+                                    value={`${category}-${action}`}
+                                    className=""
+                                    checked={permissions[category][action]}
+                                    onChange={() => handlePermissionChange(category, action)}
+                                />
+                                <label htmlFor={`${category}-${action}`}>{action}</label>
+                              </li>
+                          ))}
+                        </ul>
+                      </div>
+                  ))}
+                </div>
+
               </div>
             }
+            // Add={}
+            // Cancel={}
+            // isloading={}
           />
         }
+
       />
     </>
   );
-};
+}
 export default UsePermissionPage;
