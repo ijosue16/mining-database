@@ -474,6 +474,29 @@ export const apiSlice = createApi({
                 body
             }),
             invalidatesTags: ["suppliers", "entries", "shipments"]
+        }),
+        getAllUsersQuery: builder.query({
+            query: () => `/users`,
+            providesTags: ["users"]
+        }),
+        getOneUser: builder.query({
+            query: (userId) => `/users/${userId}`,
+            providesTags: ["users"]
+        }),
+        updateUser: builder.mutation({
+            query: ({body, userId}) => ({
+                url: `/users/${userId}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ["users"]
+        }),
+        deleteUser: builder.mutation({
+            query: (userId) => ({
+                url: `/users/${userId}`,
+                method: "DELETE"
+            }),
+            invalidatesTags: ["users"]
         })
     })
 });
@@ -549,5 +572,9 @@ export const {
     useDownloadFileMutation,
     useUpdateSettingsMutation,
     useGetSettingsQuery,
-    useGetSupplierProductionHistoryMutation
+    useGetSupplierProductionHistoryMutation,
+    useGetAllUsersQuery,
+    useGetOneUserQuery,
+    useUpdateUserMutation,
+    useDeleteUserMutation
 } = apiSlice
