@@ -216,6 +216,7 @@ const ColtanEntryForm = () => {
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
     console.log(supplier._id);
     setDropdownOpen(false);
+    setSearchText("");
   };
 
   return (
