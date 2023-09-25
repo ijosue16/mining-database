@@ -475,7 +475,7 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["suppliers", "entries", "shipments"]
         }),
-        getAllUsersQuery: builder.query({
+        getAllUsers: builder.query({
             query: () => `/users`,
             providesTags: ["users"]
         }),

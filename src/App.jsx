@@ -2,11 +2,11 @@ import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AddProductPage from './Pages/AddProductPage';
 import SalesListPage from './Pages/SalesListPage';
 import PurchasesListPage from './Pages/PurchasesListPage';
-import UsersListPage from './Pages/UsersListPage';
+import UsersListPage from './Pages/user/UsersListPage';
 import SuppliersListPage from './Pages/SuppliersListPage';
 import AddSalesPage from './Pages/AddSalesPage';
 import AddPurchasePage from './Pages/AddPurchasePage';
-import AddUserPage from './Pages/AddUserPage';
+import AddUserPage from './Pages/user/AddUserPage';
 import AddSuplierPage from './Pages/AddSuplierPage';
 import RegisterPage from './Authentications/RegisterPage';
 import LoginPage from './Authentications/LoginPage';
@@ -57,7 +57,7 @@ import BerylliumListPage from './Pages/beryllium/BerylliumList';
 import CassiteriteEditForm from './Pages/cassiterite/entry/CassiteriteEditForm';
 import WolframiteEditForm from './Pages/wolframite/entry/WolframiteEditForm';
 import Settings from "./Pages/Settings";
-import UsePermissionPage from './Pages/UsePermissionPage';
+import UserPermissionPage from './Pages/user/UserPermissionPage';
 
 function App() {
 
@@ -106,10 +106,13 @@ function App() {
 
                             <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
 
+                            <Route path='/users' element={<UsersListPage/>}/>
+
+                            <Route path='/user/edit/:userId' element={<UserPermissionPage/>}/>
+
                             <Route path='/test' element={<EditMinesitePage/>}/>
                             <Route path='/sales' element={<SalesListPage/>}/>
                             <Route path='/purchases' element={<PurchasesListPage/>}/>
-                            <Route path='/users' element={<UsersListPage/>}/>
                             <Route path='/profile' element={<UsersListPage/>}/>
                             <Route path='/suppliers' element={<SuppliersListPage/>}/>
                             <Route path='/add/supplier' element={<AddSuplierPage/>}/>
@@ -138,7 +141,7 @@ function App() {
                             <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/user" element={<UsePermissionPage/>}/>
+                            <Route path="/user" element={<UserPermissionPage/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
                         </Route>
                     </Route>

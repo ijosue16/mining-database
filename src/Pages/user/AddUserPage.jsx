@@ -1,11 +1,14 @@
 import {useEffect, useState} from "react";
-import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
-import AddComponent from "../components/Actions components/AddComponent";
+import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
+import AddComponent from "../../components/Actions components/AddComponent";
 import { PiEyeSlashFill, PiEyeFill } from "react-icons/pi";
-import { useSignupMutation } from "../states/apislice";
+import { useSignupMutation } from "../../states/apislice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 const AddUserPage = () => {
+    const navigate=useNavigate();
     const [ signup, {isLoading, isSuccess, isError, error} ] = useSignupMutation();
     const [formval, setFormval] = useState({ name: '', phoneNumber: '', email: '', role: "", password: '', passwordConfirm: '' });
     const [show, setShow] = useState(false);
@@ -14,15 +17,18 @@ const AddUserPage = () => {
     }
     useEffect(() => {
         if (isSuccess) {
-            console.log('user created successfully');
+          toast.success("User created successfully");
         } else if (isError) {
-            console.log(error);
+          const { message } = error.data;
+          toast.error(message);
         }
-    }, [isSuccess, isError, error]);
+      }, [isSuccess, isError, error]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         await signup({body: formval});
         handleCancel();
+        navigate(-1);
+        
     }
     const handleCancel = (e) => {
         setFormval({ name: '', phoneNumber: '', email: '', role: "", password: '', passwordConfirm: '' })
@@ -43,7 +49,7 @@ const AddUserPage = () => {
                             <li>
                                 <p className="mb-1 pl-1">Phone Number</p>
 
-                                <input value={formval.phoneNumber || ''} required autoComplete="phoneNumber" type="text" name="phoneNumber" id="phoneNumber" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
+                                <input value={formval.phoneNumber || ''} required autoComplete="off" type="text" name="phoneNumber" id="phoneNumber" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                             <li>
@@ -94,7 +100,10 @@ const AddUserPage = () => {
                     </div>
                 }
                     Add={handleSubmit}
-                    Cancel={handleCancel} />} />
+                    Cancel={handleCancel}
+                    isloading={isLoading} />} 
+                   
+                    />
         </>
     )
 }
