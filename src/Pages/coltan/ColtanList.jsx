@@ -23,6 +23,7 @@ import { HiOutlinePrinter } from "react-icons/hi";
 const ColtanListPage = () => {
   let dataz = [];
   const { loginData } = useMyContext();
+  const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
     useGetAllColtanEntriesQuery();
   const [
@@ -41,6 +42,7 @@ const ColtanListPage = () => {
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
   console.log(loginData);
+  console.log(permissions);
 
   let modalRef = useRef();
 
@@ -189,7 +191,7 @@ const ColtanListPage = () => {
                             <RiFileEditFill className=" text-lg" />
                             <p>complete entry</p>
                           </li>
-                          <li
+                        {permissions.entry.delete?(  <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {
                               SetSelectedRow(record._id);
@@ -203,7 +205,7 @@ const ColtanListPage = () => {
                           >
                             <MdDelete className=" text-lg" />
                             <p>delete</p>
-                          </li>
+                          </li>):null}
                         </>
                       ) : null}
                     </motion.ul>
@@ -211,10 +213,7 @@ const ColtanListPage = () => {
                 </span>
               </span>
 
-              {loginData !== "storekeeper" &&
-              "traceabilityOfficer" &&
-              "managingDirector" &&
-              "operationsManager " ? (
+              {permissions.entry.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"

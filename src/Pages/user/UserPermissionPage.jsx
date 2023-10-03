@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
 import {
@@ -13,11 +14,11 @@ import FetchingPage from "../FetchingPage";
 const UserPermissionPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const store = useSelector((state) => {
-    console.log(state.global);
-  });
+  // const store = useSelector((state) => {
+  //   console.log(state.global);
+  // });
   const [isEdit, setIsEdit] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState({name:"",role:""});
   const [permissions, setPermissions] = useState({});
  
   const { data, isLoading, isSuccess, isError, error } =
@@ -36,62 +37,67 @@ const UserPermissionPage = () => {
     if (isSuccess) {
       const { user } = data.data;
       const { permissions } = data.data.user;
-
-      console.log(permissions);
+      // console.log(permissions)
+      // console.log(user);
       setUserData(user);
       setPermissions(permissions);
     }
-  }, [isSuccess]);
-  const initialPermissions = {
-    entry: {
-      view: true,
-      create: true,
-      edit: true,
-      delete: false,
-    },
-    suppliers: {
-      view: true,
-      create: true,
-      edit: true,
-      delete: false,
-    },
-    buyers: {
-      view: false,
-      create: false,
-      edit: false,
-      delete: true,
-    },
-    payments: {
-      view: false,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-    shipments: {
-      view: false,
-      create: false,
-      edit: false,
-      delete: false,
-    },
-  };
+  }, [isSuccess,data]);
+  // const initialPermissions = {
+  //   entry: {
+  //     view: true,
+  //     create: true,
+  //     edit: true,
+  //     delete: false,
+  //   },
+  //   suppliers: {
+  //     view: true,
+  //     create: true,
+  //     edit: true,
+  //     delete: false,
+  //   },
+  //   buyers: {
+  //     view: false,
+  //     create: false,
+  //     edit: false,
+  //     delete: true,
+  //   },
+  //   payments: {
+  //     view: false,
+  //     create: false,
+  //     edit: false,
+  //     delete: false,
+  //   },
+  //   shipments: {
+  //     view: false,
+  //     create: false,
+  //     edit: false,
+  //     delete: false,
+  //   },
+  // };
 
   // const [permissions, setPermissions] = useState(initialPermissions);
-
   const handlePermissionChange = (category, action) => {
-    // Create a copy of the current permissions state
-    const updatedPermissions = { ...permissions };
-
-    // Toggle the action (e.g., view, create, edit, delete)
-    updatedPermissions[category][action] = !permissions[category][action];
-
-    // Update the state with the new permissions
-    setPermissions(updatedPermissions);
-    console.log(permissions);
+    setPermissions((prevPermissions) => {
+      const updatedPermissions = { ...prevPermissions };
+      updatedPermissions[category] = { ...updatedPermissions[category] };
+      updatedPermissions[category][action] = !updatedPermissions[category][action];
+      console.log(updatedPermissions)
+      return updatedPermissions;
+    });
   };
+  
+  
 
-  const handleSubmit = (e) => {
+  const handleSubmit =async (e) => {
     e.preventDefault();
-    console.log(permissions);
+    // console.log(permissions);
+    const body={permissions,userData};
+    await updateUser({body,userId});
+    localStorage.setItem('permissions',JSON.stringify(permissions));
+    setIsEdit(false);
+    navigate(-1);
+    // console.log(permissions);
   };
   const handleCancel = () => {
     setUserData({});
@@ -99,10 +105,18 @@ const UserPermissionPage = () => {
   };
 
   const handleChange = (e) => {
-    setUserData((prevdata) => ({
-      ...prevdata,
-      [e.target.name]: e.target.value,
-    }));
+    if(e.target.type==="checkbox"){
+      setUserData((prevdata)=>({
+        ...prevdata,
+        active:!prevdata.active,
+      }));
+    }
+    else{
+      setUserData((prevdata) => ({
+        ...prevdata,
+        [e.target.name]: e.target.value,
+      }));
+    }
   };
 
   return (
@@ -127,7 +141,7 @@ const UserPermissionPage = () => {
                       <div className=" space-y-2 col-span-full flex flex-col">
                         <label htmlFor="name" className=" font-semibold pl-2">
                           Name
-                        </label>
+                          </label>
                         <input
                           type="text"
                           name="name"
@@ -140,18 +154,17 @@ const UserPermissionPage = () => {
                         <label htmlFor="role" className=" font-semibold pl-2">
                           Role
                         </label>
-                        <input
-                          type="text"
-                          name="role"
-                          id="role"
-                          value={userData.role || ""}
-                          autoComplete="off"
-                          className=" p-2 border w-fit rounded-md focus:outline-none"
-                          onChange={handleChange}
-                        />
+                        <select value={userData.role || ''} required name="role" id="role" className="focus:outline-none p-2 border rounded-md w-fit" onChange={handleChange} >
+                                    <option value="CEO">CEO</option>
+                                    <option value="managingDirector">Managing director office</option>
+                                    <option value="operationsManager">Operations manager office</option>
+                                    <option value="accountant">Accountancy office</option>
+                                    <option value="traceabilityOfficer">Traceability office</option>
+                                    <option value="storekeeper">Storekeeper</option>
+                                </select>
                         <label htmlFor={`check${userData._id }`} className={`bg-gray-100 px-1 py-1 rounded-full flex flex-col justify-center w-12 ${userData.active===true?'items-end':'items-start'}`}>
-                <input type="checkbox" name="" id={`check${userData._id }`} className=" sr-only peer" />
-                <div className={`rounded-full p-[7.8px]  ${userData.active===true?'bg-orange-400':' bg-slate-400'}`}></div>
+                <input type="checkbox" name="" id={`check${userData._id }`} className=" sr-only peer" onChange={handleChange} />
+                <motion.div className={`rounded-full p-[7.8px]  ${userData.active===true?'bg-orange-400':' bg-slate-400'}`}></motion.div>
                 </label>
                       </div>
                     ) : (
@@ -210,9 +223,7 @@ const UserPermissionPage = () => {
                               value={`${category}-${action}`}
                               className=""
                               checked={permissions[category][action]}
-                              onChange={() =>
-                                handlePermissionChange(category, action)
-                              }
+                              onChange={() => handlePermissionChange(category, action)}
                             />
                             <label htmlFor={`${category}-${action}`}>
                               {action}
@@ -227,7 +238,7 @@ const UserPermissionPage = () => {
             }
             Add={handleSubmit}
             Cancel={handleCancel}
-            // isloading={}
+            isloading={isSending}
           />
         }
       />}

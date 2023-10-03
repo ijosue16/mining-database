@@ -33,7 +33,8 @@ const LoginPage = () => {
       dispatch(setPermissions(user.permissions));
       localStorage.setItem("profile", JSON.stringify(user));
       localStorage.setItem("role", user.role);
-      navigate("/coltan");
+      localStorage.setItem("permissions", JSON.stringify(user.permissions));
+      // navigate("/coltan");
     }
   };
 
@@ -59,6 +60,7 @@ const LoginPage = () => {
                   required
                   name="email"
                   id="email"
+                  autoComplete="off"
                   className=" focus:outline-none w-full"
                   placeholder="Enter your Email"
                   onChange={handleChange}

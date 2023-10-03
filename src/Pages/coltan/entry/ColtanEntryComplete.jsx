@@ -19,6 +19,7 @@ const ColtanEntryCompletePage = () => {
   const { entryId } = useParams();
   const navigate = useNavigate();
   const { loginData } = useMyContext();
+  const{profile,permissions}=loginData;
   const [form] = Form.useForm();
   const [selectedLotNumber, setSelectedLotNumber] = useState(null);
   const { data, isLoading, isError, isSuccess, error } =
@@ -283,10 +284,7 @@ const ColtanEntryCompletePage = () => {
                           <BiSolidEditAlt className=" text-lg" />
                           <p>edit</p>
                         </li>
-                        {loginData !== "storekeeper" &&
-                        "traceabilityOfficer" &&
-                        "managingDirector" &&
-                        "operationsManager " ? (
+                        {permissions.payments.create? (
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {

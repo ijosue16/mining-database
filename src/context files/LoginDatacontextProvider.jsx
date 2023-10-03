@@ -12,9 +12,12 @@ export function useMyContext() {
 export default function LoginDatacontextProvider() {
   const profile =JSON.parse(localStorage.getItem('profile'));
   const role = localStorage.getItem('role');
-  console.log(role)
-  console.log(profile)
-  const [loginData, setLoginData] = useState('role');
+  const permissions=JSON.parse(localStorage.getItem('permissions'))
+  // console.log(role)
+  // console.log(profile)
+  // console.log(profile.permissions)
+  const userInfo={profile,permissions};
+  const [loginData, setLoginData] = useState(userInfo);
  
   const updateLoginData = (accessibility) => {
     setLoginData({accessibility});

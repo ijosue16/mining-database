@@ -9,7 +9,8 @@ const ReportPage = () => {
       title={`Report page`}
       subTitle={`Make report `}
       actionsContainer={
-        <div className="w-full col-span-full space-y-6 p-2">
+        <div className="w-full col-span-full space-y-6 p-2 relative mb-6">
+          <div className="p-2 w-fit rounded-full bg-gray-400 shadow-2xl flex justify-center items-center absolute right-0 -bottom-4"><HiPlus className=" text-xl text-white"/></div>
           <p className="text-lg font-bold pl-1">Summary of report</p>
           <ul className=" list-none w-full bg-gray-100 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 rounded-[4px] shadow-xl shadow-zinc-400 px-3 py-4 ">
             <li className=" space-y-1">
