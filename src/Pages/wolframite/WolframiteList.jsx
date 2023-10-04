@@ -23,6 +23,7 @@ import { HiOutlinePrinter } from "react-icons/hi";
 const WolframiteListPage = () => {
   let dataz = [];
   const { loginData } = useMyContext();
+  const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
   useGetAllWolframiteEntriesQuery();
   const [
@@ -173,10 +174,7 @@ const WolframiteListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {loginData !== "storekeeper" &&
-                      "traceabilityOfficer" &&
-                      "managingDirector" &&
-                      "operationsManager " ? (
+                      {permissions.entry.edit ? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -211,10 +209,7 @@ const WolframiteListPage = () => {
                 </span>
               </span>
 
-              {loginData !== "storekeeper" &&
-              "traceabilityOfficer" &&
-              "managingDirector" &&
-              "operationsManager " ? (
+              {permissions.entry.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -244,6 +239,7 @@ const WolframiteListPage = () => {
         subTitle={"Manage your wolframite  entries"}
         navLinktext={"entry/add/wolframite"}
         navtext={"Add new Entry"}
+        isAllowed={permissions.entry.create}
         table={
           <>
             <Modal

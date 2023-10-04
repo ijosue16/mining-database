@@ -10,12 +10,12 @@ import {ImSpinner2} from "react-icons/im";
 import {FaSave} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
-import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation} from "../../../states/apislice";
+import { useGetOneBerylliumEntryQuery, useUpdateBerylliumEntryMutation} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 
-const ColtanEntryCompletePage = () => {
+const BerylliumEntryCompletePage = () => {
     const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -23,13 +23,13 @@ const ColtanEntryCompletePage = () => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
-        useGetOneColtanEntryQuery({entryId});
-    const [updateColtanEntry, {
+    useGetOneBerylliumEntryQuery({entryId});
+    const [updateBerylliumiteEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
-    }] = useUpdateColtanEntryMutation();
+    }] = useUpdateBerylliumEntryMutation();
 
     let modalRef = useRef();
 
@@ -86,7 +86,7 @@ const ColtanEntryCompletePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
-        await updateColtanEntry({body, entryId});
+        await updateBerylliumiteEntry({body, entryId});
 
         console.log(lotInfo);
         // navigate(-1);
@@ -95,7 +95,7 @@ const ColtanEntryCompletePage = () => {
         console.log("backend done");
         console.log(suply);
         const body = {...suply, output: lotInfo};
-        await updateColtanEntry({body, entryId});
+        await updateBerylliumiteEntry({body, entryId});
         navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
     };
 
@@ -382,12 +382,12 @@ const ColtanEntryCompletePage = () => {
     };
     return (
         <>
-          {isLoading ? (
+         {isLoading ? (
         <FetchingPage />
       ) : (
             <ActionsPagesContainer
-                title={"Coltan Details"}
-                subTitle={"View Coltan detailes"}
+                title={"Berylliumite Details"}
+                subTitle={"View Berylliumite detailes"}
                 actionsContainer={
                     <AddComponent
                         component={
@@ -511,4 +511,4 @@ const ColtanEntryCompletePage = () => {
         </>
     );
 };
-export default ColtanEntryCompletePage;
+export default BerylliumEntryCompletePage;

@@ -45,8 +45,9 @@ const Layout = () => {
                 { title: "Wolframite", icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
                 { title: "Lithium", icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
                 { title: "Beryllium", icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
-                { title: "Mixed", icon: <PiCurrencyEthDuotone />, id: 20,navtext:'mixed' },
-                { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },]
+                { title: "Mixed", icon: <PiCurrencyEthDuotone />, id: 20,navtext:'mixed', line: true, },
+                // { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },
+            ]
         },
         {
             heading: "Shipments", hId: 3, subHeaders: [
@@ -100,16 +101,16 @@ const Layout = () => {
                 { title: "Add", icon: <PiUserPlusDuotone />, id: 39,navtext:"add/user", line: true, },
             ]
         },
-        // {
-        //     heading: "Reports", hId: 7, subHeaders: [
-        //         { title: "Sales Report", icon: <LuBarChart2 />, id: 40 },
-        //         { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
-        //         { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
-        //         { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
-        //         { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
-        //         { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
-        //     ]
-        // },
+        {
+            heading: "Contracts", hId: 7, subHeaders: [
+                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts", line: true, },
+                // { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
+                // { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
+                // { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
+                // { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
+                // { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
+            ]
+        },
         // {
         //     heading: "User Management", hId: 8, subHeaders: [
         //         {

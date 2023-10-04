@@ -23,6 +23,7 @@ import { HiOutlinePrinter } from "react-icons/hi";
 const LithiumListPage = () => {
   let dataz = [];
   const { loginData } = useMyContext();
+  const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
   useGetAllLithiumEntriesQuery();
   const [
@@ -173,10 +174,7 @@ const LithiumListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {loginData !== "storekeeper" &&
-                      "traceabilityOfficer" &&
-                      "managingDirector" &&
-                      "operationsManager " ? (
+                      {permissions.entry.edit? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -211,10 +209,7 @@ const LithiumListPage = () => {
                 </span>
               </span>
 
-              {loginData !== "storekeeper" &&
-              "traceabilityOfficer" &&
-              "managingDirector" &&
-              "operationsManager " ? (
+              {permissions.entry.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -244,6 +239,7 @@ const LithiumListPage = () => {
         subTitle={"Manage your lithium  entries"}
         navLinktext={"entry/add/lithium"}
         navtext={"Add new Entry"}
+        isAllowed={permissions.entry.create}
         table={
           <>
             <Modal

@@ -58,6 +58,10 @@ import CassiteriteEditForm from './Pages/cassiterite/entry/CassiteriteEditForm';
 import WolframiteEditForm from './Pages/wolframite/entry/WolframiteEditForm';
 import Settings from "./Pages/Settings";
 import UserPermissionPage from './Pages/user/UserPermissionPage';
+import CassiteriteEntryCompletePage from './Pages/cassiterite/entry/CassiteriteEntryComplete';
+import WolframiteEntryCompletePage from './Pages/wolframite/entry/WolframiteEntryCompletePage';
+import BerylliumEntryCompletePage from './Pages/beryllium/entry/BerylliumEntryCompletePage';
+import LithiumEntryCompletePage from './Pages/lithium/entry/LithiumEntryCompletePage';
 
 function App() {
 
@@ -105,6 +109,10 @@ function App() {
                             <Route path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
 
                             <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
+                            <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>
+                            <Route path='/complete/wolframite/:entryId' element={<WolframiteEntryCompletePage/>}/>
+                            <Route path='/complete/beryllium/:entryId' element={<BerylliumEntryCompletePage/>}/>
+                            <Route path='/complete/lithium/:entryId' element={<LithiumEntryCompletePage/>}/>
 
                             <Route path='/users' element={<UsersListPage/>}/>
 

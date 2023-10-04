@@ -174,10 +174,7 @@ const CassiteriteListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {loginData !== "storekeeper" &&
-                      "traceabilityOfficer" &&
-                      "managingDirector" &&
-                      "operationsManager " ? (
+                      {permissions.entry.edit ? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -212,10 +209,7 @@ const CassiteriteListPage = () => {
                 </span>
               </span>
 
-              {loginData !== "storekeeper" &&
-              "traceabilityOfficer" &&
-              "managingDirector" &&
-              "operationsManager " ? (
+              {permissions.entry.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -245,6 +239,7 @@ const CassiteriteListPage = () => {
         subTitle={"Manage your cassiterite  entries"}
         navLinktext={"entry/add/cassiterite"}
         navtext={"Add new Entry"}
+        isAllowed={permissions.entry.create}
         table={
           <>
             <Modal

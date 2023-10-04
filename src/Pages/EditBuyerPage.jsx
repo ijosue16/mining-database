@@ -4,6 +4,7 @@ import AddComponent from "../components/Actions components/AddComponent";
 import { PiEyeSlashFill,PiEyeFill } from "react-icons/pi";
 import { useUpdateBuyerMutation,useGetOneBuyerQuery } from "../states/apislice";
 import { useNavigate, useParams } from "react-router-dom";
+import FetchingPage from "./FetchingPage";
 
 
 const EditBuyerPage = () => {
@@ -37,9 +38,12 @@ const EditBuyerPage = () => {
             console.log(byr);
         }
       }, [isdone]);
-   
+    
     return (
-        <div>
+        <>
+         {isgetting ? (
+        <FetchingPage />
+      ) : (
             <ActionsPagesContainer title={'Edit Buyer'}
                 subTitle={'Update buyer'}
                 actionsContainer={<AddComponent component={
@@ -80,8 +84,8 @@ const EditBuyerPage = () => {
                 } 
                 Add={handleProductSubmit}
                 Cancel={handleCancel}
-                isloading={isLoading}/>} />
-        </div>
+                isloading={isLoading}/>} />)}
+        </>
     )
 }
 export default EditBuyerPage;

@@ -1,6 +1,7 @@
  import { useParams } from "react-router-dom";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import { useGetOneBuyerQuery } from "../states/apislice";
+import FetchingPage from "./FetchingPage";
  const BuyerDetailsPage=()=>{
     let info=[];
     const{buyerId}=useParams();
@@ -12,7 +13,11 @@ import { useGetOneBuyerQuery } from "../states/apislice";
         info=byr;
     }
 return(
-    <ActionsPagesContainer title={'Buyer details'}
+    <>
+     {isLoading ? (
+        <FetchingPage />
+      ) : (
+        <ActionsPagesContainer title={'Buyer details'}
     subTitle={'Buyers info details'}
     actionsContainer={
         <div className="w-full">
@@ -34,7 +39,9 @@ return(
 
                 </ul>
             </div>
-    } />
+    } />)}
+    </>
+
 )
  }
  export default BuyerDetailsPage;
