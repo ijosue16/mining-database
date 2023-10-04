@@ -1,7 +1,7 @@
 import { PiPlus,PiCaretLeftLight } from "react-icons/pi"
 import { useNavigate } from "react-router-dom";
 
-const ListContainerHeader = ({ title, subTitle, navtext,navLinktext }) => {
+const ListContainerHeader = ({ title, subTitle, navtext,navLinktext,isAlowed }) => {
     const navigate = useNavigate();
     return (
         <>
@@ -13,10 +13,10 @@ const ListContainerHeader = ({ title, subTitle, navtext,navLinktext }) => {
                     <h6 className="text-[14px] ">{subTitle}</h6>
 
                 </div>
-                <div className="py-[10px] px-6 rounded bg-amber-500 flex items-center gap-3" onClick={() => navigate(`/${navLinktext}`)} >
+               { isAlowed?<div className="py-[10px] px-6 rounded bg-amber-500 flex items-center gap-3" onClick={() => navigate(`/${navLinktext}`)} >
                     <PiPlus className="text-white text-2xl" />
                     <button type="button" className=" bg-transparent text-white text-center" >{navtext}</button>
-                </div>
+                </div>:null}
 
             </div>
         </>

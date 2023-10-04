@@ -23,6 +23,7 @@ import { HiOutlinePrinter } from "react-icons/hi";
 const CassiteriteListPage = () => {
   let dataz = [];
   const { loginData } = useMyContext();
+  const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
   useGetAllCassiteriteEntriesQuery();
   const [

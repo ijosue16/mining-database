@@ -243,6 +243,7 @@ const ColtanListPage = () => {
         subTitle={"Manage your coltan  entries"}
         navLinktext={"entry/add/coltan"}
         navtext={"Add new Entry"}
+        isAllowed={permissions.entry.create}
         table={
           <>
             <Modal

@@ -260,6 +260,7 @@ const UsersListPage = () => {
         subTitle={"Manage your users"}
         navLinktext={"add/user"}
         navtext={"Add new User"}
+        isAllowed={true}
         table={
           <>
             <Modal

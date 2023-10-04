@@ -2,6 +2,8 @@ import React, { useEffect, useState, Fragment } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight } from "react-icons/pi";
 import { LuBarChart2 } from "react-icons/lu"
+import { GiDiamondHard } from "react-icons/gi"
+import { PiCurrencyEthDuotone } from "react-icons/pi"
 import { TbArrowsCross } from "react-icons/tb"
 import Appbar from "./Appbar";
 import Sidebar from "./sidebar";
@@ -38,12 +40,12 @@ const Layout = () => {
         },
         {
             heading: "Entry", hId:2 , subHeaders: [
-                { title: "Coltan", icon: <PiCubeDuotone />, id: 15,navtext:'coltan' },
-                { title: "Cassiterite", icon: <PiPlusSquareDuotone />, id: 16,navtext:'cassiterite' },
-                { title: "Wolframite", icon: <PiCubeTransparentDuotone />, id: 17,navtext:'wolframite' },
-                { title: "Lithium", icon: <PiTagDuotone />, id: 18,navtext:'lithium' },
-                { title: "Beryllium", icon: <PiSpeakerHifiDuotone />, id: 19,navtext:'beryllium' },
-                { title: "Mixed", icon: <PiBarcodeDuotone />, id: 20,navtext:'mixed' },
+                { title: "Coltan", icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
+                { title: "Cassiterite", icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
+                { title: "Wolframite", icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
+                { title: "Lithium", icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
+                { title: "Beryllium", icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
+                { title: "Mixed", icon: <PiCurrencyEthDuotone />, id: 20,navtext:'mixed' },
                 { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },]
         },
         {
@@ -64,12 +66,12 @@ const Layout = () => {
                 //         { title: "Import Transfer", id: 21 }
                 //     ]
                 // },
-                {
-                    title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 29, submenuItems: [
-                        { title: "Sales Return", id: 30 },
-                        { title: "Purchases Return", id: 31 }
-                    ], line: true
-                }
+                // {
+                //     title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 29, submenuItems: [
+                //         { title: "Sales Return", id: 30 },
+                //         { title: "Purchases Return", id: 31 }
+                //     ], line: true
+                // }
             ]
         },
 
@@ -81,52 +83,52 @@ const Layout = () => {
                 // { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28,navtext:"" },
             ]
         },
+        // {
+        //     heading: "Finance & acconts", hId: 5, subHeaders: [
+        //         {
+        //             title: "Expenses", icon: <PiFileTextDuotone />, submenu: true, submenuItems: [
+        //                 { title: "Expenses", id: 34 },
+        //                 { title: "Expenses Category", id: 35 }
+        //             ], line: true
+        //         }]
+        // },
         {
-            heading: "Finance & acconts", hId: 5, subHeaders: [
-                {
-                    title: "Expenses", icon: <PiFileTextDuotone />, submenu: true, submenuItems: [
-                        { title: "Expenses", id: 34 },
-                        { title: "Expenses Category", id: 35 }
-                    ], line: true
-                }]
-        },
-        {
-            heading: "Peoples", hId: 6, subHeaders: [
-                { title: "Customers", icon: <PiUserDuotone />, id: 36 },
-                { title: "Suppliers", icon: <PiUsersDuotone />, id: 37 },
+            heading: "Users", hId: 6, subHeaders: [
+                // { title: "Customers", icon: <PiUserDuotone />, id: 36 },
+                // { title: "Suppliers", icon: <PiUsersDuotone />, id: 37 },
                 { title: "Users", icon: <PiUserDuotone />, id: 38, navtext:'users' },
-                { title: "Stores", icon: <PiHouseDuotone />, line: true, id: 39 },
+                { title: "Add", icon: <PiUserPlusDuotone />, id: 39,navtext:"add/user", line: true, },
             ]
         },
-        {
-            heading: "Reports", hId: 7, subHeaders: [
-                { title: "Sales Report", icon: <LuBarChart2 />, id: 40 },
-                { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
-                { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
-                { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
-                { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
-                { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
-            ]
-        },
-        {
-            heading: "User Management", hId: 8, subHeaders: [
-                {
-                    title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 46, submenuItems: [
-                        { title: "New User", id: 47 },
-                        { title: "Users List", id: 48 }
-                    ], line: true
-                },]
-        },
+        // {
+        //     heading: "Reports", hId: 7, subHeaders: [
+        //         { title: "Sales Report", icon: <LuBarChart2 />, id: 40 },
+        //         { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
+        //         { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
+        //         { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
+        //         { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
+        //         { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
+        //     ]
+        // },
+        // {
+        //     heading: "User Management", hId: 8, subHeaders: [
+        //         {
+        //             title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 46, submenuItems: [
+        //                 { title: "New User", id: 47 },
+        //                 { title: "Users List", id: 48 }
+        //             ], line: true
+        //         },]
+        // },
         {
             heading: "Settings", hId: 9, subHeaders: [
                 {
                     title: "Settings", icon: <PiGearDuotone />, submenu: true, id: 49, submenuItems: [
-                        { title: "General Settings", id: 50 },
-                        { title: "Email Settings", id: 51 },
-                        { title: "Payment Settings", id: 52 },
-                        { title: "Currency Settings", id: 53 },
-                        { title: "Group Permissions", id: 54 },
-                        { title: "Tax Rates", id: 55 },
+                        { title: "General Settings", id: 50,navtext:"settings" },
+                        // { title: "Email Settings", id: 51 },
+                        // { title: "Payment Settings", id: 52 },
+                        // { title: "Currency Settings", id: 53 },
+                        // { title: "Group Permissions", id: 54 },
+                        // { title: "Tax Rates", id: 55 },
                     ],
                 },
                 { title: "Logout", icon: <PiSignInDuotone />, id: 56 },]
