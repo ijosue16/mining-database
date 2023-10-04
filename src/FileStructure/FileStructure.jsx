@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import FileTree from './FileTree'; // Import the FileTree component
+import FileTree from './FileTree';
 
 const FileStructure = () => {
     const data = [
