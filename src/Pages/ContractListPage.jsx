@@ -1,7 +1,9 @@
 import React from "react";
 import PurchasesListContainer from "../components/Listcomponents/PurchasesListContainer";
 
-const ContractsistPage=()=>{
+const ContractsistPage = () => {
+
+    
 return(
     <>
     <PurchasesListContainer title={'Contracts list'}

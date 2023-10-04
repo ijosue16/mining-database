@@ -51,7 +51,7 @@ const BuyersListPage = () => {
         const { buyers: byrz } = dt;
         console.log(byrz);
         dataz = byrz;
-    };
+    }
     const handleActions = (id) => {
         if (selectedRow === id) {
           console.log("uri muduki sha");

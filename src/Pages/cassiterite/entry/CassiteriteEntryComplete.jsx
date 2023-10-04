@@ -149,13 +149,13 @@ const CassiteriteEntryCompletePage = () => {
             key: "unpaid",
             sorter: (a, b) => a.unpaid - b.unpaid,
         },
-        tantal: {
-            title: "Tantal ($)",
-            dataIndex: "tantalum",
-            key: "tantalum",
-            editTable: true,
-            sorter: (a, b) => a.tantalum - b.tantalum,
-        },
+        // tantal: {
+        //     title: "Tantal ($)",
+        //     dataIndex: "tantalum",
+        //     key: "tantalum",
+        //     editTable: true,
+        //     sorter: (a, b) => a.tantalum - b.tantalum,
+        // },
         grade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
@@ -326,7 +326,8 @@ const CassiteriteEntryCompletePage = () => {
             },
         },
     ];
-    if (profile.role !== "storekeeper" && profile.role !== "traceabilityOfficer") {
+    if (profile.role === "storekeeper" ) {
+    // && profile.role !== "traceabilityOfficer"
         console.log(profile.role);
         for (const key in restrictedColumns) {
             if (restrictedColumns.hasOwnProperty(key)) {

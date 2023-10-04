@@ -54,6 +54,10 @@ export const apiSlice = createApi({
             query: () => `/contracts`,
             providesTags: ['buyers', 'contracts']
         }),
+        getBuyerContracts: builder.query({
+            query: ({buyerId}) => `/contracts/${buyerId}`,
+            providesTags: ['buyers', 'contracts']
+        }),
         addContract: builder.mutation({
             query: ({body}) => ({
                 url: `/contracts`,
@@ -511,6 +515,7 @@ export const {
     useUpdateBuyerMutation,
     useDeleteBuyerMutation,
     useGetAllContractsQuery,
+    useGetBuyerContractsQuery,
     useAddContractMutation,
     useDownloadContractMutation,
     useUpdateContractMutation,

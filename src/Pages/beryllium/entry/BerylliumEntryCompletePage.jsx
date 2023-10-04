@@ -76,8 +76,13 @@ const BerylliumEntryCompletePage = () => {
         if (isSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
+            const output = [
+                {
+                    ...entr
+                }
+            ]
             setSuply(entr);
-            setLotInfo(entr.output);
+            setLotInfo(output);
             console.log(entr);
             // console.log(lotInfo);
         }
@@ -409,30 +414,30 @@ const BerylliumEntryCompletePage = () => {
                                                     Entry details
                                                 </p>
                                                 <p>Weight in: {suply?.weightIn}</p>
-                                                <p>Mineral type: {suply?.mineralType}</p>
+                                                <p>Mineral type: {suply?.name}</p>
                                                 {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                                <p>Number of tags: {suply?.numberOfTags}</p>
-                                                <p>Beneficiary: {suply?.beneficiary}</p>
+                                                {/*<p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                                {/*<p>Beneficiary: {suply?.beneficiary}</p>*/}
                                             </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Company info
-                                                </p>
-                                                <p>Name: {suply?.companyName}</p>
-                                                <p>Email: {suply.email}</p>
-                                                <p>TIN Number: {suply.TINNumber}</p>
-                                                <p className=" shrink">
-                                                    License Number: {suply.licenseNumber}
-                                                </p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Representative info
-                                                </p>
-                                                <p>Phone number: {suply.representativePhoneNumber}</p>
-                                                <p>ID: {suply.representativeId}</p>
-                                                {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                                            </li>
+                                            {/*<li>*/}
+                                            {/*    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                            {/*        Company info*/}
+                                            {/*    </p>*/}
+                                            {/*    <p>Name: {suply?.companyName}</p>*/}
+                                            {/*    <p>Email: {suply.email}</p>*/}
+                                            {/*    <p>TIN Number: {suply.TINNumber}</p>*/}
+                                            {/*    <p className=" shrink">*/}
+                                            {/*        License Number: {suply.licenseNumber}*/}
+                                            {/*    </p>*/}
+                                            {/*</li>*/}
+                                            {/*<li>*/}
+                                            {/*    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                            {/*        Representative info*/}
+                                            {/*    </p>*/}
+                                            {/*    <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                            {/*    <p>ID: {suply.representativeId}</p>*/}
+                                            {/*    /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                            {/*</li>*/}
 
                                         </ul>
                                     </div>
