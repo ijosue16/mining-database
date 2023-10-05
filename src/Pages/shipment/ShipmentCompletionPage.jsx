@@ -407,7 +407,7 @@ const ShipmentCompletionPage = () => {
                         />
                         <button
                           type="button"
-                          className=" w-full p-2 rounded-md bg-blue-300"
+                          className=" w-full p-2 rounded-md bg-gradient-to-r from-gray-100 via-blue-100 to-blue-300 shadow-md"
                           onClick={() =>
                             handleCustomUpload("analysisCertificate")
                           }
@@ -432,7 +432,7 @@ const ShipmentCompletionPage = () => {
                         />
                         <button
                           type="button"
-                          className=" w-full p-2 rounded-md bg-blue-300"
+                          className=" w-full p-2 rounded-md bg-gradient-to-r from-gray-100 via-blue-100 to-blue-300 shadow-md"
                           onClick={() =>
                             handleCustomUpload("containerForwardNote")
                           }
@@ -456,7 +456,7 @@ const ShipmentCompletionPage = () => {
                         />
                         <button
                           type="button"
-                          className=" w-full p-2 rounded-md bg-blue-300"
+                          className=" w-full p-2 rounded-md bg-gradient-to-r from-gray-100 via-blue-100 to-blue-300 shadow-md"
                           onClick={() =>
                             handleCustomUpload("certificateOfOrigin")
                           }
@@ -480,7 +480,7 @@ const ShipmentCompletionPage = () => {
                         />
                         <button
                           type="button"
-                          className=" w-full p-2 rounded-md bg-blue-300"
+                          className=" w-full p-2 rounded-md bg-gradient-to-r from-gray-100 via-blue-100 to-blue-300 shadow-md"
                           onClick={() =>
                             handleCustomUpload("rmbIcglrCertificate")
                           }

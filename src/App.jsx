@@ -62,6 +62,8 @@ import CassiteriteEntryCompletePage from './Pages/cassiterite/entry/CassiteriteE
 import WolframiteEntryCompletePage from './Pages/wolframite/entry/WolframiteEntryCompletePage';
 import BerylliumEntryCompletePage from './Pages/beryllium/entry/BerylliumEntryCompletePage';
 import LithiumEntryCompletePage from './Pages/lithium/entry/LithiumEntryCompletePage';
+import AddContract from './Pages/AddContract';
+import LithiumEditForm from './Pages/lithium/entry/LithiumEditForm';
 
 function App() {
 
@@ -106,6 +108,7 @@ function App() {
                             <Route path='/entry/edit/coltan/:entryId' element={<ColtanEditForm/>}/>
                             <Route path='/entry/edit/cassiterite/:entryId' element={<CassiteriteEditForm/>}/>
                             <Route path='/entry/edit/wolframite/:entryId' element={<WolframiteEditForm/>}/>
+                            <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
                             <Route path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
 
                             <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
@@ -143,6 +146,7 @@ function App() {
                             <Route path='/edit/user' element={<EditUserPage/>}/>
                             <Route path='/add/supplier' element={<AddSuplierPage/>}/>
                             <Route path='/contracts' element={<ContractsistPage/>}/>
+                            <Route path='add/contract' element={<AddContract/>}/>
                             <Route path='/register' element={<RegisterPage/>}/>
                             <Route path='/login' element={<LoginPage/>}/>
                             <Route path='/password/reset' element={<ResetPasswordPage/>}/>

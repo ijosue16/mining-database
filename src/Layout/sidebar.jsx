@@ -30,8 +30,9 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                     </div>
                 </div>
             </div>
-            <div onClick={opennav} className={`-right-0 transition transform ease-in-out duration-500 flex border-4 border-white dark:border-[#0F172A] dark:hover:bg-blue-500 hover:bg-amber-500 absolute top-2 p-3 rounded-full text-white hover:rotate-45 ${!open && 'text-black'}`}>
-                <PiWindowsLogoDuotone className={`${!open && 'text-black'}`} />
+            <div onClick={opennav} className={`-right-0 transition transform ease-in-out duration-500 flex border-4 border-white dark:border-[#0F172A] dark:hover:bg-blue-500 hover:bg-amber-500 absolute top-2 p-1 rounded-full text-white hover:rotate-45 ${!open && 'text-black'}`}>
+                {/* <PiWindowsLogoDuotone className={`${!open && 'text-black'}`} /> */}
+                <img src="https://icon-library.com/images/mining-icon/mining-icon-1.jpg" alt="logo-image" className="w-8 h-8" />
             </div>
             {/* big sidebar menu */}
             <div className={`max mt-20 flex-col  w-full  list-none overflow-y-scroll ${!open && 'hidden'}`} >

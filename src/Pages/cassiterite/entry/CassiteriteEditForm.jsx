@@ -457,7 +457,7 @@ const CassiteriteEditForm = () => {
                         onChange={handleEntry}
                       />
                     </li>
-                    <li className=" space-y-1">
+                    {/* <li className=" space-y-1">
                       <p className="pl-1">Email</p>
                       <input
                         type="email"
@@ -468,7 +468,7 @@ const CassiteriteEditForm = () => {
                         value={formval.email || ""}
                         onChange={handleEntry}
                       />
-                    </li>
+                    </li> */}
                     <li className=" space-y-1">
                       <p className="pl-1">TIN Number</p>
                       <input

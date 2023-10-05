@@ -99,6 +99,24 @@ const ShipmentPage = () => {
             key: "createdAt",
             sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
             render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
+            filteredValue: [searchText],
+            onFilter: (value, record) => {
+              return (
+                String(record.totalShipmentQuantity)
+                  .toLowerCase()
+                  .includes(value.toLowerCase()) ||
+                String(record.averageGrade)
+                  .toLowerCase()
+                  .includes(value.toLowerCase()) ||
+                String(record.model)
+                  .toLowerCase()
+                  .includes(value.toLowerCase()) ||
+                String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
+                String(dayjs(record.createdAt).format("MMM DD, YYYY"))
+                  .toLowerCase()
+                  .includes(value.toLowerCase())
+              );
+            },
         },
         {
             title: "T. Quantity",
@@ -142,7 +160,7 @@ const ShipmentPage = () => {
         },
 
         {
-            title: "",
+            title: "reports",
             dataIndex: "action",
             key: "action",
             render: (_, record) => {

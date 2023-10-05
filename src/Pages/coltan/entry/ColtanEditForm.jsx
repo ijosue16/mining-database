@@ -170,14 +170,14 @@ const ColtanEditForm = () => {
     }
   };
 
-  const handleAddDate = (date, dateString) => {
+  const handleAddDate = ( dateString) => {
     setFormval((prevState) => ({
       ...prevState,
       supplyDate: dateString,
     }));
   };
 
-  const handleAddTime = (time, timeString) => {
+  const handleAddTime = ( timeString) => {
     setFormval((prevState) => ({
       ...prevState,
       time: timeString,
@@ -457,7 +457,7 @@ const ColtanEditForm = () => {
                         onChange={handleEntry}
                       />
                     </li>
-                    <li className=" space-y-1">
+                    {/* <li className=" space-y-1">
                       <p className="pl-1">Email</p>
                       <input
                         type="email"
@@ -468,7 +468,7 @@ const ColtanEditForm = () => {
                         value={formval.email || ""}
                         onChange={handleEntry}
                       />
-                    </li>
+                    </li> */}
                     <li className=" space-y-1">
                       <p className="pl-1">TIN Number</p>
                       <input
