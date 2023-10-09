@@ -116,6 +116,11 @@ const ColtanEntryCompletePage = () => {
         setEditRowKey(record._id);
         setShow(false);
     };
+    const calculatePrice = (tantal, grade, weightOut) => {
+        if (tantal && grade && weightOut) {
+            return ((tantal * grade/100) * weightOut).toFixed(3)
+        }
+    }
     const save = async (key) => {
         const row = await form.validateFields();
         const newData = [...lotInfo];
@@ -125,7 +130,7 @@ const ColtanEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                mineralPrice: (row.tantalum * row.mineralGrade).toFixed(3),
+                mineralPrice: calculatePrice(row.tantalum, row.mineralGrade, row.weightOut),
             };
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -149,6 +154,13 @@ const ColtanEntryCompletePage = () => {
             key: "unpaid",
             sorter: (a, b) => a.unpaid - b.unpaid,
         },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            editTable: true,
+            sorter: (a, b) => a.USDRate - b.USDRate,
+        },
         tantal: {
             title: "Tantal ($)",
             dataIndex: "tantalum",
@@ -171,11 +183,11 @@ const ColtanEntryCompletePage = () => {
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         rmaFee: {
-            title: "RMA Fee (RWF)",
-            dataIndex: "rmaFee",
-            key: "rmaFee",
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
 
-            sorter: (a, b) => a.rmaFee - b.rmaFee,
+            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
         },
     }
     const columns = [
@@ -202,7 +214,7 @@ const ColtanEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-
+            editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
 
@@ -326,11 +338,12 @@ const ColtanEntryCompletePage = () => {
             },
         },
     ];
-    if (profile.role !== "storekeeper" && profile.role !== "traceabilityOfficer") {
+    if (profile.role === "storekeeper") {
+    // && profile.role !== "traceabilityOfficer"
         console.log(profile.role);
         for (const key in restrictedColumns) {
             if (restrictedColumns.hasOwnProperty(key)) {
-                columns.push(restrictedColumns[key])
+                columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
             }
         }
     }

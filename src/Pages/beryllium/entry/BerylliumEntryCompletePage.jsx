@@ -335,7 +335,7 @@ const BerylliumEntryCompletePage = () => {
         console.log(profile.role);
         for (const key in restrictedColumns) {
             if (restrictedColumns.hasOwnProperty(key)) {
-                columns.push(restrictedColumns[key])
+                columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
             }
         }
     }

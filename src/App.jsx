@@ -64,6 +64,7 @@ import BerylliumEntryCompletePage from './Pages/beryllium/entry/BerylliumEntryCo
 import LithiumEntryCompletePage from './Pages/lithium/entry/LithiumEntryCompletePage';
 import AddContract from './Pages/AddContract';
 import LithiumEditForm from './Pages/lithium/entry/LithiumEditForm';
+import FileStructure from "./FileStructure/FileStructure";
 
 function App() {
 
@@ -154,6 +155,7 @@ function App() {
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
+                            <Route path="/structure" element={<FileStructure/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
                         </Route>
                     </Route>

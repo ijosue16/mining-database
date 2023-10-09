@@ -32,7 +32,13 @@ const Settings = () => {
                     rmaFeeWolframite: existingSettings.rmaFeeWolframite,
                     rmaFeeCassiterite: existingSettings.rmaFeeCassiterite,
                     rmaFeeColtan: existingSettings.rmaFeeColtan,
-                    nameOfCompany: existingSettings.nameOfCompany
+                    nameOfCompany: existingSettings.nameOfCompany,
+                    // address: {
+                    //     province: existingSettings.address.province,
+                    //     district: existingSettings.address.district,
+                    //     sector: existingSettings.address.sector,
+                    // },
+                    representative: existingSettings.representative
                 })
             );
         }
@@ -43,7 +49,9 @@ const Settings = () => {
     }
 
     const handleCancel = () => {
-        setSettings({nameOfCompany: "", rmaFeeWolframite: 0, rmaFeeColtan: 0, rmaFeeCassiterite: 0});
+        setSettings({nameOfCompany: "", rmaFeeWolframite: 0, rmaFeeColtan: 0, rmaFeeCassiterite: 0, representative: "",
+            // supplier: {province: "", district: "", sector: ""}
+        });
     }
 
     const handleSubmit = async (e) => {
@@ -82,6 +90,22 @@ const Settings = () => {
                             <p className="mb-1">Name of Processor</p>
                             <input type="text" name="nameOfCompany" id="nameOfCompany" autoComplete="off" value={settings.nameOfCompany}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
                         </li>
+                        <li>
+                            <p className="mb-1">Name of Representatative</p>
+                            <input type="text" name="representative" id="representative" autoComplete="off" value={settings.representative}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
+                        </li>
+                        {/*<li>*/}
+                        {/*    <p className="mb-1">Province</p>*/}
+                        {/*    <input type="text" name="address.province" id="province" autoComplete="off" value={settings.address.province}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>*/}
+                        {/*</li>*/}
+                        {/*<li>*/}
+                        {/*    <p className="mb-1">District</p>*/}
+                        {/*    <input type="text" name="address.district" id="district" autoComplete="off" value={settings.address.district}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>*/}
+                        {/*</li>*/}
+                        {/*<li>*/}
+                        {/*    <p className="mb-1">Sector</p>*/}
+                        {/*    <input type="text" name="address.sector" id="sector" autoComplete="off" value={settings.address.sector}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>*/}
+                        {/*</li>*/}
                     </ul>
                     </div>
                 }

@@ -116,6 +116,13 @@ const CassiteriteEntryCompletePage = () => {
         setEditRowKey(record._id);
         setShow(false);
     };
+
+    const calculatePrice = (LME, grade, TC, weightOut) => {
+        if (LME && grade && TC && weightOut) {
+            return ((((LME * grade/100) - TC)/1000) * weightOut).toFixed(3)
+        }
+    }
+
     const save = async (key) => {
         const row = await form.validateFields();
         const newData = [...lotInfo];
@@ -125,7 +132,7 @@ const CassiteriteEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                mineralPrice: (row.tantalum * row.mineralGrade).toFixed(3),
+                mineralPrice: calculatePrice(row.londonMetalExchange, row.mineralGrade, row.treatmentCharges, row.weightOut),
             };
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -149,13 +156,27 @@ const CassiteriteEntryCompletePage = () => {
             key: "unpaid",
             sorter: (a, b) => a.unpaid - b.unpaid,
         },
-        // tantal: {
-        //     title: "Tantal ($)",
-        //     dataIndex: "tantalum",
-        //     key: "tantalum",
-        //     editTable: true,
-        //     sorter: (a, b) => a.tantalum - b.tantalum,
-        // },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            editTable: true,
+            sorter: (a, b) => a.USDRate - b.USDRate,
+        },
+        LME: {
+            title: "LME ($)",
+            dataIndex: "londonMetalExchange",
+            key: "londonMetalExchange",
+            editTable: true,
+            sorter: (a, b) => a.londonMetalExchange - b.londonMetalExchange,
+        },
+        treatmentCharges: {
+            title: "TC ($)",
+            dataIndex: "treatmentCharges",
+            key: "treatmentCharges",
+            editTable: true,
+            sorter: (a, b) => a.treatmentCharges - b.treatmentCharges,
+        },
         grade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
@@ -171,11 +192,11 @@ const CassiteriteEntryCompletePage = () => {
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         rmaFee: {
-            title: "RMA Fee (RWF)",
-            dataIndex: "rmaFee",
-            key: "rmaFee",
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
 
-            sorter: (a, b) => a.rmaFee - b.rmaFee,
+            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
         },
     }
     const columns = [
@@ -202,7 +223,7 @@ const CassiteriteEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-
+            editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
 
@@ -331,7 +352,7 @@ const CassiteriteEntryCompletePage = () => {
         console.log(profile.role);
         for (const key in restrictedColumns) {
             if (restrictedColumns.hasOwnProperty(key)) {
-                columns.push(restrictedColumns[key])
+                columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
             }
         }
     }
