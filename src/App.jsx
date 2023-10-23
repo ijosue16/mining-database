@@ -156,7 +156,7 @@ function App() {
                             <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/add/invoice" element={<AddInvoice/>}/>
+                            <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
                             <Route path="/invoice" element={<InvoiceList/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
                             <Route path="/structure" element={<FileStructure/>}/>

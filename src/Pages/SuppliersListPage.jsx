@@ -40,6 +40,7 @@ const SuppliersListPage = () => {
   });
   const [selectedRow, SetSelectedRow] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
+
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {
@@ -63,10 +64,17 @@ const SuppliersListPage = () => {
   }
 
   const handleActions = (id) => {
-    SetShowActions(!showActions);
-    SetSelectedRow(id);
-    console.log("Deleted ID:", id);
+    if (selectedRow === id) {
+      console.log("uri muduki sha");
+      SetShowActions(false);
+      SetSelectedRow("");
+    } else {
+      SetSelectedRow(id);
+      SetShowActions(true);
+      console.log("Clicked ID:", id);
+    }
   };
+  
   const handleDelete = async () => {
     // console.log(selectedRow);
     const supplierId = selectedRow;
@@ -147,6 +155,17 @@ const SuppliersListPage = () => {
                     >
                       <BiSolidEditAlt className=" text-xl" />
                       <p>Edit</p>
+                    </li>
+                    <li
+                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                      onClick={() => {
+                        {
+                          navigate(`/add/invoice/${record._id}`);
+                        }
+                      }}
+                    >
+                      <BiSolidEditAlt className=" text-xl" />
+                      <p>Make invoice</p>
                     </li>
                   </motion.ul>
                 )}
