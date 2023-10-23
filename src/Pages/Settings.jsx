@@ -71,28 +71,28 @@ const Settings = () => {
                     <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center">
                         <li>
                             <p className="mb-1">Coltan RMA Fee</p>
-                            <input  type="number" name="rmaFeeColtan" value={settings.rmaFeeColtan}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings} />
+                            <input  type="number" name="rmaFeeColtan" value={settings.rmaFeeColtan ||""}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings} />
                         </li>
                         {/* ******* */}
                         <li>
                             <p className="mb-1">Cassiterite RMA Fee</p>
 
-                            <input type="number" name="rmaFeeCassiterite" value={settings.rmaFeeCassiterite}  className="focus:outline-none p-2 border rounded-lg w-full" onWheelCapture={(e) => {e.target.blur()}} onChange={handleChangeSettings} />
+                            <input type="number" name="rmaFeeCassiterite" value={settings.rmaFeeCassiterite ||""}  className="focus:outline-none p-2 border rounded-lg w-full" onWheelCapture={(e) => {e.target.blur()}} onChange={handleChangeSettings} />
                         </li>
                         {/* ******* */}
                         <li>
                             <p className="mb-1">Wolframite RMA Fee</p>
 
-                            <input type="number" name="rmaFeeWolframite" value={settings.rmaFeeWolframite}  className="focus:outline-none p-2 border rounded-lg w-full" onWheelCapture={(e) => {e.target.blur()}} onChange={handleChangeSettings}/>
+                            <input type="number" name="rmaFeeWolframite" value={settings.rmaFeeWolframite ||""}  className="focus:outline-none p-2 border rounded-lg w-full" onWheelCapture={(e) => {e.target.blur()}} onChange={handleChangeSettings}/>
                         </li>
                         {/* ******* */}
                         <li>
                             <p className="mb-1">Name of Processor</p>
-                            <input type="text" name="nameOfCompany" id="nameOfCompany" autoComplete="off" value={settings.nameOfCompany}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
+                            <input type="text" name="nameOfCompany" id="nameOfCompany" autoComplete="off" value={settings.nameOfCompany ||""}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
                         </li>
                         <li>
                             <p className="mb-1">Name of Representatative</p>
-                            <input type="text" name="representative" id="representative" autoComplete="off" value={settings.representative}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
+                            <input type="text" name="representative" id="representative" autoComplete="off" value={settings.representative ||""}  className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChangeSettings}/>
                         </li>
                         {/*<li>*/}
                         {/*    <p className="mb-1">Province</p>*/}

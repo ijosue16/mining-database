@@ -154,7 +154,7 @@ function App() {
                             <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/user" element={<UserPermissionPage/>}/>
+                            <Route path="/user/:userId" element={<UserPermissionPage/>}/>
                             <Route path="/structure" element={<FileStructure/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
                         </Route>

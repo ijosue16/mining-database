@@ -37,8 +37,8 @@ const UserPermissionPage = () => {
     if (isSuccess) {
       const { user } = data.data;
       const { permissions } = data.data.user;
-      // console.log(permissions)
-      // console.log(user);
+      console.log(permissions)
+      console.log(user);
       setUserData(user);
       setPermissions(permissions);
     }
@@ -95,7 +95,7 @@ const UserPermissionPage = () => {
     const body={permissions,userData};
     await updateUser({body,userId});
     localStorage.setItem('permissions',JSON.stringify(permissions));
-    setIsEdit(false);
+    // setIsEdit(false);
     navigate(-1);
     // console.log(permissions);
   };
@@ -176,14 +176,14 @@ const UserPermissionPage = () => {
                         <p className="">{userData.active?'Active':'Suspended'}</p>
                       </span>
                     )}
-                    <span
+                    {/* <span
                       className=" justify-self-end text-black text-2xl"
                       onClick={() => {
                         setIsEdit(!isEdit);
                       }}
                     >
                       <BiEditAlt />
-                    </span>
+                    </span> */}
                   </div>
                 </div>
 
