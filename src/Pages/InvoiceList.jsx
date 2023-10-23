@@ -20,7 +20,7 @@ const InvoiceList = () => {
 
     const columns = [
         {
-            title: "#",
+            title: "#", 
             dataIndex: "lotNumber",
             key: "lotNumber",
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),

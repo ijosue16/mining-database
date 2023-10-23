@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 
 const AddInvoice = () => {
     const{supplierId}=useParams();
-    const [ generateInvoice, { isSuccess, isLoading, isError, error } ] = useGenerateInvoiceMutation();
+    const [ generateInvoice, { data:response,isSuccess, isLoading, isError, error } ] = useGenerateInvoiceMutation();
     const {data,isLoading:isFetching,isSuccess:isDone,isError:isProblem}=useGetOneSupplierQuery({supplierId});
     const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery(supplierId);
     const [download, setDownload] = useState(false);
@@ -73,9 +73,21 @@ const AddInvoice = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body=invoiceInfo;
-        await generateInvoice({body});
+        const response = await generateInvoice({body});
+        const url = window.URL.createObjectURL(
+            new Blob([response.data], { type: "application/pdf" })
+          );
+          window.open(url);
         console.log(invoiceInfo);
     }
+    // const handleGenerate = async () => {
+    //     const response = await generateClassReport(ClassId);
+    
+    //     const url = window.URL.createObjectURL(
+    //       new Blob([response.data], { type: "application/pdf" })
+    //     );
+    //     window.open(url);
+    //   };
 
     const handleCancel = () => {
         setInvoiceInfo({

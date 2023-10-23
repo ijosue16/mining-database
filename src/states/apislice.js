@@ -514,7 +514,8 @@ export const apiSlice = createApi({
             query: ({body}) => ({
                 url: `/invoice`,
                 method: "POST",
-                body
+                body,
+                responseHandler:response=>response.blob()
             }),
             invalidatesTags: ['invoice']
         }),
