@@ -530,6 +530,10 @@ export const apiSlice = createApi({
             query: (invoiceId) => `/invoice/${invoiceId}`,
             providesTags: ['invoice']
         }),
+        getUnsettledLots: builder.query({
+            query: ({supplierId}) => `/stock/unpaid-lots/${supplierId}`,
+            providesTags: ['payments', 'entries', 'suppliers']
+        })
     })
 });
 export const {

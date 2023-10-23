@@ -147,28 +147,28 @@ const Settings = () => {
                                                           className="focus:outline-none p-2 border rounded-lg w-full"
                                                           onChange={handleChange}/>
                                                </li>
-                                               <li>
-                                                   <p className="mb-1">Province</p>
-                                                   <input type="text" name="address.province" id="province"
-                                                          autoComplete="off" value={settings.address.province}
-                                                          className="focus:outline-none p-2 border rounded-lg w-full"
-                                                          onChange={handleChange}
-                                                   />
-                                               </li>
-                                               <li>
-                                                   <p className="mb-1">District</p>
-                                                   <input type="text" name="address.district" id="district"
-                                                          autoComplete="off" value={settings.address.district}
-                                                          className="focus:outline-none p-2 border rounded-lg w-full"
-                                                          onChange={handleChange}/>
-                                               </li>
-                                               <li>
-                                                   <p className="mb-1">Sector</p>
-                                                   <input type="text" name="address.sector" id="sector"
-                                                          autoComplete="off" value={settings.address.sector}
-                                                          className="focus:outline-none p-2 border rounded-lg w-full"
-                                                          onChange={handleChange}/>
-                                               </li>
+                                               {/*<li>*/}
+                                               {/*    <p className="mb-1">Province</p>*/}
+                                               {/*    <input type="text" name="address.province" id="province"*/}
+                                               {/*           autoComplete="off" value={settings.address.province}*/}
+                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
+                                               {/*           onChange={handleChange}*/}
+                                               {/*    />*/}
+                                               {/*</li>*/}
+                                               {/*<li>*/}
+                                               {/*    <p className="mb-1">District</p>*/}
+                                               {/*    <input type="text" name="address.district" id="district"*/}
+                                               {/*           autoComplete="off" value={settings.address.district}*/}
+                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
+                                               {/*           onChange={handleChange}/>*/}
+                                               {/*</li>*/}
+                                               {/*<li>*/}
+                                               {/*    <p className="mb-1">Sector</p>*/}
+                                               {/*    <input type="text" name="address.sector" id="sector"*/}
+                                               {/*           autoComplete="off" value={settings.address.sector}*/}
+                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
+                                               {/*           onChange={handleChange}/>*/}
+                                               {/*</li>*/}
                                            </ul>
                                        </div>
                                    }
