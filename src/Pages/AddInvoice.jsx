@@ -11,7 +11,7 @@ const AddInvoice = () => {
     const{supplierId}=useParams();
     const [ generateInvoice, { isSuccess, isLoading, isError, error } ] = useGenerateInvoiceMutation();
     const {data,isLoading:isFetching,isSuccess:isDone,isError:isProblem}=useGetOneSupplierQuery({supplierId});
-    const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery({supplierId});
+    const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery(supplierId);
     const [download, setDownload] = useState(false);
     const [invoiceInfo, setInvoiceInfo] = useState(
         {
@@ -22,7 +22,7 @@ const AddInvoice = () => {
             processorCompanyName: "",
             extraNotes: "",
             items: [],
-            supplierId: "",
+            supplierId: supplierId,
             supplierAddress: {
                 province: "",
                 district: "",
@@ -44,11 +44,11 @@ const AddInvoice = () => {
         }
     },[isDone]);
 
-    useEffect(() =>{
+ 
         if(isComplete){
          console.log(info);
         }
-    },[isComplete]);
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -70,7 +70,10 @@ const AddInvoice = () => {
         }
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const body=invoiceInfo;
+        await generateInvoice({body});
         console.log(invoiceInfo);
     }
 

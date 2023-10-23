@@ -14,6 +14,7 @@ import { MdDelete } from "react-icons/md";
 import { BsCardList } from "react-icons/bs";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
+import { FaFileAlt } from "react-icons/fa";
 import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
 import {
   useGetAllSuppliersQuery,
@@ -164,7 +165,7 @@ const SuppliersListPage = () => {
                         }
                       }}
                     >
-                      <BiSolidEditAlt className=" text-xl" />
+                      <FaFileAlt className=" text-xl" />
                       <p>Make invoice</p>
                     </li>
                   </motion.ul>
