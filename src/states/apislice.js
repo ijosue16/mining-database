@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', "dd-reports", "statistics", "settings"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -501,7 +501,35 @@ export const apiSlice = createApi({
                 method: "DELETE"
             }),
             invalidatesTags: ["users"]
-        })
+        }),
+        getAllInvoices: builder.query({
+            query: () => `/invoice`,
+            providesTags: ['invoice']
+        }),
+        getSuppliersInvoice: builder.query({
+            query: (supplierId) => `/invoice/supplier/${supplierId}`,
+            providesTags: ['invoice']
+        }),
+        generateInvoice: builder.mutation({
+            query: ({body}) => ({
+                url: `/invoice`,
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ['invoice']
+        }),
+        updateInvoice: builder.mutation({
+            query: ({body, invoiceId}) => ({
+                url: `/invoice/${invoiceId}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ['invoice']
+        }),
+        getInvoice: builder.query({
+            query: (invoiceId) => `/invoice/${invoiceId}`,
+            providesTags: ['invoice']
+        }),
     })
 });
 export const {
@@ -581,5 +609,10 @@ export const {
     useGetAllUsersQuery,
     useGetOneUserQuery,
     useUpdateUserMutation,
-    useDeleteUserMutation
+    useDeleteUserMutation,
+    useGetAllInvoicesQuery,
+    useGetSuppliersInvoiceQuery,
+    useGenerateInvoiceMutation,
+    useUpdateInvoiceMutation,
+    useGetInvoiceQuery
 } = apiSlice
