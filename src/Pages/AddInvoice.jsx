@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import FetchingPage from "./FetchingPage";
-import { useGenerateInvoiceMutation, useGetOneSupplierQuery } from "../states/apislice";
+import { useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery } from "../states/apislice";
 import {toast} from "react-toastify";
 import { useParams } from "react-router-dom";
 
@@ -11,6 +11,7 @@ const AddInvoice = () => {
     const{supplierId}=useParams();
     const [ generateInvoice, { isSuccess, isLoading, isError, error } ] = useGenerateInvoiceMutation();
     const {data,isLoading:isFetching,isSuccess:isDone,isError:isProblem}=useGetOneSupplierQuery({supplierId});
+    const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery({supplierId});
     const [download, setDownload] = useState(false);
     const [invoiceInfo, setInvoiceInfo] = useState(
         {
@@ -42,6 +43,12 @@ const AddInvoice = () => {
         },})
         }
     },[isDone]);
+
+    useEffect(() =>{
+        if(isComplete){
+         console.log(info);
+        }
+    },[isComplete]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
