@@ -3,13 +3,16 @@ import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
 import { FiChevronsLeft, } from "react-icons/fi"
 import { useMyContext } from "../context files/LoginDatacontextProvider";
+import { useNavigate } from "react-router-dom";
 
 const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userMenu, setUserMenu] = useState(false);
+    const navigate=useNavigate();
     const [userSubmenu, setUserSubmenu] = useState(false);
     let modalRef = useRef();
     const{loginData}=useMyContext();
     const{profile,permissions}=loginData;
+    console.log(profile._id)
 
 
     const handleClickOutside = (event) => {
@@ -79,7 +82,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
 
                             <ul className=" list-none">
-                                <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
+                                <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2" onClick={()=>navigate(`/user/${profile._id}`)}>
                                     <PiUser />
                                     <p className="text-[14px]">My profile</p>
                                 </li>

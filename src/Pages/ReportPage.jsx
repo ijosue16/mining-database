@@ -486,7 +486,7 @@ const AddInterviewedRepresentative=()=>{
                 </div>
                 </div>
                 {/*  */}
-                <li className="space-y-1 col-span-full">
+{    selectedSupplierName?            <li className="space-y-1 col-span-full">
             <p className="pl-1">Choose company</p>
             <div ref={modalSitelRef} className="w-fit h-fit relative ">
                         <div
@@ -498,7 +498,7 @@ const AddInterviewedRepresentative=()=>{
                           <p className=" ">
                             {selectedSupplierSite
                               ? selectedSupplierSite
-                              : "select a supplier"}
+                              : "select a site"}
                           </p>
                           <BsChevronDown
                             className={`text-md transition ease-in-out duration-500 ${
@@ -547,7 +547,7 @@ const AddInterviewedRepresentative=()=>{
                           </ul>}
                         </motion.div>
                       </div>
-            </li>
+            </li>:null}
             {/*  */}
                 <li className=" space-y-1">
                   <p className="pl-1">Name of the site</p>
