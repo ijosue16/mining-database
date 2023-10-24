@@ -80,51 +80,51 @@ const InvoiceList = () => {
             key: "total",
             sorter: (a, b) => a.total.localeCompare(b.total),
         },
-        {
-            title: "status",
-            dataIndex: "status",
-            key: "status",
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            render: (text) => {
-                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color = "";
-                // const value='non-sell agreement'
-                switch (text) {
-                    case "in stock": {
-                        color = "bg-green-500";
-                        break;
-                    }
-                    case "partially exported": {
-                        color = "bg-gradient-to-r from-slate-500 shadow-md";
-                        break;
-                    }
-                    case "fully exported": {
-                        color = "bg-slate-600";
-                        break;
-                    }
-                    case "in progress": {
-                        color = "bg-orange-400";
-                        break;
-                    }
-                    case "rejected": {
-                        color = "bg-red-500";
-                        break;
-                    }
-                    case "non-sell agreement": {
-                        color = "bg-indigo-400";
-                        break;
-                    }
-                    default: {
-                        color = "bg-green-300";
-                    }
-                }
-                return (
-                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
-                        {text}
-                    </p>
-                );
-            },
-        },
+        // {
+        //     title: "status",
+        //     dataIndex: "status",
+        //     key: "status",
+        //     sorter: (a, b) => a.status.localeCompare(b.status),
+        //     render: (text) => {
+        //         // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
+        //         let color = "";
+        //         // const value='non-sell agreement'
+        //         switch (text) {
+        //             case "in stock": {
+        //                 color = "bg-green-500";
+        //                 break;
+        //             }
+        //             case "partially exported": {
+        //                 color = "bg-gradient-to-r from-slate-500 shadow-md";
+        //                 break;
+        //             }
+        //             case "fully exported": {
+        //                 color = "bg-slate-600";
+        //                 break;
+        //             }
+        //             case "in progress": {
+        //                 color = "bg-orange-400";
+        //                 break;
+        //             }
+        //             case "rejected": {
+        //                 color = "bg-red-500";
+        //                 break;
+        //             }
+        //             case "non-sell agreement": {
+        //                 color = "bg-indigo-400";
+        //                 break;
+        //             }
+        //             default: {
+        //                 color = "bg-green-300";
+        //             }
+        //         }
+        //         return (
+        //             <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
+        //                 {text}
+        //             </p>
+        //         );
+        //     },
+        // },
         // {
         //     title: "Action",
         //     dataIndex: "action",
