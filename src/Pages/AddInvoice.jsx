@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from "react";
+import { Modal,Table } from "antd";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import FetchingPage from "./FetchingPage";
 import { useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery } from "../states/apislice";
 import {toast} from "react-toastify";
+import { ImSpinner2 } from "react-icons/im";
 import { useParams } from "react-router-dom";
+import { space } from "postcss/lib/list";
 
 
 const AddInvoice = () => {
@@ -13,6 +16,7 @@ const AddInvoice = () => {
     const {data,isLoading:isFetching,isSuccess:isDone,isError:isProblem}=useGetOneSupplierQuery({supplierId});
     const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery(supplierId);
     const [download, setDownload] = useState(false);
+    const [showmodal, setShowmodal] = useState(false);
     const [invoiceInfo, setInvoiceInfo] = useState(
         {
             invoiceNo: "",
@@ -33,8 +37,8 @@ const AddInvoice = () => {
     );
     useEffect(() =>{
         if(isDone){
-          const {data:dt}=data;
-          const {supplier:sup}=dt;
+          
+          const {supplier:sup}=data.data;
           console.log(sup);
           setInvoiceInfo({ ...invoiceInfo, supplierCompanyName: sup.companyName,processorCompanyName:sup.companyName,supplierAddress: {
             province: sup.address.province,
@@ -49,6 +53,91 @@ const AddInvoice = () => {
          console.log(info);
         }
 
+        const columns = [
+            {
+                title: "Select",
+                key: "select",
+                render: (_, record) => (
+                  <Checkbox
+                    name="checkbox"
+                    checked={
+                      selectedData.length > 0 &&
+                      selectedData.some((selected) => selected.index === record.index)
+                    }
+                    onChange={() => handleRowToggle(record)}
+                  />
+                ),
+              },
+
+            {
+              title: "Supply date",
+              dataIndex: "supplyDate",
+              key: "supplyDate",
+              sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
+              render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
+            },
+            { title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary" },
+            {
+              title: "weight out (KG)",
+              dataIndex: "weightOut",
+              key: "weightOut",
+              editTable: true,
+            },
+            {
+                title: "mineralGrade",
+                dataIndex: "mineralGrade",
+                key: "mineralGrade",
+                editTable: true,
+              },
+            {
+              title: "pricePerUnit",
+              dataIndex: "priscePerUnit",
+              key: "pricePerUnit",
+              editTable: true,
+            },
+            {
+              title: "Grade (%)",
+              dataIndex: "mineralGrade",
+              key: "mineralGrade",
+            },
+            {
+              title: "Mineral Price",
+              dataIndex: "mineralPrice",
+              key: "mineralPrice",
+            },
+
+            // {
+            //   title: "Action",
+            //   dataIndex: "action",
+            //   key: "action",
+            //   render: (_, record) => {
+            //     const editable = isEditing(record);
+            //     return (
+            //       <>
+            //         <div className="flex items-center gap-1">
+            //           {editable ? (
+            //             <div className="flex items-center gap-3">
+            //               <FaSave
+            //                 className=" text-xl"
+            //                 onClick={() => save(record.index)}
+            //               />
+            //               <MdOutlineClose
+            //                 className=" text-xl"
+            //                 onClick={() => setEditRowKey("")}
+            //               />
+            //             </div>
+            //           ) : (
+            //             <BiSolidEditAlt
+            //               className=" text-xl"
+            //               onClick={() => edit(record)}
+            //             />
+            //           )}
+            //         </div>
+            //       </>
+            //     );
+            //   },
+            // },
+          ];
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -170,12 +259,39 @@ const AddInvoice = () => {
                             <input  type="text" name="supplierAddress.sector" value={invoiceInfo.supplierAddress.sector ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} />
                         </li>
                         {/* ******* */}
-                        <li className="">
+                        <li className=" col-span-full">
+                            <button type="button" className="p-1 bg-orange-300 rounded" onClick={()=>setShowmodal(!showmodal)}>choose items</button>
+                        </li>
+                        <li className="col-span-full">
                             <p className="mb-1">Extra Notes</p>
                             <textarea name="extraNotes" value={invoiceInfo.extraNotes ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} />
                         </li>
                         {/* ******* */}
                     </ul>
+                    <Modal
+              open={showmodal}
+              width={"100%"}
+              destroyOnClose
+              onOk={() =>""}
+              onCancel={() => {
+                setShowmodal(!showmodal)
+              }}
+             
+              footer={[
+            
+              ]}
+            >
+                 <Table
+                      className=" overflow-x-auto w-full bg-white rounded-lg mt-10"
+                      dataSource={""}
+                      columns={columns}
+                     
+                      pagination={false}
+
+                      rowKey="index"
+                    />
+              
+            </Modal>
                 </div>
                 }  Add={handleSubmit}
                 Cancel={handleCancel}
