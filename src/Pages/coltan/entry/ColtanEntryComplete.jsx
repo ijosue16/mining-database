@@ -1,19 +1,32 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import {motion} from "framer-motion";
-import {Form, Input, Modal, Table} from "antd";
+import {Form, Input, Modal, Table, Upload, Button, message} from "antd";
+import { UploadOutlined } from '@ant-design/icons';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {ImSpinner2} from "react-icons/im";
-import {FaSave} from "react-icons/fa";
+import {FaSave, FaImage} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
+
+const getBase64FromServer = (fileUrl) => {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = fileUrl;
+        img.onload = () => {
+            resolve(fileUrl);
+        };
+    });
+};
+
+
 
 const ColtanEntryCompletePage = () => {
     const {entryId} = useParams();
@@ -22,7 +35,7 @@ const ColtanEntryCompletePage = () => {
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
-    const {data, isLoading, isError, isSuccess, error} =
+    const {data, isLoading, isError, isSuccess, error, refetch} =
         useGetOneColtanEntryQuery({entryId});
     const [updateColtanEntry, {
         isSuccess: isUpdateSuccess,
@@ -71,6 +84,82 @@ const ColtanEntryCompletePage = () => {
     const [editRowKey, setEditRowKey] = useState("");
     const [show, setShow] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
+
+
+    ///////////////////////
+
+    const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+    const [file, setFile] = useState(null);
+
+    const handleClose = () => {
+        setPreviewVisible(false);
+        setFile(null);
+    };
+
+    const handlePreview = async (fileUrl) => {
+        // const fileUrl = 'https://mining-company-management-system.onrender.com/data/coltan/DSC_0494.jpg';
+        const previewedUrl = await getBase64FromServer(fileUrl);
+        setPreviewImage(previewedUrl);
+        setPreviewVisible(true);
+    };
+
+
+    const props = {
+        // beforeUpload: (file) => {
+        //     const isPNG = file.type === 'image/png';
+        //     if (!isPNG) {
+        //         message.error(`${file.name} is not a png file`);
+        //     }
+        //     return isPNG || Upload.LIST_IGNORE;
+        // },
+        onChange: (info) => {
+            if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
+            }
+            if (info.file.status === 'done') {
+                message.success(`${info.file.name} file uploaded successfully`);
+                refetch()
+            } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} file upload failed.`);
+            }
+        },
+    };
+
+    const customRequest = async ({ file, onSuccess, onError }) => {
+        try {
+            const formData = new FormData();
+            formData.append('1', file);
+            // formData.append('customData', 'Your custom data here');
+
+            // Make a custom HTTP request to your server
+            const response = await fetch('http://localhost:3000/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                message.success(`${file.name} file uploaded successfully`);
+                onSuccess();
+            } else {
+                message.error(`${file.name} file upload failed.`);
+                onError(new Error('Upload failed'));
+            }
+        } catch (error) {
+            message.error(`${file.name} file upload failed.`);
+            onError(error);
+        }
+    };
+
+    const beforeUpload = (file) => {
+        const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+        if (!isPNG) {
+            message.error(`${file.name} is not a .png or .jpeg file`);
+        }
+        return isPNG || Upload.LIST_IGNORE;
+    }
+
+    ///////////////////////
 
     useEffect(() => {
         if (isSuccess) {
@@ -174,6 +263,32 @@ const ColtanEntryCompletePage = () => {
             key: "mineralGrade",
             editTable: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+        },
+        gradeImg: {
+            title: "Grade Img",
+            dataIndex: "gradeImg",
+            key: "gradeImg",
+            // editTable: true,
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            render: (_, record) => {
+                if (record.gradeImg) {
+                    return <Button icon={<FaImage title="Preview" className="text-lg" onClick={() => handlePreview(record.gradeImg.filePath)}/>}/>
+                } else {
+                    return (
+                        <Upload
+                            beforeUpload={beforeUpload}
+                            name={record.lotNumber}
+                            action={`https://mining-company-management-system.onrender.com/api/v1/coltan/${entryId}`}
+                            method="PATCH"
+                            {...props}
+                        >
+                            {!record.gradeImg ? <Button icon={<UploadOutlined />}/>: null}
+
+                        </Upload>
+                    )
+                }
+
+            }
         },
         price: {
             title: "Price ($)",
@@ -512,6 +627,15 @@ const ColtanEntryCompletePage = () => {
                                     <p className="text-center text-lg">
                                         {`Please verify all the information before proceeding`}.
                                     </p>
+                                </Modal>
+
+                                <Modal
+                                    visible={previewVisible}
+                                    title="Image Preview"
+                                    footer={null}
+                                    onCancel={handleClose}
+                                >
+                                    <img alt="example" style={{width: '100%', height: "100%"}} src={previewImage}/>
                                 </Modal>
                             </>
                         }

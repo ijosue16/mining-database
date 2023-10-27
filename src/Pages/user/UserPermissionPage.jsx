@@ -82,7 +82,6 @@ const UserPermissionPage = () => {
       const updatedPermissions = { ...prevPermissions };
       updatedPermissions[category] = { ...updatedPermissions[category] };
       updatedPermissions[category][action] = !updatedPermissions[category][action];
-      console.log(updatedPermissions)
       return updatedPermissions;
     });
   };
