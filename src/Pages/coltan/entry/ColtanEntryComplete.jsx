@@ -118,7 +118,7 @@ const ColtanEntryCompletePage = () => {
     };
     const calculatePrice = (tantal, grade, weightOut) => {
         if (tantal && grade && weightOut) {
-            return ((tantal * grade/100) * weightOut).toFixed(3)
+            return ((tantal * grade)*weightOut).toFixed(3)
         }
     }
     const save = async (key) => {
@@ -142,24 +142,12 @@ const ColtanEntryCompletePage = () => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
-        paid: {
-            title: "paid ($)",
-            dataIndex: "paid",
-            key: "paid",
-            sorter: (a, b) => a.paid - b.paid,
-        },
-        unpaid: {
-            title: "unpaid ($)",
-            dataIndex: "unpaid",
-            key: "unpaid",
-            sorter: (a, b) => a.unpaid - b.unpaid,
-        },
-        USDRate: {
-            title: "USD Rate (rwf)",
-            dataIndex: "USDRate",
-            key: "USDRate",
+        grade: {
+            title: "Grade (%)",
+            dataIndex: "mineralGrade",
+            key: "mineralGrade",
             editTable: true,
-            sorter: (a, b) => a.USDRate - b.USDRate,
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         tantal: {
             title: "Tantal ($)",
@@ -168,13 +156,7 @@ const ColtanEntryCompletePage = () => {
             editTable: true,
             sorter: (a, b) => a.tantalum - b.tantalum,
         },
-        grade: {
-            title: "Grade (%)",
-            dataIndex: "mineralGrade",
-            key: "mineralGrade",
-            editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
-        },
+       
         price: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
@@ -182,6 +164,26 @@ const ColtanEntryCompletePage = () => {
             editTable: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            sorter: (a, b) => a.paid - b.paid,
+        },
+        // unpaid: {
+        //     title: "unpaid ($)",
+        //     dataIndex: "unpaid",
+        //     key: "unpaid",
+        //     sorter: (a, b) => a.unpaid - b.unpaid,
+        // },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            editTable: true,
+            sorter: (a, b) => a.USDRate - b.USDRate,
+        },
+
         rmaFee: {
             title: "RMA Fee ($)",
             dataIndex: "rmaFeeUSD",

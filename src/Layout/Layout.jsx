@@ -103,10 +103,10 @@ const Layout = () => {
         },
         {
             heading: "Contracts", hId: 7, subHeaders: [
-                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts", line: true, },
+                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts" },
                 // { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
                 // { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
-                // { title: "Invoice Report", icon: <PiFileDuotone />, id: 43 },
+                { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
                 // { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
                 // { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
             ]

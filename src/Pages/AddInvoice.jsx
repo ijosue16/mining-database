@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import { Modal,Table } from "antd";
+import { Modal,Table,Checkbox } from "antd";
+import dayjs from "dayjs";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
 import FetchingPage from "./FetchingPage";
@@ -12,11 +13,13 @@ import { space } from "postcss/lib/list";
 
 const AddInvoice = () => {
     const{supplierId}=useParams();
+    let dataz=[];
     const [ generateInvoice, { data:response,isSuccess, isLoading, isError, error } ] = useGenerateInvoiceMutation();
     const {data,isLoading:isFetching,isSuccess:isDone,isError:isProblem}=useGetOneSupplierQuery({supplierId});
     const {data:info,isLoading:isGetting,isSuccess:isComplete}=useGetUnsettledLotsQuery(supplierId);
     const [download, setDownload] = useState(false);
     const [showmodal, setShowmodal] = useState(false);
+    const [selectedData, setSelectedData] = useState([]);
     const [invoiceInfo, setInvoiceInfo] = useState(
         {
             invoiceNo: "",
@@ -25,7 +28,7 @@ const AddInvoice = () => {
             supplierCompanyName: "",
             processorCompanyName: "",
             extraNotes: "",
-            items: [],
+            items: [{itemName:"",quantity:"",rmaFee:"",lotNumber:"",supplyDate:"",pricePerUnit:"",concentration:"",amount:""}],
             supplierId: supplierId,
             supplierAddress: {
                 province: "",
@@ -50,19 +53,32 @@ const AddInvoice = () => {
 
  
         if(isComplete){
-         console.log(info);
-        }
+        const{lots}=info.data;
+        dataz=lots;
+        console.log(lots)
+        };
+
+        const handleRowToggle = (record) => {
+            if (selectedData.some((selected) => selected.newId === record.newId)) {
+              setSelectedData((prevSelectedData) =>
+                prevSelectedData.filter((selected) => selected.newId !== record.newId)
+              );
+            } else {
+              setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
+            }
+          };
 
         const columns = [
             {
                 title: "Select",
+                dataIndex: "select",
                 key: "select",
                 render: (_, record) => (
                   <Checkbox
                     name="checkbox"
                     checked={
                       selectedData.length > 0 &&
-                      selectedData.some((selected) => selected.index === record.index)
+                      selectedData.some((selected) => selected.newId === record.newId)
                     }
                     onChange={() => handleRowToggle(record)}
                   />
@@ -81,19 +97,91 @@ const AddInvoice = () => {
               title: "weight out (KG)",
               dataIndex: "weightOut",
               key: "weightOut",
-              editTable: true,
+              
             },
             {
                 title: "mineralGrade",
                 dataIndex: "mineralGrade",
                 key: "mineralGrade",
-                editTable: true,
+                
               },
             {
               title: "pricePerUnit",
               dataIndex: "priscePerUnit",
               key: "pricePerUnit",
-              editTable: true,
+              
+            },
+            {
+              title: "Grade (%)",
+              dataIndex: "mineralGrade",
+              key: "mineralGrade",
+            },
+            {
+              title: "Mineral Price",
+              dataIndex: "mineralPrice",
+              key: "mineralPrice",
+            },
+
+            // {
+            //   title: "Action",
+            //   dataIndex: "action",
+            //   key: "action",
+            //   render: (_, record) => {
+            //     const editable = isEditing(record);
+            //     return (
+            //       <>
+            //         <div className="flex items-center gap-1">
+            //           {editable ? (
+            //             <div className="flex items-center gap-3">
+            //               <FaSave
+            //                 className=" text-xl"
+            //                 onClick={() => save(record.index)}
+            //               />
+            //               <MdOutlineClose
+            //                 className=" text-xl"
+            //                 onClick={() => setEditRowKey("")}
+            //               />
+            //             </div>
+            //           ) : (
+            //             <BiSolidEditAlt
+            //               className=" text-xl"
+            //               onClick={() => edit(record)}
+            //             />
+            //           )}
+            //         </div>
+            //       </>
+            //     );
+            //   },
+            // },
+          ];
+
+          const columns2 = [
+
+            {
+              title: "Supply date",
+              dataIndex: "supplyDate",
+              key: "supplyDate",
+              sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
+              render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
+            },
+            { title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary" },
+            {
+              title: "weight out (KG)",
+              dataIndex: "weightOut",
+              key: "weightOut",
+              
+            },
+            {
+                title: "mineralGrade",
+                dataIndex: "mineralGrade",
+                key: "mineralGrade",
+                
+              },
+            {
+              title: "pricePerUnit",
+              dataIndex: "priscePerUnit",
+              key: "pricePerUnit",
+              
             },
             {
               title: "Grade (%)",
@@ -161,14 +249,22 @@ const AddInvoice = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setInvoiceInfo((prevState)=>({
+            ...prevState,
+            items:[
+                {itemName:"",quantity:"",rmaFee:"",lotNumber:"",supplyDate:"",pricePerUnit:"",concentration:"",amount:""}
+            ]
+        }));
         const body=invoiceInfo;
         const response = await generateInvoice({body});
         const url = window.URL.createObjectURL(
             new Blob([response.data], { type: "application/pdf" })
           );
           window.open(url);
-        console.log(invoiceInfo);
-    }
+        console.log(body);
+    };
+
+
     // const handleGenerate = async () => {
     //     const response = await generateClassReport(ClassId);
     
@@ -186,7 +282,7 @@ const AddInvoice = () => {
             supplierCompanyName: "",
             processorCompanyName: "",
             extraNotes: "",
-            items: [],
+            items: [{itemName:"",quantity:"",rmaFee:"",lotNumber:"",supplyDate:"",pricePerUnit:"",concentration:"",amount:""}],
             supplierId: "",
             supplierAddress: {
                 province: "",
@@ -262,6 +358,18 @@ const AddInvoice = () => {
                         <li className=" col-span-full">
                             <button type="button" className="p-1 bg-orange-300 rounded" onClick={()=>setShowmodal(!showmodal)}>choose items</button>
                         </li>
+                        {/* ******* */}
+                        <li className=" col-span-full w-full">
+                            {/* TABLE OF INVOICE */}
+                {selectedData.length>0?(        <Table
+                      className=" overflow-x-auto w-full bg-white rounded-lg"
+                      dataSource={selectedData}
+                      columns={columns2}
+                      pagination={false}
+                      rowKey="index"
+                    />):null}
+                        </li>
+                        {/* ******* */}
                         <li className="col-span-full">
                             <p className="mb-1">Extra Notes</p>
                             <textarea name="extraNotes" value={invoiceInfo.extraNotes ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} />
@@ -281,15 +389,15 @@ const AddInvoice = () => {
             
               ]}
             >
+                <div className="w-full space-y-3">
                  <Table
                       className=" overflow-x-auto w-full bg-white rounded-lg mt-10"
-                      dataSource={""}
+                      dataSource={dataz}
                       columns={columns}
-                     
-                      pagination={false}
-
                       rowKey="index"
                     />
+                    <button className=" bg-orange-300 p-2 rounded text-white">Confirm</button>
+                    </div>
               
             </Modal>
                 </div>
