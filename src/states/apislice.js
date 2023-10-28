@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -535,6 +535,30 @@ export const apiSlice = createApi({
             query: (supplierId) => `/stock/unpaid-lots/${supplierId}`,
             providesTags: ['payments', 'entries', 'suppliers']
         }),
+        getAllEditRequests: builder.query({
+            query: () => `/edit-request`,
+            providesTags: ['editRequest', 'notifications']
+        }),
+        createEditRequest: builder.mutation({
+            query: ({body}) => ({
+                url: `/edit-request`,
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ['editRequest', 'notifications']
+        }),
+        getOneEditRequest: builder.query({
+            query: ({requestId}) => `/edit-request/${requestId}`,
+            providesTags: ['editRequest']
+        }),
+        updateEditRequest: builder.mutation({
+            query: ({body, requestId}) => ({
+                url: `/edit-request/${requestId}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ['editRequest', 'notifications']
+        })
     })
 });
 export const {
@@ -620,5 +644,9 @@ export const {
     useGenerateInvoiceMutation,
     useUpdateInvoiceMutation,
     useGetInvoiceQuery,
-    useGetUnsettledLotsQuery
+    useGetUnsettledLotsQuery,
+    useGetAllEditRequestsQuery,
+    useCreateEditRequestMutation,
+    useGetOneEditRequestQuery,
+    useUpdateEditRequestMutation
 } = apiSlice

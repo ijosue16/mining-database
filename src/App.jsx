@@ -67,6 +67,8 @@ import LithiumEditForm from './Pages/lithium/entry/LithiumEditForm';
 import FileStructure from "./FileStructure/FileStructure";
 import AddInvoice from "./Pages/AddInvoice";
 import InvoiceList from "./Pages/InvoiceList";
+import EditRequests from "./Pages/EditRequests";
+import SingleImageUpload from "./Pages/Simbo";
 
 function App() {
 
@@ -157,9 +159,11 @@ function App() {
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
+                            <Route path="/edit-requests" element={<EditRequests/>}/>
                             <Route path="/invoice" element={<InvoiceList/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
                             <Route path="/structure" element={<FileStructure/>}/>
+                            <Route path="/simbo" element={<SingleImageUpload/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
                         </Route>
                     </Route>
