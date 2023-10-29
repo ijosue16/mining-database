@@ -245,13 +245,6 @@ const ColtanEntryCompletePage = () => {
             editTable: true,
             sorter: (a, b) => a.tantalum - b.tantalum,
         },
-        grade: {
-            title: "Grade (%)",
-            dataIndex: "mineralGrade",
-            key: "mineralGrade",
-            editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
-        },
         gradeImg: {
             title: "Grade Img",
             dataIndex: "gradeImg",

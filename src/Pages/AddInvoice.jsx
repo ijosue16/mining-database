@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Modal,Table,Checkbox } from "antd";
+import { Modal,Table,Checkbox,DatePicker } from "antd";
 import dayjs from "dayjs";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../components/Actions components/AddComponent";
@@ -59,13 +59,15 @@ const AddInvoice = () => {
         };
 
         const handleRowToggle = (record) => {
-            if (selectedData.some((selected) => selected.newId === record.newId)) {
+            if (selectedData.some((selected) => (selected._id && selected.lotNumber && selected.weightOut)===( record._id && record.lotNumber && record.weightOut))) {
               setSelectedData((prevSelectedData) =>
-                prevSelectedData.filter((selected) => selected.newId !== record.newId)
+                prevSelectedData.filter((selected) =>( selected._id && selected.lotNumber && selected.weightOut) !== (record._id && record.lotNumber && record.weightOut))
               );
             } else {
               setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
+             
             }
+            
           };
 
         const columns = [
@@ -78,7 +80,7 @@ const AddInvoice = () => {
                     name="checkbox"
                     checked={
                       selectedData.length > 0 &&
-                      selectedData.some((selected) => selected.newId === record.newId)
+                      selectedData.some((selected) => (selected._id && selected.lotNumber && selected.weightOut)=== (record._id && record.lotNumber && record.weightOut))
                     }
                     onChange={() => handleRowToggle(record)}
                   />
@@ -119,7 +121,7 @@ const AddInvoice = () => {
             {
               title: "Mineral Price",
               dataIndex: "mineralPrice",
-              key: "mineralPrice",
+              Key: "mineralPrice",
             },
 
             // {
@@ -226,6 +228,55 @@ const AddInvoice = () => {
             //   },
             // },
           ];
+          const sampleData = [
+            {
+                "_id": "64f7733179e840cf8052bc7a",
+                "companyName": "DEMIKARU",
+                "beneficiary": "Vincent",
+                "supplyDate": "2023-09-05T00:00:00.000Z",
+                "newId": "a1a036fd-9985-41b6-942e-ad1d33c40ce6",
+                "lotNumber": 4,
+                "weightOut": 100,
+                "mineralGrade": null,
+                "mineralPrice": null,
+                "rmaFee": 12500,
+                "paid": 0,
+                "unpaid": null,
+                "settled": false,
+                "pricePerUnit": null
+            },
+            {
+              "_id": "789",
+              "companyName": "Company B",
+              "beneficiary": "Jane Smith",
+              "supplyDate": "2023-10-20",
+              "newId": "101",
+              "lotNumber": 5,
+              "weightOut": 150,
+              "mineralGrade": null,
+              "mineralPrice": null,
+              "rmaFee": 10000,
+              "paid": 0,
+              "unpaid": null,
+              "settled": false,
+              "pricePerUnit": null
+            }
+            // ... (rest of the sample data)
+        ];
+        
+        const keyMap = {
+            
+            "weightOut": "quantity",
+            "rmaFee": "rmaFee",
+            "lotNumber": "lotNumber",
+            "supplyDate": "supplyDate",
+            "pricePerUnit": "pricePerUnit",
+            "mineralGrade": "concentration",
+            "mineralPrice": "amount",
+        
+        };
+        
+      
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -246,15 +297,38 @@ const AddInvoice = () => {
             }));
         }
     };
+    const handleAddDate = (e) => {
+      setInvoiceInfo((prevState) => ({
+        ...prevState,
+        dateOfIssue: dayjs(e).format("MMM/DD/YYYY"),
+      }));
+    };
 
+    const itemConfirm=()=>{
+      const transformedData = selectedData.map(item => {
+        const newItem = {};
+        for (const key in item) {
+            const newKey = keyMap[key] || key;
+            newItem[newKey] = item[key];
+        }
+        return newItem;
+    });
+    
+    console.log(transformedData);
+    
+      setInvoiceInfo((prevState)=>({...prevState,items:transformedData}));
+      setShowmodal(!showmodal);
+    };
+  
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setInvoiceInfo((prevState)=>({
-            ...prevState,
-            items:[
-                {itemName:"",quantity:"",rmaFee:"",lotNumber:"",supplyDate:"",pricePerUnit:"",concentration:"",amount:""}
-            ]
-        }));
+        
+        // setInvoiceInfo((prevState)=>({
+        //     ...prevState,
+        //     items:[
+        //         {itemName:"",quantity:"",rmaFee:"",lotNumber:"",supplyDate:"",pricePerUnit:"",concentration:"",amount:""}
+        //     ]
+        // }));
         const body=invoiceInfo;
         const response = await generateInvoice({body});
         const url = window.URL.createObjectURL(
@@ -262,6 +336,7 @@ const AddInvoice = () => {
           );
           window.open(url);
         console.log(body);
+        console.log(selectedData);
     };
 
 
@@ -322,7 +397,16 @@ const AddInvoice = () => {
                         {/* ******* */}
                         <li>
                             <p className="mb-1">Date of Issue</p>
-                            <input  type="date" name="dateOfIssue" value={invoiceInfo.dateOfIssue ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} />
+                            {/* <input  type="date" name="dateOfIssue" value={invoiceInfo.dateOfIssue ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} /> */}
+                            <DatePicker
+                       value={
+                        invoiceInfo.dateOfIssue  ? dayjs(invoiceInfo.dateOfIssue ) : null
+                      }
+                      id="dateOfIssue"
+                      name="dateOfIssue"
+                      className=" focus:outline-none p-2 border rounded-md w-full"
+                      onChange={handleAddDate}
+                    />
                         </li>
                         {/* ******* */}
                         <li>
@@ -361,18 +445,27 @@ const AddInvoice = () => {
                         {/* ******* */}
                         <li className=" col-span-full w-full">
                             {/* TABLE OF INVOICE */}
-                {selectedData.length>0?(        <Table
+                {selectedData.length>0?(<>
+                  <Table
                       className=" overflow-x-auto w-full bg-white rounded-lg"
                       dataSource={selectedData}
                       columns={columns2}
                       pagination={false}
                       rowKey="index"
-                    />):null}
+                    />
+                    <div className="w-full p-3 flex justify-end gap-2 align-bottom">
+                    <p className=" font-semibold text-lg">total:</p>
+                    <p>4000(dummy nbr)</p>
+                  </div>
+                </>):null}
                         </li>
                         {/* ******* */}
-                        <li className="col-span-full">
+                        <li className="col-span-full space-y-2">
                             <p className="mb-1">Extra Notes</p>
                             <textarea name="extraNotes" value={invoiceInfo.extraNotes ||''} className="focus:outline-none p-2 border rounded-lg w-full" onChange={handleChange} />
+                            <div className="w-full flex justify-end ">
+                            <button className="p-2 bg-orange-300 rounded text-end justify-items-end">Preview</button>
+                            </div>
                         </li>
                         {/* ******* */}
                     </ul>
@@ -381,9 +474,7 @@ const AddInvoice = () => {
               width={"100%"}
               destroyOnClose
               onOk={() =>""}
-              onCancel={() => {
-                setShowmodal(!showmodal)
-              }}
+              onCancel={itemConfirm}
              
               footer={[
             
@@ -396,7 +487,7 @@ const AddInvoice = () => {
                       columns={columns}
                       rowKey="index"
                     />
-                    <button className=" bg-orange-300 p-2 rounded text-white">Confirm</button>
+                    <button className=" bg-orange-300 p-2 rounded text-white" onClick={itemConfirm}>Confirm</button>
                     </div>
               
             </Modal>
