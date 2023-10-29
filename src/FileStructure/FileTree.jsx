@@ -4,6 +4,7 @@ import { FaFolderOpen, FaRegFile, FaDownload} from "react-icons/fa";
 import {HiChevronDown, HiChevronRight} from "react-icons/hi";
 import { useDownloadFileMutation } from "../states/apislice";
 import {toast} from "react-toastify";
+import {Link} from 'react-router-dom'
 
 const FileTree = ({ data }) => {
     const [downloadFile, {isSuccess, isLoading, isError, error}] = useDownloadFileMutation();
@@ -31,17 +32,31 @@ const FileTree = ({ data }) => {
 
 
     const handleDownloadFile = async ({ name, fullPath }) => {
-        const response = await downloadFile({ name, fullPath });
-        const contentType = response.headers['content-type'];
 
-        // Check if the response contains a DOCX file
-        if (contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-            const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
-            window.open(url);
-        } else {
-            // Handle the case where the response is not a DOCX file
-            console.error('Response is not a DOCX file');
-        }
+        // console.log(fullPath);
+        // const body = {filename: name, fullPath}
+        // const response = await downloadFile({body});
+        // // const response = await fetch("https://mining-company-management-system.onrender.com/data/DD%20Reports/2023/August/dd%20template.docx");
+        // const blob = await response.blob();
+        // const url = window.URL.createObjectURL(blob);
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = name;
+        // document.body.appendChild(a);
+        // a.click();
+        // window.URL.revokeObjectURL(url);
+        const link = "https://docs.google.com/viewerng/viewer?url=https://mining-company-management-system.onrender.com/data/DD+Reports/2023/August/dd+template.docx"
+
+        // const contentType = response.headers['content-type'];
+        // <Link to="route" target="_blank" rel="noopener noreferrer" />
+        // // Check if the response contains a DOCX file
+        // if (contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        //     const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
+        //     window.open(url);
+        // } else {
+        //     // Handle the case where the response is not a DOCX file
+        //     console.error('Response is not a DOCX file');
+        // }
     };
 
 
@@ -73,7 +88,10 @@ const FileTree = ({ data }) => {
               )}
               {node.name}
               {node.type === "file" && (
-                  <FaDownload style={{marginLeft: 5}} onClick={() => handleDownloadFile(node)}/>
+                  <Link to="https://mining-company-management-system.onrender.com/data/DD%20Reports/2023/August/dd%20template.docx" target="_blank" rel="noopener noreferrer" download>
+                      <FaDownload style={{marginLeft: 5}}/>
+                  </Link>
+
               )}
           </span>
                     {isDirectory && isDirectoryOpen(node.name) && node.content && (
