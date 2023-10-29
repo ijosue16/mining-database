@@ -11,7 +11,7 @@ import {ImSpinner2} from "react-icons/im";
 import {FaSave, FaImage} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
-import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation} from "../../../states/apislice";
+import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation, useDeleteGradeImgMutation} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
@@ -43,6 +43,8 @@ const ColtanEntryCompletePage = () => {
         isError: isUpdateError,
         error: updateError
     }] = useUpdateColtanEntryMutation();
+
+    const [deleteGradeImg, {isSuccess: isImageDeleteSuccess, isError: isImageDeleteError, error: imageDeleteError}] = useDeleteGradeImgMutation();
 
     let modalRef = useRef();
 
@@ -119,7 +121,7 @@ const ColtanEntryCompletePage = () => {
             }
             if (info.file.status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully`);
-                refetch()
+                // refetch()
             } else if (info.file.status === 'error') {
                 message.error(`${info.file.name} file upload failed.`);
             }
@@ -158,6 +160,23 @@ const ColtanEntryCompletePage = () => {
         }
         return isPNG || Upload.LIST_IGNORE;
     }
+
+    const removeFile = async (lotNumber, entryId) => {
+        const body = {lotNumber}
+        console.log('*****************************************************')
+        console.log(body)
+        await deleteGradeImg({body, entryId});
+        console.log('=====================================================');
+    }
+
+    useEffect(() => {
+        if (isImageDeleteSuccess) {
+            message.success("File successfully deleted");
+        } else if (isImageDeleteError) {
+            const { message: deleteError } = imageDeleteError.data;
+            message.error(deleteError);
+        }
+    }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
 
     ///////////////////////
 
@@ -281,6 +300,7 @@ const ColtanEntryCompletePage = () => {
                             action={`https://mining-company-management-system.onrender.com/api/v1/coltan/${entryId}`}
                             method="PATCH"
                             {...props}
+                            onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             {!record.gradeImg ? <Button icon={<UploadOutlined />}/>: null}
 

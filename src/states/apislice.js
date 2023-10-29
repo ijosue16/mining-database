@@ -450,13 +450,13 @@ export const apiSlice = createApi({
             providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
         }),
         downloadFile: builder.mutation({
-            query: ({body}) => ({
-                url: "/file-structure",
+            query: () => ({
+                url: "/file-structure/download",
                 method: "POST",
-                body,
-                responseHandler: response => {
-                    response.blob();
-                }
+                // body,
+                // responseHandler: response => {
+                //     return response.blob();
+                // }
             })
         }),
         getSettings: builder.query({
@@ -558,6 +558,14 @@ export const apiSlice = createApi({
                 body
             }),
             invalidatesTags: ['editRequest', 'notifications']
+        }),
+        deleteGradeImg: builder.mutation({
+            query: ({body, entryId}) => ({
+                url: `/coltan/delete-grade-img/${entryId}`,
+                method: "DELETE",
+                body
+            }),
+            invalidatesTags: ['entry']
         })
     })
 });
@@ -631,6 +639,7 @@ export const {
     useShipmentReportMutation,
     useGetPaymentHistoryQuery,
     useDetailedStockQuery,
+    useGetFileStructureQuery,
     useDownloadFileMutation,
     useUpdateSettingsMutation,
     useGetSettingsQuery,
@@ -648,5 +657,6 @@ export const {
     useGetAllEditRequestsQuery,
     useCreateEditRequestMutation,
     useGetOneEditRequestQuery,
-    useUpdateEditRequestMutation
+    useUpdateEditRequestMutation,
+    useDeleteGradeImgMutation
 } = apiSlice
