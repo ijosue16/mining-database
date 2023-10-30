@@ -651,6 +651,8 @@ const ColtanEntryCompletePage = () => {
                                 </Modal>
 
                                 <Modal
+                                width= {'70%'}
+                                 
                                     visible={previewVisible}
                                     title="Image Preview"
                                     footer={null}

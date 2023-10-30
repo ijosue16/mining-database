@@ -440,7 +440,7 @@ const AddInvoice = () => {
                         </li>
                         {/* ******* */}
                         <li className=" col-span-full">
-                            <button type="button" className="p-1 bg-orange-300 rounded" onClick={()=>setShowmodal(!showmodal)}>choose items</button>
+                            <button type="button" className="p-1 bg-orange-300 rounded" onClick={()=>setShowmodal(!showmodal)}>{selectedData.length>0?"Add item ":"choose items"}</button>
                         </li>
                         {/* ******* */}
                         <li className=" col-span-full w-full">
