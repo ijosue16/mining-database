@@ -7,7 +7,7 @@ import { HiPlus, HiMinus } from "react-icons/hi";
 
 const AddSuplierPage = () => {
     const navigate = useNavigate();
-    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
+    const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '', cell: '' }, typeOfMining: '', equipmentList: [], surfaceArea: null, categoryOfMine: '', numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
     const [mineSitesDetails, setmineSitesDetails] = useState([
         { coordinates: { lat: '', long: '', }, name: '', code: '' },
     ]);
@@ -100,12 +100,12 @@ const AddSuplierPage = () => {
         const body = { ...formval, mineSites: mineSitesDetails, typeOfMinerals: formval.typeOfMinerals.split(' ') };
         console.log(body)
         await createNewSupplier({ ...formval, body });
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '', cell: '' }, typeOfMining: '', equipmentList: [], surfaceArea: null, categoryOfMine: '', numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
         navigate(-1);
     }
     const handleCancel = () => {
-        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
+        setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '', cell: '' }, typeOfMining: '', equipmentList: [], surfaceArea: null, categoryOfMine: '', numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);
         navigate(-1);
     }
@@ -213,6 +213,32 @@ const AddSuplierPage = () => {
                             ))}
 
                         </ul>
+
+                        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
+                            <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Mining Info</p>
+
+                            <li>
+                                <p className="mb-1">Type of Mining</p>
+                                <input type="text" name="typeOfMining" id="typeOfMining" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.typeOfMining || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            <li>
+                                <p className="mb-1">Surface Area</p>
+                                <input type="text" name="surfaceArea" id="surfaceArea" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.surfaceArea || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            <li>
+                                <p className="mb-1">Equipment List</p>
+                                <input type="text" name="equipmentList" id="equipmentList" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.equipmentList || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            <li>
+                                <p className="mb-1">Category of Mine</p>
+                                <input type="text" name="categoryOfMine" id="categoryOfMine" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.categoryOfMine || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                        </ul>
+
                         <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-2 border-t relative p-2 pb-9 shadow-md rounded-md bg-slate-50">
                             <p className=" col-span-full absolute -top-[13px] bg-white left-4 px-2 p-0 font-semibold">Address</p>
 
@@ -229,6 +255,11 @@ const AddSuplierPage = () => {
                             <li>
                                 <p className="mb-1">Sector</p>
                                 <input type="text" name="address.sector" id="address.sector" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.address.sector || ''} onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            <li>
+                                <p className="mb-1">Cell</p>
+                                <input type="text" name="address.cell" id="address.cell" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.address.cell || ''} onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
                         </ul>

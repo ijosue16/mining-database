@@ -69,6 +69,7 @@ import AddInvoice from "./Pages/AddInvoice";
 import InvoiceList from "./Pages/InvoiceList";
 import EditRequests from "./Pages/EditRequests";
 import SingleImageUpload from "./Pages/Simbo";
+import Chat from "./Pages/Chat";
 
 function App() {
 
@@ -162,6 +163,7 @@ function App() {
                             <Route path="/edit-requests" element={<EditRequests/>}/>
                             <Route path="/invoice" element={<InvoiceList/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
+                            <Route path="/chat" element={<Chat/>}/>
                             <Route path="/structure" element={<FileStructure/>}/>
                             <Route path="/simbo" element={<SingleImageUpload/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>

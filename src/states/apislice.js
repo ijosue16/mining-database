@@ -12,7 +12,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -170,6 +170,14 @@ export const apiSlice = createApi({
             query: ({supplierId}) => ({
                 url: `/suppliers/${supplierId}`,
                 method: 'DELETE'
+            }),
+            invalidatesTags: ['suppliers']
+        }),
+        generateDDReport: builder.mutation({
+            query: ({body, supplierId}) => ({
+                url: `/suppliers/generate/${supplierId}`,
+                method: "POST",
+                body
             }),
             invalidatesTags: ['suppliers']
         }),
@@ -566,9 +574,37 @@ export const apiSlice = createApi({
                 body
             }),
             invalidatesTags: ['entry']
+        }),
+        getMessages: builder.query({
+            query: ({chatId}) => `/message/${chatId}`,
+            providesTags: ['messages']
+        }),
+        addMessage: builder.mutation({
+            query: ({body}) => ({
+                url: `/message`,
+                method: "POST",
+                body
+            }),
+            providesTags: ['messages']
+        }),
+        createChat: builder.mutation({
+            query: ({body}) => ({
+                url: `/chat`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['chat']
+        }),
+        userChats: builder.query({
+            query: ({userId}) => `/chat/${userId}`,
+            providesTags: ['chat']
+        }),
+        findChat: builder.query({
+            query: ({firstId, secondId}) => `/chat/find/${firstId}/${secondId}`,
+            providesTags: ['chat']
         })
     })
-});
+})
 export const {
     useEndpointnameQuery,
     useSignupMutation,
@@ -658,5 +694,11 @@ export const {
     useCreateEditRequestMutation,
     useGetOneEditRequestQuery,
     useUpdateEditRequestMutation,
-    useDeleteGradeImgMutation
+    useDeleteGradeImgMutation,
+    useGetMessagesQuery,
+    useAddMessageMutation,
+    useCreateChatMutation,
+    useUserChatsQuery,
+    useFindChatQuery,
+    useGenerateDDReportMutation,
 } = apiSlice
