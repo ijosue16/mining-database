@@ -5,22 +5,23 @@ import { PiEyeSlashFill, PiEyeFill } from "react-icons/pi";
 import { useSignupMutation } from "../../states/apislice";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import {message} from "antd";
 
 
 const AddUserPage = () => {
     const navigate=useNavigate();
     const [ signup, {isLoading, isSuccess, isError, error} ] = useSignupMutation();
-    const [formval, setFormval] = useState({ name: '', phoneNumber: '', email: '', role: "", password: '', passwordConfirm: '' });
+    const [formval, setFormval] = useState({ name: '', phoneNumber: '', username: '', email: '', role: "", password: '', passwordConfirm: '' });
     const [show, setShow] = useState(false);
     const handleAddproduct = (e) => {
         setFormval((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     }
     useEffect(() => {
         if (isSuccess) {
-          toast.success("User created successfully");
+          message.success("User created successfully");
         } else if (isError) {
           const { message } = error.data;
-          toast.error(message);
+          message.error(message);
         }
       }, [isSuccess, isError, error]);
     const handleSubmit = async (e) => {
@@ -31,7 +32,7 @@ const AddUserPage = () => {
         
     }
     const handleCancel = (e) => {
-        setFormval({ name: '', phoneNumber: '', email: '', role: "", password: '', passwordConfirm: '' })
+        setFormval({ name: '', phoneNumber: '', username: '', email: '', role: "", password: '', passwordConfirm: '' })
     }
     return (
         <>
@@ -46,15 +47,21 @@ const AddUserPage = () => {
                                        onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
+
+                            <li>
+                                <p className="mb-1 pl-1">Email</p>
+                                <input value={formval.email || ''} required autoComplete="off" type="email" name="email" id="email" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
+                            <li>
+                                <p className="mb-1 pl-1">Username</p>
+                                <input value={formval.username || ''} required autoComplete="off" type="username" name="username" id="username" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
+                            </li>
+                            {/* ******* */}
                             <li>
                                 <p className="mb-1 pl-1">Phone Number</p>
 
                                 <input value={formval.phoneNumber || ''} required autoComplete="off" type="text" name="phoneNumber" id="phoneNumber" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
-                            </li>
-                            {/* ******* */}
-                            <li>
-                                <p className="mb-1 pl-1">Email</p>
-                                <input value={formval.email || ''} required autoComplete="off" type="email" name="email" id="email" className="focus:outline-none p-2 border rounded-md w-full" onChange={handleAddproduct} />
                             </li>
                             {/* ******* */}
 
