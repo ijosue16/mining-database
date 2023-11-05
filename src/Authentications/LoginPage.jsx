@@ -34,7 +34,7 @@ const LoginPage = () => {
       localStorage.setItem("profile", JSON.stringify(user));
       localStorage.setItem("role", user.role);
       localStorage.setItem("permissions", JSON.stringify(user.permissions));
-      // navigate("/coltan");
+      navigate("/chat");
     }
   };
 

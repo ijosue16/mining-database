@@ -103,9 +103,10 @@ export const apiSlice = createApi({
             })
         }),
         logout: builder.mutation({
-            query: () => ({
+            query: ({body}) => ({
                 url: `/users/logout`,
-                method: 'POST'
+                method: 'POST',
+                body
             })
         }),
         getAllDueDiligence: builder.query({
@@ -587,6 +588,10 @@ export const apiSlice = createApi({
             }),
             providesTags: ['messages']
         }),
+        lastMessage: builder.query({
+            query: ({chatId}) => `/message/last/${chatId}`,
+            providesTags: ['messages']
+        }),
         createChat: builder.mutation({
             query: ({body}) => ({
                 url: `/chat`,
@@ -602,6 +607,10 @@ export const apiSlice = createApi({
         findChat: builder.query({
             query: ({firstId, secondId}) => `/chat/find/${firstId}/${secondId}`,
             providesTags: ['chat']
+        }),
+        getAllLogs: builder.query({
+            query: () => `/logs`,
+            providesTags: ['logs']
         })
     })
 })
@@ -695,10 +704,11 @@ export const {
     useGetOneEditRequestQuery,
     useUpdateEditRequestMutation,
     useDeleteGradeImgMutation,
-    useGetMessagesQuery,
+    useLazyGetMessagesQuery,
     useAddMessageMutation,
+    useLazyLastMessageQuery,
     useCreateChatMutation,
     useUserChatsQuery,
-    useFindChatQuery,
+    useLazyFindChatQuery,
     useGenerateDDReportMutation,
 } = apiSlice

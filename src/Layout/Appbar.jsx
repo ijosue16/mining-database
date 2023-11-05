@@ -11,8 +11,12 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userSubmenu, setUserSubmenu] = useState(false);
     let modalRef = useRef();
     const{loginData}=useMyContext();
-    const{profile,permissions}=loginData;
-    console.log(profile._id)
+    let profile;
+    if(loginData) {
+        const{profile: info,permissions}=loginData;
+        profile = info;
+        // console.log(profile._id)
+    }
 
 
     const handleClickOutside = (event) => {
@@ -66,7 +70,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                                 </div>
                             </span>
 
-                            <p className="hidden md:block text-sm md:text-md text-black dark:text-white">{profile.name}</p>
+                            <p className="hidden md:block text-sm md:text-md text-black dark:text-white">{profile?.name}</p>
                             <PiCaretRightLight  className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={()=>{setUserSubmenu((prev)=>!prev)}} />
                         </li>
                         <div className={`absolute right-0 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`} ref={modalRef}>
@@ -75,8 +79,8 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                                 <img className=" w-[36px] h-[36px] object-cover rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user profile" />
 
                                 <span className=" text-left">
-                                    <p className="text-sm">{profile.name}</p>
-                                    <p className="text-sm">{profile.role}</p>
+                                    <p className="text-sm">{profile?.name}</p>
+                                    <p className="text-sm">{profile?.role}</p>
                                 </span>
                             </div>
                             <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
@@ -110,8 +114,8 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <img className=" w-[36px] h-[36px] object-cover rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user profile" />
 
                             <span className=" text-left">
-                            <p className="text-sm">{profile.name}</p>
-                                    <p className="text-sm">{profile.role}</p>
+                            <p className="text-sm">{profile?.name}</p>
+                                    <p className="text-sm">{profile?.role}</p>
                             </span>
                         </div>
                         <div className="w-full bg-gray-500 h-[0.5px] divider"></div>

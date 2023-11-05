@@ -69,7 +69,7 @@ import AddInvoice from "./Pages/InvoicePages/AddInvoice";
 import InvoiceList from "./Pages/InvoicePages/InvoiceList";
 import EditRequests from "./Pages/EditRequests";
 import SingleImageUpload from "./Pages/Simbo";
-import Chat from "./Pages/Chat";
+import Chat from "./Pages/Chat/Chat";
 import ColtanEditRequestPage from './Pages/EditRequestspages/ColtanEditRequestPage';
 
 function App() {

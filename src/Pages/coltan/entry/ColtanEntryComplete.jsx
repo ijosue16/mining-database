@@ -163,10 +163,7 @@ const ColtanEntryCompletePage = () => {
 
     const removeFile = async (lotNumber, entryId) => {
         const body = {lotNumber}
-        console.log('*****************************************************')
-        console.log(body)
         await deleteGradeImg({body, entryId});
-        console.log('=====================================================');
     }
 
     useEffect(() => {
