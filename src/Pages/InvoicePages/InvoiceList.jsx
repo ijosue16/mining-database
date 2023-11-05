@@ -1,8 +1,8 @@
 import React, {useEffect,useState,useRef} from "react";
-import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
-import { useMyContext } from "../context files/LoginDatacontextProvider";
+import SuppliersListContainer from "../../components/Listcomponents/SuppliersListContainer";
+import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import { Table,Modal } from "antd";
-import { useGetSuppliersInvoiceQuery, useGetAllInvoicesQuery } from "../states/apislice";
+import { useGetSuppliersInvoiceQuery, useGetAllInvoicesQuery } from "../../states/apislice";
 import dayjs from "dayjs";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import { ImSpinner2 } from "react-icons/im";

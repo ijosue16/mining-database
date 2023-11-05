@@ -19,6 +19,7 @@ import ListContainer from "../components/Listcomponents/ListContainer";
 import {
   useGetAllSuppliersQuery,
   useDeleteSupplierMutation,
+  useGetSuppliersInvoiceQuery,
 } from "../states/apislice";
 import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
@@ -26,9 +27,32 @@ import { useNavigate } from "react-router-dom";
 const SuppliersListPage = () => {
   const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
+    const[supplierId,setSupplierId]=useState();
   let dataz = [];
   const { data, isLoading, isError, isSuccess, error } =
     useGetAllSuppliersQuery();
+  // const { data:info, isLoading:isGetting, isError:isFail, isSuccess:isDone, error:fail } =
+  //   useGetSuppliersInvoiceQuery(supplierId);
+
+    const useSupplierData = (supplierId) => {
+      if(supplierId!==null ||""){
+
+        const { data, isLoading, error,isSuccess } = useGetSuppliersInvoiceQuery(supplierId);
+       
+    
+          return { data, isLoading, error };
+     
+
+      };
+  
+    };
+    const handleSupplierinvoice=(supplierId)=>{
+      const dt = useSupplierData(supplierId);
+      console.log(dt);
+    };
+
+   
+
   const [
     deleteSupplier,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
@@ -63,7 +87,9 @@ const SuppliersListPage = () => {
     const { suppliers: spl } = dt;
     console.log(spl);
     dataz = spl;
-  }
+  };
+
+
 
   const handleActions = (id) => {
     if (selectedRow === id) {
@@ -168,6 +194,27 @@ const SuppliersListPage = () => {
                     >
                       <FaFileAlt className=" text-xl" />
                       <p>Make invoice</p>
+                    </li>
+                    <li
+                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                      onClick={() => {
+                        
+                         
+                          setSupplierId(record._id)
+                        
+                      }}
+                    >
+                      <FaFileAlt className=" text-xl" />
+                      <p>Invoices history</p>
+                    </li>
+                    <li
+                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                      onClick={() => {
+                        navigate(`/report/${record._id}`);
+                      }}
+                    >
+                      <FaFileAlt className=" text-xl" />
+                      <p>Make report</p>
                     </li>
                   </motion.ul>
                 )}

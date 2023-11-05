@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import moment from "moment";
 import dayjs from "dayjs";
 import { Spin, Table, Form, Input, Button, Modal, DatePicker } from 'antd';
 import { toast } from "react-toastify";
@@ -275,7 +276,7 @@ const ColtanPaymentsPage = () => {
                                {showForm ? <form action="submit" onSubmit={handlePaymentSubmit} className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-3 gap-x-2 bg-gray-100 rounded-md p-2 shadow-lg shadow-zinc-300">
                                     <span className=" space-y-1">
                                         <p className="pl-1">Date</p>
-                                        <DatePicker value={payment.paymentDate ? dayjs(payment.paymentDate) : ''} onChange={handleAddDate} id="paymentDate" name="paymentDate" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                        <DatePicker  onChange={handleAddDate} id="paymentDate" name="paymentDate" className=" focus:outline-none p-2 border rounded-md w-full" />
                                     </span>
                                     <span className=" space-y-1">
                                         <p className="pl-1">Beneficiary</p>

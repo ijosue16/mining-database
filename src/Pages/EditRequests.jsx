@@ -24,6 +24,7 @@ const EditRequests = () => {
         if (isSuccess) {
             const {editRequests} = data.data;
             setEditRequests(editRequests);
+            console.log(editRequests)
         }
     }, [isSuccess, data]);
 

@@ -1,204 +1,123 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-// Sample file system structure
-const fileSystem = {
-  status: "Success",
-  data: {
-    files: [
-      {
-        type: "directory",
-        name: "data",
-        content: [
-          {
-            type: "directory",
-            name: "DD Reports",
-            content: [
-              {
-                type: "directory",
-                name: "2023",
-                content: [
-                  {
-                    type: "directory",
-                    name: "August",
-                    content: []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            type: "directory",
-            name: "shipment",
-            content: [
-              {
-                type: "directory",
-                name: "64e71ce5a932f1ac6fe490e1",
-                content: []
-              },
-              {
-                type: "directory",
-                name: "64e71d076f9a0f8f07559c94",
-                content: []
-              },
-              {
-                type: "directory",
-                name: "64e71d576f9a0f8f07559ca6",
-                content: [
-                  {
-                    type: "file",
-                    name: "Cover letter satago.docx"
-                  },
-                  {
-                    type: "file",
-                    name: "META BASIC INFO.docx"
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        type: "directory",
-        name: "stylesheets",
-        content: [
-          {
-            type: "file",
-            name: "style.css"
-          }
-        ]
-      }
-    ]
-  }
-};
-
-
-const jsonData = {
-    "status": "Success",
-    "data": {
-      "files": [
-        {
-          "type": "directory",
-          "name": "data",
-          "content": [
-            {
-              "type": "directory",
-              "name": "DD Reports",
-              "content": [
-                {
-                  "type": "directory",
-                  "name": "2023",
-                  "content": [
-                    {
-                      "type": "directory",
-                      "name": "August",
-                      "content": []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "directory",
-              "name": "shipment",
-              "content": [
-                {
-                  "type": "directory",
-                  "name": "64e71ce5a932f1ac6fe490e1",
-                  "content": []
-                },
-                {
-                  "type": "directory",
-                  "name": "64e71d076f9a0f8f07559c94",
-                  "content": []
-                },
-                {
-                  "type": "directory",
-                  "name": "64e71d576f9a0f8f07559ca6",
-                  "content": [
-                    {
-                      "type": "file",
-                      "name": "Cover letter satago.docx"
-                    },
-                    {
-                      "type": "file",
-                      "name": "META BASIC INFO.docx"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type": "directory",
-          "name": "stylesheets",
-          "content": [
-            {
-              "type": "file",
-              "name": "style.css"
-            }
-          ]
-        }
-      ]
-    }
-  };
-  
-  function getHierarchyLevels(data, currentLevel = 0) {
-    if (Array.isArray(data)) {
-      return data.map((item) => getHierarchyLevels(item, currentLevel));
-    } else if (typeof data === "object") {
-      const levels = {};
-      for (const key in data) {
-        if (data.hasOwnProperty(key)) {
-          levels[key] = {
-            level: currentLevel,
-            children: getHierarchyLevels(data[key], currentLevel + 1),
-          };
-        }
-      }
-      return levels;
-    }
-    return data;
-  }
-  
-  const hierarchyLevels = getHierarchyLevels(jsonData);
-  
-  console.log(hierarchyLevels);
-
-const FileExplorer = ({ files }) => {
-  const renderFilesystem = (items) => {
-    return items.map((item, index) => (
-      <div key={index}>
-        {item.type === "directory" ? (
-          <div className="directory">
-            <span className="icon-folder"></span>
-            {item.name}
-            {item.content.length > 0 && (
-              <div className="nested">
-                {renderFilesystem(item.content)}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="file">
-            <span className="icon-file"></span>
-            {item.name}
-          </div>
-        )}
-      </div>
-    ));
+const CarDetails = ({ selectedCars }) => {
+  const carDetails = {
+    volvo: {
+      name_of_sites: 'Volvo Site',
+      code_of_sites: 'V001',
+      // Add other relevant details
+    },
+    saab: {
+      name_of_sites: 'Saab Site',
+      code_of_sites: 'S002',
+      // Add other relevant details
+    },
+    opel: {
+      name_of_sites: 'Opel Site',
+      code_of_sites: 'O003',
+      // Add other relevant details
+    },
+    audi: {
+      name_of_sites: 'Audi Site',
+      code_of_sites: 'A004',
+      // Add other relevant details
+    },
   };
 
-  return <div className="file-explorer">{renderFilesystem(files)}</div>;
-};
-
-function FileExplorerApp() {
   return (
-    <div className="App">
-      <FileExplorer files={fileSystem.data.files} />
+    <div>
+      {selectedCars.map((car, index) => (
+        <div key={index}>
+          <h3>Details for {car}</h3>
+          <p>Name of Site: {carDetails[car].name_of_sites}</p>
+          <p>Code of Site: {carDetails[car].code_of_sites}</p>
+          {/* Display other details */}
+        </div>
+      ))}
     </div>
   );
-}
+};
 
-export default FileExplorerApp;
+const DynamicForm = () => {
+  const [selectedCars, setSelectedCars] = useState([]);
+  const [minesiteInfo, setMinesiteInfo] = useState([]);
+
+  const carDetails = {
+    volvo: {
+      name_of_sites: 'Volvo Site',
+      code_of_sites: 'V001',
+      // Add other relevant details
+    },
+    saab: {
+      name_of_sites: 'Saab Site',
+      code_of_sites: 'S002',
+      // Add other relevant details
+    },
+    opel: {
+      name_of_sites: 'Opel Site',
+      code_of_sites: 'O003',
+      // Add other relevant details
+    },
+    audi: {
+      name_of_sites: 'Audi Site',
+      code_of_sites: 'A004',
+      // Add other relevant details
+    },
+  };
+
+  const handleSelectChange = (event) => {
+    const selectedOptions = Array.from(event.target.selectedOptions, (option) => option.value);
+    setSelectedCars(selectedOptions);
+
+    const updatedMinesiteInfo = selectedOptions.map((car) => ({
+      name_of_sites: carDetails[car].name_of_sites,
+      code_of_sites: carDetails[car].code_of_sites,
+      // Add other details as needed
+    }));
+
+    setMinesiteInfo(updatedMinesiteInfo);
+  };
+
+  const handleInputChange = (index, event) => {
+    const updatedInfo = [...minesiteInfo];
+    updatedInfo[index] = {
+      ...updatedInfo[index],
+      [event.target.name]: event.target.value,
+    };
+    setMinesiteInfo(updatedInfo);
+  };
+
+  return (
+    <div>
+      <select name="cars" id="cars" multiple onChange={handleSelectChange}>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+        <option value="audi">Audi</option>
+      </select>
+
+      {/* Render dynamic form based on minesiteInfo state */}
+      <form>
+        {minesiteInfo.map((site, index) => (
+          <div key={index}>
+            <input
+              type="text"
+              name="name_of_sites"
+              value={site.name_of_sites}
+              onChange={(e) => handleInputChange(index, e)}
+            />
+            <input
+              type="text"
+              name="code_of_sites"
+              value={site.code_of_sites}
+              onChange={(e) => handleInputChange(index, e)}
+            />
+            {/* Add other input fields for the additional site information */}
+          </div>
+        ))}
+      </form>
+    </div>
+  );
+};
+
+export default DynamicForm;

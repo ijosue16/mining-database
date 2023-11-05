@@ -653,7 +653,7 @@ const ColtanEntryCompletePage = () => {
                                 <Modal
                                 width= {'70%'}
                                  
-                                    visible={previewVisible}
+                                    open={previewVisible}
                                     title="Image Preview"
                                     footer={null}
                                     onCancel={handleClose}

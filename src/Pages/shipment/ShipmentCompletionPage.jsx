@@ -167,13 +167,13 @@ const ShipmentCompletionPage = () => {
   const handleAddSamplingDate = (e) => {
     setShipmentDetails((prevState) => ({
       ...prevState,
-      shipmentSamplingDate: dayjs(e).format("MMM/DD/YYYY"),
+      shipmentSamplingDate: e,
     }));
   };
   const handleAddLoadingDate = (e) => {
     setShipmentDetails((prevState) => ({
       ...prevState,
-      shipmentContainerLoadingDate: dayjs(e).format("MMM/DD/YYYY"),
+      shipmentContainerLoadingDate: e,
     }));
   };
 
@@ -414,9 +414,9 @@ const ShipmentCompletionPage = () => {
                         >
                           Upload Analysis certificate
                         </button>
-                        <p className="border p-2">
+                       {fileNames.analysisCertificate? <p className="border p-2 rounded-md">
                           {fileNames.analysisCertificate}
-                        </p>
+                        </p>:null}
                       </span>
                       <span className="space-y-4">
                         <p className="pl-1">Container forward note</p>
@@ -439,9 +439,9 @@ const ShipmentCompletionPage = () => {
                         >
                           Upload Container forward note
                         </button>
-                        <p className="border p-2">
+                      { fileNames.containerForwardNote? <p className="border p-2 rounded-md">
                           {fileNames.containerForwardNote}
-                        </p>
+                        </p>:null}
                       </span>
                       <span className="space-y-4">
                         <p className="pl-1">Certificate of origin</p>
@@ -463,9 +463,9 @@ const ShipmentCompletionPage = () => {
                         >
                           Upload Certificate of origin
                         </button>
-                        <p className="border p-2">
+                       {fileNames.certificateOfOrigin ? <p className="border p-2 rounded-md">
                           {fileNames.certificateOfOrigin}
-                        </p>
+                        </p>:null}
                       </span>
                       <span className="space-y-4">
                         <p className="pl-1">RMBIcglr certificate</p>
@@ -487,9 +487,9 @@ const ShipmentCompletionPage = () => {
                         >
                           Upload RMBIcglr certificate
                         </button>
-                        <p className="border p-2">
+                       {fileNames.rmbIcglrCertificate? <p className="border p-2 rounded-md">
                           {fileNames.rmbIcglrCertificate}
-                        </p>
+                        </p>:null}
                       </span>
 
                       {/* <div className=" border grid justify-center grid-cols-1 text-center items-center gap-3 p-3 rounded-md space-y-4">

@@ -65,11 +65,12 @@ import LithiumEntryCompletePage from './Pages/lithium/entry/LithiumEntryComplete
 import AddContract from './Pages/AddContract';
 import LithiumEditForm from './Pages/lithium/entry/LithiumEditForm';
 import FileStructure from "./FileStructure/FileStructure";
-import AddInvoice from "./Pages/AddInvoice";
-import InvoiceList from "./Pages/InvoiceList";
+import AddInvoice from "./Pages/InvoicePages/AddInvoice";
+import InvoiceList from "./Pages/InvoicePages/InvoiceList";
 import EditRequests from "./Pages/EditRequests";
 import SingleImageUpload from "./Pages/Simbo";
 import Chat from "./Pages/Chat";
+import ColtanEditRequestPage from './Pages/EditRequestspages/ColtanEditRequestPage';
 
 function App() {
 
@@ -95,7 +96,7 @@ function App() {
                             <Route path='/dummy' element={<DummyPage/>}/>
                             <Route path='/dummy2' element={<FetchingPage/>}/>
                             <Route path='/dummy3' element={<FilesytemMangerSample/>}/>
-                            <Route path='/report' element={<ReportPage/>}/>
+                            <Route path='/report/:supplierId' element={<ReportPage/>}/>
 
                             <Route path='/coltan' element={<ColtanListPage/>}/>
                             <Route path='/cassiterite' element={<CassiteriteListPage/>}/>
@@ -122,6 +123,8 @@ function App() {
                             <Route path='/complete/wolframite/:entryId' element={<WolframiteEntryCompletePage/>}/>
                             <Route path='/complete/beryllium/:entryId' element={<BerylliumEntryCompletePage/>}/>
                             <Route path='/complete/lithium/:entryId' element={<LithiumEntryCompletePage/>}/>
+
+                            <Route path='/coltan/request' element={<ColtanEditRequestPage/>}/>
 
                             <Route path='/users' element={<UsersListPage/>}/>
 
@@ -159,9 +162,11 @@ function App() {
                             <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                             <Route path='/framer' element={<Framer/>}/>
                             <Route path="/settings" element={<Settings/>}/>
+
                             <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
-                            <Route path="/edit-requests" element={<EditRequests/>}/>
                             <Route path="/invoice" element={<InvoiceList/>}/>
+                            
+                            <Route path="/edit-requests" element={<EditRequests/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
                             <Route path="/chat" element={<Chat/>}/>
                             <Route path="/structure" element={<FileStructure/>}/>

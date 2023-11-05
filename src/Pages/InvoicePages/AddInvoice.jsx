@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
 import { Modal,Table,Checkbox,DatePicker } from "antd";
 import dayjs from "dayjs";
-import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
-import AddComponent from "../components/Actions components/AddComponent";
-import FetchingPage from "./FetchingPage";
-import { useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery } from "../states/apislice";
+import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
+import AddComponent from "../../components/Actions components/AddComponent";
+import FetchingPage from "../FetchingPage";
+import { useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery } from "../../states/apislice";
 import {toast} from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
 import { useParams } from "react-router-dom";

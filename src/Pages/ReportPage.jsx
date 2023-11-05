@@ -6,16 +6,20 @@ import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import { motion } from "framer-motion";
 import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
-import { useGetAllSuppliersQuery } from "../states/apislice";
+import { useGenerateDDReportMutation, useGetAllSuppliersQuery } from "../states/apislice";
+import { useParams } from "react-router-dom";
 
 const ReportPage = () => {
+  const{supplierId}=useParams();
   let sup = [""];
   let sites = [""];
   const { data, isLoading, isError, error, isSuccess } =
   useGetAllSuppliersQuery();
+  const[GenerateReport,{isLoading:isGenerating,isError:isFailed,isSuccess:isGenerated,error:fail}]=useGenerateDDReportMutation();
  const [minesiteInfo,setMinesiteInfo]=useState([{name_of_sites:'',code_of_sites:'',sites_district:'',sites_sector:'',sites_cell:'',sites_coordinates:'',date_of_visit:'',time_of_visit:''}]);
  const [personsInterviewedAndRole,setPersonsInterviewedAndRole]=useState([{name:"",role:""}]);
  const [interviewedRepresentative,setInterviewedRepresentative]=useState([{name:"",role:""}]);
+ const [selectedReasons, setSelectedReasons] = useState([]);
  const [reportInfo,setReportInfo]=useState({name_of_consultant:'',email_of_consultant:'',purpose_of_visit:'',name_of_processor:"",company_visited:"",company_license_number:"",number_of_minesites:"",number_of_minesites_visited:"",sites_visited:"",number_of_diggers_observations_men:"",number_of_diggers_observations_women:"",number_of_diggers_representative_men:"",number_of_diggers_representative_women:"",number_of_washers_observations_men:"",number_of_washers_observations_women:"",number_of_washers_representative_men:"",number_of_washers_representative_women:"",number_of_transporters:"",number_of_transporters_observations_women:"",number_of_transporters_representative_men:"",number_of_transporters_representative_women:"",number_of_persons_per_team_observations:"",number_of_washers_per_team_observations:"",number_of_transporters_per_team_observations:"",number_of_diggers_per_team_observations:"",number_of_persons_per_team_representative:"",number_of_washers_per_team_representative:"",number_of_transporters_per_team_representative:"",number_of_diggers_per_team_representative:"",do_they_use_temporary_workers_observations:"",number_of_temporary_workers_observations:"",number_of_times_observations:"",do_they_use_temporary_workers_representative:"",number_of_temporary_workers_representative:"",number_of_times_representative:"",equipments_used_observations:"",equipment_used_representative:"",production_per_day_observations:"",production_per_day_representative:"",production_per_day_records:"",number_of_washing_times_observation:"",days_of_mineral_washing_observations:"",number_of_washing_times_representative:"",days_of_mineral_washing_representative:"",number_of_washing_times_records:"",days_of_mineral_washing_records:"",type_of_minerals_observations:"",type_of_minerals_representative:"",type_of_minerals_records:"",});
 //  
  const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -109,6 +113,29 @@ const handleSupplierSelect = (supplier) => {
   return companyName;
 
 });
+
+const reasons = [
+  'Scenic Beauty',
+  'Cultural Experience',
+  'Adventure Activities',
+  'Historical Sites',
+];
+const handleCheckboxChange = (event) => {
+  const text = event.target.value;
+  const isChecked = event.target.checked;
+
+  if (isChecked) {
+    setSelectedReasons(selectedReasons + text + '\n');
+  } else {
+    const updatedReasons = selectedReasons.replace(text + '\n', '');
+    setSelectedReasons(updatedReasons);
+  }
+};
+
+useEffect(() => {
+  console.log('Selected Reasons:\n', selectedReasons);
+}, [selectedReasons]);
+
 
 const handleSupplierSiteSelect = (supplier, index) => {
   // Create a copy of the current minesiteInfo array
@@ -210,8 +237,10 @@ const AddInterviewedRepresentative=()=>{
   setMinesiteInfo(values);
  };
 
- const handleFormSubmit=()=>{
-  const body={minesiteInfo,interviewedRepresentative,personsInterviewedAndRole,reportInfo};
+ const handleFormSubmit=async(e)=>{
+  e.preventDefault();
+  const body={...minesiteInfo,...interviewedRepresentative,...personsInterviewedAndRole,...reportInfo};
+  await GenerateReport({body,supplierId});
   console.log(body);
  };
 
@@ -283,15 +312,24 @@ const AddInterviewedRepresentative=()=>{
                 className="focus:outline-none p-2 border  rounded-[4px] w-full"
               />
             </li>
-            <li className="space-y-1 col-span-full">
-              <p className="pl-1">Purpose of visit</p>
-              <textarea
-                name="purpose_of_visit"
-                id=""
-                cols="30"
-                rows="10"
-                className="focus:outline-none p-2 border  rounded-[4px] w-full"
-              ></textarea>
+            <li className="space-y-2 col-span-full bg-white p-2">
+              <p className="">Purpose of visit</p>
+
+              {reasons.map((reason, index) => (
+          <div className="flex gap-2 items-center" key={index}>
+            
+              <input
+                type="checkbox"
+                value={reason}
+                onChange={handleCheckboxChange}
+                checked={selectedReasons.includes(reason)}
+               style={{width:"17px",height:"17px"}}
+              />
+            <p>{reason}</p>
+            
+          </div>
+        ))}
+              
             </li>
           </ul>
 
@@ -534,7 +572,8 @@ const AddInterviewedRepresentative=()=>{
                           {isLoading?<div className="w-full flex justify-start items-center gap-1">
                           <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
                           <p className=" text-slate-400">Fetching suppliers...</p>
-                          </div>:<ul className={`list-none  overflow-auto `}>
+                          </div>:
+                          <ul className={`list-none  overflow-auto `}>
                             {filteredMineSites.map((site, index) => (
                               <li
                                 key={index}
