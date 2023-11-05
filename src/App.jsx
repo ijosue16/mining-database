@@ -69,7 +69,7 @@ import AddInvoice from "./Pages/AddInvoice";
 import InvoiceList from "./Pages/InvoiceList";
 import EditRequests from "./Pages/EditRequests";
 import SingleImageUpload from "./Pages/Simbo";
-import Chat from "./Pages/Chat";
+import Chat from "./Pages/Chat/Chat";
 
 function App() {
 
