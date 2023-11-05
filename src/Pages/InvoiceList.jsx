@@ -1,7 +1,7 @@
 import React, {useEffect,useState,useRef} from "react";
 import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
 import { useMyContext } from "../context files/LoginDatacontextProvider";
-import { Table } from "antd";
+import { Table,Modal } from "antd";
 import { useGetSuppliersInvoiceQuery, useGetAllInvoicesQuery } from "../states/apislice";
 import dayjs from "dayjs";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
@@ -19,7 +19,7 @@ const InvoiceList = () => {
     const{profile,permissions}=loginData;
     const [showActions, SetShowActions] = useState(false);
     const [selectedRow, SetSelectedRow] = useState(null);
-
+    const [showmodal, setShowmodal] = useState(false);
     if (isSuccess) {
             const {invoices}=data.data;
             dataz=invoices;
@@ -181,7 +181,7 @@ const InvoiceList = () => {
                           >
                               <li
                                   className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => edit(record)}
+                                  onClick={() =>setShowmodal(!showmodal)}
                               >
                                   <BiSolidDetail className=" text-lg"/>
                                   <p>details</p>
@@ -237,7 +237,27 @@ const InvoiceList = () => {
                 columns={columns}
                 rowKey="_id"
               />
+              
         }/>
+                            <Modal
+              open={showmodal}
+              width={"100%"}
+              destroyOnClose
+              onOk={() =>""}
+              onCancel={() => {
+                setShowmodal(!showmodal)
+              }}
+             
+              footer={[
+            
+              ]}
+            >
+                <div className="w-full space-y-3">
+                
+                    <button className=" bg-orange-300 p-2 rounded text-white">Confirm</button>
+                    </div>
+              
+            </Modal>
        </>
     )
 }

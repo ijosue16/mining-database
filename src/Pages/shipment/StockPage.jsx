@@ -304,7 +304,7 @@ const StockPage = () => {
           onChange={() => handleRowToggle(record)}
         />
       ),
-    },
+    }, 
   ];
 
   const mergedColumns = columns.map((col) => {
@@ -378,6 +378,7 @@ const StockPage = () => {
           {/* <div className='w-full flex items-center justify-end'> */}
 
           <div className=" space-y-2 w-full block">
+             {/* TABLE 1 TO SELECT INFO FROM */}
             <Table
               className=" overflow-x-auto w-full bg-white"
               dataSource={initialData}
@@ -427,6 +428,7 @@ const StockPage = () => {
 
               <div className="w-full py-4 space-y-3 text-end">
                 <div className=" w-full space-y-2 overflow-y-auto" key="item1">
+                  {/* TABLE 2 TO BE  FILLED WITH SELECTED DATA AND EDITABLT */}
                   <Form form={form} component={false}>
                     <Table
                       className=" overflow-x-auto w-full bg-white rounded-lg"

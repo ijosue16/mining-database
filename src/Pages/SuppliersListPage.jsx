@@ -15,7 +15,7 @@ import { BsCardList } from "react-icons/bs";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { FaFileAlt } from "react-icons/fa";
-import SuppliersListContainer from "../components/Listcomponents/SuppliersListContainer";
+import ListContainer from "../components/Listcomponents/ListContainer";
 import {
   useGetAllSuppliersQuery,
   useDeleteSupplierMutation,
@@ -24,6 +24,8 @@ import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 
 const SuppliersListPage = () => {
+  const {loginData} = useMyContext();
+    const {profile, permissions} = loginData;
   let dataz = [];
   const { data, isLoading, isError, isSuccess, error } =
     useGetAllSuppliersQuery();
@@ -31,7 +33,6 @@ const SuppliersListPage = () => {
     deleteSupplier,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
   ] = useDeleteSupplierMutation();
-  const { sharedData, setsharedData } = useMyContext();
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
   const [showActions, SetShowActions] = useState(false);
@@ -194,11 +195,12 @@ const SuppliersListPage = () => {
   ];
   return (
     <>
-      <SuppliersListContainer
+      <ListContainer
         title={"Suppliers List"}
         subTitle={"Manage your Suppliers"}
         navLinktext={"add/supplier"}
         navtext={"Add supplier"}
+        isAllowed={permissions.suppliers.create}
         table={
           <>
             <Modal
