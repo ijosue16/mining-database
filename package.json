@@ -17,6 +17,7 @@
     "dayjs": "^1.11.9",
     "framer-motion": "^10.12.18",
     "moment": "^2.29.4",
+    "pdfmake": "^0.2.7",
     "react": "^18.2.0",
     "react-countdown": "^2.3.5",
     "react-datepicker": "^4.16.0",

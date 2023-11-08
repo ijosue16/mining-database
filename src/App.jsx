@@ -69,8 +69,12 @@ import AddInvoice from "./Pages/InvoicePages/AddInvoice";
 import InvoiceList from "./Pages/InvoicePages/InvoiceList";
 import EditRequests from "./Pages/EditRequests";
 import SingleImageUpload from "./Pages/Simbo";
-import Chat from "./Pages/Chat/Chat";
+// import Chat from "./Pages/Chat/Chat";
 import ColtanEditRequestPage from './Pages/EditRequestspages/ColtanEditRequestPage';
+import InvoiceTemp from './test elements/InvoiceTemp';
+import SuppliersInvoice from './Pages/InvoicePages/SuppliersInvoice';
+import AdvancedPaymentsList from './Pages/AdvancedPayments/AdvancedPaymentsList';
+import AdvancedPaymentEntry from './Pages/AdvancedPayments/AdvancedPaymentEntry';
 
 function App() {
 
@@ -89,6 +93,9 @@ function App() {
 
                             <Route path='*' element={<DefaultPages/>}/>
                             <Route path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
+                            <Route path='/payment/advanced' element={<AdvancedPaymentsList/>}/>
+                            <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
+
                             <Route path='/shipment/add/:model' element={<StockPage/>}/>
                             <Route path='/shipments' element={<ShipmentPage/>}/>
                             <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
@@ -165,10 +172,12 @@ function App() {
 
                             <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
                             <Route path="/invoice" element={<InvoiceList/>}/>
+                            <Route path="/invoice/temp" element={<InvoiceTemp/>}/>
+                            <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/>
                             
                             <Route path="/edit-requests" element={<EditRequests/>}/>
                             <Route path="/user" element={<UserPermissionPage/>}/>
-                            <Route path="/chat" element={<Chat/>}/>
+                            {/* <Route path="/chat" element={<Chat/>}/> */}
                             <Route path="/structure" element={<FileStructure/>}/>
                             <Route path="/simbo" element={<SingleImageUpload/>}/>
                             <Route path='/wee' element={<RoleBasedRoute/>}/>
