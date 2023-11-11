@@ -321,7 +321,7 @@ const ColtanEditForm = () => {
   const handleLRemoveNegociantTags = (index) => {
     const values = [...mineTags];
     values.splice(index, 1);
-    const updatedValues = values.map((lot, i) => {
+    const updatedValues = values.map((lot, i) => { 
       return {
         ...lot,
       };

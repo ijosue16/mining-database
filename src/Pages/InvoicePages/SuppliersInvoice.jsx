@@ -1,20 +1,22 @@
-import React, {useEffect,useState,useRef} from "react";
+import React,{useState,useEffect,useRef} from "react";
+import { useGetSuppliersInvoiceQuery } from "../../states/apislice";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
-import { Table,Modal } from "antd";
-import { useGetSuppliersInvoiceQuery, useGetAllInvoicesQuery } from "../../states/apislice";
+import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
+import { Table,Modal } from "antd";
+import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import { ImSpinner2 } from "react-icons/im";
 import {motion} from "framer-motion";
 import {BiSolidDetail} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {FaSave} from "react-icons/fa";
 
-const InvoiceList = () => {
+const SuppliersInvoice =()=>{
+    const{supplierId,supplierName}=useParams();
     let dataz=[];
     // const {data, isLoading, isSuccess, isError, error} = useGetSuppliersInvoiceQuery();
-    const { data, isLoading, isSuccess, isError, error } = useGetAllInvoicesQuery();
+    const { data, isLoading, isSuccess, isError, error } = useGetSuppliersInvoiceQuery(supplierId);
     const { loginData } = useMyContext();
     const{profile,permissions}=loginData;
     const [showActions, SetShowActions] = useState(false);
@@ -215,16 +217,18 @@ const InvoiceList = () => {
 
 
     return (
-       <>
+        <>
+        
         <ListContainer
-        title={"Invoice List"}
-        subTitle={"Manage your invoices"}
+        title={`${supplierName} Invoice History`}
+        subTitle={`Manage ${supplierName} invoices`}
         navLinktext={"add/invoice"}
         navtext={"Add invoice"}
+        isAllowed={false}
         table={
             <>
                         <Table
-                className="w-full"
+                className="w-full overflow-x-auto"
                 loading={{
                   indicator: (
                     <ImSpinner2
@@ -234,6 +238,7 @@ const InvoiceList = () => {
                   ),
                   spinning: isLoading,
                 }}
+                
                 dataSource={dataz}
                 columns={columns}
                 rowKey="_id"
@@ -263,6 +268,6 @@ const InvoiceList = () => {
             </Modal>
        </>
     )
-}
 
-export default InvoiceList;
+}
+export default SuppliersInvoice;

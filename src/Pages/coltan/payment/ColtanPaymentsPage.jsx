@@ -296,7 +296,19 @@ const ColtanPaymentsPage = () => {
                                     </span>
                                    <span className=" space-y-1">
                                         <p className="pl-1">Currency</p>
-                                        <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="currency" id="currency" value={payment.currency || ''} onChange={handlePayment} />
+                                        <select
+                            name="currency"
+                            autoComplete="off" 
+                            className="focus:outline-none p-2 border rounded-md w-full"
+                            defaultValue={payment.currency || ''|| "defaultcurrency"}
+                            onChange={handlePayment}
+                          >
+                            <option value="defaultcurrency" hidden>
+                              {payment.currency ? `${payment.currency}` : "select Currency"}
+                            </option>
+                            <option value="USD">USD</option>
+                            <option value="RWF">RWF</option>
+                          </select>
                                     </span>
                                     <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
                                         {isSending ?

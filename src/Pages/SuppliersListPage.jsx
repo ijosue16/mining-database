@@ -199,7 +199,7 @@ const SuppliersListPage = () => {
                       className="flex gap-2 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
                         
-                         
+                        navigate(`/invoice/${record.companyName}/${record._id}`);
                           setSupplierId(record._id)
                         
                       }}

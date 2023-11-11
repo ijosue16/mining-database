@@ -75,6 +75,7 @@ import InvoiceTemp from './test elements/InvoiceTemp';
 import SuppliersInvoice from './Pages/InvoicePages/SuppliersInvoice';
 import AdvancedPaymentsList from './Pages/AdvancedPayments/AdvancedPaymentsList';
 import AdvancedPaymentEntry from './Pages/AdvancedPayments/AdvancedPaymentEntry';
+import AdvancedPaymentsCompositionContratcts from './Pages/AdvancedPayments/AdvancedPaymentsCompositionContratcts';
 
 function App() {
 
@@ -95,6 +96,7 @@ function App() {
                             <Route path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
                             <Route path='/payment/advanced' element={<AdvancedPaymentsList/>}/>
                             <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
+                            <Route path='/payment/advanced/editor' element={<AdvancedPaymentsCompositionContratcts/>}/>
 
                             <Route path='/shipment/add/:model' element={<StockPage/>}/>
                             <Route path='/shipments' element={<ShipmentPage/>}/>
