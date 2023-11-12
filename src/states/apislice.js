@@ -1,5 +1,7 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
+// const existingUrl = "https://mining-company-management-system.onrender.com/api/v1/";
+
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
@@ -12,7 +14,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -569,12 +571,12 @@ export const apiSlice = createApi({
             invalidatesTags: ['editRequest', 'notifications']
         }),
         deleteGradeImg: builder.mutation({
-            query: ({body, entryId}) => ({
-                url: `/coltan/delete-grade-img/${entryId}`,
+            query: ({body, entryId, model}) => ({
+                url: `/coltan/delete-grade-img/${model}/${entryId}`,
                 method: "DELETE",
                 body
             }),
-            invalidatesTags: ['entry']
+            invalidatesTags: ['entries']
         }),
         getMessages: builder.query({
             query: ({chatId}) => `/message/${chatId}`,
@@ -611,6 +613,17 @@ export const apiSlice = createApi({
         getAllLogs: builder.query({
             query: () => `/logs`,
             providesTags: ['logs']
+        }),
+        getNotifications: builder.query({
+            query: (userId) => `/users/notifications/${userId}`,
+            providesTags: ['notifications']
+        }),
+        updateNotificationStatus: builder.mutation({
+            query: ({userId, notificationId}) => ({
+                url: `/users/notifications/${userId}/${notificationId}`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ['notifications']
         })
     })
 })
@@ -711,4 +724,6 @@ export const {
     useUserChatsQuery,
     useLazyFindChatQuery,
     useGenerateDDReportMutation,
+    useGetNotificationsQuery,
+    useUpdateNotificationStatusMutation,
 } = apiSlice

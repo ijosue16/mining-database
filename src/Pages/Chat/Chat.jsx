@@ -1,15 +1,21 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import Conversation from "./Conversation";
-import {useUserChatsQuery} from "../../states/apislice";
+import {useUserChatsQuery, useGetAllUsersQuery} from "../../states/apislice";
 import {useSelector} from "react-redux";
 import ChatBox from "./ChatBox";
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import {SocketContext} from "../../context files/socket";
+import {GrAddCircle} from "react-icons/gr";
+import {IoMdAddCircle} from "react-icons/io";
 
-const socket = io.connect("http://localhost:5001");
+// const socket = io.connect("http://localhost:5001");
 const Chat = () => {
+    const socket = useContext(SocketContext);
 
     const {userData} = useSelector(state => state.global);
     const {data, isLoading, isSuccess} = useUserChatsQuery({userId: userData._id});
+    // const [fetchData, setFetchData] = useState(true);
+    // const {data:usersData, isSuccess:usersSuccess} = useGetAllUsersQuery("", {skip: fetchData});
     const [chats, setChats] = useState([]);
     const [currentChat, setCurrentChat] = useState(null);
     const [sendMessage, setSendMessage] = useState(null);
@@ -17,11 +23,12 @@ const Chat = () => {
     const [receiveMessage, setReceiveMessage] = useState(null);
     const [lastMessage, setLastMessage] = useState(null);
     const [fetchLastMessage, setFetchLastMessage] = useState(false);
+    const [users, setUsers] = useState([]);
     // const [currentUserTyping, setCurrentUserTyping] = useState({status: false, receiverId: null});
 
 
     useEffect(() => {
-        socket.emit('new-user-add', userData._id);
+        socket.emit('new-user-add', {userId: userData._id, username: userData.username, role: userData.role, permissions: userData.permissions});
         socket.on('get-users', users => {
             setOnlineUsers(users);
         })
@@ -57,12 +64,27 @@ const Chat = () => {
         }
     }, [isSuccess]);
 
+    // useEffect(() => {
+    //     if (usersSuccess) {
+    //         const {users} = usersData.data;
+    //         if (users) setUsers(users);
+    //     }
+    // }, [usersSuccess]);
+
+    // const fetchUsers = () => {
+    //     setFetchData(false);
+    // }
+
+
 
 
     return (
         <div className="flex">
             {/*CHATTING*/}
             <div className="w-1/4 bg-gray-200 h-screen overflow-y-auto rounded-[4px] border-[#e8eaed]">
+                {/*<div className="flex justify-end">*/}
+                {/*    <IoMdAddCircle className="text-3xl" style={{marginRight: "0.2rem", marginTop: "0.2rem"}} color={"#1816dc"} size={35} onClick={fetchUsers}/>*/}
+                {/*</div>*/}
                 {chats.map((chat, index) => (
                     <div key={index} onClick={() => setCurrentChat(chat)}>
                         <Conversation data={chat} currentUser={userData._id}  fetchLastMessage={fetchLastMessage} setFetchLastMessage={setFetchLastMessage}/>

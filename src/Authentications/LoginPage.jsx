@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { PiEnvelopeBold, PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../states/apislice";
@@ -6,6 +6,8 @@ import { setAuthToken, setUserData, setPermissions } from "../states/slice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
+import {SocketContext} from "../context files/socket";
+
 
 const LoginPage = () => {
   const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
@@ -13,6 +15,7 @@ const LoginPage = () => {
   const [user, setUser] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const socket = useContext(SocketContext);
   useEffect(() => {
     if (isSuccess) {
       toast.success("Logged in Successfully");
@@ -21,6 +24,7 @@ const LoginPage = () => {
       toast.error(message);
     }
   }, [isSuccess, isError, error]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,7 +38,8 @@ const LoginPage = () => {
       localStorage.setItem("profile", JSON.stringify(user));
       localStorage.setItem("role", user.role);
       localStorage.setItem("permissions", JSON.stringify(user.permissions));
-      navigate("/chat");
+      socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
+      navigate("/")
     }
   };
 

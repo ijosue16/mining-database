@@ -1,14 +1,58 @@
-import React, { useState,useRef,useEffect,useMemo } from "react";
+import React, {useState, useRef, useEffect, useMemo, useContext} from "react";
 import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
 import { FiChevronsLeft, } from "react-icons/fi"
 import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
+import {Drawer, Space, Button, Badge, notification} from "antd";
+import { useGetNotificationsQuery, useUpdateNotificationStatusMutation } from "../states/apislice";
+import {useSelector} from "react-redux";
+import {SocketContext} from "../context files/socket";
+import {BiSolidCalendarEdit} from "react-icons/bi";
+
+
 
 const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userMenu, setUserMenu] = useState(false);
     const navigate=useNavigate();
     const [userSubmenu, setUserSubmenu] = useState(false);
+    const [notifications, setNotifications] = useState([]);
+    const [open, setOpen] = useState(false);
+    const {userData} = useSelector(state => state.global);
+    const [userId, setUserId] = useState(null);
+    const socket = useContext(SocketContext);
+
+    const openNotification = ({message, description, type}) => {
+        notification.open({
+            message,
+            description,
+            placement: "topRight",
+            type
+        });
+    };
+
+    useEffect(() => {
+        socket.on("new-edit-request", data => {
+            openNotification({message: "New Edit Request", description: `${data.username} has requested to edit incorrect data. Please review his/her request and make decision`, type: "info"});
+        })
+
+        socket.on("request-authorized", data => {
+            openNotification({message: "Request Authorized", description: `Your edit request has been authorized. Please keep in mind that you have limited time to make changes`, type: "success"});
+        })
+
+        socket.on("request-rejected", data => {
+            openNotification({message: "Request Rejected", description: `Your edit request has been rejected. Please contact admin for more information`, type: "warning"});
+        })
+    }, [socket]);
+
+    useEffect(() => {
+        if (userData) {
+            setUserId(userData._id);
+        }
+    }, [userData])
+    const {data, isLoading, isSuccess} = useGetNotificationsQuery(userId, {skip: userId === null});
+    const [updateNotificationStatus, {isSuccess: updateSuccess}] = useUpdateNotificationStatusMutation();
+
     let modalRef = useRef();
     const{loginData}=useMyContext();
     let profile;
@@ -17,6 +61,26 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         profile = info;
         // console.log(profile._id)
     }
+    const showDrawer = () => {
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+        setNotifications(data.data.notifications[0].notifications.slice(0,10));
+    };
+
+
+    useEffect(() => {
+        if (isSuccess) {
+            const { notifications: notificationsObj } = data.data;
+            console.log(notificationsObj);
+            if (notificationsObj.length > 0) {
+                const {notifications: notificationsArray} = notificationsObj[0];
+                setNotifications(notificationsArray.slice(0,10));
+            }
+        }
+    }, [isSuccess]);
 
 
     const handleClickOutside = (event) => {
@@ -24,6 +88,31 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
             setUserSubmenu(false);
         }
       };
+
+    const readMessage = async (notificationId) => {
+        await updateNotificationStatus({userId, notificationId});
+        // if (updateSuccess) {
+        //     const newNotification = notifications.find(item => item._id  === notificationId);
+        //     if (newNotification) {
+        //         console.log("found")
+        //         setNotifications(prevState => ([...prevState, {...newNotification, read: true}]));
+        //     }
+        //     const updateNotifications = notifications.map(notification => {
+        //         if (notification._id === notificationId) {
+        //             console.log({...notification, read: true})
+        //             return {...notification, read: true};
+        //
+        //         }
+        //     })
+        //     console.log(updateNotifications);
+        //
+        // }
+    }
+
+    const navigateToLink = (link) => {
+        setOpen(false);
+        navigate(link);
+    }
   
   
     useEffect(() => {
@@ -54,8 +143,12 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
                         </li>
                         <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                            <PiBellSimpleLight className="text-xl text-gray-500" />
+                            <BiSolidCalendarEdit onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
+                        </li>
+                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                            <PiBellSimpleLight className="text-xl text-gray-500" onClick={showDrawer}/>
+                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications.length}</span>
                         </li>
                         <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiGearLight className="text-xl text-gray-500" />
@@ -139,6 +232,42 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                         </ul> */}
                     </div>
                 </div>
+
+                <Drawer
+                    title="Notifications"
+                    placement="right"
+                    width={560}
+                    onClose={onClose}
+                    open={open}
+                    // extra={
+                    //     <Space>
+                    //         <Button onClick={onClose}>Cancel</Button>
+                    //         <Button type="default" title="" onClick={onClose}>
+                    //             OK
+                    //         </Button>
+                    //     </Space>
+                    // }
+                >
+                    <Space className="flex flex-col items-start">
+                        {notifications.length > 0 && notifications.map((notification, index) => {
+                            if (notification.message.includes("**")) {
+                                return (
+                                    <Badge onClick={() => readMessage(notification._id)} className="p-3 border rounded-[4px] bg-purple-200" key={index} dot={notification.read ? true : false} offset={[7,7]}>
+                                        <span>{`${notification.message.split("**")[0]} ${notification.message.split("**")[2].trim()}`}</span>
+                                        <button className="p-2 bg-gray-400 border rounded-[4px] mt-2 text-white" onClick={() => navigateToLink(notification.message.split("**")[1])}>Link</button>
+                                    </Badge>
+                                )
+                            }
+                            return (
+                                <Badge onClick={() => readMessage(notification._id)} className="p-3 border rounded-[4px] bg-purple-200" key={index} dot={!notification.read} offset={[7,7]} overflowCount={10}>
+                                    <span>{notification.message}</span>
+                                </Badge>
+                            )
+                        }
+                        )}
+                        {notifications.length >= 10 && notifications.length < data.data.notifications[0].notifications.length && <button className="bg-blue-400 p-2 border rounded-[4px] text-white" onClick={() => setNotifications(prevState => prevState.concat(data.data.notifications[0].notifications.slice(10)))}>Load more</button>}
+                    </Space>
+                </Drawer>
 
 
             </div>

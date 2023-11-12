@@ -1,6 +1,6 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import {Checkbox, Modal, Table} from "antd";
+import {Checkbox, Modal, Table, message} from "antd";
 import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
 import {useMyContext} from "../../context files/LoginDatacontextProvider";
@@ -19,8 +19,13 @@ import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
 import {toast} from "react-toastify";
+import {useSelector} from "react-redux";
+import { toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import { SocketContext } from "../../context files/socket";
 
 const ColtanListPage = () => {
+    const { userData } = useSelector(state => state.global);
+    const socket = useContext(SocketContext);
     let dataz = [];
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
@@ -68,7 +73,6 @@ const ColtanListPage = () => {
 
     const handleActions = (id) => {
         if (selectedRow === id) {
-            console.log("uri muduki sha");
             SetShowActions(false);
             SetSelectedRow("");
         } else {
@@ -85,25 +89,25 @@ const ColtanListPage = () => {
         setShowmodal(!showmodal);
     };
 
-    function toCamelCase(str) {
-        return str.split(' ').map((word, index) => {
-            if (index === 0) {
-                return word.toLowerCase();
-            } else {
-                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-            }
-        }).join('');
-    }
+    // function toCamelCase(str) {
+    //     return str.split(' ').map((word, index) => {
+    //         if (index === 0) {
+    //             return word.toLowerCase();
+    //         } else {
+    //             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    //         }
+    //     }).join('');
+    // }
 
-    function toInitialCase(camelCaseString) {
-        return camelCaseString
-            .replace(/([a-z])([A-Z])/g, '$1 $2')
-            .replace(/^./, function(str) {
-                return str.toUpperCase();
-            });
-    }
+    // function toInitialCase(camelCaseString) {
+    //     return camelCaseString
+    //         .replace(/([a-z])([A-Z])/g, '$1 $2')
+    //         .replace(/^./, function(str) {
+    //             return str.toUpperCase();
+    //         });
+    // }
 
-    const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "output"];
+    const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
 
     const [checkboxValues, setCheckboxValues] = useState(
         fields.reduce((acc, field) => {
@@ -113,6 +117,7 @@ const ColtanListPage = () => {
     );
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [requestId, setRequestId] = useState(null);
     const showModal = () => {
         setIsModalOpen(true);
     }
@@ -127,7 +132,7 @@ const ColtanListPage = () => {
     }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
 
     const handleOk = async () => {
-        const finalBody = {editableFields: [], model: "coltan", recordId: "", username: profile.name.split(' ')[0]};
+        const finalBody = {editableFields: [], model: "coltan", recordId: "", username: userData.username};
         setIsModalOpen(false);
         for (const key of Object.keys(checkboxValues)) {
             if (checkboxValues[key] === true) {
@@ -138,7 +143,15 @@ const ColtanListPage = () => {
             }
         }
         finalBody.recordId = record._id;
-        await createEditRequest({body: finalBody});
+        const response = await createEditRequest({body: finalBody});
+        socket.emit("new-edit-request", {username: userData.username});
+        message.success("Edit Request sent successfully");
+        if (response) {
+            const { editRequest } = response.data.data;
+            if (editRequest) {
+                setRequestId(editRequest._id);
+            }
+        }
     }
 
     const handleCancel = () => {
