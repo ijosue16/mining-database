@@ -50,30 +50,56 @@ const ReasonsToVisit = () => {
 // Predefined accessibility array
 const accessibilityArray = ['Weight In', 'Beneficiary', 'Output'];
 
-// Function to create a new state object
-const createStateObject = (data) => {
+// // Function to create a new state object
+// const createStateObject = (data) => {
+//   const stateObject = {};
+
+//   // Extract fieldname values from editableFields
+//   const fieldnameValues = data.editableFields?.map(field => field.fieldname);
+
+//   // Filter values found in the accessibilityArray
+//   const valuesFoundInAccessibility = fieldnameValues?.filter(value => accessibilityArray.includes(value));
+
+//   // Create a new state object with found values
+//   valuesFoundInAccessibility?.forEach(value => {
+//     const foundField = data.editableFields?.find(field => field.fieldname === value);
+//     stateObject[value] = foundField.initialValue;
+//   });
+
+//   return stateObject;
+// };
+
+
+// // Call the function passing your object to create the state object
+// const newStateObject = createStateObject(Editfields);
+
+// //////////////////////////////////////////////////////////////
+
+const createSpecificObject = (data) => {
   const stateObject = {};
 
   // Extract fieldname values from editableFields
-  const fieldnameValues = data.editableFields?.map(field => field.fieldname);
+  const fieldnameValues = data.editableFields.map(field => field.fieldname);
 
-  // Filter values found in the accessibilityArray
-  const valuesFoundInAccessibility = fieldnameValues?.filter(value => accessibilityArray.includes(value));
-
-  // Create a new state object with found values
-  valuesFoundInAccessibility?.forEach(value => {
-    const foundField = data.editableFields?.find(field => field.fieldname === value);
-    stateObject[value] = foundField.initialValue;
+  // Iterate over the predefined array and check if each value exists in the fieldname values
+  accessibilityArray.forEach(value => {
+    stateObject[value] = fieldnameValues.includes(value);
   });
+
+  // Rename 'Number Of Tags' to 'Number_Of_Tags' for consistency
+  stateObject['Number_Of_Tags'] = stateObject['Number Of Tags'];
+  delete stateObject['Number Of Tags'];
 
   return stateObject;
 };
 
-// Call the function passing your object to create the state object
-const newStateObject = createStateObject(Editfields);
+// Call the function passing your object to create the specific object
+const specificObject = createSpecificObject(Editfields);
+
+// ////////////////////////////////////////////////////// 
 
 // Displaying the created state object
-console.log('New State Object:', newStateObject);
+console.log('New State Object:', specificObject);
 
   // Effect to console log the selected reasons whenever it changes
   // useEffect(() => {
@@ -102,6 +128,7 @@ console.log('New State Object:', newStateObject);
       <h3>Selected Reasons:</h3>
       <ul>
         {selectedReasons.map((selected, index) => (
+          
           <li key={index}>{selected}</li>
         ))}
       </ul>

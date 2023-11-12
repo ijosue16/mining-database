@@ -1,131 +1,95 @@
-import React, { useState } from 'react';
-import { Select, Tag, Input, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { useGetOneEditRequestQuery } from '../states/apislice';
 
-const { Option } = Select;
 
-const App = () => {
-  const [selectedValues, setSelectedValues] = useState([]);
-  const [editableFields, setEditableFields] = useState([]);
+const EditRequestForm = () => {
+  const [formData, setFormData] = useState({});
+  const [editRequest, setEditRequest] = useState({});
+  const requestId="6541e446983dc8332984b7b3"; 
+  const {data,isLoading,isSuccess,isError,error}= useGetOneEditRequestQuery({requestId});
+  useEffect(() => {
+    if (isSuccess) {
+      // console.log(data); // Check the received data in the console
+      const { data: dt } = data;
+      setEditRequest(dt);
+      console.log(dt);
+    }
+  }, [isSuccess]);
+  
+  // Further down in the component...
+  
+  if (!editRequest || !editRequest.editableFields) {
+    return <div>Loading...</div>;
+  }
+  
+  console.log(editRequest);
 
-  const options = [
-    { value: 'gold', hex: '#FFD700', rgb: 'rgb(255, 215, 0)' },
-    { value: 'lime', hex: '#00FF00', rgb: 'rgb(0, 255, 0)' },
-    { value: 'green', hex: '#008000', rgb: 'rgb(0, 128, 0)' },
-    { value: 'cyan', hex: '#00FFFF', rgb: 'rgb(0, 255, 255)' },
-  ];
+  const { editableFields } = editRequest;
 
-  const tagRender = (props) => {
-    const { label, value, closable, onClose } = props;
 
-    const handleTagClose = (removedTag) => {
-      const newSelectedValues = selectedValues.filter((tag) => tag !== removedTag);
-      setSelectedValues(newSelectedValues);
-
-      const indexToRemove = selectedValues.indexOf(removedTag);
-      const fields = [...editableFields];
-      fields.splice(indexToRemove * 3, 1);
-      fields.splice(indexToRemove * 3, 1);
-      fields.splice(indexToRemove * 3, 1);
-      setEditableFields(fields);
-    };
-
-    return (
-      <Tag
-        color={'red'}
-        closable={closable}
-        onClose={() => handleTagClose(value)}
-        style={{ marginRight: 3, display: 'flex', alignItems: 'center' }}
-      >
-        {label}
-      </Tag>
-    );
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission here, for example, you might want to send the edited data back to the server.
+    console.log("Form submitted:", formData);
   };
 
-  const handleSelectChange = (values) => {
-    setSelectedValues(values);
-    const initialFields = values.reduce((acc, val) => {
-      const foundOption = options.find(option => option.value === val);
-      if (foundOption) {
-        acc.push({
-          value: foundOption.value,
-          hex: foundOption.hex,
-          rgb: foundOption.rgb
-        });
-      }
-      return acc;
-    }, []);
-    setEditableFields(initialFields);
-  };
-
-  const handleInputChange = (value, index, field) => {
-    const fields = [...editableFields];
-    fields[index][field] = value;
-    setEditableFields(fields);
-  };
-
-  const removeDynamicFields = (index) => {
-    const updatedSelectedValues = [...selectedValues];
-    updatedSelectedValues.splice(index, 1);
-    setSelectedValues(updatedSelectedValues);
-
-    const fields = [...editableFields];
-    fields.splice(index, 1);
-    setEditableFields(fields);
-  };
-
-  const handleOutput = () => {
-    console.log(editableFields);
-  };
+  useEffect(() => {
+    // Set initial form data based on editable fields
+    const initialData = {};
+    editableFields.forEach(field => {
+      initialData[field.fieldname] = field.initialValue;
+    });
+    setFormData(initialData);
+  }, [editableFields]);
 
   return (
-    <div>
-      <Select
-        mode="multiple"
-        tagRender={tagRender}
-        style={{ width: '100%' }}
-        value={selectedValues}
-        onChange={handleSelectChange}
-      >
-        {options.map((opt) => (
-          <Option key={opt.value} value={opt.value}>
-            {opt.value}
-          </Option>
-        ))}
-      </Select>
-
-      <br />
-
-      {editableFields.map((obj, index) => (
-        <div key={obj.value}>
-          <Tag color={'blue'} style={{ marginBottom: '5px' }}>
-            {obj.value}
-            <span
-              style={{ marginLeft: '10px', cursor: 'pointer' }}
-              onClick={() => removeDynamicFields(index)}
+    <form onSubmit={handleSubmit}>
+      <h2>Edit Request for {editRequest.model}</h2>
+      {editableFields.map(field => (
+        <div key={field._id}>
+          <label htmlFor={field.fieldname}>{field.fieldname}</label>
+          {Array.isArray(field.initialValue) ? (
+            // If the field is an array (like 'Mine Tags'), render a select or multi-select input
+            <select
+              multiple
+              id={field.fieldname}
+              name={field.fieldname}
+              value={formData[field.fieldname]}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  [field.fieldname]: Array.from(
+                    e.target.selectedOptions,
+                    (option) => option.value
+                  ),
+                })
+              }
             >
-              -
-            </span>
-          </Tag>
-          <Input
-            placeholder="Hex Color Code"
-            value={obj.hex}
-            onChange={(e) => handleInputChange(e.target.value, index, 'hex')}
-            style={{ marginTop: '5px' }}
-          />
-          <Input
-            placeholder="RGB Value"
-            value={obj.rgb}
-            onChange={(e) => handleInputChange(e.target.value, index, 'rgb')}
-            style={{ marginTop: '5px' }}
-          />
+              {/* Options for multi-select */}
+              {/* You might populate this dynamically */}
+            </select>
+          ) : (
+            // For other fields, render a regular input
+            <input
+              type="text"
+              id={field.fieldname}
+              name={field.fieldname}
+              value={formData[field.fieldname]}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  [field.fieldname]: e.target.value,
+                })
+              }
+            />
+          )}
         </div>
       ))}
+      <button type="submit">Submit</button>
+    </form>
 
-      <Button onClick={handleOutput} style={{ marginTop: '10px' }}>
-        Output
-      </Button>
-    </div>
   );
 };
 
-export default App;
+export default EditRequestForm;
