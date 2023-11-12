@@ -1,7 +1,7 @@
 import React, {useEffect, useState,useRef} from "react";
-import { useAddContractMutation } from "../states/apislice";
+import {useAddContractMutation, useGetAllBuyersQuery} from "../states/apislice";
 import dayjs from "dayjs";
-import { DatePicker } from "antd";
+import { DatePicker, message } from "antd";
 import {useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import AddComponent from "../components/Actions components/AddComponent";
@@ -9,17 +9,36 @@ import ActionsPagesContainer from "../components/Actions components/ActionsCompo
 
 const AddContract = () => {
     // const { buyerId } = useParams();
+
+    const {
+        data,
+        isLoading: isGetting,
+        isError: isproblem,
+        error: problem,
+        isSuccess: isGettingBuyersSuccess
+    } = useGetAllBuyersQuery();
+
     const [contractInfo, setContractInfo] = useState(
         {
             name: "",
             buyerName: "",
-            minerals: [],
+            buyerId: "",
+            minerals: "",
             contractStartDate: "",
             contractExpiryDate: "",
-            grade: "",
             contract: ""
         }
     );
+    const [buyerz, setBuyerz] = useState([]);
+
+
+    useEffect(() => {
+        if (isGettingBuyersSuccess) {
+            const { buyers: buyrz } = data.data;
+            setBuyerz(buyrz);
+        }
+    }, [isGettingBuyersSuccess]);
+
 
     const fileInputRefs = {
       contract: useRef(null),
@@ -32,10 +51,10 @@ const AddContract = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            toast.success("Contract Added Successfully");
+            message.success("Contract Added Successfully");
         } else if (isError) {
-            const { message } = error.data;
-            toast.error(message);
+            const { message: errorMessage } = error.data;
+            message.error(errorMessage);
         }
     }, [isSuccess, isError, error]);
 
@@ -58,26 +77,33 @@ const AddContract = () => {
     };
 
     const handleChange = (e) => {
-        setContractInfo(prevState => ({...prevState, [e.target.name]: e.target.value}));
-
-        setFileNames((prevFileNames) => ({
-          ...prevFileNames,
-          [e.target.name]: e.target.files[0] ? e.target.files[0].name : "",
-        }));
+        if (e.target.type === "file") {
+            setFileNames((prevFileNames) => {
+                return ({
+                    ...prevFileNames,
+                    [e.target.name]: e.target.files[0] ? e.target.files[0].name : "",
+                })
+            });
+            setContractInfo((prevState) => ({...prevState, [e.target.name]: e.target.files[0]}));
+        } else if (e.target.name === "buyerId") {
+            const buyer = buyerz.find(item => item._id === e.target.value);
+            setContractInfo(prevState => ({...prevState, buyerName: buyer.name, buyerId: buyer._id}));
+        } else {
+            setContractInfo(prevState => ({...prevState, [e.target.name]: e.target.value}));
+        }
     };
-    
+
 
     const handleSubmit = async e => {
         e.preventDefault();
         const formData = new FormData();
-        for (const key of contractInfo) {
+        for (const key in contractInfo) {
             if (contractInfo.hasOwnProperty(key)) {
                 formData.append(key, contractInfo[key]);
             }
         }
-        console.log(contractInfo);
-        // console.log(formData.entries());
-        // await addContract({body: formData});
+        await addContract({body: formData});
+        handleCancel();
     }
 
     const handleCancel = () => {
@@ -85,13 +111,16 @@ const AddContract = () => {
             {
                 name: "",
                 buyerName: "",
-                minerals: [],
+                buyerId: "",
+                minerals: "",
                 contractStartDate: "",
                 contractExpiryDate: "",
-                grade: "",
                 contract: ""
             }
         )
+        setFileNames({
+            contract: "",
+        });
     }
  
     return (
@@ -105,24 +134,35 @@ const AddContract = () => {
                 <div className="grid grid-cols-1 gap-1">
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  <li className=" space-y-1">
-                    <p className="pl-1">Contract filename</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="name" value={contractInfo.name} onChange={handleChange}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Buyer name</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="buyerName" value={contractInfo.buyerName} onChange={handleChange}
-                    />
-                  </li>
+                  {/*<li className=" space-y-1">*/}
+                  {/*  <p className="pl-1">Contract filename</p>*/}
+                  {/*  <input*/}
+                  {/*    type="text"*/}
+                  {/*    autoComplete="off"*/}
+                  {/*    className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*    name="name" value={contractInfo.name} onChange={handleChange}*/}
+                  {/*  />*/}
+                  {/*</li>*/}
+                    <li className=" space-y-1">
+                        <p className="pl-1">Buyer name</p>
+                        <select
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-md w-full"
+                            name="buyerId"
+                            id="buyerId"
+                            value={contractInfo.buyerId || ""}
+                            onChange={handleChange}
+                        >
+                            <option value="defaultBuyer" hidden>
+                                Select a buyer
+                            </option>
+                            {buyerz.map(({ _id, name }) => (
+                                <option key={_id} value={_id}>
+                                    {name}
+                                </option>
+                            ))}
+                        </select>
+                    </li>
                   <li className=" space-y-1">
                     <p className="pl-1">Minerals</p>
                     <input
@@ -153,15 +193,15 @@ const AddContract = () => {
                     />
                   </li>
 
-                  <li className=" space-y-1">
-                    <p className="pl-1">Concentration</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="grade" value={contractInfo.grade} onChange={handleChange}
-                    />
-                  </li>
+                  {/*<li className=" space-y-1">*/}
+                  {/*  <p className="pl-1">Concentration</p>*/}
+                  {/*  <input*/}
+                  {/*    type="text"*/}
+                  {/*    autoComplete="off"*/}
+                  {/*    className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*    name="grade" value={contractInfo.grade} onChange={handleChange}*/}
+                  {/*  />*/}
+                  {/*</li>*/}
                   <li className=" space-y-1">
                     <p className="pl-1">Contract</p>
                     <input

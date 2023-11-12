@@ -1,17 +1,19 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useGetAllEditRequestsQuery, useUpdateEditRequestMutation} from "../states/apislice";
 import ListContainer from "../components/Listcomponents/ListContainer";
 import {ImSpinner2} from "react-icons/im";
 import Countdown from "react-countdown";
-import {Table} from "antd";
+import {Table, message} from "antd";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import {toast} from "react-toastify";
+import { SocketContext } from "../context files/socket";
 
 dayjs.extend(localizedFormat);
 
 
 const EditRequests = () => {
+    const socket = useContext(SocketContext);
     const {data, isSuccess, isLoading} = useGetAllEditRequestsQuery();
     const [updateEditRequest, {
         isSuccess: isUpdateSuccess,
@@ -19,6 +21,7 @@ const EditRequests = () => {
         error: updateError
     }] = useUpdateEditRequestMutation();
     const [editRequests, setEditRequests] = useState([]);
+    const [userName, setUserName] = useState("");
 
     useEffect(() => {
         if (isSuccess) {
@@ -30,15 +33,22 @@ const EditRequests = () => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Edit request updated successfully");
+            message.success("Edit request updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message: errorMessage} = updateError.data;
+            message.error(errorMessage);
         }
     }, [isUpdateSuccess, isUpdateError, updateError]);
 
-    const handleUpdate = async (body, requestId) => {
-        await updateEditRequest({body, requestId});
+    const handleUpdate = async (body, record) => {
+        setUserName(record.username);
+        await updateEditRequest({body, requestId: record._id});
+        socket.emit("request-decision", {decision: body.decision, userName});
+        // if (isUpdateSuccess && body.decision) {
+        //     socket.emit("request-authorized", userName);
+        // } else if (isUpdateSuccess && body.decision === false) {
+        //     socket.emit("request-rejected", userName);
+        // }
     }
 
     const columns = [
@@ -60,7 +70,8 @@ const EditRequests = () => {
             dataIndex: "editExpiresAt",
             // key: "edit",
             sorter: (a, b) => a.username.localeCompare(b.username),
-            render: (_, record) => <span>{dayjs(record.editExpiresAt).format("llll")}</span>
+            render: (_, record) => <span>{record.editExpiresAt ? dayjs(record.editExpiresAt).format("llll"): null}</span>
+
         },
         {
             title: "Time Rem.",
@@ -70,14 +81,14 @@ const EditRequests = () => {
             render: (_, record) => {
                 return (
                     <>
-                        {record.requestStatus === "pending" || record.requestStatus === "expired" ?
+                        {record.requestStatus === "authorized" || record.requestStatus === "expired" ?
                             <Countdown
                                 date={dayjs(record.editExpiresAt).valueOf()}
-                                onComplete={() => {
-                                    if (record.requestStatus === "pending") {
-                                        handleUpdate({ requestStatus: "expired" }, record._id);
-                                    }
-                                }}
+                                // onComplete={() => {
+                                //     if (record.requestStatus === "pending") {
+                                //         handleUpdate({ requestStatus: "expired" }, record._id);
+                                //     }
+                                // }}
                                 renderer={({hours, minutes, seconds, completed}) => {
                                     if (completed) {
                                         return <span>Timeout</span>
@@ -92,7 +103,7 @@ const EditRequests = () => {
                                     }
                                 }}
                             /> :
-                            <span>Decided</span>
+                            null
                         }
                     </>
                 )
@@ -128,14 +139,14 @@ const EditRequests = () => {
                         <button
                             disabled={record.requestStatus !== "pending"}
                             className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
-                            onClick={() => handleUpdate({decision: true}, record._id)}
+                            onClick={() => handleUpdate({decision: true}, record)}
                         >
                             Authorize
                         </button>
                         <button
                             disabled={record.requestStatus !== "pending"}
                             className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"
-                            onClick={() => handleUpdate({decision: false}, record._id)}
+                            onClick={() => handleUpdate({decision: false}, record)}
                         >
                             Reject
                         </button>
@@ -146,6 +157,7 @@ const EditRequests = () => {
 
     ]
 
+
     return (
         <>
             <ListContainer
@@ -153,7 +165,7 @@ const EditRequests = () => {
                 table={
                     <>
                         <Table
-                            className=" w-full"
+                            className="w-full overflow-x-auto"
                             loading={{
                                 indicator: (
                                     <ImSpinner2

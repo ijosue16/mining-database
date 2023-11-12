@@ -1,20 +1,26 @@
 import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import {motion} from "framer-motion";
-import {Form, Input, Modal, Table, Upload, Button, message} from "antd";
-import { UploadOutlined } from '@ant-design/icons';
+import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
+import {UploadOutlined} from '@ant-design/icons';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {ImSpinner2} from "react-icons/im";
-import {FaSave, FaImage} from "react-icons/fa";
+import {FaImage, FaSave} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
-import {useGetOneColtanEntryQuery, useUpdateColtanEntryMutation, useDeleteGradeImgMutation} from "../../../states/apislice";
+import {
+    useDeleteGradeImgMutation,
+    useGetOneColtanEntryQuery,
+    useUpdateColtanEntryMutation
+} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
+import {useSelector} from "react-redux";
+import {IoClose} from "react-icons/io5";
 
 const getBase64FromServer = (fileUrl) => {
     return new Promise((resolve) => {
@@ -29,12 +35,14 @@ const getBase64FromServer = (fileUrl) => {
 
 
 const ColtanEntryCompletePage = () => {
+    const {permissions: userPermissions} = useSelector(state => state.global);
     const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
+    const [imageAvailable, setImageAvailable] = useState(false);
     const {data, isLoading, isError, isSuccess, error, refetch} =
         useGetOneColtanEntryQuery({entryId});
     const [updateColtanEntry, {
@@ -44,7 +52,11 @@ const ColtanEntryCompletePage = () => {
         error: updateError
     }] = useUpdateColtanEntryMutation();
 
-    const [deleteGradeImg, {isSuccess: isImageDeleteSuccess, isError: isImageDeleteError, error: imageDeleteError}] = useDeleteGradeImgMutation();
+    const [deleteGradeImg, {
+        isSuccess: isImageDeleteSuccess,
+        isError: isImageDeleteError,
+        error: imageDeleteError
+    }] = useDeleteGradeImgMutation();
 
     let modalRef = useRef();
 
@@ -128,7 +140,7 @@ const ColtanEntryCompletePage = () => {
         },
     };
 
-    const customRequest = async ({ file, onSuccess, onError }) => {
+    const customRequest = async ({file, onSuccess, onError}) => {
         try {
             const formData = new FormData();
             formData.append('1', file);
@@ -163,7 +175,7 @@ const ColtanEntryCompletePage = () => {
 
     const removeFile = async (lotNumber, entryId) => {
         const body = {lotNumber}
-        await deleteGradeImg({body, entryId});
+        await deleteGradeImg({body, entryId, model: "coltan"});
     }
 
     useEffect(() => {
@@ -192,13 +204,9 @@ const ColtanEntryCompletePage = () => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
         await updateColtanEntry({body, entryId});
-
-        console.log(lotInfo);
         // navigate(-1);
     };
     const handleModelAdvance = async () => {
-        console.log("backend done");
-        console.log(suply);
         const body = {...suply, output: lotInfo};
         await updateColtanEntry({body, entryId});
         navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
@@ -221,9 +229,9 @@ const ColtanEntryCompletePage = () => {
         setEditRowKey(record._id);
         setShow(false);
     };
-    const calculatePrice = (tantal, grade, weightOut) => {
-        if (tantal && grade && weightOut) {
-            return ((tantal * grade)*weightOut).toFixed(3)
+    const calculatePricePerUnit = (tantal, grade) => {
+        if (tantal && grade) {
+            return (tantal * grade).toFixed(3);
         }
     }
     const save = async (key) => {
@@ -235,8 +243,9 @@ const ColtanEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                mineralPrice: calculatePrice(row.tantalum, row.mineralGrade, row.weightOut),
+                pricePerUnit: calculatePricePerUnit(row.tantalum, row.mineralGrade),
             };
+            updatedItem.mineralPrice = (updatedItem.pricePerUnit * row.weightOut).toFixed(3);
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -247,11 +256,11 @@ const ColtanEntryCompletePage = () => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
-        grade: {
+        mineralGrade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
-            editTable: true,
+            // editTable: true, // adjust edit permission based on user permissions
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         tantal: {
@@ -269,26 +278,37 @@ const ColtanEntryCompletePage = () => {
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
             render: (_, record) => {
                 if (record.gradeImg) {
-                    return <Button icon={<FaImage title="Preview" className="text-lg" onClick={() => handlePreview(record.gradeImg.filePath)}/>}/>
+                    return (
+                        <div className="flex items-center">
+                            {record.gradeImg && (<Button icon={<FaImage title="Preview" className="text-lg" onClick={() => handlePreview(record.gradeImg.filePath)}/>}/>)}
+                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        </div>
+                    )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
                             name={record.lotNumber}
-                            action={`https://mining-company-management-system.onrender.com/api/v1/coltan/${entryId}`}
+                            action={`http://localhost:5001/api/v1/coltan/${entryId}`}
                             method="PATCH"
                             {...props}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
-                            {!record.gradeImg ? <Button icon={<UploadOutlined />}/>: null}
-
+                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
                         </Upload>
                     )
                 }
 
             }
         },
-        price: {
+        pricePerUnit: {
+            title: "price/kg ($)",
+            dataIndex: "pricePerUnit",
+            key: "pricePerUnit",
+            editTable: true,
+            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+        },
+        mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
@@ -301,12 +321,6 @@ const ColtanEntryCompletePage = () => {
             key: "paid",
             sorter: (a, b) => a.paid - b.paid,
         },
-        // unpaid: {
-        //     title: "unpaid ($)",
-        //     dataIndex: "unpaid",
-        //     key: "unpaid",
-        //     sorter: (a, b) => a.unpaid - b.unpaid,
-        // },
         USDRate: {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
@@ -314,12 +328,10 @@ const ColtanEntryCompletePage = () => {
             editTable: true,
             sorter: (a, b) => a.USDRate - b.USDRate,
         },
-
         rmaFee: {
             title: "RMA Fee ($)",
             dataIndex: "rmaFeeUSD",
             key: "rmaFeeUSD",
-
             sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
         },
     }
@@ -357,7 +369,23 @@ const ColtanEntryCompletePage = () => {
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
-        {
+
+    ];
+
+    const filterColumns = (restrictedColumns, userPermissions) => {
+        for (const key in restrictedColumns) {
+            if (restrictedColumns.hasOwnProperty(key)) {
+                if (Object.keys(userPermissions).includes(key)) {
+                    if (userPermissions[key].view) {
+                        if (userPermissions[key].edit && `${key}` === !"gradeImg") {
+                            restrictedColumns[key].editTable = true;
+                        }
+                        columns.push(restrictedColumns[key]);
+                    }
+                }
+            }
+        }
+        columns.push({
             title: "status",
             dataIndex: "status",
             key: "status",
@@ -401,8 +429,8 @@ const ColtanEntryCompletePage = () => {
                     </p>
                 );
             },
-        },
-        {
+        });
+        columns.push({
             title: "Action",
             dataIndex: "action",
             key: "action",
@@ -469,16 +497,17 @@ const ColtanEntryCompletePage = () => {
                     </>
                 );
             },
-        },
-    ];
-    if (profile.role === "storekeeper") {
-    // && profile.role !== "traceabilityOfficer"
-        console.log(profile.role);
-        for (const key in restrictedColumns) {
-            if (restrictedColumns.hasOwnProperty(key)) {
-                columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
-            }
-        }
+        });
+
+    }
+
+    if (restrictedColumns && userPermissions) {
+        filterColumns(restrictedColumns, userPermissions);
+        // for (const key in restrictedColumns) {
+        //     if (restrictedColumns.hasOwnProperty(key)) {
+        //         columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
+        //     }
+        // }
     }
 
     const mergedColumns = columns.map((col) => {
@@ -528,91 +557,91 @@ const ColtanEntryCompletePage = () => {
     };
     return (
         <>
-          {isLoading ? (
-        <FetchingPage />
-      ) : (
-            <ActionsPagesContainer
-                title={"Coltan Details"}
-                subTitle={"View Coltan detailes"}
-                actionsContainer={
-                    <AddComponent
-                        component={
-                            <>
-                                {isLoading ? (
-                                    <div className="flex h-32 w-full items-center justify-center bg-white">
-                                        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-6 w-full">
-                                        <div
-                                            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                                            <p className=" font-semibold text-lg">Entry details</p>
+            {isLoading ? (
+                <FetchingPage/>
+            ) : (
+                <ActionsPagesContainer
+                    title={"Coltan Details"}
+                    subTitle={"View Coltan detailes"}
+                    actionsContainer={
+                        <AddComponent
+                            component={
+                                <>
+                                    {isLoading ? (
+                                        <div className="flex h-32 w-full items-center justify-center bg-white">
+                                            <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
                                         </div>
+                                    ) : (
+                                        <div className="flex flex-col gap-6 w-full">
+                                            <div
+                                                className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
+                                                <p className=" font-semibold text-lg">Entry details</p>
+                                            </div>
 
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Entry details
-                                                </p>
-                                                <p>Weight in: {suply?.weightIn}</p>
-                                                <p>Mineral type: {suply?.mineralType}</p>
-                                                {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                                <p>Number of tags: {suply?.numberOfTags}</p>
-                                                <p>Beneficiary: {suply?.beneficiary}</p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Company info
-                                                </p>
-                                                <p>Name: {suply?.companyName}</p>
-                                                <p>Email: {suply.email}</p>
-                                                <p>TIN Number: {suply.TINNumber}</p>
-                                                <p className=" shrink">
-                                                    License Number: {suply.licenseNumber}
-                                                </p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Representative info
-                                                </p>
-                                                <p>Phone number: {suply.representativePhoneNumber}</p>
-                                                <p>ID: {suply.representativeId}</p>
-                                                {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                                            </li>
+                                            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
+                                                <li>
+                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
+                                                        Entry details
+                                                    </p>
+                                                    <p>Weight in: {suply?.weightIn}</p>
+                                                    <p>Mineral type: {suply?.mineralType}</p>
+                                                    {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
+                                                    <p>Number of tags: {suply?.numberOfTags}</p>
+                                                    <p>Beneficiary: {suply?.beneficiary}</p>
+                                                </li>
+                                                <li>
+                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
+                                                        Company info
+                                                    </p>
+                                                    <p>Name: {suply?.companyName}</p>
+                                                    <p>Email: {suply.email}</p>
+                                                    <p>TIN Number: {suply.TINNumber}</p>
+                                                    <p className=" shrink">
+                                                        License Number: {suply.licenseNumber}
+                                                    </p>
+                                                </li>
+                                                <li>
+                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
+                                                        Representative info
+                                                    </p>
+                                                    <p>Phone number: {suply.representativePhoneNumber}</p>
+                                                    <p>ID: {suply.representativeId}</p>
+                                                    {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
+                                                </li>
 
-                                        </ul>
+                                            </ul>
+                                        </div>
+                                    )}
+                                    <div className="w-full">
+                                        <Form form={form} component={false}>
+                                            <Table
+                                                className="overflow-x-auto w-full"
+                                                loading={{
+                                                    indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
+                                                                            className="animate-spin text-gray-500"/>),
+                                                    spinning: isLoading
+                                                }}
+                                                dataSource={lotInfo}
+                                                columns={mergedColumns}
+                                                components={{
+                                                    body: {
+                                                        cell: EditableCell,
+                                                    },
+                                                }}
+                                                rowKey="_id"
+                                            />
+                                        </Form>
                                     </div>
-                                )}
-                                <div className="w-full">
-                                    <Form form={form} component={false}>
-                                        <Table
-                                            className="overflow-x-auto w-full"
-                                            loading={{
-                                                indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
-                                                                        className="animate-spin text-gray-500"/>),
-                                                spinning: isLoading
-                                            }}
-                                            dataSource={lotInfo}
-                                            columns={mergedColumns}
-                                            components={{
-                                                body: {
-                                                    cell: EditableCell,
-                                                },
-                                            }}
-                                            rowKey="_id"
-                                        />
-                                    </Form>
-                                </div>
-                                <Modal
-                                    open={showPayModel}
-                                    onOk={""}
-                                    onCancel={() => setShowPayModel(!showPayModel)}
-                                    destroyOnClose
-                                    footer={[
-                                        <span
-                                            key="actions"
-                                            className=" flex w-full justify-center gap-4 text-base text-white"
-                                        >
+                                    <Modal
+                                        open={showPayModel}
+                                        onOk={""}
+                                        onCancel={() => setShowPayModel(!showPayModel)}
+                                        destroyOnClose
+                                        footer={[
+                                            <span
+                                                key="actions"
+                                                className=" flex w-full justify-center gap-4 text-base text-white"
+                                            >
                       {isSending ?
                           <button
                               key="back"
@@ -628,43 +657,43 @@ const ColtanEntryCompletePage = () => {
                               Confirm
                           </button>}
 
-                                            <button
-                                                key="submit"
-                                                className=" bg-red-400 p-2 rounded-lg"
-                                                type="primary"
-                                                onClick={() => setShowPayModel(!showPayModel)}
-                                            >
+                                                <button
+                                                    key="submit"
+                                                    className=" bg-red-400 p-2 rounded-lg"
+                                                    type="primary"
+                                                    onClick={() => setShowPayModel(!showPayModel)}
+                                                >
                         Cancel
                       </button>
                     </span>,
-                                    ]}
-                                >
-                                    <h2 className="modal-title text-center font-bold text-xl">
-                                        Proceed Payment
-                                    </h2>
-                                    <p className="text-center text-lg">
-                                        {`Please verify all the information before proceeding`}.
-                                    </p>
-                                </Modal>
+                                        ]}
+                                    >
+                                        <h2 className="modal-title text-center font-bold text-xl">
+                                            Proceed Payment
+                                        </h2>
+                                        <p className="text-center text-lg">
+                                            {`Please verify all the information before proceeding`}.
+                                        </p>
+                                    </Modal>
 
-                                <Modal
-                                width= {'70%'}
-                                 
-                                    open={previewVisible}
-                                    title="Image Preview"
-                                    footer={null}
-                                    onCancel={handleClose}
-                                >
-                                    <img alt="example" style={{width: '100%', height: "100%"}} src={previewImage}/>
-                                </Modal>
-                            </>
-                        }
-                        Add={handleSubmit}
-                        Cancel={handleCancel}
-                        isloading={isSending}
-                    />
-                }
-            />)}
+                                    <Modal
+                                        width={'70%'}
+
+                                        open={previewVisible}
+                                        title="Image Preview"
+                                        footer={null}
+                                        onCancel={handleClose}
+                                    >
+                                        <img alt="example" style={{width: '100%', height: "100%"}} src={previewImage}/>
+                                    </Modal>
+                                </>
+                            }
+                            Add={handleSubmit}
+                            Cancel={handleCancel}
+                            isloading={isSending}
+                        />
+                    }
+                />)}
         </>
     );
 };

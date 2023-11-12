@@ -6,7 +6,11 @@ const AdvancedPaymentsList = () => {
     <ActionsPagesContainer
       title={"Advanced payments"}
       subTitle={"Advabced payments list"}
-      actionsContainer={<div></div>}
+      actionsContainer={
+        <div>
+          Advanced payment list
+        </div>
+      }
     />
   );
 };
