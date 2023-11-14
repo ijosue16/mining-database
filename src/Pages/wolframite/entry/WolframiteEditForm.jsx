@@ -2,24 +2,56 @@ import React, { Fragment, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker, Spin } from "antd";
+import {DatePicker, TimePicker, Spin, message} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useUpdateWolframiteEntryMutation,
-  useGetOneWolframiteEntryQuery,
+  useGetOneWolframiteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
+import {openNotification, toCamelCase} from "../../../components/helperFunctions";
+import Countdown from "react-countdown";
 
 const WolframiteEditForm = () => {
-  const { entryId } = useParams();
+  const { entryId, requestId } = useParams();
   const navigate = useNavigate();
+
+  const [isRequestAvailable, setIsRequestAvailable] = useState(() => {
+    return !!requestId;
+  });
+
+  useEffect(() => {
+    if (requestId) {
+      console.log("Here is optional requestId: ", requestId);
+      console.log("Request availability status: ", !isRequestAvailable);
+    } else {
+      console.log("No optional requestId");
+    }
+  }, [requestId]);
+
+  const { data: requestData, isSuccess: isRequestSuccess } = useGetOneEditRequestQuery({ requestId },
+      {
+        skip: !isRequestAvailable,
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+      });
+  const [updateEditRequest, {
+    isLoading: isUpdateLoading,
+    isSuccess: isUpdateSuccess,
+    isError: isUpdateError,
+    error: updateError
+  }] = useUpdateEditRequestMutation();
+
   const { data, isLoading, isError, error, isSuccess } =
-  useGetOneWolframiteEntryQuery({ entryId });
+  useGetOneWolframiteEntryQuery({ entryId }, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     updateWolframiteEntry,
     {
@@ -68,13 +100,38 @@ const WolframiteEditForm = () => {
   const [selectedItem, setSelectedItem] = useState(-1);
   const [beneficial, setBeneficial] = useState("");
   const [admin, setAdmin] = useState({ role: "admin" });
+  const [editableFields, setEditableFields] = useState([]);
+  const [requestInfo, setRequestInfo] = useState({});
+
+  useEffect(() => {
+    if (isRequestSuccess) {
+      const { editRequest } = requestData.data;
+      if (editRequest) {
+        if (new Date(editRequest.editExpiresAt) < new Date()) {
+          openNotification({message: "Request Expired", description: "This request has expired", type: "error"});
+          navigate(-1);
+        } else {
+          setRequestInfo(editRequest);
+          setEditableFields(editRequest.editableFields);
+        }
+      }
+    }
+  }, [isRequestSuccess]);
+
+  const decideEditable = (field) => {
+    if (editableFields) {
+      const editableField = editableFields.find((item) => toCamelCase(item.fieldname) === field);
+      if (!editableField) {
+        return true;
+      }
+    }
+  }
 
   useEffect(() => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
       // sup = sups;
-      console.log(entr);
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
@@ -104,9 +161,17 @@ const WolframiteEditForm = () => {
         setmineTags(mineTags);
         setnegociantTags(negociantTags);
       }
-      console.log(entr.output);
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isDone) {
+      message.success("Entry updated successfully");
+    } else if (isFail) {
+      const { message: errorMessage } = failError.data;
+      message.error(errorMessage);
+    }
+  }, [isDone, isFail]);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -351,9 +416,18 @@ const WolframiteEditForm = () => {
       mineTags: mineTags,
       negociantTags: negociantTags,
     };
-    console.log(body);
-    await updateWolframiteEntry({ entryId, body });
-    // console.log(body);
+    const newBody = {};
+    if (requestId) {
+      for (const key in body) {
+        if (body.hasOwnProperty(key)) {
+          const editable = editableFields.find(item => toCamelCase(item.fieldname) === `${key}`);
+          if (editable) {
+            newBody[`${key}`] = body[key];
+          }
+        }
+      }
+    }
+    await updateWolframiteEntry({ entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",
@@ -414,6 +488,10 @@ const WolframiteEditForm = () => {
     navigate(-1);
   };
 
+  const handleUpdate = async (body, record) => {
+    await updateEditRequest({body, requestId: record._id});
+  }
+
   return (
     <>
       {isLoading ? (
@@ -444,6 +522,34 @@ const WolframiteEditForm = () => {
 
                         </ul> */}
 
+                  <div className="flex justify-center">
+                    {editableFields.length > 0 ? (
+                        <Countdown
+                            date={dayjs(requestInfo?.editExpiresAt).valueOf()}
+                            onComplete={() => {
+                              if (requestInfo?.requestStatus === "authorized") {
+                                handleUpdate({ requestStatus: "expired" }, requestInfo);
+                                openNotification({message: "Request Expired", description: "This request has expired", type: "error"});
+                                navigate(-1);
+                              }
+                            }}
+                            renderer={({hours, minutes, seconds, completed}) => {
+                              if (completed) {
+                                return <span>Timeout</span>
+                              } else {
+                                return (
+                                    <span className="text-3xl">
+                                      {String(hours).padStart(2, "0")}:
+                                      {String(minutes).padStart(2, "0")}:
+                                      {String(seconds).padStart(2, "0")}
+                                    </span>
+                                )
+                              }
+                            }}
+                        />
+                    ): null}
+                  </div>
+
                   <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     <li className=" space-y-1">
                       <p className="pl-1">Company name</p>
@@ -453,6 +559,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="companyName"
                         id="companyName"
+                        disabled={editableFields.length > 0 ? decideEditable("companyName") : false}
                         value={formval.companyName || ""}
                         onChange={handleEntry}
                       />
@@ -477,6 +584,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="TINNumber"
                         id="TINNumber"
+                        disabled={editableFields.length > 0 ? decideEditable("TINNumber") : false}
                         value={formval.TINNumber || ""}
                         onChange={handleEntry}
                       />
@@ -489,6 +597,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="licenseNumber"
                         id="licenseNumber"
+                        disabled={editableFields.length > 0 ? decideEditable("licenseNumber") : false}
                         value={formval.licenseNumber || ""}
                         onChange={handleEntry}
                       />
@@ -501,6 +610,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="companyRepresentative"
                         id="companyRepresentative"
+                        disabled={editableFields.length > 0 ? decideEditable("companyRepresentative") : false}
                         value={formval.companyRepresentative || ""}
                         onChange={handleEntry}
                       />
@@ -513,6 +623,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="representativeId"
                         id="representativeId"
+                        disabled={editableFields.length > 0 ? decideEditable("representativeId") : false}
                         value={formval.representativeId || ""}
                         onChange={handleEntry}
                       />
@@ -525,6 +636,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="representativePhoneNumber"
                         id="representativePhoneNumber"
+                        disabled={editableFields.length > 0 ? decideEditable("representativePhoneNumber") : false}
                         value={formval.representativePhoneNumber || ""}
                         onChange={handleEntry}
                       />
@@ -550,6 +662,7 @@ const WolframiteEditForm = () => {
                         onChange={handleAddDate}
                         id="supplyDate"
                         name="supplyDate"
+                        disabled={editableFields.length > 0 ? decideEditable("supplyDate") : false}
                         className=" focus:outline-none p-2 border rounded-md w-full"
                       />
                     </li>
@@ -563,6 +676,7 @@ const WolframiteEditForm = () => {
                         format={"HH:mm"}
                         id="date"
                         name="date"
+                        disabled={editableFields.length > 0 ? decideEditable("time") : false}
                         className=" focus:outline-none p-2 border rounded-md w-full"
                       />
                     </li>
@@ -575,6 +689,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="weightIn"
                         id="weightIn"
+                        disabled={editableFields.length > 0 ? decideEditable("weightIn") : false}
                         value={formval.weightIn || ""}
                         onChange={handleEntry}
                       />
@@ -587,6 +702,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="numberOfTags"
                         id="numberOfTags"
+                        disabled={editableFields.length > 0 ? decideEditable("numberOfTags") : false}
                         value={formval.numberOfTags || ""}
                         onWheelCapture={(e) => {
                           e.target.blur();
@@ -607,6 +723,7 @@ const WolframiteEditForm = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="beneficiary"
                         id="beneficiary"
+                        disabled={editableFields.length > 0 ? decideEditable("beneficiary") : false}
                         value={formval.beneficiary || ""}
                         onChange={handleEntry}
                       />

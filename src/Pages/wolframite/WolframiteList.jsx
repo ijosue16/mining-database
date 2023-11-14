@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect, useContext} from "react";
 import dayjs from "dayjs";
-import { Modal, Spin, Table } from "antd";
+import {Checkbox, message, Modal, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
   useGetAllWolframiteEntriesQuery,
-  useDeleteWolframiteEntryMutation,
+  useDeleteWolframiteEntryMutation, useCreateEditRequestMutation,
 } from "../../states/apislice";
 import {
   PiMagnifyingGlassDuotone,
@@ -19,13 +19,28 @@ import { BsCardList } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
+import {useSelector} from "react-redux";
+import {SocketContext} from "../../context files/socket";
+import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import {FiEdit} from "react-icons/fi";
 
 const WolframiteListPage = () => {
+  const {userData} = useSelector(state => state.persistedReducer.global);
+  const socket = useContext(SocketContext);
+  const [createEditRequest, {
+    isLoading: isCreateRequestLoading,
+    isSuccess: isCreateRequestSuccess,
+    isError: isCreateRequestError,
+    error: createRequestError
+  }] = useCreateEditRequestMutation();
   let dataz = [];
   const { loginData } = useMyContext();
   const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
-  useGetAllWolframiteEntriesQuery();
+  useGetAllWolframiteEntriesQuery("", {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     deleteWolframite,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
@@ -41,7 +56,7 @@ const WolframiteListPage = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
-  console.log(loginData);
+  const [record, setRecord] = useState(null);
 
   let modalRef = useRef();
 
@@ -61,19 +76,16 @@ const WolframiteListPage = () => {
   if (isSuccess) {
     const { data: dt } = data;
     const { entries: entrz } = dt;
-    console.log(entrz);
     dataz = entrz;
   }
 
   const handleActions = (id) => {
     if (selectedRow === id) {
-      console.log("uri muduki sha");
       SetShowActions(false);
       SetSelectedRow("");
     } else {
       SetSelectedRow(id);
       SetShowActions(true);
-      console.log("Clicked ID:", id);
     }
   };
 
@@ -83,6 +95,61 @@ const WolframiteListPage = () => {
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
+
+  const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
+
+  const initialCheckboxValues = fields.reduce((acc, field) => {
+    acc[toCamelCase(field)] = false;
+    return acc;
+  }, {});
+
+  const [checkboxValues, setCheckboxValues] = useState(initialCheckboxValues);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [requestId, setRequestId] = useState(null);
+  const showModal = () => {
+    setIsModalOpen(true);
+  }
+
+  useEffect(() => {
+    if (isCreateRequestLoading) {
+      message.info("Creating edit request...");
+    } else if(isCreateRequestSuccess) {
+      message.success("Edit Request created successfully");
+    } else if (isCreateRequestError) {
+      const {message: errorMessage} = createRequestError.data;
+      message.error(errorMessage);
+    }
+  }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
+
+
+  const handleOk = async () => {
+    const finalBody = {editableFields: [], model: "wolframite", recordId: "", username: userData.username};
+    setCheckboxValues(initialCheckboxValues);
+    setIsModalOpen(false);
+    for (const key of Object.keys(checkboxValues)) {
+      if (checkboxValues[key] === true) {
+        finalBody.editableFields.push({
+          fieldname: toInitialCase(key),
+          initialValue: record[key]
+        })
+      }
+    }
+    finalBody.recordId = record._id;
+    const response = await createEditRequest({body: finalBody});
+    socket.emit("new-edit-request", {username: userData.username});
+    if (response) {
+      const {editRequest} = response.data.data;
+      if (editRequest) {
+        setRequestId(editRequest._id);
+      }
+    }
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setCheckboxValues(initialCheckboxValues);
+  }
 
   const columns = [
     {
@@ -225,12 +292,31 @@ const WolframiteListPage = () => {
                   />
                 </span>
               ) : null}
+
+              {!userData.permissions.entry.edit &&
+              <span>
+                  <FiEdit
+                      className="text-lg"
+                      onClick={() => {
+                        setRecord(record);
+                        showModal();
+                      }}
+                  />
+              </span>
+              }
             </div>
           </>
         );
       },
     },
   ];
+
+  const handleCheckboxChange = (itemName) => {
+    setCheckboxValues({
+      ...checkboxValues,
+      [itemName]: !checkboxValues[itemName], // Toggle the checkbox value
+    });
+  };
 
   return (
     <>
@@ -297,6 +383,26 @@ const WolframiteListPage = () => {
                 selectedRowInfo.date
               ).format("MMM/DD/YYYY")}`}</li>
             </Modal>
+
+            <Modal
+                title="Basic Modal"
+                open={isModalOpen}
+                onOk={handleOk}
+                onCancel={handleCancel}
+                destroyOnClose
+            >
+              {fields.map((item, index) => (
+                  <div key={index}>
+                    <Checkbox
+                        checked={checkboxValues[toCamelCase(item)]}
+                        onChange={() => handleCheckboxChange(toCamelCase(item))}
+                    >
+                      {item}
+                    </Checkbox>
+                  </div>
+              ))}
+            </Modal>
+
             <div className=" w-full overflow-x-auto h-full min-h-[320px]">
               <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
                 <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">

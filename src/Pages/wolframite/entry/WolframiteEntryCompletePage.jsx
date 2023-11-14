@@ -1,21 +1,30 @@
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import {motion} from "framer-motion";
-import {Form, Input, Modal, Table} from "antd";
+import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
-import {BiSolidEditAlt} from "react-icons/bi";
-import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {ImSpinner2} from "react-icons/im";
-import {FaSave} from "react-icons/fa";
+import {FaImage, FaSave} from "react-icons/fa";
 import {toast} from "react-toastify";
-import {MdOutlineClose, MdPayments} from "react-icons/md";
-import { useGetOneWolframiteEntryQuery, useUpdateWolframiteEntryMutation} from "../../../states/apislice";
+import {
+    useDeleteGradeImgMutation,
+    useGetOneWolframiteEntryQuery,
+    useUpdateWolframiteEntryMutation
+} from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
+import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/helperFunctions";
+import {IoClose} from "react-icons/io5";
+import {UploadOutlined} from "@ant-design/icons";
+import {useSelector} from "react-redux";
+import {PiDotsThreeVerticalBold} from "react-icons/pi";
+import {BiSolidEditAlt} from "react-icons/bi";
+import {MdOutlineClose, MdPayments} from "react-icons/md";
 
 const WolframiteEntryCompletePage = () => {
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
     const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -23,13 +32,21 @@ const WolframiteEntryCompletePage = () => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneWolframiteEntryQuery({entryId});
+    useGetOneWolframiteEntryQuery({entryId}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [updateWolframiteEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
     }] = useUpdateWolframiteEntryMutation();
+    const [deleteGradeImg, {
+        isSuccess: isImageDeleteSuccess,
+        isError: isImageDeleteError,
+        error: imageDeleteError
+    }] = useDeleteGradeImgMutation();
 
     let modalRef = useRef();
 
@@ -72,6 +89,60 @@ const WolframiteEntryCompletePage = () => {
     const [show, setShow] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
 
+    /////////////////////////////
+    const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState('');
+
+    const handleClose = () => {
+        setPreviewVisible(false);
+    };
+
+    const handlePreview = async (fileUrl) => {
+        // const fileUrl = 'https://mining-company-management-system.onrender.com/data/coltan/DSC_0494.jpg';
+        const previewedUrl = await getBase64FromServer(fileUrl);
+        setPreviewImage(previewedUrl);
+        setPreviewVisible(true);
+    };
+
+    const props = {
+        onChange: (info) => {
+            if (info.file.status !== 'uploading') {
+                console.log(info.file, info.fileList);
+            }
+            if (info.file.status === 'done') {
+                message.success(`${info.file.name} file uploaded successfully`);
+                // refetch()
+            } else if (info.file.status === 'error') {
+                message.error(`${info.file.name} file upload failed.`);
+            }
+        },
+    };
+
+    const beforeUpload = (file) => {
+        const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
+        if (!isPNG) {
+            message.error(`${file.name} is not a .png or .jpeg file`);
+        }
+        return isPNG || Upload.LIST_IGNORE;
+    }
+
+    const removeFile = async (lotNumber, entryId) => {
+        const body = {lotNumber}
+        await deleteGradeImg({body, entryId, model: "wolframite"});
+    }
+
+
+    useEffect(() => {
+        if (isImageDeleteSuccess) {
+            message.success("File successfully deleted");
+        } else if (isImageDeleteError) {
+            const { message: deleteError } = imageDeleteError.data;
+            message.error(deleteError);
+        }
+    }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
+
+    ////////////////
+
     useEffect(() => {
         if (isSuccess) {
             const {data: info} = data;
@@ -92,11 +163,9 @@ const WolframiteEntryCompletePage = () => {
         // navigate(-1);
     };
     const handleModelAdvance = async () => {
-        console.log("backend done");
-        console.log(suply);
         const body = {...suply, output: lotInfo};
         await updateWolframiteEntry({body, entryId});
-        navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
+        navigate(`/payment/wolframite/${suply._id}/${selectedLotNumber}`);
     };
 
     const handleCancel = () => {
@@ -116,6 +185,11 @@ const WolframiteEntryCompletePage = () => {
         setEditRowKey(record._id);
         setShow(false);
     };
+    const calculatePricePerUnit = (MTU, grade) => {
+        if (MTU && grade) {
+            return ((MTU * grade/100) * 0.1);
+        }
+    }
     const save = async (key) => {
         const row = await form.validateFields();
         const newData = [...lotInfo];
@@ -125,8 +199,9 @@ const WolframiteEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                mineralPrice: (row.tantalum * row.mineralGrade).toFixed(3),
+                pricePerUnit: calculatePricePerUnit(row.metricTonUnit, row.mineralGrade).toFixed(3),
             };
+            updatedItem.mineralPrice = (updatedItem.pricePerUnit * row.weightOut);
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -137,45 +212,85 @@ const WolframiteEntryCompletePage = () => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
-        paid: {
-            title: "paid ($)",
-            dataIndex: "paid",
-            key: "paid",
-            sorter: (a, b) => a.paid - b.paid,
-        },
-        unpaid: {
-            title: "unpaid ($)",
-            dataIndex: "unpaid",
-            key: "unpaid",
-            sorter: (a, b) => a.unpaid - b.unpaid,
-        },
-        tantal: {
-            title: "Tantal ($)",
-            dataIndex: "tantalum",
-            key: "tantalum",
-            editTable: true,
-            sorter: (a, b) => a.tantalum - b.tantalum,
-        },
-        grade: {
+        mineralGrade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
-            editTable: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
-        price: {
+        metricTonUnit: {
+            title: "MTU ($)",
+            dataIndex: "metricTonUnit",
+            key: "metricTonUnit",
+            sorter: (a, b) => a.metricTonUnit - b.metricTonUnit,
+        },
+        gradeImg: {
+            title: "Grade Img",
+            dataIndex: "gradeImg",
+            key: "gradeImg",
+            // editTable: true,
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            render: (_, record) => {
+                if (record.gradeImg) {
+                    return (
+                        <div className="flex items-center">
+                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
+                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        </div>
+                    )
+                } else {
+                    return (
+                        <Upload
+                            beforeUpload={beforeUpload}
+                            name={record.lotNumber}
+                            action={`${AppUrls.server}/wolframite/${entryId}`}
+                            method="PATCH"
+                            {...props}
+                            onRemove={() => removeFile(record.lotNumber, entryId)}
+                        >
+                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
+                        </Upload>
+                    )
+                }
+
+            }
+        },
+        pricePerUnit: {
+            title: "price/kg ($)",
+            dataIndex: "pricePerUnit",
+            key: "pricePerUnit",
+            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+        },
+        mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
             editTable: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            sorter: (a, b) => a.paid - b.paid,
+        },
+        // unpaid: {
+        //     title: "unpaid ($)",
+        //     dataIndex: "unpaid",
+        //     key: "unpaid",
+        //     sorter: (a, b) => a.unpaid - b.unpaid,
+        // },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            sorter: (a, b) => a.USDRate - b.USDRate,
+        },
         rmaFee: {
-            title: "RMA Fee (RWF)",
-            dataIndex: "rmaFee",
-            key: "rmaFee",
-
-            sorter: (a, b) => a.rmaFee - b.rmaFee,
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
+            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
         },
     }
     const columns = [
@@ -202,17 +317,21 @@ const WolframiteEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-
+            editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
-
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
-        {
+    ];
+
+
+    if (restrictedColumns && userPermissions && columns) {
+        filterColumns(restrictedColumns, userPermissions, columns);
+        columns.push({
             title: "status",
             dataIndex: "status",
             key: "status",
@@ -256,8 +375,8 @@ const WolframiteEntryCompletePage = () => {
                     </p>
                 );
             },
-        },
-        {
+        });
+        columns.push({
             title: "Action",
             dataIndex: "action",
             key: "action",
@@ -324,16 +443,10 @@ const WolframiteEntryCompletePage = () => {
                     </>
                 );
             },
-        },
-    ];
-    if (profile.role !== "storekeeper" && profile.role !== "traceabilityOfficer") {
-        console.log(profile.role);
-        for (const key in restrictedColumns) {
-            if (restrictedColumns.hasOwnProperty(key)) {
-                columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
-            }
-        }
+        });
     }
+
+
 
     const mergedColumns = columns.map((col) => {
         if (!col.editTable) {
@@ -499,6 +612,17 @@ const WolframiteEntryCompletePage = () => {
                                     <p className="text-center text-lg">
                                         {`Please verify all the information before proceeding`}.
                                     </p>
+                                </Modal>
+
+                                <Modal
+                                    width={'70%'}
+
+                                    open={previewVisible}
+                                    title="Image Preview"
+                                    footer={null}
+                                    onCancel={handleClose}
+                                >
+                                    <img alt="example" style={{width: '100%', height: "100%"}} src={previewImage}/>
                                 </Modal>
                             </>
                         }
