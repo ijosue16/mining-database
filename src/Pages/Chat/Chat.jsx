@@ -84,9 +84,9 @@ const Chat = () => {
 
 
     return (
-        <div className="flex">
+        <div className="flex h-full">
             {/*CHATTING*/}
-            <div className="w-1/4 bg-gray-200 h-screen overflow-y-auto rounded-[4px] border-[#e8eaed]">
+            <div className="w-1/4 bg-zinc-50 overflow-y-hidden rounded-[4px] rounded-tr-none rounded-br-none border-r border-gray-200 ">
                 {/*<div className="flex justify-end">*/}
                 {/*    <IoMdAddCircle className="text-3xl" style={{marginRight: "0.2rem", marginTop: "0.2rem"}} color={"#1816dc"} size={35} onClick={fetchUsers}/>*/}
                 {/*</div>*/}
@@ -96,7 +96,7 @@ const Chat = () => {
                     </div>
                 ))}
             </div>
-            <div className="w-full bg-purple-200">
+            <div className="w-full">
                 <ChatBox chat={currentChat} currentUser={userData._id}  setSendMessage={setSendMessage} receivedMessage={receiveMessage}/>
             </div>
         </div>

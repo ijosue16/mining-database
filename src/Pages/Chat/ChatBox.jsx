@@ -112,34 +112,27 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
 
     return (
         <>
-            <div className="ChatBox-container">
+            <div className="ChatBox-container w-full h-full overflow-y-hidden overflow-x-hidden relative">
                 {chat ? (
                     <>
                         {/* chat-header */}
-                        <div className="chat-header">
-                            <div className="follower">
+                        <div className="chat-header border-b shadow-lg p-2 w-full absolute top-0 z-50 bg-zinc-50">
+                           
                                 <div className="flex items-center gap-3">
                                     <Avatar size={40} icon={<UserOutlined/>}/>
                                     <div className="name" style={{fontSize: "0.9rem"}}>
-                                        <span>
+                                        <span className=" font-bold">
                                           {userData?.name}
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                            <hr
-                                style={{
-                                    width: "95%",
-                                    border: "0.1px solid #ececec",
-                                    marginTop: "20px",
-                                }}
-                            />
+
                         </div>
                         {/* chat-body */}
-                        <div className="flex flex-col w-full">
+                        <div className="flex flex-col h-full w-full py-20 px-2 convo-body gap-2 overflow-y-scroll z-10">
                             {messages.map((message, index) => (
                                 <div key={index} ref={scroll}
-                                     className={`flex ${message.senderId === currentUser ? "bg-amber-200 self-end" : "bg-blue-300"} p-3 rounded-[4px] mb-2 w-fit`}
+                                     className={`${message.senderId === currentUser ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white self-end" : "bg-white"} ps-2 pe-6 pb-[9px] shadow-md pt-1 text-start rounded-[4px] w-fit`}
                                 >
                                     <span>{message.text}</span>{""}
                                     {/*<span>{format(message.createdAt)}</span>*/}
@@ -147,7 +140,7 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
                             ))}
                         </div>
                         {/* chat-sender */}
-                        <div className="flex items-center">
+                        <div className="flex items-center absolute shadow-md bottom-0 w-full z-50 bg-zinc-50">
                             <GrAdd onClick={() => imageRef.current.click()}/>
                             <InputEmoji
                                 value={newMessage}
