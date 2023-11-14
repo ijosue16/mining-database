@@ -25,7 +25,7 @@ const AdvancedPaymentsList = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [showActions, SetShowActions] = useState(false);
   const [showmodal, setShowmodal] = useState(false);
-  const [paymentDetailsModal, setPaymentDetailsModal] = useState({companyName:"",beneficiary:"",nationalId:"",phoneNumber:"",email:"",paymentAmount:"",currency:"",paymentDate:"",consumed:"",remainingAmount:"",consumptionDetails:""});
+  const [paymentDetailsModal, setPaymentDetailsModal] = useState({companyName:"",beneficiary:"",nationalId:"",phoneNumber:"",email:"",paymentAmount:"",currency:"",paymentDate:"",consumed:"",remainingAmount:"",consumptionDetails:"",id:""});
   const [showPyDetailsModal, setShowPyDetailsModal] = useState(false);
   const [selectedRowInfo, SetSelectedRowInfo] = useState({
       name: "",
@@ -80,7 +80,8 @@ SetSelectedRow("");
     {
       title: "Payment date",
       dataIndex: "paymentDate",
-      key: "paymentDate",
+      // key: "paymentDate",
+      Key:"_id",
       sorter: (a, b) => a.paymentDate.localeCompare(b.paymentDate),
       render: (text) => {
         return (
@@ -93,7 +94,8 @@ SetSelectedRow("");
     {
       title: "Company name",
       dataIndex: "companyName",
-      key: "companyName",
+      // key: "companyName",
+      Key:"_id",
       sorter: (a, b) => a.companyName.localeCompare(b.companyName),
       filteredValue: [searchText],
       onFilter: (value, record) => {
@@ -148,7 +150,7 @@ SetSelectedRow("");
     {
         title: "Action",
         dataIndex: "action",
-        key: "action",
+        key: "_id",
         render: (_, record) => {
             return (
                 <>
@@ -172,8 +174,8 @@ SetSelectedRow("");
                                     <li
                                         className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                         onClick={() => {
+                                          setPaymentDetailsModal((prevstate)=>({...prevstate,companyName:record.companyName,beneficiary:record.beneficiary,nationalId:record.nationalId,phoneNumber:record.phoneNumber,email:record.email,paymentAmount:record.paymentAmount,currency:record.currency,paymentDate:record.paymentDate,consumed:record.consumed,remainingAmount:record.remainingAmount,consumptionDetails:"",id:record._id}));
                                            setShowPyDetailsModal(!showPyDetailsModal);
-                                           setPaymentDetailsModal((prevstate)=>({...prevstate,companyName:record.companyName,beneficiary:record.beneficiary,nationalId:record.nationalId,phoneNumber:record.phoneNumber,email:record.email,paymentAmount:record.paymentAmount,currency:record.currency,paymentDate:record.paymentDate,consumed:record.consumed,remainingAmount:record.remainingAmount,consumptionDetails:""}))
                                          
                                         }}
                                     >
@@ -262,58 +264,24 @@ SetSelectedRow("");
   ];
 
   return (
+    <>
     <ActionsPagesContainer
       title={"Advanced payments"}
       subTitle={"Advanced payments list"}
       actionsContainer={
         <>
-        <div className=" w-full overflow-x-auto h-full min-h-[320px]">
-                            <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
-                <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
-                  <PiMagnifyingGlassDuotone className="h-4 w-4"/>
-                  <input
-                      type="text"
-                      className=" w-full focus:outline-none"
-                      name="tableFilter"
-                      id="tableFilter"
-                      placeholder="Search..."
-                      onChange={(e) => SetSearchText(e.target.value)}
-                  />
-                </span>
-
-                                <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
-                  <BiSolidFilePdf className=" text-2xl"/>
-                  <BsCardList className=" text-2xl"/>
-                  <HiOutlinePrinter className=" text-2xl"/>
-                </span>
-                            </div>
-                            <Table
-                                className=" w-full"
-                                loading={{
-                                    indicator: (
-                                        <ImSpinner2
-                                            style={{width: "60px", height: "60px"}}
-                                            className="animate-spin text-gray-500"
-                                        />
-                                    ),
-                                    spinning: isLoading,
-                                }}
-                                dataSource={dataz}
-                                columns={columns}
-                                rowKey="_id"
-                            />
-                        </div>
-                        <Modal 
+                            <Modal 
                          width= {'95%'}
-                         s
                         title="Payment details"
                         open={showPyDetailsModal}
                         // onOk={handleOk}
                         onCancel={handleCancel}
+                        // key={paymentDetailsModal.id}
                         destroyOnClose
                         footer={[
-                          <button className=" w-fit rounded px-2 py-1 bg-red-300 font-semibold" onClick={handleCancel}>Close</button>
-                        ]}>
+                          <button key="close" className=" w-fit rounded px-2 py-1 bg-red-300 font-semibold" onClick={handleCancel}>Close</button>
+                        ]}
+                        >
                           <div className=" py-4 flex flex-col gap-3">
                             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-stretch">
                               <ul className="space-y-1">
@@ -364,9 +332,48 @@ SetSelectedRow("");
                             </div>
                           </div>
                         </Modal>
+
+        <div className=" w-full overflow-x-auto h-full min-h-[320px]">
+                            <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
+                <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
+                  <PiMagnifyingGlassDuotone className="h-4 w-4"/>
+                  <input
+                      type="text"
+                      className=" w-full focus:outline-none"
+                      name="tableFilter"
+                      id="tableFilter"
+                      placeholder="Search..."
+                      onChange={(e) => SetSearchText(e.target.value)}
+                  />
+                </span>
+
+                                <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
+                  <BiSolidFilePdf className=" text-2xl"/>
+                  <BsCardList className=" text-2xl"/>
+                  <HiOutlinePrinter className=" text-2xl"/>
+                </span>
+                            </div>
+                            <Table
+                                className=" w-full"
+                                loading={{
+                                    indicator: (
+                                        <ImSpinner2
+                                            style={{width: "60px", height: "60px"}}
+                                            className="animate-spin text-gray-500"
+                                        />
+                                    ),
+                                    spinning: isLoading,
+                                }}
+                                dataSource={dataz}
+                                columns={columns}
+                                rowKey="_id"
+                            />
+                        </div>
                         </>
       }
     />
+
+    </>
   );
 };
 export default AdvancedPaymentsList;
