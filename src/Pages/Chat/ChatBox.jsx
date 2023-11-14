@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useGetOneUserQuery, useAddMessageMutation, useLazyGetMessagesQuery} from "../../states/apislice";
 // import { format } from "timeago";
 import InputEmoji from 'react-input-emoji'
+import { VscSend } from "react-icons/vsc";
 import {UserOutlined} from "@ant-design/icons";
 import {Avatar, message} from "antd";
 import {GrAdd} from "react-icons/gr";
@@ -147,7 +148,11 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
                                 onChange={handleChange}
                                 // onFocus={() => setCurrentUserTyping({status: true, receiverId: chat?.members?.find((id) => id !== currentUser)})}
                             />
-                            <button className="bg-blue-400 p-2 rounded-[4px] text-white" onClick={handleSend}>Send</button>
+                            <button className="bg-blue-400 flex items-center gap-1 p-2 rounded-[4px] text-white" onClick={handleSend}>
+                                <p className="m-0">Send</p>
+                                <VscSend />
+                                
+                            </button>
                             <input
                                 type="file"
                                 name=""

@@ -55,7 +55,7 @@ const Conversation = ({ data, currentUser, online, fetchLastMessage, setFetchLas
                 <div className="flex items-center gap-2">
                     {/*{online && <div className="online-dot"/>}*/}
                     <Avatar size={40} >{user?.name.slice(0,2)}</Avatar>
-                    <div className="name flex flex-col">
+                    <div className="name flex flex-col border-b w-full">
                         <span className=" font-semibold" style={{fontSize: '1rem'}}>{user?.name}</span>
                         <span style={{fontSize: '0.8rem'}}>{lastMessage?.senderId === currentUser ? `You: ${lastMessage?.text}`: lastMessage?.text}</span>
                         {/*<span style={{color: online?"#51e200":"", marginRight: 5}}>{online? "Online" : "Offline"}</span>*/}
