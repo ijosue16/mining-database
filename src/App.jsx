@@ -76,6 +76,7 @@ import ColtanEditRequestPage from './Pages/EditRequestspages/ColtanEditRequestPa
 import AdvancedPaymentsList from './Pages/AdvancedPayments/AdvancedPaymentsList';
 import AdvancedPaymentEntry from './Pages/AdvancedPayments/AdvancedPaymentEntry';
 import {socket, SocketContext} from "./context files/socket";
+import UsersActivityLogs from "./Pages/UsersActivityLogs";
 
 function App() {
 
@@ -120,8 +121,8 @@ function App() {
 
 
                                 <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
-                                <Route path='/entry/edit/cassiterite/:entryId' element={<CassiteriteEditForm/>}/>
-                                <Route path='/entry/edit/wolframite/:entryId' element={<WolframiteEditForm/>}/>
+                                <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
+                                <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
                                 <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
                                 <Route path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
 
@@ -169,6 +170,7 @@ function App() {
                                 <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
                                 <Route path='/framer' element={<Framer/>}/>
                                 <Route path="/settings" element={<Settings/>}/>
+                                <Route path="/logs" element={<UsersActivityLogs/>}/>
 
                                 <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
                                 <Route path="/invoice" element={<InvoiceList/>}/>

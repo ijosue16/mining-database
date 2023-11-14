@@ -4,7 +4,9 @@ import { useGetFileStructureQuery } from "../states/apislice";
 import {message} from "antd";
 
 const FileStructure = () => {
-    const { data, isSuccess, isLoading, isError, error } = useGetFileStructureQuery();
+    const { data, isSuccess, isLoading, isError, error } = useGetFileStructureQuery("",
+        { refetchOnMountOrArgChange: true, refetchOnReconnect: true }
+    );
     const [fileStructure, setFileStructure] = useState([]);
 
     useEffect(() => {

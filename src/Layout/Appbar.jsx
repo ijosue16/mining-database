@@ -18,7 +18,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [open, setOpen] = useState(false);
-    const {userData} = useSelector(state => state.global);
+    const {userData} = useSelector(state => state.persistedReducer.global);
     const [userId, setUserId] = useState(null);
     const socket = useContext(SocketContext);
 
@@ -50,7 +50,13 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
             setUserId(userData._id);
         }
     }, [userData])
-    const {data, isLoading, isSuccess} = useGetNotificationsQuery(userId, {skip: userId === null});
+    const {data, isLoading, isSuccess} = useGetNotificationsQuery(userId,
+        {
+            skip: userId === null,
+            refetchOnMountOrArgChange: true,
+            refetchOnReconnect: true
+        }
+    );
     const [updateNotificationStatus, {isSuccess: updateSuccess}] = useUpdateNotificationStatusMutation();
 
     let modalRef = useRef();
@@ -67,14 +73,13 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
 
     const onClose = () => {
         setOpen(false);
-        setNotifications(data.data.notifications[0].notifications.slice(0,10));
+        // setNotifications(data.data.notifications[0].notifications.slice(0,10));
     };
 
 
     useEffect(() => {
         if (isSuccess) {
             const { notifications: notificationsObj } = data.data;
-            console.log(notificationsObj);
             if (notificationsObj.length > 0) {
                 const {notifications: notificationsArray} = notificationsObj[0];
                 setNotifications(notificationsArray.slice(0,10));

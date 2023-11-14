@@ -1,6 +1,5 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
-// const existingUrl = "https://mining-company-management-system.onrender.com/api/v1/";
 
 export const apiSlice = createApi({
     reducerPath: "adminApi",
@@ -292,7 +291,7 @@ export const apiSlice = createApi({
             invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
         }),
         getAllCassiteriteEntries: builder.query({
-            query: () => `/Cassiterite`,
+            query: () => `/cassiterite`,
             providesTags: ['entries', 'payments', 'buyers']
         }),
         getOneCassiteriteEntry: builder.query({
@@ -724,6 +723,7 @@ export const {
     useUserChatsQuery,
     useLazyFindChatQuery,
     useGenerateDDReportMutation,
+    useGetAllLogsQuery,
     useGetNotificationsQuery,
     useUpdateNotificationStatusMutation,
 } = apiSlice

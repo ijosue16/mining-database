@@ -8,7 +8,10 @@ import { setUserData } from "../../states/slice";
 // import { getUser } from "../../api/UserRequests";
 const Conversation = ({ data, currentUser, online, fetchLastMessage, setFetchLastMessage }) => {
     const userId = data.members.find((id)=>id!==currentUser);
-    const {data: userInfo, isSuccess: isGettingUserSuccess} = useGetOneUserQuery(userId);
+    const {data: userInfo, isSuccess: isGettingUserSuccess} = useGetOneUserQuery(userId, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [getLastMessage, {isSuccess}] = useLazyLastMessageQuery();
     const [lastMessage, setLastMessage] = useState(null);
     const [user, setUser] = useState(null)
