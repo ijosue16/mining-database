@@ -1,8 +1,3 @@
-import {PiDotsThreeVerticalBold} from "react-icons/pi";
-import {motion} from "framer-motion";
-import {BiSolidEditAlt} from "react-icons/bi";
-import {MdOutlineClose, MdPayments} from "react-icons/md";
-import {FaSave} from "react-icons/fa";
 import React from "react";
 import {notification} from "antd";
 
