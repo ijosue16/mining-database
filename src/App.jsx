@@ -94,7 +94,7 @@ function App() {
 
                                 <Route path='*' element={<DefaultPages/>}/>
                                 <Route path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
-                                <Route path='/payment/advanced' element={<AdvancedPaymentsList/>}/>
+                                <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
                                 <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                 <Route path='/shipment/add/:model' element={<StockPage/>}/>
                                 <Route path='/shipments' element={<ShipmentPage/>}/>
