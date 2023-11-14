@@ -4,7 +4,7 @@ import { PiMagnifyingGlassDuotone } from "react-icons/pi";
 import { BsClipboard2MinusFill } from "react-icons/bs";
 import {ImSpinner2 } from "react-icons/im";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
-import { Table, Tooltip, Checkbox, Input, Form, Modal, Spin } from "antd";
+import {Table, Tooltip, Checkbox, Input, Form, Modal, Spin, message} from "antd";
 import { BiSolidEditAlt } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
@@ -17,8 +17,9 @@ import dayjs from "dayjs";
 
 const StockPage = () => {
   const { model } = useParams();
-  const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({
-    model,
+  const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({model}, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
   });
   const [
     AddShipment,
@@ -43,6 +44,7 @@ const StockPage = () => {
   const [editRowKey, setEditRowKey] = useState("");
   const [emptyError, setEmptyError] = useState("");
   const [form] = Form.useForm();
+  const [shipmentNumber, setShipmentNumber] = useState("");
   let initialData = [];
 
   // useEffect(() => {
@@ -53,6 +55,15 @@ const StockPage = () => {
     initialData = dtStk;
   }
   // },[isSuccess]);
+
+  useEffect(() => {
+    if (isSent) {
+      message.success("Shipment added successfully");
+    } else if (isFailed) {
+      const { message: errorMessage } = fail.data;
+      message.error(errorMessage);
+    }
+  }, [isSent, isFailed, fail]);
 
   const handleBillOpen = () => {
     setOpenBill(!openBill);
@@ -99,6 +110,7 @@ const StockPage = () => {
 
   const handleOpenModal = () => {
     setOpenModal(!openModal);
+    setShipmentNumber("");
   };
 
   const handleConfirmModal = () => {
@@ -168,7 +180,7 @@ const StockPage = () => {
     console.log(newData);
   };
    const handleshipmentNumber=(e)=>{
-    console.log(e.target.value)
+     setShipmentNumber(e.target.value);
    }
   const columns = [
     {
@@ -360,7 +372,7 @@ const StockPage = () => {
       shipmentInfo.totalShipmentQuantity !== null &&
       shipmentInfo.entries.length > 0
     ) {
-      const body = shipmentInfo;
+      const body = {...shipmentInfo, shipmentNumber};
       await AddShipment({ body });
       setSelectedData([]);
       console.log("Shipment Info After Update:", { body });
@@ -485,7 +497,7 @@ const StockPage = () => {
                   </div>
                       <div className="w-full space-y-2">
                       <p className=" font-semibold">Shipment number</p>
-                  <input type="text" name="shipmentNbr" id="" className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleshipmentNumber}/>
+                  <input type="text" name="shipmentNumber" id="shipmentNumber" value={shipmentNumber} className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleshipmentNumber}/>
                       </div>
                   <button
                     className=" bg-orange-500 text-white py-2 px-4 rounded-md"

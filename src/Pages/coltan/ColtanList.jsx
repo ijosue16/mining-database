@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import {Checkbox, Modal, Table, message} from "antd";
+import {Checkbox, message, Modal, Table} from "antd";
 import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
 import {useMyContext} from "../../context files/LoginDatacontextProvider";
@@ -18,20 +18,27 @@ import {MdDelete} from "react-icons/md";
 import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
-import {toast} from "react-toastify";
 import {useSelector} from "react-redux";
-import { toCamelCase, toInitialCase} from "../../components/helperFunctions";
-import { SocketContext } from "../../context files/socket";
+import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import {SocketContext} from "../../context files/socket";
 
 const ColtanListPage = () => {
-    const { userData } = useSelector(state => state.global);
+    const {userData} = useSelector(state => state.persistedReducer.global);
     const socket = useContext(SocketContext);
     let dataz = [];
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
-    const [createEditRequest, {isLoading: isCreateRequestLoading, isSuccess: isCreateRequestSuccess, isError: isCreateRequestError, error: createRequestError}] = useCreateEditRequestMutation();
+    const [createEditRequest, {
+        isLoading: isCreateRequestLoading,
+        isSuccess: isCreateRequestSuccess,
+        isError: isCreateRequestError,
+        error: createRequestError
+    }] = useCreateEditRequestMutation();
     const {data, isLoading, isSuccess, isError, error} =
-        useGetAllColtanEntriesQuery();
+        useGetAllColtanEntriesQuery("", {
+            refetchOnMountOrArgChange: true,
+            refetchOnReconnect: true
+        });
     const [
         deleteColtan,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
@@ -67,7 +74,6 @@ const ColtanListPage = () => {
     if (isSuccess) {
         const {data: dt} = data;
         const {entries: entrz} = dt;
-        console.log(entrz);
         dataz = entrz;
     }
 
@@ -78,7 +84,6 @@ const ColtanListPage = () => {
         } else {
             SetSelectedRow(id);
             SetShowActions(true);
-            console.log("Clicked ID:", id);
         }
     };
 
@@ -89,32 +94,16 @@ const ColtanListPage = () => {
         setShowmodal(!showmodal);
     };
 
-    // function toCamelCase(str) {
-    //     return str.split(' ').map((word, index) => {
-    //         if (index === 0) {
-    //             return word.toLowerCase();
-    //         } else {
-    //             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    //         }
-    //     }).join('');
-    // }
-
-    // function toInitialCase(camelCaseString) {
-    //     return camelCaseString
-    //         .replace(/([a-z])([A-Z])/g, '$1 $2')
-    //         .replace(/^./, function(str) {
-    //             return str.toUpperCase();
-    //         });
-    // }
 
     const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
 
-    const [checkboxValues, setCheckboxValues] = useState(
-        fields.reduce((acc, field) => {
-            acc[toCamelCase(field)] = false; // Initialize all checkboxes as unchecked
-            return acc;
-        }, {})
-    );
+    const initialCheckboxValues = fields.reduce((acc, field) => {
+        acc[toCamelCase(field)] = false;
+        return acc;
+    }, {});
+
+    const [checkboxValues, setCheckboxValues] = useState(initialCheckboxValues);
+
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [requestId, setRequestId] = useState(null);
@@ -124,15 +113,16 @@ const ColtanListPage = () => {
 
     useEffect(() => {
         if (isCreateRequestSuccess) {
-            toast.success("Edit Request was created successfully");
+            message.success("Edit Request was created successfully");
         } else if (isCreateRequestError) {
-            const { message } = createRequestError.data;
-            toast.error(message);
+            const {message: errorMessage} = createRequestError.data;
+            message.error(errorMessage);
         }
     }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
 
     const handleOk = async () => {
         const finalBody = {editableFields: [], model: "coltan", recordId: "", username: userData.username};
+        setCheckboxValues(initialCheckboxValues);
         setIsModalOpen(false);
         for (const key of Object.keys(checkboxValues)) {
             if (checkboxValues[key] === true) {
@@ -147,7 +137,7 @@ const ColtanListPage = () => {
         socket.emit("new-edit-request", {username: userData.username});
         message.success("Edit Request sent successfully");
         if (response) {
-            const { editRequest } = response.data.data;
+            const {editRequest} = response.data.data;
             if (editRequest) {
                 setRequestId(editRequest._id);
             }
@@ -156,6 +146,7 @@ const ColtanListPage = () => {
 
     const handleCancel = () => {
         setIsModalOpen(false);
+        setCheckboxValues(initialCheckboxValues);
     }
 
     const columns = [
@@ -300,6 +291,7 @@ const ColtanListPage = () => {
                                 </span>
                             ) : null}
 
+                            {!userData.permissions.entry.edit &&
                             <span>
                                 <FiEdit
                                     className="text-lg"
@@ -309,6 +301,7 @@ const ColtanListPage = () => {
                                     }}
                                 />
                             </span>
+                            }
 
                             {/*{permissions.entry.edit ? (*/}
 
@@ -322,15 +315,12 @@ const ColtanListPage = () => {
     // const [field, setField] = useState()
 
 
-
     const handleCheckboxChange = (itemName) => {
         setCheckboxValues({
             ...checkboxValues,
             [itemName]: !checkboxValues[itemName], // Toggle the checkbox value
         });
     };
-
-
 
 
     function toCamelCaseArray(strings) {

@@ -14,7 +14,10 @@ dayjs.extend(localizedFormat);
 
 const EditRequests = () => {
     const socket = useContext(SocketContext);
-    const {data, isSuccess, isLoading} = useGetAllEditRequestsQuery();
+    const {data, isSuccess, isLoading} = useGetAllEditRequestsQuery("", {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [updateEditRequest, {
         isSuccess: isUpdateSuccess,
         isError: isUpdateError,
@@ -27,7 +30,6 @@ const EditRequests = () => {
         if (isSuccess) {
             const {editRequests} = data.data;
             setEditRequests(editRequests);
-            console.log(editRequests)
         }
     }, [isSuccess, data]);
 
@@ -39,6 +41,12 @@ const EditRequests = () => {
             message.error(errorMessage);
         }
     }, [isUpdateSuccess, isUpdateError, updateError]);
+
+    useEffect(() => {
+        socket.on("new-edit-request", data => {
+
+        })
+    })
 
     const handleUpdate = async (body, record) => {
         setUserName(record.username);
@@ -62,7 +70,7 @@ const EditRequests = () => {
             title: "Requested At",
             dataIndex: "editRequestedAt",
             // key: "username",
-            sorter: (a, b) => a.username.localeCompare(b.username),
+            sorter: (a, b) => a.editRequestedAt.localeCompare(b.editRequestedAt),
             render: (_, record) => <span>{dayjs(record.editRequestedAt).format("llll")}</span>
         },
         {
@@ -156,6 +164,7 @@ const EditRequests = () => {
         },
 
     ]
+
 
 
     return (

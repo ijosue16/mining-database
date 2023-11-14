@@ -22,7 +22,10 @@ const UserPermissionPage = () => {
   const [permissions, setPermissions] = useState({});
  
   const { data, isLoading, isSuccess, isError, error } =
-    useGetOneUserQuery(userId);
+    useGetOneUserQuery(userId, {
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true
+    });
   const [
     updateUser,
     {

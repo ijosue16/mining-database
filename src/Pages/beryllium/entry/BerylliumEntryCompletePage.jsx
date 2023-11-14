@@ -23,7 +23,10 @@ const BerylliumEntryCompletePage = () => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneBerylliumEntryQuery({entryId});
+    useGetOneBerylliumEntryQuery({entryId}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [updateBerylliumiteEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,

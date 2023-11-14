@@ -21,6 +21,7 @@ import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
+import {AppUrls, filterColumns} from "../../../components/helperFunctions";
 
 const getBase64FromServer = (fileUrl) => {
     return new Promise((resolve) => {
@@ -35,7 +36,7 @@ const getBase64FromServer = (fileUrl) => {
 
 
 const ColtanEntryCompletePage = () => {
-    const {permissions: userPermissions} = useSelector(state => state.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
     const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -44,13 +45,22 @@ const ColtanEntryCompletePage = () => {
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [imageAvailable, setImageAvailable] = useState(false);
     const {data, isLoading, isError, isSuccess, error, refetch} =
-        useGetOneColtanEntryQuery({entryId});
+        useGetOneColtanEntryQuery({entryId},
+            {
+                refetchOnMountOrArgChange: true,
+                refetchOnReconnect: true
+            }
+        );
     const [updateColtanEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
     }] = useUpdateColtanEntryMutation();
+
+    useEffect(() => {
+        console.log("re-render")
+    },[])
 
     const [deleteGradeImg, {
         isSuccess: isImageDeleteSuccess,
@@ -120,13 +130,6 @@ const ColtanEntryCompletePage = () => {
 
 
     const props = {
-        // beforeUpload: (file) => {
-        //     const isPNG = file.type === 'image/png';
-        //     if (!isPNG) {
-        //         message.error(`${file.name} is not a png file`);
-        //     }
-        //     return isPNG || Upload.LIST_IGNORE;
-        // },
         onChange: (info) => {
             if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);
@@ -166,6 +169,7 @@ const ColtanEntryCompletePage = () => {
     };
 
     const beforeUpload = (file) => {
+        console.log("before upload");
         const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
         if (!isPNG) {
             message.error(`${file.name} is not a .png or .jpeg file`);
@@ -267,7 +271,6 @@ const ColtanEntryCompletePage = () => {
             title: "Tantal ($)",
             dataIndex: "tantalum",
             key: "tantalum",
-            editTable: true,
             sorter: (a, b) => a.tantalum - b.tantalum,
         },
         gradeImg: {
@@ -280,7 +283,7 @@ const ColtanEntryCompletePage = () => {
                 if (record.gradeImg) {
                     return (
                         <div className="flex items-center">
-                            {record.gradeImg && (<Button icon={<FaImage title="Preview" className="text-lg" onClick={() => handlePreview(record.gradeImg.filePath)}/>}/>)}
+                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
                             {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
                         </div>
                     )
@@ -289,12 +292,12 @@ const ColtanEntryCompletePage = () => {
                         <Upload
                             beforeUpload={beforeUpload}
                             name={record.lotNumber}
-                            action={`http://localhost:5001/api/v1/coltan/${entryId}`}
+                            action={`${AppUrls.server}/coltan/${entryId}`}
                             method="PATCH"
                             {...props}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
-                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
+                            <Button icon={<UploadOutlined/>}/>
                         </Upload>
                     )
                 }
@@ -305,14 +308,12 @@ const ColtanEntryCompletePage = () => {
             title: "price/kg ($)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
-            editTable: true,
             sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
         },
         mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
-            editTable: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         paid: {
@@ -325,7 +326,6 @@ const ColtanEntryCompletePage = () => {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
             key: "USDRate",
-            editTable: true,
             sorter: (a, b) => a.USDRate - b.USDRate,
         },
         rmaFee: {
@@ -362,7 +362,6 @@ const ColtanEntryCompletePage = () => {
             editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
-
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
@@ -372,19 +371,8 @@ const ColtanEntryCompletePage = () => {
 
     ];
 
-    const filterColumns = (restrictedColumns, userPermissions) => {
-        for (const key in restrictedColumns) {
-            if (restrictedColumns.hasOwnProperty(key)) {
-                if (Object.keys(userPermissions).includes(key)) {
-                    if (userPermissions[key].view) {
-                        if (userPermissions[key].edit && `${key}` === !"gradeImg") {
-                            restrictedColumns[key].editTable = true;
-                        }
-                        columns.push(restrictedColumns[key]);
-                    }
-                }
-            }
-        }
+    if (restrictedColumns && userPermissions && columns) {
+        filterColumns(restrictedColumns, userPermissions, columns);
         columns.push({
             title: "status",
             dataIndex: "status",
@@ -498,11 +486,6 @@ const ColtanEntryCompletePage = () => {
                 );
             },
         });
-
-    }
-
-    if (restrictedColumns && userPermissions) {
-        filterColumns(restrictedColumns, userPermissions);
         // for (const key in restrictedColumns) {
         //     if (restrictedColumns.hasOwnProperty(key)) {
         //         columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
@@ -623,6 +606,65 @@ const ColtanEntryCompletePage = () => {
                                                 }}
                                                 dataSource={lotInfo}
                                                 columns={mergedColumns}
+                                                expandable={{
+                                                    expandedRowRender: record => {
+                                                        if (record.shipments) {
+                                                            return (
+                                                                <>
+                                                                    <div className=" space-y-3 w-full">
+                                                                        <p className=" text-lg font-bold">More Details</p>
+                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Exported Amount: {record.exportedAmount}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              RMA Fee decision: {record.rmaFeeDecision}
+                                                                            </p>
+                                                                          </span>
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              paid: {record.paid}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                            <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Payment status: {record.settled}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
+                                                                    </span>
+                                                                        {record.shipments.map((shipment, index) => {
+                                                                            if (!Array.isArray(shipment)) {
+                                                                                return (
+                                                                                    <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
+                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
+                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
+                                                                                </span>
+                                                                                )
+                                                                            }
+                                                                        })}
+                                                                    </div>
+                                                                </>
+                                                            )
+                                                        }
+                                                    },
+                                                    rowExpandable: record => record.shipments.length > 0,
+                                                }}
                                                 components={{
                                                     body: {
                                                         cell: EditableCell,

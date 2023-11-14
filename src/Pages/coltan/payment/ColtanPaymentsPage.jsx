@@ -21,7 +21,10 @@ import { ImSpinner2 } from "react-icons/im";
 
 const ColtanPaymentsPage = () => {
     const { entryId, model, lotNumber} = useParams();
-    const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber});
+    const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()

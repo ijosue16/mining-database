@@ -25,7 +25,10 @@ const LithiumListPage = () => {
   const { loginData } = useMyContext();
   const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
-  useGetAllLithiumEntriesQuery();
+  useGetAllLithiumEntriesQuery("", {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     deleteLithium,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },

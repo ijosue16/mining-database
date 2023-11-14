@@ -17,7 +17,10 @@ import ListModalContainerHeader from "../../components/Listcomponents/ListModalC
 const ShipmentPage = () => {
     const [form] = Form.useForm();
     const {data, isLoading, isSuccess, isError, error} =
-        useGetAllShipmentsQuery();
+        useGetAllShipmentsQuery("", {
+            refetchOnMountOrArgChange: true,
+            refetchOnReconnect: true
+        });
     const [
         createShipmentReport,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},

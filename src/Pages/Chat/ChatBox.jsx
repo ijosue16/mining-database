@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useGetOneUserQuery, useAddMessageMutation, useLazyGetMessagesQuery} from "../../states/apislice";
-// import "./ChatBox.css";
 // import { format } from "timeago";
 import InputEmoji from 'react-input-emoji'
 import {UserOutlined} from "@ant-design/icons";
