@@ -25,7 +25,10 @@ const BerylliumListPage = () => {
   const { loginData } = useMyContext();
   const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
-  useGetAllBerylliumEntriesQuery();
+  useGetAllBerylliumEntriesQuery("", {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     deleteBeryllium,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },

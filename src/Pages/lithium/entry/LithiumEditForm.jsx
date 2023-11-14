@@ -19,7 +19,10 @@ const LithiumEditForm = () => {
   const { entryId } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
-  useGetOneLithiumEntryQuery({ entryId });
+  useGetOneLithiumEntryQuery({ entryId }, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     updateLithiumEntry,
     {

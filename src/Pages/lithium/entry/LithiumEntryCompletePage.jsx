@@ -23,7 +23,10 @@ const LithiumEntryCompletePage = () => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneLithiumEntryQuery({entryId});
+    useGetOneLithiumEntryQuery({entryId}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    });
     const [updateLithiumEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,

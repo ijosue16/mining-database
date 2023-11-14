@@ -12,8 +12,13 @@ import {IoMdAddCircle} from "react-icons/io";
 const Chat = () => {
     const socket = useContext(SocketContext);
 
-    const {userData} = useSelector(state => state.global);
-    const {data, isLoading, isSuccess} = useUserChatsQuery({userId: userData._id});
+    const { userData } = useSelector(state => state.persistedReducer.global);
+    const {data, isLoading, isSuccess} = useUserChatsQuery({userId: userData._id},
+        {
+            refetchOnMountOrArgChange: true,
+            refetchOnReconnect: true
+        }
+    );
     // const [fetchData, setFetchData] = useState(true);
     // const {data:usersData, isSuccess:usersSuccess} = useGetAllUsersQuery("", {skip: fetchData});
     const [chats, setChats] = useState([]);

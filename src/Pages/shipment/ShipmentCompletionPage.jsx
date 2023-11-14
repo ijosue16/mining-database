@@ -30,14 +30,20 @@ const ShipmentCompletionPage = () => {
     isError: isproblem,
     error: problem,
     isSuccess,
-  } = useGetAllBuyersQuery();
+  } = useGetAllBuyersQuery("", {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const {
     data: info,
     isloading: isFetching,
     isError: isFail,
     error: fail,
     isSuccess: isDone,
-  } = useGetOneShipmentQuery(shipmentId);
+  } = useGetOneShipmentQuery(shipmentId, {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
 
   const fileInputRefs = {
     analysisCertificate: useRef(null),

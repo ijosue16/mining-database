@@ -21,7 +21,10 @@ import { toast } from "react-toastify";
 const UsersListPage = () => {
   let dataz = [];
   const { loginData } = useMyContext();
-  const { data, isLoading, isSuccess, isError, error } = useGetAllUsersQuery();
+  const { data, isLoading, isSuccess, isError, error } = useGetAllUsersQuery("", {
+    refetchOnMountOrArgChange: true,
+    refetchOnReconnect: true
+  });
   const [
     deleteUser,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem,error:problem },

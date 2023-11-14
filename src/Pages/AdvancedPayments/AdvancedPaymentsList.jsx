@@ -31,7 +31,10 @@ const AdvancedPaymentsList = () => {
       name: "",
       date: "",
   });
-  const {data,isLoading,isSuccess,isError,error}=useGetAllAdvancePaymentsQuery();
+  const {data,isLoading,isSuccess,isError,error}=useGetAllAdvancePaymentsQuery("", {
+      refetchOnMountOrArgChange: true,
+      refetchOnReconnect: true
+  });
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {
