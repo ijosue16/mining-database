@@ -39,7 +39,7 @@ const LoginPage = () => {
       localStorage.setItem("role", user.role);
       localStorage.setItem("permissions", JSON.stringify(user.permissions));
       socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
-      navigate("/chat")
+      navigate("/chat");
     }
   };
 
