@@ -224,7 +224,7 @@ const InvoiceList = () => {
         table={
             <>
                         <Table
-                className="w-full"
+                className="w-full overflow-x-auto"
                 loading={{
                   indicator: (
                     <ImSpinner2

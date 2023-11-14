@@ -20,7 +20,7 @@ const ReportPage = () => {
  const [personsInterviewedAndRole,setPersonsInterviewedAndRole]=useState([{name:"",role:""}]);
  const [interviewedRepresentative,setInterviewedRepresentative]=useState([{name:"",role:""}]);
  const [selectedReasons, setSelectedReasons] = useState([]);
- const [reportInfo,setReportInfo]=useState({name_of_consultant:'',email_of_consultant:'',purpose_of_visit:'',name_of_processor:"",company_visited:"",company_license_number:"",number_of_minesites:"",number_of_minesites_visited:"",sites_visited:"",number_of_diggers_observations_men:"",number_of_diggers_observations_women:"",number_of_diggers_representative_men:"",number_of_diggers_representative_women:"",number_of_washers_observations_men:"",number_of_washers_observations_women:"",number_of_washers_representative_men:"",number_of_washers_representative_women:"",number_of_transporters:"",number_of_transporters_observations_women:"",number_of_transporters_representative_men:"",number_of_transporters_representative_women:"",number_of_persons_per_team_observations:"",number_of_washers_per_team_observations:"",number_of_transporters_per_team_observations:"",number_of_diggers_per_team_observations:"",number_of_persons_per_team_representative:"",number_of_washers_per_team_representative:"",number_of_transporters_per_team_representative:"",number_of_diggers_per_team_representative:"",do_they_use_temporary_workers_observations:"",number_of_temporary_workers_observations:"",number_of_times_observations:"",do_they_use_temporary_workers_representative:"",number_of_temporary_workers_representative:"",number_of_times_representative:"",equipments_used_observations:"",equipment_used_representative:"",production_per_day_observations:"",production_per_day_representative:"",production_per_day_records:"",number_of_washing_times_observation:"",days_of_mineral_washing_observations:"",number_of_washing_times_representative:"",days_of_mineral_washing_representative:"",number_of_washing_times_records:"",days_of_mineral_washing_records:"",type_of_minerals_observations:"",type_of_minerals_representative:"",type_of_minerals_records:"",});
+ const [reportInfo,setReportInfo]=useState({name_of_consultant:'',email_of_consultant:'',purpose_of_visit:"",name_of_processor:"",company_visited:"",company_license_number:"",number_of_minesites:"",number_of_minesites_visited:"",sites_visited:"",number_of_diggers_observations_men:"",number_of_diggers_observations_women:"",number_of_diggers_representative_men:"",number_of_diggers_representative_women:"",number_of_washers_observations_men:"",number_of_washers_observations_women:"",number_of_washers_representative_men:"",number_of_washers_representative_women:"",number_of_transporters:"",number_of_transporters_observations_women:"",number_of_transporters_representative_men:"",number_of_transporters_representative_women:"",number_of_persons_per_team_observations:"",number_of_washers_per_team_observations:"",number_of_transporters_per_team_observations:"",number_of_diggers_per_team_observations:"",number_of_persons_per_team_representative:"",number_of_washers_per_team_representative:"",number_of_transporters_per_team_representative:"",number_of_diggers_per_team_representative:"",do_they_use_temporary_workers_observations:"",number_of_temporary_workers_observations:"",number_of_times_observations:"",do_they_use_temporary_workers_representative:"",number_of_temporary_workers_representative:"",number_of_times_representative:"",equipments_used_observations:"",equipment_used_representative:"",production_per_day_observations:"",production_per_day_representative:"",production_per_day_records:"",number_of_washing_times_observation:"",days_of_mineral_washing_observations:"",number_of_washing_times_representative:"",days_of_mineral_washing_representative:"",number_of_washing_times_records:"",days_of_mineral_washing_records:"",type_of_minerals_observations:"",type_of_minerals_representative:"",type_of_minerals_records:"",});
 //  
  const [dropdownOpen, setDropdownOpen] = useState(false);
  const [selectedSupplierName, setSelectedSupplierName] = useState(null);
@@ -125,12 +125,18 @@ const handleCheckboxChange = (event) => {
   const isChecked = event.target.checked;
 
   if (isChecked) {
-    setSelectedReasons(selectedReasons + text + '\n');
+    setSelectedReasons((prevReasons) => (prevReasons ? prevReasons + '\n' : '') + text);
   } else {
     const updatedReasons = selectedReasons.replace(text + '\n', '');
     setSelectedReasons(updatedReasons);
   }
+
+  setReportInfo((prev) => ({
+    ...prev,
+    purpose_of_visit: isChecked ? (prev.purpose_of_visit ? prev.purpose_of_visit + '\n' : '') + text : updatedReasons,
+  }));
 };
+
 
 useEffect(() => {
   console.log('Selected Reasons:\n', selectedReasons);
@@ -239,8 +245,9 @@ const AddInterviewedRepresentative=()=>{
 
  const handleFormSubmit=async(e)=>{
   e.preventDefault();
+
   const body={...minesiteInfo,...interviewedRepresentative,...personsInterviewedAndRole,...reportInfo};
-  await GenerateReport({body,supplierId});
+  // await GenerateReport({body,supplierId});
   console.log(body);
  };
 
@@ -1320,6 +1327,66 @@ const AddInterviewedRepresentative=()=>{
                 <ul className=" space-y-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 col-span-full shadow-lg bg-zinc-200 rounded-sm border border-l-[3px] border-l-gray-400 pb-4 ">
                   <p className=" py-1 border-b-2 border-b-gray-300 px-2 text-lg font-semibold col-span-full">
                     Type of mined minerals
+                  </p>
+                  <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r border-r-gray-300">
+                    <p className="col-span-full p-1 font-semibold bg-zinc-300">
+                      Info collected from miners
+                    </p>
+                    <span className="space-y-1 col-span-full">
+                      <p className="pl-1">Type of minerals</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-[4px] w-full border-gray-300"
+                        name="type_of_minerals_observations"
+                        id=""
+                        value={reportInfo.type_of_minerals_observations||""}
+                        onChange={handleFormInput}
+                      />
+                    </span>
+
+                  </li>
+                  <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r border-r-gray-300">
+                    <p className="col-span-full p-1 font-semibold bg-zinc-300">
+                      Info based on mine company representative
+                    </p>
+                    <span className="space-y-1 col-span-full">
+                      <p className="pl-1">Type of minerals</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-[4px] w-full border-gray-300"
+                        name="type_of_minerals_representative"
+                        id=""
+                        value={reportInfo.type_of_minerals_representative||""}
+                        onChange={handleFormInput}
+                      />
+                    </span>
+
+                  </li>
+                  <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r border-r-gray-300">
+                    <p className="col-span-full p-1 font-semibold bg-zinc-300">
+                      Info from company's or cooperative's own records
+                    </p>
+                    <span className="space-y-1 col-span-full">
+                      <p className="pl-1">Type of minerals</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-[4px] w-full border-gray-300"
+                        name="type_of_minerals_records"
+                        id=""
+                        value={reportInfo.type_of_minerals_records||""}
+                        onChange={handleFormInput}
+                      />
+                    </span>
+
+                  </li>
+                </ul>
+                {/* DOES COMPANY KEEP THEIR OWN RECORD */}
+                <ul className=" space-y-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 col-span-full shadow-lg bg-zinc-200 rounded-sm border border-l-[3px] border-l-gray-400 pb-4 ">
+                  <p className=" py-1 border-b-2 border-b-gray-300 px-2 text-lg font-semibold col-span-full">
+                   Company record tracking
                   </p>
                   <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r border-r-gray-300">
                     <p className="col-span-full p-1 font-semibold bg-zinc-300">
