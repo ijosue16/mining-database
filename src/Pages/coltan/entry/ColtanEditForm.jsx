@@ -14,7 +14,7 @@ import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
-import { toCamelCase, toInitialCase} from "../../../components/helperFunctions";
+import { toCamelCase, openNotification} from "../../../components/helperFunctions";
 import Countdown from "react-countdown";
 
 const ColtanEditForm = () => {
@@ -34,8 +34,13 @@ const ColtanEditForm = () => {
     }
   }, [requestId]);
 
-
-  const { data: requestData, isSuccess: isRequestSuccess } = useGetOneEditRequestQuery({ requestId }, {skip: !isRequestAvailable});
+  const { data: requestData, isSuccess: isRequestSuccess } = useGetOneEditRequestQuery({ requestId },
+      {
+        skip: !isRequestAvailable,
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+      }
+  );
   const [updateEditRequest, {
     isSuccess: isUpdateSuccess,
     isError: isUpdateError,
@@ -44,7 +49,11 @@ const ColtanEditForm = () => {
 
 
   const { data, isLoading, isError, error, isSuccess } =
-    useGetOneColtanEntryQuery({ entryId });
+    useGetOneColtanEntryQuery({ entryId },
+        {
+          refetchOnMountOrArgChange: true,
+          refetchOnReconnect: true}
+    );
   const [
     updateColtanEntry,
     {
@@ -96,14 +105,6 @@ const ColtanEditForm = () => {
   const [editableFields, setEditableFields] = useState([]);
   const [requestInfo, setRequestInfo] = useState({});
 
-  const openNotification = ({message, description, type}) => {
-    notification.open({
-      message,
-      description,
-      placement: "topRight",
-      type
-    });
-  };
 
 
   useEffect(() => {
@@ -118,8 +119,6 @@ const ColtanEditForm = () => {
           setEditableFields(editRequest.editableFields);
         }
       }
-    } else {
-      console.log("No request data");
     }
   }, [isRequestSuccess]);
 
@@ -137,7 +136,6 @@ const ColtanEditForm = () => {
       const { data: dt } = data;
       const { entry: entr } = dt;
       // sup = sups;
-      console.log(entr);
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
@@ -167,7 +165,6 @@ const ColtanEditForm = () => {
         setmineTags(mineTags);
         setnegociantTags(negociantTags);
       }
-      console.log(entr.output);
     }
   }, [isSuccess]);
 
@@ -426,7 +423,6 @@ const ColtanEditForm = () => {
       }
     }
     await updateColtanEntry({ entryId, body: requestId ? newBody : body });
-    // console.log(body);
     setFormval({
       weightIn: "",
       companyName: "",
