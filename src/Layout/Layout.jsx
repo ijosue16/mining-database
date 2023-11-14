@@ -103,23 +103,24 @@ const Layout = () => {
         },
         {
             heading: "Contracts", hId: 7, subHeaders: [
-                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts" },
+                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts", line: true, },
                 // { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
                 // { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
-                { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
                 // { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
                 // { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
             ]
         },
-        // {
-        //     heading: "User Management", hId: 8, subHeaders: [
-        //         {
-        //             title: "Manage Users", icon: <PiUsersDuotone />, submenu: true, id: 46, submenuItems: [
-        //                 { title: "New User", id: 47 },
-        //                 { title: "Users List", id: 48 }
-        //             ], line: true
-        //         },]
-        // },
+        {
+            heading: "Finance", hId: 8, subHeaders: [
+                {
+                    title: "Payments", icon: <PiUsersDuotone />, id: 46,navtext:"payments"
+                },
+                {
+                    title: "Advanced Payment", icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment"
+                },
+                { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
+            ]
+        },
         {
             heading: "Settings", hId: 9, subHeaders: [
                 {
