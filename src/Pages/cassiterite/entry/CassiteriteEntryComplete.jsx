@@ -31,6 +31,8 @@ const CassiteriteEntryCompletePage = () => {
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
+    const [decision, setDecision] = useState("");
+
     const {data, isLoading, isError, isSuccess, error} =
     useGetOneCassiteriteEntryQuery({entryId}, {
         refetchOnMountOrArgChange: true,
@@ -66,10 +68,10 @@ const CassiteriteEntryCompletePage = () => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Entry updated successfully");
+            return message.success("Entry updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message :errorMessage} = updateError.data;
+            return message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
@@ -192,6 +194,7 @@ const CassiteriteEntryCompletePage = () => {
 
     const calculatePricePerUnit = (LME, grade, TC) => {
         if (LME && grade && TC) {
+            console.log(LME, grade, TC);
             return (((LME * grade/100) - TC)/1000).toFixed(3);
         }
     }
@@ -207,10 +210,14 @@ const CassiteriteEntryCompletePage = () => {
                 ...row,
                 pricePerUnit: calculatePricePerUnit(row.londonMetalExchange, row.mineralGrade, row.treatmentCharges),
             };
-            updatedItem.mineralPrice = (updatedItem.pricePerUnit * row.weightOut);
+            if (updatedItem.pricePerUnit && updatedItem.weightOut) {
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * updatedItem.weightOut).toFixed(3);
+            }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
+            const body = { output: [updatedItem]};
+            await updateCassiteriteEntry({body, entryId});
         }
     };
     const handleActions = (id) => {
@@ -341,51 +348,6 @@ const CassiteriteEntryCompletePage = () => {
 
     if (restrictedColumns && userPermissions && columns) {
         filterColumns(restrictedColumns, userPermissions, columns);
-        columns.push({
-            title: "status",
-            dataIndex: "status",
-            key: "status",
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            render: (text) => {
-                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color = "";
-                // const value='non-sell agreement'
-                switch (text) {
-                    case "in stock": {
-                        color = "bg-green-500";
-                        break;
-                    }
-                    case "partially exported": {
-                        color = "bg-gradient-to-r from-slate-500 shadow-md";
-                        break;
-                    }
-                    case "fully exported": {
-                        color = "bg-slate-600";
-                        break;
-                    }
-                    case "in progress": {
-                        color = "bg-orange-400";
-                        break;
-                    }
-                    case "rejected": {
-                        color = "bg-red-500";
-                        break;
-                    }
-                    case "non-sell agreement": {
-                        color = "bg-indigo-400";
-                        break;
-                    }
-                    default: {
-                        color = "bg-green-300";
-                    }
-                }
-                return (
-                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
-                        {text}
-                    </p>
-                );
-            },
-        });
         columns.push({
             title: "Action",
             dataIndex: "action",
@@ -569,6 +531,113 @@ const CassiteriteEntryCompletePage = () => {
                                             }}
                                             dataSource={lotInfo}
                                             columns={mergedColumns}
+                                            expandable={{
+                                                expandedRowRender: record => {
+                                                    if (record.shipments) {
+                                                        let color = "";
+                                                        // const value='non-sell agreement'
+                                                        switch (record.status) {
+                                                            case "in stock": {
+                                                                color = "bg-green-500";
+                                                                break;
+                                                            }
+                                                            case "partially exported": {
+                                                                color = "bg-gradient-to-r from-slate-500 shadow-md";
+                                                                break;
+                                                            }
+                                                            case "fully exported": {
+                                                                color = "bg-slate-600";
+                                                                break;
+                                                            }
+                                                            case "in progress": {
+                                                                color = "bg-orange-400";
+                                                                break;
+                                                            }
+                                                            case "rejected": {
+                                                                color = "bg-red-500";
+                                                                break;
+                                                            }
+                                                            case "non-sell agreement": {
+                                                                color = "bg-indigo-400";
+                                                                break;
+                                                            }
+                                                            default: {
+                                                                color = "bg-green-300";
+                                                            }
+                                                        }
+                                                        return (
+                                                            <>
+                                                                <div className=" space-y-3 w-full">
+                                                                    <p className=" text-lg font-bold">More Details</p>
+                                                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Exported Amount: {record.exportedAmount}
+                                                                            </p>
+                                                                            <span className="flex">
+                                                                                <p className="text-md font-semibold">
+                                                                                    RMA Fee decision
+                                                                                </p>
+                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
+                                                                                    setDecision(e.target.value);
+                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
+                                                                                    const body = {output: [lot]};
+                                                                                    await updateCassiteriteEntry({body, entryId});
+                                                                                }}>
+                                                                                  <option value="pending">Pending</option>
+                                                                                  <option value="collected">Collected</option>
+                                                                                  <option value="exempted">Exempted</option>
+                                                                                </select>
+                                                                            </span>
+                                                                          </span>
+                                                                        <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              paid: {record.paid}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                        <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Payment status: {record.settled}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                        <span className=" space-y-2">
+                                                                              <p className={"text-md font-semibold"}>
+                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
+                                                                              </p>
+                                                                          </span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
+                                                                    </span>
+                                                                    {record.shipments.map((shipment, index) => {
+                                                                        if (!Array.isArray(shipment)) {
+                                                                            return (
+                                                                                <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
+                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
+                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
+                                                                                </span>
+                                                                            )
+                                                                        }
+                                                                    })}
+                                                                </div>
+                                                            </>
+                                                        )
+                                                    }
+                                                },
+                                                rowExpandable: record => record,
+                                            }}
                                             components={{
                                                 body: {
                                                     cell: EditableCell,

@@ -207,6 +207,21 @@ const WolframiteListPage = () => {
       key: "weightIn",
       sorter: (a, b) => a.weightIn - b.weightIn,
     },
+    {
+      title: "Balance",
+      dataIndex: "cumulativeAmount",
+      key: "cumulativeAmount",
+      sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+      render: (_, record) => {
+        if (record.output) {
+          let sum = 0;
+          record.output.forEach((item) => {
+            sum += item.cumulativeAmount;
+          });
+          return <p>{sum}</p>;
+        }
+      }
+    },
 
     {
       title: "Action",

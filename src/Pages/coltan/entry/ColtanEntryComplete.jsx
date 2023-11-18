@@ -44,6 +44,7 @@ const ColtanEntryCompletePage = () => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [imageAvailable, setImageAvailable] = useState(false);
+    const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error, refetch} =
         useGetOneColtanEntryQuery({entryId},
             {
@@ -85,10 +86,10 @@ const ColtanEntryCompletePage = () => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Entry updated successfully");
+            return message.success("Entry updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message: errorMessage} = updateError.data;
+            return message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
@@ -309,12 +310,22 @@ const ColtanEntryCompletePage = () => {
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
             sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            render: (_, record) => {
+                if (record.pricePerUnit) {
+                    return <span>{record.pricePerUnit.toFixed(3)}</span>
+                }
+            }
         },
         mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
+            render: (_, record) => {
+                if (record.mineralPrice) {
+                    return <span>{record.mineralPrice.toFixed(3)}</span>
+                }
+            }
         },
         paid: {
             title: "paid ($)",
@@ -373,51 +384,6 @@ const ColtanEntryCompletePage = () => {
 
     if (restrictedColumns && userPermissions && columns) {
         filterColumns(restrictedColumns, userPermissions, columns);
-        columns.push({
-            title: "status",
-            dataIndex: "status",
-            key: "status",
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            render: (text) => {
-                // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-                let color = "";
-                // const value='non-sell agreement'
-                switch (text) {
-                    case "in stock": {
-                        color = "bg-green-500";
-                        break;
-                    }
-                    case "partially exported": {
-                        color = "bg-gradient-to-r from-slate-500 shadow-md";
-                        break;
-                    }
-                    case "fully exported": {
-                        color = "bg-slate-600";
-                        break;
-                    }
-                    case "in progress": {
-                        color = "bg-orange-400";
-                        break;
-                    }
-                    case "rejected": {
-                        color = "bg-red-500";
-                        break;
-                    }
-                    case "non-sell agreement": {
-                        color = "bg-indigo-400";
-                        break;
-                    }
-                    default: {
-                        color = "bg-green-300";
-                    }
-                }
-                return (
-                    <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>
-                        {text}
-                    </p>
-                );
-            },
-        });
         columns.push({
             title: "Action",
             dataIndex: "action",
@@ -609,6 +575,37 @@ const ColtanEntryCompletePage = () => {
                                                 expandable={{
                                                     expandedRowRender: record => {
                                                         if (record.shipments) {
+                                                            let color = "";
+                                                            // const value='non-sell agreement'
+                                                            switch (record.status) {
+                                                                case "in stock": {
+                                                                    color = "bg-green-500";
+                                                                    break;
+                                                                }
+                                                                case "partially exported": {
+                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
+                                                                    break;
+                                                                }
+                                                                case "fully exported": {
+                                                                    color = "bg-slate-600";
+                                                                    break;
+                                                                }
+                                                                case "in progress": {
+                                                                    color = "bg-orange-400";
+                                                                    break;
+                                                                }
+                                                                case "rejected": {
+                                                                    color = "bg-red-500";
+                                                                    break;
+                                                                }
+                                                                case "non-sell agreement": {
+                                                                    color = "bg-indigo-400";
+                                                                    break;
+                                                                }
+                                                                default: {
+                                                                    color = "bg-green-300";
+                                                                }
+                                                            }
                                                             return (
                                                                 <>
                                                                     <div className=" space-y-3 w-full">
@@ -618,9 +615,21 @@ const ColtanEntryCompletePage = () => {
                                                                             <p className="text-md font-semibold">
                                                                               Exported Amount: {record.exportedAmount}
                                                                             </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              RMA Fee decision: {record.rmaFeeDecision}
-                                                                            </p>
+                                                                            <span className="flex">
+                                                                                <p className="text-md font-semibold">
+                                                                                    RMA Fee decision
+                                                                                </p>
+                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
+                                                                                    setDecision(e.target.value);
+                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
+                                                                                    const body = {output: [lot]};
+                                                                                    await updateColtanEntry({body, entryId});
+                                                                                }}>
+                                                                                  <option value="pending">Pending</option>
+                                                                                  <option value="collected">Collected</option>
+                                                                                  <option value="exempted">Exempted</option>
+                                                                                </select>
+                                                                            </span>
                                                                           </span>
                                                                           <span className=" space-y-2">
                                                                             <p className="text-md font-semibold">
@@ -630,13 +639,18 @@ const ColtanEntryCompletePage = () => {
                                                                               Unpaid: {record.unpaid}
                                                                             </p>
                                                                           </span>
-                                                                            <span className=" space-y-2">
+                                                                          <span className=" space-y-2">
                                                                             <p className="text-md font-semibold">
                                                                               Payment status: {record.settled}
                                                                             </p>
                                                                             <p className="text-md font-semibold">
                                                                               Unpaid: {record.unpaid}
                                                                             </p>
+                                                                          </span>
+                                                                          <span className=" space-y-2">
+                                                                              <p className={"text-md font-semibold"}>
+                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
+                                                                              </p>
                                                                           </span>
                                                                         </div>
                                                                     </div>
@@ -663,7 +677,7 @@ const ColtanEntryCompletePage = () => {
                                                             )
                                                         }
                                                     },
-                                                    rowExpandable: record => record.shipments.length > 0,
+                                                    rowExpandable: record => record,
                                                 }}
                                                 components={{
                                                     body: {
