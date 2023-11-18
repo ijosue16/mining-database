@@ -7,6 +7,8 @@ import ChatBox from "./ChatBox";
 import {SocketContext} from "../../context files/socket";
 import {GrAddCircle} from "react-icons/gr";
 import {IoMdAddCircle} from "react-icons/io";
+import { FiEdit } from "react-icons/fi";
+import { IoFilterOutline } from "react-icons/io5";
 
 // const socket = io.connect("http://localhost:5001");
 const Chat = () => {
@@ -84,9 +86,22 @@ const Chat = () => {
 
 
     return (
-        <div className="flex h-full">
+        <>
+        <div className="flex h-full space-y-3">
             {/*CHATTING*/}
-            <div className="w-1/4 bg-zinc-50 overflow-y-hidden rounded-[4px] rounded-tr-none rounded-br-none border-r border-gray-200 ">
+
+            <div className="w-1/4 bg-zinc-50 overflow-y-hidden rounded-[4px] p-2 rounded-tr-none rounded-br-none border-r border-gray-200 ">
+            <div className="add chatt flex justify-between items-center p-2">
+          <p className=" font-bold text-xl">Chats</p>
+          <div className="flex justify-end items-center">
+            <span className=" p-4 hover:bg-gray-300 rounded-md">
+              <FiEdit />
+            </span>
+            <span className=" p-4 hover:bg-gray-300 rounded-md">
+              <IoFilterOutline />
+            </span>
+          </div>
+        </div>
                 {/*<div className="flex justify-end">*/}
                 {/*    <IoMdAddCircle className="text-3xl" style={{marginRight: "0.2rem", marginTop: "0.2rem"}} color={"#1816dc"} size={35} onClick={fetchUsers}/>*/}
                 {/*</div>*/}
@@ -100,6 +115,7 @@ const Chat = () => {
                 <ChatBox chat={currentChat} currentUser={userData._id}  setSendMessage={setSendMessage} receivedMessage={receiveMessage}/>
             </div>
         </div>
+        </> 
     )
 }
 
