@@ -20,8 +20,8 @@ const LoginPage = () => {
     if (isSuccess) {
       toast.success("Logged in Successfully");
     } else if (isError) {
-      const { message } = error.data;
-      toast.error(message);
+      // const { message } = error.data;
+      // toast.error(message);
     }
   }, [isSuccess, isError, error]);
 

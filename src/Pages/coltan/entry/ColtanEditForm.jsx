@@ -89,10 +89,10 @@ const ColtanEditForm = () => {
     { lotNumber: "", weightOut: "" },
   ]);
   const [mineTags, setmineTags] = useState([
-    { weightInPerMineTag: "", tagNumber: "", status: "" },
+    { weight: "", tagNumber: "", status: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
-    { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
+    { weight: "", tagNumber: "", status: "" },
   ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
@@ -300,7 +300,7 @@ const ColtanEditForm = () => {
   const handleAddMinesTag = () => {
     setmineTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weightInPerMineTag: "", tagNumber: "", status: "" },
+      { weight: "", tagNumber: "", status: "" },
     ]);
     updateLotNumbers();
   };
@@ -346,7 +346,7 @@ const ColtanEditForm = () => {
   const handleAddNegociantTags = () => {
     setnegociantTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
+      { weight: "", tagNumber: "", status: "" },
     ]);
     updateLotNumbers();
   };
@@ -446,9 +446,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
     setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
+      { weight: "", tagNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -476,9 +476,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
     setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
+      { weight: "", tagNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -822,10 +822,10 @@ const ColtanEditForm = () => {
                           <p className="mb-1">Tag weight</p>
                           <input
                             type="text"
-                            name="weightInPerMineTag"
+                            name="weight"
                             autoComplete="off"
                             className="focus:outline-none p-2 border rounded-lg w-full"
-                            value={tag.weightInPerMineTag || ""}
+                            value={tag.weight || ""}
                             onWheelCapture={(e) => {
                               e.target.blur();
                             }}
@@ -897,10 +897,10 @@ const ColtanEditForm = () => {
                           <p className="mb-1">Weight out</p>
                           <input
                             type="text"
-                            name="weightOutPerNegociantTag"
+                            name="weight"
                             autoComplete="off"
                             className="focus:outline-none p-2 border rounded-lg w-full"
-                            value={tag.weightOutPerNegociantTag || ""}
+                            value={tag.weight || ""}
                             onWheelCapture={(e) => {
                               e.target.blur();
                             }}
