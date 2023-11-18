@@ -15,6 +15,7 @@ import { BsCardList } from "react-icons/bs";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { FaFileAlt } from "react-icons/fa";
+import { FaFileInvoiceDollar } from "react-icons/fa";
 import ListContainer from "../components/Listcomponents/ListContainer";
 import {
   useGetAllSuppliersQuery,
@@ -192,7 +193,7 @@ const SuppliersListPage = () => {
                         }
                       }}
                     >
-                      <FaFileAlt className=" text-xl" />
+                      <FaFileInvoiceDollar className=" text-xl" />
                       <p>Make invoice</p>
                     </li>
                     <li

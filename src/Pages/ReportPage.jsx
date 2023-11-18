@@ -1,5 +1,6 @@
 import React, { useState,useRef,useEffect } from "react";
 import { DatePicker } from "antd";
+import dayjs from "dayjs";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { BsChevronDown } from "react-icons/bs";
@@ -20,7 +21,7 @@ const ReportPage = () => {
  const [personsInterviewedAndRole,setPersonsInterviewedAndRole]=useState([{name:"",role:""}]);
  const [interviewedRepresentative,setInterviewedRepresentative]=useState([{name:"",role:""}]);
  const [selectedReasons, setSelectedReasons] = useState([]);
- const [reportInfo,setReportInfo]=useState({name_of_consultant:'',email_of_consultant:'',purpose_of_visit:"",name_of_processor:"",company_visited:"",company_license_number:"",number_of_minesites:"",number_of_minesites_visited:"",sites_visited:"",number_of_diggers_observations_men:"",number_of_diggers_observations_women:"",number_of_diggers_representative_men:"",number_of_diggers_representative_women:"",number_of_washers_observations_men:"",number_of_washers_observations_women:"",number_of_washers_representative_men:"",number_of_washers_representative_women:"",number_of_transporters:"",number_of_transporters_observations_women:"",number_of_transporters_representative_men:"",number_of_transporters_representative_women:"",number_of_persons_per_team_observations:"",number_of_washers_per_team_observations:"",number_of_transporters_per_team_observations:"",number_of_diggers_per_team_observations:"",number_of_persons_per_team_representative:"",number_of_washers_per_team_representative:"",number_of_transporters_per_team_representative:"",number_of_diggers_per_team_representative:"",do_they_use_temporary_workers_observations:"",number_of_temporary_workers_observations:"",number_of_times_observations:"",do_they_use_temporary_workers_representative:"",number_of_temporary_workers_representative:"",number_of_times_representative:"",equipments_used_observations:"",equipment_used_representative:"",production_per_day_observations:"",production_per_day_representative:"",production_per_day_records:"",number_of_washing_times_observation:"",days_of_mineral_washing_observations:"",number_of_washing_times_representative:"",days_of_mineral_washing_representative:"",number_of_washing_times_records:"",days_of_mineral_washing_records:"",type_of_minerals_observations:"",type_of_minerals_representative:"",type_of_minerals_records:"",});
+ const [reportInfo,setReportInfo]=useState({name_of_consultant:'',email_of_consultant:'',purpose_of_visit:"",when_training:"",name_of_processor:"",company_visited:"",company_license_number:"",number_of_minesites:"",number_of_minesites_visited:"",sites_visited:"",number_of_diggers_observations_men:"",number_of_diggers_observations_women:"",number_of_diggers_representative_men:"",number_of_diggers_representative_women:"",number_of_washers_observations_men:"",number_of_washers_observations_women:"",number_of_washers_representative_men:"",number_of_washers_representative_women:"",number_of_transporters:"",number_of_transporters_observations_women:"",number_of_transporters_representative_men:"",number_of_transporters_representative_women:"",number_of_persons_per_team_observations:"",number_of_washers_per_team_observations:"",number_of_transporters_per_team_observations:"",number_of_diggers_per_team_observations:"",number_of_persons_per_team_representative:"",number_of_washers_per_team_representative:"",number_of_transporters_per_team_representative:"",number_of_diggers_per_team_representative:"",do_they_use_temporary_workers_observations:"",number_of_temporary_workers_observations:"",number_of_times_observations:"",do_they_use_temporary_workers_representative:"",number_of_temporary_workers_representative:"",number_of_times_representative:"",equipments_used_observations:"",equipment_used_representative:"",production_per_day_observations:"",production_per_day_representative:"",production_per_day_records:"",number_of_washing_times_observations:"",days_of_mineral_washing_observations:"",number_of_washing_times_representative:"",days_of_mineral_washing_representative:"",number_of_washing_times_records:"",days_of_mineral_washing_records:"",type_of_minerals_observations:"",type_of_minerals_representative:"",type_of_minerals_records:"",list_of_persons_interviewed_and_role:null});
 //  
  const [dropdownOpen, setDropdownOpen] = useState(false);
  const [selectedSupplierName, setSelectedSupplierName] = useState(null);
@@ -175,6 +176,21 @@ const handleSupplierSiteSelect = (supplier, index) => {
  const handleSearchSiteInputChange = (e) => {
   setSearchText(e.target.value);
 };
+
+const handleAddDate = (e) => {
+  setReportInfo((prevState) => ({
+    ...prevState,
+    date_of_report: dayjs(e).format("MMM/DD/YYYY"),
+  }));
+};
+
+const handleAddTrainingDate = (e) => {
+  setReportInfo((prevState) => ({
+    ...prevState,
+    when_training: dayjs(e).format("MMM/DD/YYYY"),
+  }));
+};
+
 // 
 
 const handleFormInput = (e) => {
@@ -242,12 +258,18 @@ const AddInterviewedRepresentative=()=>{
   values[index][e.target.name] = e.target.value;
   setMinesiteInfo(values);
  };
+ const updateRoleList = (newList) => {
+  setReportInfo(prevState => ({
+    ...prevState,
+    list_of_persons_interviewed_and_role: newList
+  }));
+};
 
  const handleFormSubmit=async(e)=>{
   e.preventDefault();
-
-  const body={...minesiteInfo,...interviewedRepresentative,...personsInterviewedAndRole,...reportInfo};
-  // await GenerateReport({body,supplierId});
+  updateRoleList(personsInterviewedAndRole);
+  const body={...minesiteInfo,...interviewedRepresentative,...reportInfo};
+  await GenerateReport({body,supplierId});
   console.log(body);
  };
 
@@ -297,23 +319,25 @@ const AddInterviewedRepresentative=()=>{
             <li className=" space-y-1">
               <p className="pl-1">Date of report</p>
               <DatePicker
+              onChange={handleAddDate}
                 id=""
                 name="date_of_report"
                 className="focus:outline-none p-2 border  rounded-[4px] w-full"
               />
             </li>
             <li className=" space-y-1">
-              <p className="pl-1">Is trained (todo)</p>
+              <p className="pl-1">Is individual trained </p>
               <input
                         type="checkbox"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-[4px]  border-gray-300"
-                        name="s_person_trained"
+                        name="is_person_trained"
                         id=""
                         onChange={handleFormInput}
                       />
 
               <DatePicker
+              onChange={handleAddTrainingDate}
                 id=""
                 name="when_training"
                 className="focus:outline-none p-2 border  rounded-[4px] w-full"
@@ -458,6 +482,7 @@ const AddInterviewedRepresentative=()=>{
               <p className="pl-1">Last visit date and sites</p>
               <div className="w-full grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <DatePicker
+                // onChange={handleLastvisitDate}
                   id=""
                   name="date_of_last_visit"
                   className="focus:outline-none p-2 border  rounded-[4px] w-full z-0"
@@ -932,7 +957,7 @@ const AddInterviewedRepresentative=()=>{
                   <p className=" py-1 border-b-2 border-b-gray-300 px-2 text-lg font-semibold col-span-full">
                     Number of teams
                   </p>
-                  <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r border-r-gray-300">
+                  <li className="space-y-1 pt-2 px-2 grid grid-cols-1 md:grid-cols-2 gap-2 border-r items-center border-r-gray-300">
                     <p className="col-span-full p-1 font-semibold bg-zinc-300">
                       Info based on owns observation at the site
                     </p>
@@ -1248,7 +1273,7 @@ const AddInterviewedRepresentative=()=>{
                         className="focus:outline-none p-2 border rounded-[4px] w-full border-gray-300"
                         name="number_of_washing_times_observation"
                         id=""
-                        value={reportInfo.number_of_washing_times_observation||""}
+                        value={reportInfo.number_of_washing_times_observations||""}  
                         onChange={handleFormInput}
                       />
                     </span>
@@ -1542,7 +1567,7 @@ const AddInterviewedRepresentative=()=>{
             </li>
           </ul> */}
           <div className="flex gap-1 items-center" >
-            <button className="p-2 bg-orange-200 rounded-md w-fit" onClick={handleFormSubmit}>Submit</button> 
+           {isGenerating? <button className="p-2 bg-orange-100 rounded-md w-fit" >Sending</button> :<button className="p-2 bg-orange-200 rounded-md w-fit" onClick={handleFormSubmit}>Submit</button> }
             <button className="p-2 bg-blue-200 rounded-md w-fit">Cancel</button> 
           </div>
         </div>
