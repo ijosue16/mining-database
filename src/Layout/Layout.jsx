@@ -27,16 +27,16 @@ const Layout = () => {
 
     const menu = [
         {
-            // heading: "Main", hId: 1, subHeaders: [
-            //     { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10 },
-            //     {
-            //         title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
-            //         submenuItems: [
-            //             { title: "Chat", id: 12 },
-            //             { title: "Calender", id: 13 },
-            //             { title: "Email", id: 14 }], line: true
-            //     }
-            // ]
+            heading: "Main", hId: 1, subHeaders: [
+                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10 },
+                {
+                    title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
+                    submenuItems: [
+                        { title: "Chat", id: 12,navtext:'chat' },
+                        { title: "Calender", id: 13 },
+                        { title: "Email", id: 14 }], line: true
+                }
+            ]
         },
         {
             heading: "Entry", hId:2 , subHeaders: [
