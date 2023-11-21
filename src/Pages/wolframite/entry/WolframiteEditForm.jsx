@@ -862,8 +862,8 @@ const WolframiteEditForm = () => {
                             <option value="defaultstatus" hidden>
                               {tag.status ? `${tag.status}` : "status"}
                             </option>
-                            <option value="inStock">In stock</option>
-                            <option value="exported">Exported</option>
+                            <option value="in store">In Stock</option>
+                            <option value="out of store">Out of Store</option>
                           </select>
                         </li>
                       </ul>

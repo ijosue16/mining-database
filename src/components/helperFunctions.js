@@ -40,7 +40,7 @@ export function filterColumns (restrictedColumns, userPermissions, columns) {
         if (restrictedColumns.hasOwnProperty(key)) {
             if (Object.keys(userPermissions).includes(key)) {
                 if (userPermissions[key].view) {
-                    if (userPermissions[key].edit && `${key}` !== "gradeImg") {
+                    if (userPermissions[key].edit && !["gradeImg", "mineralPrice", "pricePerUnit"].includes(`${key}`)) {
                         restrictedColumns[key].editTable = true;
                     }
                     columns.push(restrictedColumns[key]);
@@ -60,5 +60,5 @@ export function openNotification  ({message, description, type}) {
 }
 
 export const AppUrls = {
-    server: "https://mining-company-management-system.onrender.com/api/v1",
+    server: "http://localhost:5001/api/v1",
 }

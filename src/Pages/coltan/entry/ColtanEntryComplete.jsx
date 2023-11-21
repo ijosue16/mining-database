@@ -21,23 +21,23 @@ import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
-import {AppUrls, filterColumns} from "../../../components/helperFunctions";
+import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
 
-const getBase64FromServer = (fileUrl) => {
-    return new Promise((resolve) => {
-        const img = new Image();
-        img.src = fileUrl;
-        img.onload = () => {
-            resolve(fileUrl);
-        };
-    });
-};
+// const getBase64FromServer = (fileUrl) => {
+//     return new Promise((resolve) => {
+//         const img = new Image();
+//         img.src = fileUrl;
+//         img.onload = () => {
+//             resolve(fileUrl);
+//         };
+//     });
+// };
 
 
 
-const ColtanEntryCompletePage = () => {
+const ColtanEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
-    const {entryId} = useParams();
+    // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
@@ -59,9 +59,6 @@ const ColtanEntryCompletePage = () => {
         error: updateError
     }] = useUpdateColtanEntryMutation();
 
-    useEffect(() => {
-        console.log("re-render")
-    },[])
 
     const [deleteGradeImg, {
         isSuccess: isImageDeleteSuccess,
@@ -236,7 +233,7 @@ const ColtanEntryCompletePage = () => {
     };
     const calculatePricePerUnit = (tantal, grade) => {
         if (tantal && grade) {
-            return (tantal * grade).toFixed(3);
+            return (tantal * grade);
         }
     }
     const save = async (key) => {
@@ -248,12 +245,43 @@ const ColtanEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                pricePerUnit: calculatePricePerUnit(row.tantalum, row.mineralGrade),
             };
-            updatedItem.mineralPrice = (updatedItem.pricePerUnit * row.weightOut).toFixed(3);
+            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
+                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+                    return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
+                }
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                    return message.error("Non Sell Agreement Amount cannot be empty", 5);
+
+                updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
+                if (updatedItem.cumulativeAmount < 0) {
+                    updatedItem.cumulativeAmount = 0;
+                }
+            }
+            if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+                    return message.error("Mineral Grade cannot be empty or zero", 5);
+            }
+            if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+                if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+                    return message.error("USD rate cannot be empty or zero", 5);
+            }
+            if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be empty or zero", 5);
+            if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
+            if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+                if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
+                    return message.error("Tantal cannot be empty or zero", 5);
+            }
+            if (Boolean(updatedItem.tantalum) === true && Boolean(updatedItem.mineralGrade) === true && parseFloat(updatedItem.mineralGrade) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3);
+            }
+            if (Boolean(updatedItem.pricePerUnit) === true)
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount))).toFixed(3);
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
+            const body = { output: [updatedItem]};
+            await updateColtanEntry({body, entryId});
         }
     };
     const handleActions = (id) => {
@@ -312,7 +340,7 @@ const ColtanEntryCompletePage = () => {
             sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
             render: (_, record) => {
                 if (record.pricePerUnit) {
-                    return <span>{record.pricePerUnit.toFixed(3)}</span>
+                    return <span>{Number(record.pricePerUnit).toFixed(3)}</span>
                 }
             }
         },
@@ -323,7 +351,7 @@ const ColtanEntryCompletePage = () => {
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
             render: (_, record) => {
                 if (record.mineralPrice) {
-                    return <span>{record.mineralPrice.toFixed(3)}</span>
+                    return <span>{Number(record.mineralPrice).toFixed(3)}</span>
                 }
             }
         },
@@ -370,7 +398,7 @@ const ColtanEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-            editTable: true,
+            // editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
@@ -378,6 +406,13 @@ const ColtanEntryCompletePage = () => {
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        },
+        {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreementAmount",
+            key: "nonSellAgreementAmount",
+            editTable: true,
+            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
         },
 
     ];
@@ -417,7 +452,7 @@ const ColtanEntryCompletePage = () => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
-                              {permissions.payments.create ? (
+                              {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                       onClick={() => {
@@ -485,11 +520,7 @@ const ColtanEntryCompletePage = () => {
         const input = (
             <Input
                 style={{margin: 0}}
-                type={
-                    dataIndex === "weightOut" || dataIndex === "rmaFee"
-                        ? "number"
-                        : "text"
-                }
+                type={"number"}
             />
         );
         return (
@@ -510,57 +541,57 @@ const ColtanEntryCompletePage = () => {
                 <FetchingPage/>
             ) : (
                 <ActionsPagesContainer
-                    title={"Coltan Details"}
-                    subTitle={"View Coltan detailes"}
+                    title={"LOT DETAILS"}
+                    // subTitle={"View Coltan detailes"}
                     actionsContainer={
                         <AddComponent
                             component={
                                 <>
-                                    {isLoading ? (
-                                        <div className="flex h-32 w-full items-center justify-center bg-white">
-                                            <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col gap-6 w-full">
-                                            <div
-                                                className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                                                <p className=" font-semibold text-lg">Entry details</p>
-                                            </div>
+                                    {/*{isLoading ? (*/}
+                                    {/*    <div className="flex h-32 w-full items-center justify-center bg-white">*/}
+                                    {/*        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>*/}
+                                    {/*    </div>*/}
+                                    {/*) : (*/}
+                                    {/*    <div className="flex flex-col gap-6 w-full">*/}
+                                    {/*        <div*/}
+                                    {/*            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                    {/*            <p className=" font-semibold text-lg">Entry details</p>*/}
+                                    {/*        </div>*/}
 
-                                            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
-                                                <li>
-                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                        Entry details
-                                                    </p>
-                                                    <p>Weight in: {suply?.weightIn}</p>
-                                                    <p>Mineral type: {suply?.mineralType}</p>
-                                                    {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                                    <p>Number of tags: {suply?.numberOfTags}</p>
-                                                    <p>Beneficiary: {suply?.beneficiary}</p>
-                                                </li>
-                                                <li>
-                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                        Company info
-                                                    </p>
-                                                    <p>Name: {suply?.companyName}</p>
-                                                    <p>Email: {suply.email}</p>
-                                                    <p>TIN Number: {suply.TINNumber}</p>
-                                                    <p className=" shrink">
-                                                        License Number: {suply.licenseNumber}
-                                                    </p>
-                                                </li>
-                                                <li>
-                                                    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                        Representative info
-                                                    </p>
-                                                    <p>Phone number: {suply.representativePhoneNumber}</p>
-                                                    <p>ID: {suply.representativeId}</p>
-                                                    {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                                                </li>
+                                    {/*        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Entry details*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Weight in: {suply?.weightIn}</p>*/}
+                                    {/*                <p>Mineral type: {suply?.mineralType}</p>*/}
+                                    {/*                /!* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> *!/*/}
+                                    {/*                <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                    {/*                <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Company info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Name: {suply?.companyName}</p>*/}
+                                    {/*                <p>Email: {suply.email}</p>*/}
+                                    {/*                <p>TIN Number: {suply.TINNumber}</p>*/}
+                                    {/*                <p className=" shrink">*/}
+                                    {/*                    License Number: {suply.licenseNumber}*/}
+                                    {/*                </p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Representative info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                    {/*                <p>ID: {suply.representativeId}</p>*/}
+                                    {/*                /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                    {/*            </li>*/}
 
-                                            </ul>
-                                        </div>
-                                    )}
+                                    {/*        </ul>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
                                     <div className="w-full">
                                         <Form form={form} component={false}>
                                             <Table

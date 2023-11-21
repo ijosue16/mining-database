@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
-import {DatePicker, TimePicker, Spin, notification} from "antd";
+import {DatePicker, TimePicker, message, Spin, notification} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
@@ -63,6 +63,15 @@ const ColtanEditForm = () => {
       isSuccess: isDone,
     },
   ] = useUpdateColtanEntryMutation();
+
+  useEffect(() => {
+    if (isDone) {
+      return message.success("Coltan entry updated successfully");
+    } else if (isFail) {
+      const { message: errorMessage } = failError.data;
+      return message.error(errorMessage);
+    }
+  }, [isDone, isFail]);
   const [formval, setFormval] = useState({
     weightIn: "",
     companyName: "",
@@ -89,10 +98,10 @@ const ColtanEditForm = () => {
     { lotNumber: "", weightOut: "" },
   ]);
   const [mineTags, setmineTags] = useState([
-    { weight: "", tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", status: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
-    { weight: "", tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", status: "" },
   ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
@@ -135,6 +144,7 @@ const ColtanEditForm = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
+      console.log("Here is the entry: ", entr);
       // sup = sups;
       setFormval({
         ...formval,
@@ -158,7 +168,7 @@ const ColtanEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      if (entr.mineTags.length > 0 && entr.negociantTags.length > 0) {
+      if (entr.mineTags.length > 0 || entr.negociantTags.length > 0) {
         setmineTags(entr.mineTags);
         setnegociantTags(entr.negociantTags);
       } else {
@@ -300,7 +310,7 @@ const ColtanEditForm = () => {
   const handleAddMinesTag = () => {
     setmineTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", status: "" },
     ]);
     updateLotNumbers();
   };
@@ -446,9 +456,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -476,9 +486,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -858,8 +868,8 @@ const ColtanEditForm = () => {
                             <option value="defaultstatus" hidden>
                               {tag.status ? `${tag.status}` : "status"}
                             </option>
-                            <option value="inStock">In stock</option>
-                            <option value="exported">Exported</option>
+                            <option value="in store">In Store</option>
+                            <option value="out of store">Out of Store</option>
                           </select>
                         </li>
                       </ul>

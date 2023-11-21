@@ -23,9 +23,11 @@ import {useSelector} from "react-redux";
 import {SocketContext} from "../../context files/socket";
 import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
 import {FiEdit} from "react-icons/fi";
+import WolframiteEntryCompletePage from "./entry/WolframiteEntryCompletePage";
 
 const WolframiteListPage = () => {
   const {userData} = useSelector(state => state.persistedReducer.global);
+  const { permissions: userPermissions } = userData;
   const socket = useContext(SocketContext);
   const [createEditRequest, {
     isLoading: isCreateRequestLoading,
@@ -35,7 +37,7 @@ const WolframiteListPage = () => {
   }] = useCreateEditRequestMutation();
   let dataz = [];
   const { loginData } = useMyContext();
-  const{profile,permissions}=loginData;
+  // const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
   useGetAllWolframiteEntriesQuery("", {
     refetchOnMountOrArgChange: true,
@@ -256,7 +258,7 @@ const WolframiteListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {permissions.entry.edit ? (
+                      {userPermissions.entry?.edit ? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -291,7 +293,7 @@ const WolframiteListPage = () => {
                 </span>
               </span>
 
-              {permissions.entry.delete ? (
+              {userPermissions.entry?.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -308,7 +310,7 @@ const WolframiteListPage = () => {
                 </span>
               ) : null}
 
-              {!userData.permissions.entry.edit &&
+              {userPermissions.entry?.edit &&
               <span>
                   <FiEdit
                       className="text-lg"
@@ -340,7 +342,7 @@ const WolframiteListPage = () => {
         subTitle={"Manage your wolframite  entries"}
         navLinktext={"entry/add/wolframite"}
         navtext={"Add new Entry"}
-        isAllowed={permissions.entry.create}
+        isAllowed={userPermissions.entry?.create}
         table={
           <>
             <Modal
@@ -451,6 +453,10 @@ const WolframiteListPage = () => {
                 }}
                 dataSource={dataz}
                 columns={columns}
+                expandable={{
+                  expandedRowRender: record1 => <WolframiteEntryCompletePage entryId={record1._id}/>,
+                  rowExpandable: record1 => record1.output?.length > 0,
+                }}
                 rowKey="_id"
               />
             </div>

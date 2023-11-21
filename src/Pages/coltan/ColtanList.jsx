@@ -1,6 +1,7 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import {Checkbox, message, Modal, Table} from "antd";
+import isBetween from "dayjs/plugin/isBetween"
+import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
 import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
 import {useMyContext} from "../../context files/LoginDatacontextProvider";
@@ -21,13 +22,18 @@ import {FiEdit} from "react-icons/fi";
 import {useSelector} from "react-redux";
 import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
 import {SocketContext} from "../../context files/socket";
+import {GiGiftOfKnowledge} from "react-icons/gi";
+dayjs.extend(isBetween);
+import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
+
 
 const ColtanListPage = () => {
     const {userData} = useSelector(state => state.persistedReducer.global);
     const socket = useContext(SocketContext);
-    let dataz = [];
+    const [dataz, setDataz] = useState([]);
     const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
+    const {permissions} = userData;
+    // const {profile, permissions} = loginData;
     const [createEditRequest, {
         isLoading: isCreateRequestLoading,
         isSuccess: isCreateRequestSuccess,
@@ -71,11 +77,15 @@ const ColtanListPage = () => {
         };
     }, []);
 
-    if (isSuccess) {
-        const {data: dt} = data;
-        const {entries: entrz} = dt;
-        dataz = entrz;
-    }
+    useEffect(() => {
+        if (isSuccess) {
+            const {data: dt} = data;
+            const {entries: entrz} = dt;
+            if (entrz) {
+                setDataz(entrz);
+            }
+        }
+    }, [isSuccess, data]);
 
     const handleActions = (id) => {
         if (selectedRow === id) {
@@ -148,20 +158,97 @@ const ColtanListPage = () => {
         setIsModalOpen(false);
         setCheckboxValues(initialCheckboxValues);
     }
+    const {RangePicker} = DatePicker;
 
     const columns = [
+        // {
+        //     title: "Supply date",
+        //     dataIndex: "supplyDate",
+        //     key: "supplyDate",
+        //     sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
+        //     render: (text) => {
+        //         return (
+        //             <>
+        //                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+        //             </>
+        //         );
+        //     },
+        // },
         {
             title: "Supply date",
             dataIndex: "supplyDate",
             key: "supplyDate",
             sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-            render: (text) => {
-                return (
-                    <>
-                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-                    </>
-                );
+            render: (text) => (
+                <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+            ),
+            // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            //     <div style={{ padding: 8 }}>
+            //         <Space>
+            //             <RangePicker
+            //                 value={selectedKeys}
+            //                 onChange={(dates) => setSelectedKeys(dates)}
+            //                 onPressEnter={() => confirm()}
+            //                 onReset={() => clearFilters()}
+            //             />
+            //         </Space>
+            //     </div>
+            // ),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+                <div style={{ padding: 8 }}>
+                    <Space>
+                        <RangePicker
+                            value={selectedKeys}
+                            onChange={(dates) => setSelectedKeys(dates)}
+                        />
+                        <Button
+                            type="primary"
+                            onClick={() => {
+
+                                if (isSuccess && selectedKeys.length > 0) {
+                                    console.log(isSuccess)
+                                    const {data: dt} = data;
+                                    const {entries: entrz} = dt;
+                                    if (entrz) {
+                                        setDataz(entrz);
+                                    }
+                                    const startDate = selectedKeys[0] || dayjs();
+                                    const endDate = selectedKeys[1] || dayjs();
+                                    console.log(startDate, endDate);
+                                    const sortedData = entrz.filter(dt => dayjs(dt.supplyDate).isBetween(startDate, endDate, null, '[]'))
+                                    setDataz(sortedData);
+                                }
+                                confirm();
+
+                            }}
+                            icon={<GiGiftOfKnowledge/>}
+                        >
+                            OK
+                        </Button>
+                        <Button onClick={() => {
+                            if (isSuccess) {
+                                const {data: dt} = data;
+                                const {entries: entrz} = dt;
+                                if (entrz) {
+                                    setDataz(entrz);
+                                }
+                            }
+                            clearFilters()
+                        }} icon={<GiGiftOfKnowledge />}>
+                            Reset
+                        </Button>
+                    </Space>
+                </div>
+            ),
+            onFilter: (value, record) => {
+                const startDate = value[0];
+                const endDate = value[1];
+
+                return dayjs(record.supplyDate).isBetween(startDate, endDate, null, '[]');
             },
+            filterIcon: (filtered) => (
+                <span>{filtered ? '📅' : '📅'}</span>
+            ),
         },
         {
             title: "Company name",
@@ -211,6 +298,7 @@ const ColtanListPage = () => {
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
             render: (_, record) => {
+                console.log(record);
                 if (record.output) {
                     let sum = 0;
                     record.output.forEach((item) => {
@@ -254,7 +342,7 @@ const ColtanListPage = () => {
                                             <BiSolidEditAlt className=" text-lg"/>
                                             <p>edit</p>
                                         </li>
-                                        {permissions.entry.edit ? (
+                                        {permissions.entry?.edit ? (
                                             <>
                                                 <li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -267,7 +355,7 @@ const ColtanListPage = () => {
                                                     <RiFileEditFill className=" text-lg"/>
                                                     <p>complete entry</p>
                                                 </li>
-                                                {permissions.entry.delete ? (<li
+                                                {permissions.entry?.delete ? (<li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                     onClick={() => {
                                                         SetSelectedRow(record._id);
@@ -289,7 +377,7 @@ const ColtanListPage = () => {
                             </span>
                           </span>
 
-                            {permissions.entry.delete ? (
+                            {permissions.entry?.delete ? (
                                 <span>
                                   <MdDelete
                                       className="text-lg"
@@ -306,7 +394,7 @@ const ColtanListPage = () => {
                                 </span>
                             ) : null}
 
-                            {userData.permissions.entry.edit &&
+                            {permissions.entry?.edit &&
                             <span>
                                 <FiEdit
                                     className="text-lg"
@@ -367,7 +455,7 @@ const ColtanListPage = () => {
                 subTitle={"Manage your coltan  entries"}
                 navLinktext={"entry/add/coltan"}
                 navtext={"Add new Entry"}
-                isAllowed={permissions.entry.create}
+                isAllowed={permissions.entry?.create}
                 table={
                     <>
                         <Modal
@@ -478,6 +566,10 @@ const ColtanListPage = () => {
                                 }}
                                 dataSource={dataz}
                                 columns={columns}
+                                expandable={{
+                                    expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>,
+                                    rowExpandable: record1 => record1.output?.length > 0,
+                                }}
                                 rowKey="_id"
                             />
                         </div>
