@@ -185,7 +185,7 @@ SetSelectedRow("");
                                         <FaClipboardList className=" text-lg"/>
                                         <p>details</p>
                                     </li>
-                                    <li
+                                    {/* <li
                                         className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                         onClick={() => {
                                             navigate(`/entry/edit/coltan/${record._id}`);
@@ -193,8 +193,8 @@ SetSelectedRow("");
                                     >
                                         <BiSolidEditAlt className=" text-lg"/>
                                         <p>edit</p>
-                                    </li>
-                                    {permissions.entry.edit ? (
+                                    </li> */}
+                                    {/* {permissions.entry.edit ? (
                                         <>
                                             <li
                                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -223,7 +223,7 @@ SetSelectedRow("");
                                                 <p>delete</p>
                                             </li>) : null}
                                         </>
-                                    ) : null}
+                                    ) : null} */}
                                 </motion.ul>
                             ) : null}
                         </span>

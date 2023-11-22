@@ -396,7 +396,7 @@ const StockPage = () => {
               dataSource={initialData}
               loading={{indicator:< ImSpinner2 style={{width:'60px',height:'60px'}} className="animate-spin text-gray-500"/>, spinning:isLoading}}
               columns={columns2}
-              rowKey="index"
+              rowKey="_id"
             />
             <div
               className=" w-full p-2 bg-orange-500 rounded-md flex justify-center"

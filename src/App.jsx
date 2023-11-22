@@ -78,6 +78,7 @@ import AdvancedPaymentEntry from './Pages/AdvancedPayments/AdvancedPaymentEntry'
 import {socket, SocketContext} from "./context files/socket";
 import UsersActivityLogs from "./Pages/UsersActivityLogs";
 import TagsList from "./Pages/shipment/TagsList";
+import ShipmentEdit from './Pages/shipment/ShipmentEdit';
 
 function App() {
 
@@ -100,6 +101,7 @@ function App() {
                                 <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                 <Route path='/shipment/add/:model' element={<StockPage/>}/>
                                 <Route path='/shipments' element={<ShipmentPage/>}/>
+                                <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
                                 <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                 <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
                                 <Route path='/payment' element={<ColtanPaymentsPage/>}/>

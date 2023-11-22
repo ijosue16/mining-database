@@ -17,6 +17,16 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+.ant-table
+  .ant-table-container
+  .ant-table-content
+  table
+  thead.ant-table-thead
+  .ant-table-cell {
+  background-color:white ;
+  color:#262626;
+  /* font-size:12px */
+}
 
 input[type="number"]::-webkit-outer-spin-button, 
 input[type="number"]::-webkit-inner-spin-button {
