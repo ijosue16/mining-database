@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import moment from "moment";
 import dayjs from "dayjs";
-import { Spin, Table, Form, Input, Button, Modal, DatePicker } from 'antd';
+import { Spin, Table, Form, Input, Button, Modal, DatePicker,Collapse,Space } from 'antd';
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
-import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation } from "../../../states/apislice";
+import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
 // import AddComponent from "../../../components/Actions components/AddComponent";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri"
 import { PiDotsThreeVerticalBold } from "react-icons/pi"
@@ -17,20 +17,26 @@ import { MdClose } from "react-icons/md";
 import { BsCheck2 } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
 import { ImSpinner2 } from "react-icons/im";
+import { IoCaretForward } from "react-icons/io5";
 
 
 const ColtanPaymentsPage = () => {
+    const { Panel } = Collapse;
+    let dataz=[];
     const { entryId, model, lotNumber} = useParams();
     const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     });
+    const {data:adv,isLoading:isFetching,isError:isFail,error:fail,isSuccess:isDone}=useGetAllAdvancePaymentsQuery();
     const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()
     const{data,isLoading,isSuccess,isError,error}=useGetOneColtanEntryQuery({entryId});
+    const [advancedListModal,SetAdvancedListModal]=useState(false);
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
     const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, currency: "" });
+    const [selectedAccordData,setSelectedAccordData]=useState({item:""});
     const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
     const [suply, setSuply] = useState([]);
     const [lotInfo, setLotInfo] = useState(null);
@@ -61,7 +67,14 @@ const ColtanPaymentsPage = () => {
         const{output:pt}=entr;
         const{paymentHistory:pHist}=pt;
         console.log(pHist);
-    }
+    };
+
+    if(isDone){
+        const {payments}=adv.data;
+        dataz=payments;
+        // console.log(payments);
+    };
+
     const columns = [
         // {
         //     title: '#',
@@ -198,6 +211,197 @@ const ColtanPaymentsPage = () => {
         //     }
         // },
     ];
+    const columns2 = [
+        {
+          title: "Payment date",
+          dataIndex: "paymentDate",
+          // key: "paymentDate",
+          Key:"_id",
+          sorter: (a, b) => a.paymentDate.localeCompare(b.paymentDate),
+          render: (text) => {
+            return (
+              <>
+                <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+              </>
+            );
+          },
+        },
+        {
+          title: "Company name",
+          dataIndex: "companyName",
+          // key: "companyName",
+          Key:"_id",
+          sorter: (a, b) => a.companyName.localeCompare(b.companyName),
+        //   filteredValue: [searchText],
+        //   onFilter: (value, record) => {
+        //     return (
+        //       String(record.companyName)
+        //         .toLowerCase()
+        //         .includes(value.toLowerCase()) ||
+        //       String(record.beneficiary)
+        //         .toLowerCase()
+        //         .includes(value.toLowerCase()) ||
+        //       String(record.mineralType)
+        //         .toLowerCase()
+        //         .includes(value.toLowerCase()) ||
+        //       String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
+        //       String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
+        //         .toLowerCase()
+        //         .includes(value.toLowerCase())
+        //     );
+        //   },
+        },
+        {
+          title: "Beneficiary",
+          dataIndex: "beneficiary",
+          key: "beneficiary",
+          sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
+        },
+       
+        {
+          title: "Amount payed",
+          dataIndex: "paymentAmount",
+          key: "paymentAmount",
+          sorter: (a, b) => a.paymentAmount - b.paymentAmount,
+        },
+        {
+          title: "Amount remaining",
+          dataIndex: "remainingAmount",
+          key: "remainingAmount",
+          sorter: (a, b) => a.remainingAmount - b.remainingAmount,
+        },
+       
+        // {
+        //     title: "Action",
+        //     dataIndex: "action",
+        //     key: "_id",
+        //     render: (_, record) => {
+        //         return (
+        //             <>
+        //                 <div className="flex items-center gap-4">
+        //                   <span>
+        //                     <span className="relative">
+        //                       <PiDotsThreeVerticalBold
+        //                           className="text-lg"
+        //                           onClick={() => handleActions(record._id)}
+        //                       />
+        //                         {selectedRow === record._id ? (
+        //                             <motion.ul
+        //                                 ref={modalRef}
+        //                                 animate={
+        //                                     showActions
+        //                                         ? {opacity: 1, x: -10, y: 1, display: "block"}
+        //                                         : {opacity: 0, x: 0, y: 0, display: "none"}
+        //                                 }
+        //                                 className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+        //                             >
+        //                                 <li
+        //                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
+        //                                     onClick={() => {
+        //                                       setPaymentDetailsModal((prevstate)=>({...prevstate,companyName:record.companyName,beneficiary:record.beneficiary,nationalId:record.nationalId,phoneNumber:record.phoneNumber,email:record.email,paymentAmount:record.paymentAmount,currency:record.currency,paymentDate:record.paymentDate,consumed:record.consumed,remainingAmount:record.remainingAmount,consumptionDetails:"",id:record._id}));
+        //                                        setShowPyDetailsModal(!showPyDetailsModal);
+                                             
+        //                                     }}
+        //                                 >
+        //                                     <FaClipboardList className=" text-lg"/>
+        //                                     <p>details</p>
+        //                                 </li>
+        //                                 <li
+        //                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
+        //                                     onClick={() => {
+        //                                         navigate(`/entry/edit/coltan/${record._id}`);
+        //                                     }}
+        //                                 >
+        //                                     <BiSolidEditAlt className=" text-lg"/>
+        //                                     <p>edit</p>
+        //                                 </li>
+        //                                 {permissions.entry.edit ? (
+        //                                     <>
+        //                                         <li
+        //                                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
+        //                                             onClick={() => {
+        //                                                 {
+        //                                                     navigate(`/complete/coltan/${record._id}`);
+        //                                                 }
+        //                                             }}
+        //                                         >
+        //                                             <RiFileEditFill className=" text-lg"/>
+        //                                             <p>complete entry</p>
+        //                                         </li>
+        //                                         {permissions.entry.delete ? (<li
+        //                                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
+        //                                             onClick={() => {
+        //                                                 SetSelectedRow(record._id);
+        //                                                 SetSelectedRowInfo({
+        //                                                     ...selectedRowInfo,
+        //                                                     name: record.companyName,
+        //                                                     date: record.supplyDate,
+        //                                                 });
+        //                                                 setShowmodal(!showmodal);
+        //                                             }}
+        //                                         >
+        //                                             <MdDelete className=" text-lg"/>
+        //                                             <p>delete</p>
+        //                                         </li>) : null}
+        //                                     </>
+        //                                 ) : null}
+        //                             </motion.ul>
+        //                         ) : null}
+        //                     </span>
+        //                   </span>
+    
+        //                     {permissions.entry.delete ? (
+        //                         <span>
+        //                           <MdDelete
+        //                               className="text-lg"
+        //                               onClick={() => {
+        //                                   SetSelectedRow(record._id);
+        //                                   SetSelectedRowInfo({
+        //                                       ...selectedRowInfo,
+        //                                       name: record.companyName,
+        //                                       date: record.supplyDate,
+        //                                   });
+        //                                   setShowmodal(!showmodal);
+        //                               }}
+        //                           />
+        //                         </span>
+        //                     ) : null}
+    
+        //                     <span>
+        //                         <FiEdit
+        //                             className="text-lg"
+        //                             onClick={() => {
+        //                                 setRecord(record);
+        //                                 showModal();
+        //                             }}
+        //                         />
+        //                     </span>
+    
+        //                     {/*{permissions.entry.edit ? (*/}
+    
+        //                     {/*) : null}*/}
+        //                 </div>
+        //             </>
+        //         );
+        //     },
+        // },
+      ];
+      useEffect(() => {
+        // Handle confirmation logic, e.g., send data to the state
+        if (selectedAccordData) {
+          console.log('Data sent to the state:', selectedAccordData);
+          // Perform any other logic here
+        }
+      }, [selectedAccordData]);
+
+      const handleUseButtonClick = async (item) => {
+        // setSelectedAccordData({item:item});
+        const advancedPaymentId=item;
+        const body = {entryId, lotNumber, model,advancedPaymentId};
+        await addPayment({body});
+        // setIsModalVisible(true);
+        console.log(item);
+      };
 
     const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
         cumulativeAmount: 40, exportedAmount: 0, id: "64ca67b1492ba72b23596c5a", lotNumber: 2, paid: 120000, rmaFee: 5000, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 40, _id: "64ca67b1492ba72b23596c5a",
@@ -232,7 +436,7 @@ const ColtanPaymentsPage = () => {
 
 
     return (
-        <div>
+        <>
             <ActionsPagesContainer title={'Coltan Payments'}
                 subTitle={'Make Coltan Payments'}
                 actionsContainer={
@@ -245,12 +449,15 @@ const ColtanPaymentsPage = () => {
                                 <GrHistory />
                                 <p className=" text-lg font-semibold">Payments history</p>
                             </div>
-                            <span>
-                                <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
+                            <div>
+                                <div className="w-full flex-col sm:flex-row justify-between items-center mb-4 gap-4 space-y-2">
                                     <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
                                         <PiMagnifyingGlassDuotone className="h-4 w-4" />
                                         <input type="text" className=" w-full focus:outline-none" name="tableFilter" id="tableFilter" placeholder="Search..." onChange={(e) => SetSearchText(e.target.value)} />
                                     </span>
+                                    
+                                        <button type="button" className=" bg-orange-300 p-2 shadow-md w-fit rounded-md" onClick={()=>SetAdvancedListModal(!advancedListModal)}>Advanced payments</button>
+                                    
 
                                     {/* <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
                                     <BiSolidFilePdf className=" text-2xl" />
@@ -263,7 +470,7 @@ const ColtanPaymentsPage = () => {
                                     dataSource={paymentHistory}
                                     pagination={false}
                                     rowKey="paymentId" />
-                            </span>
+                            </div>
                             <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
                                 <p className=" font-semibold text-lg">Sum(Paid):</p>
                                 <p>{total}</p>
@@ -340,7 +547,89 @@ const ColtanPaymentsPage = () => {
 
 
                 } />
-        </div>
+                
+                <Modal
+                    width={"80%"}
+                    style={{ top:20 }}
+                    open={advancedListModal}
+                    title="advanced payments"
+                    footer={null}
+                    onCancel={()=>SetAdvancedListModal(!advancedListModal)}
+                  >
+                  {/* <Table
+                                className=" w-full overflow-x-auto"
+                                loading={{
+                                    indicator: (
+                                        <ImSpinner2
+                                            style={{width: "60px", height: "60px"}}
+                                            className="animate-spin text-gray-500"
+                                        />
+                                    ),
+                                    spinning: isLoading,
+                                }}
+                                dataSource={dataz}
+                                columns={columns2}
+                                rowKey="_id"
+                            /> */}
+
+ {/* <Space> */}
+ <>
+ <div className=""></div>
+    <Collapse
+    expandIcon={({ isActive }) => <IoCaretForward rotate={isActive ? 90 : 0} />}
+    size="small" accordion className="w-full">
+      {dataz.map((item) => (
+        <Panel header={<div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center gap-2">
+           <span className="">
+            <p className=" font-bold">Company name:</p>
+            <p className=" text-md">{item.companyName}</p>
+            </span>
+
+           <span className="">
+            <p className=" font-bold">Payed amount:</p>
+            <p className=" text-md">{item.paymentAmount}</p>
+            </span>
+
+           <span className="">
+            <p className=" font-bold">Remaining amount:</p>
+            <p className=" text-md">{item.remainingAmount}</p>
+            </span>
+           <span className="">
+            <p className=" font-bold">Payment date:</p>
+            <p className=" text-md">{dayjs(item.paymentDate).format("MMM DD, YYYY")}</p>
+            </span>
+            
+
+        </div>} 
+        key={item._id}>
+      <ul className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
+        <li className="space-y-1">
+        <p className=" font-bold">Beneficiary:</p>
+        <p>{item.beneficiary}</p>
+        </li>
+        <li className="space-y-1">
+        <p className=" font-bold">Email:</p>
+        <p>{item.email}</p>
+        </li>
+        <li className="space-y-1">
+        <p className=" font-bold">Phone number:</p>
+        <p>{item.phoneNumber}</p>
+        </li>
+        <li className="space-y-1">
+        <p className=" font-bold">National ID:</p>
+        <p>{item.nationalId}</p>
+        </li>
+      </ul>
+      <Button onClick={()=>handleUseButtonClick(item._id)}>Use</Button>
+        </Panel>
+      ))}
+    </Collapse>
+    </>
+    {/* </Space> */}
+                  </Modal>
+               
+                
+        </>
     )
 }
 export default ColtanPaymentsPage;
