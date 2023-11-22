@@ -224,9 +224,7 @@ const ShipmentPage = () => {
                           </li> */}
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                              onClick={() => {
-                                  edit(record), SetShowActions(!showActions);
-                              }}
+                              onClick={() => {navigate(`/shipment/edit/${record.model}/${record._id}`)}}
                           >
                               <BiSolidEditAlt className=" text-lg"/>
                               <p>edit</p>
