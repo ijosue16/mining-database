@@ -23,9 +23,9 @@ import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 
-const WolframiteEntryCompletePage = () => {
+const WolframiteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
-    const {entryId} = useParams();
+    // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
@@ -66,10 +66,10 @@ const WolframiteEntryCompletePage = () => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Entry updated successfully");
+            return message.success("Entry updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message: errorMessage} = updateError.data;
+            return message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
@@ -135,10 +135,10 @@ const WolframiteEntryCompletePage = () => {
 
     useEffect(() => {
         if (isImageDeleteSuccess) {
-            message.success("File successfully deleted");
+            return message.success("File successfully deleted");
         } else if (isImageDeleteError) {
             const { message: deleteError } = imageDeleteError.data;
-            message.error(deleteError);
+            return message.error(deleteError);
         }
     }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
 
@@ -200,12 +200,46 @@ const WolframiteEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                pricePerUnit: calculatePricePerUnit(row.metricTonUnit, row.mineralGrade).toFixed(3),
             };
-            updatedItem.mineralPrice = (updatedItem.pricePerUnit * row.weightOut);
+            if (item.metricTonUnit !== updatedItem.metricTonUnit) {
+                if (Boolean(updatedItem.metricTonUnit) === false)
+                    return message.error("MTU cannot be empty or zero", 5);
+                if ((Boolean(item.metricTonUnit) === true && Boolean(updatedItem.metricTonUnit) === false))
+                    return message.error("MTU cannot be empty or zero", 5);
+                updatedItem.metricTonUnit = parseFloat(updatedItem.metricTonUnit);
+            }
+            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
+                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
+                    return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
+                }
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                    return message.error("Non Sell Agreement Amount cannot be empty", 5);
+
+                updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
+                // updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
+                // if (updatedItem.cumulativeAmount < 0) {
+                //     updatedItem.cumulativeAmount = 0;
+                // }
+            }
+            if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+                    return message.error("Mineral Grade cannot be empty or zero", 5);
+            }
+            if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
+            if (item.USDRate !== updatedItem.USDRate) {
+                if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+                    return message.error("USD rate cannot be empty or zero", 5);
+            }
+            if (Boolean(updatedItem.metricTonUnit) === true && Boolean(updatedItem.mineralGrade) === true) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.metricTonUnit), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
+            }
+            if (Boolean(updatedItem.pricePerUnit) === true)
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3) || null;
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
+            const body = { output: [updatedItem]};
+            await updateWolframiteEntry({body, entryId});
         }
     };
     const handleActions = (id) => {
@@ -266,7 +300,6 @@ const WolframiteEntryCompletePage = () => {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
-            editTable: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         paid: {
@@ -301,24 +334,23 @@ const WolframiteEntryCompletePage = () => {
             key: "lotNumber",
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
-        {
-            title: "Date",
-            dataIndex: "supplyDate",
-            key: "supplyDate",
-            sorter: (a, b) => a.supplyDate - b.supplyDate,
-            render: (text) => {
-                return (
-                    <>
-                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-                    </>
-                );
-            },
-        },
+        // {
+        //     title: "Date",
+        //     dataIndex: "supplyDate",
+        //     key: "supplyDate",
+        //     sorter: (a, b) => a.supplyDate - b.supplyDate,
+        //     render: (text) => {
+        //         return (
+        //             <>
+        //                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+        //             </>
+        //         );
+        //     },
+        // },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-            editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
@@ -326,6 +358,13 @@ const WolframiteEntryCompletePage = () => {
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        },
+        {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreementAmount",
+            key: "nonSellAgreementAmount",
+            editTable: true,
+            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
         },
     ];
 
@@ -365,7 +404,7 @@ const WolframiteEntryCompletePage = () => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
-                              {permissions.payments.create ? (
+                              {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                       onClick={() => {
@@ -402,6 +441,13 @@ const WolframiteEntryCompletePage = () => {
         });
     }
 
+    // const handleRealTimeChange = (e, record) => {
+    //     const {name, value} = e.target;
+    //     if (name === "metricTonUnit") {
+    //         record["pricePerUnit"] = record["pricePerUnit"]
+    //     }
+    // }
+
 
 
     const mergedColumns = columns.map((col) => {
@@ -430,11 +476,7 @@ const WolframiteEntryCompletePage = () => {
         const input = (
             <Input
                 style={{margin: 0}}
-                type={
-                    dataIndex === "weightOut" || dataIndex === "rmaFee"
-                        ? "number"
-                        : "text"
-                }
+                type={"number"}
             />
         );
         return (
@@ -449,63 +491,64 @@ const WolframiteEntryCompletePage = () => {
             </td>
         );
     };
+
     return (
         <>
          {isLoading ? (
         <FetchingPage />
       ) : (
             <ActionsPagesContainer
-                title={"Wolframite Details"}
-                subTitle={"View Wolframite detailes"}
+                title={"LOT DETAILS"}
+                // subTitle={"View Wolframite detailes"}
                 actionsContainer={
                     <AddComponent
                         component={
                             <>
-                                {isLoading ? (
-                                    <div className="flex h-32 w-full items-center justify-center bg-white">
-                                        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-6 w-full">
-                                        <div
-                                            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                                            <p className=" font-semibold text-lg">Entry details</p>
-                                        </div>
+                                {/*{isLoading ? (*/}
+                                {/*    <div className="flex h-32 w-full items-center justify-center bg-white">*/}
+                                {/*        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>*/}
+                                {/*    </div>*/}
+                                {/*) : (*/}
+                                {/*    <div className="flex flex-col gap-6 w-full">*/}
+                                {/*        <div*/}
+                                {/*            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                {/*            <p className=" font-semibold text-lg">Entry details</p>*/}
+                                {/*        </div>*/}
 
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Entry details
-                                                </p>
-                                                <p>Weight in: {suply?.weightIn}</p>
-                                                <p>Mineral type: {suply?.mineralType}</p>
-                                                {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                                <p>Number of tags: {suply?.numberOfTags}</p>
-                                                <p>Beneficiary: {suply?.beneficiary}</p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Company info
-                                                </p>
-                                                <p>Name: {suply?.companyName}</p>
-                                                <p>Email: {suply.email}</p>
-                                                <p>TIN Number: {suply.TINNumber}</p>
-                                                <p className=" shrink">
-                                                    License Number: {suply.licenseNumber}
-                                                </p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Representative info
-                                                </p>
-                                                <p>Phone number: {suply.representativePhoneNumber}</p>
-                                                <p>ID: {suply.representativeId}</p>
-                                                {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                                            </li>
+                                {/*        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Entry details*/}
+                                {/*                </p>*/}
+                                {/*                <p>Weight in: {suply?.weightIn}</p>*/}
+                                {/*                <p>Mineral type: {suply?.mineralType}</p>*/}
+                                {/*                /!* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> *!/*/}
+                                {/*                <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                {/*                <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                {/*            </li>*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Company info*/}
+                                {/*                </p>*/}
+                                {/*                <p>Name: {suply?.companyName}</p>*/}
+                                {/*                <p>Email: {suply.email}</p>*/}
+                                {/*                <p>TIN Number: {suply.TINNumber}</p>*/}
+                                {/*                <p className=" shrink">*/}
+                                {/*                    License Number: {suply.licenseNumber}*/}
+                                {/*                </p>*/}
+                                {/*            </li>*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Representative info*/}
+                                {/*                </p>*/}
+                                {/*                <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                {/*                <p>ID: {suply.representativeId}</p>*/}
+                                {/*                /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                {/*            </li>*/}
 
-                                        </ul>
-                                    </div>
-                                )}
+                                {/*        </ul>*/}
+                                {/*    </div>*/}
+                                {/*)}*/}
                                 <div className="w-full">
                                     <Form form={form} component={false}>
                                         <Table

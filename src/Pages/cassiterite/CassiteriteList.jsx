@@ -23,13 +23,14 @@ import {useSelector} from "react-redux";
 import {SocketContext} from "../../context files/socket";
 import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
 import {FiEdit} from "react-icons/fi";
+import CassiteriteEntryComplete from "./entry/CassiteriteEntryComplete";
 
 const CassiteriteListPage = () => {
   const { userData } = useSelector(state => state.persistedReducer.global);
   const socket = useContext(SocketContext);
   let dataz = [];
   const { loginData } = useMyContext();
-  const{profile,permissions}=loginData;
+  const{permissions}=userData;
   const [createEditRequest, {
     isLoading: isCreateRequestLoading,
     isSuccess: isCreateRequestSuccess,
@@ -254,7 +255,7 @@ const CassiteriteListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {permissions.entry.edit ? (
+                      {permissions.entry?.edit ? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -289,7 +290,7 @@ const CassiteriteListPage = () => {
                 </span>
               </span>
 
-              {permissions.entry.delete ? (
+              {permissions.entry?.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -306,7 +307,7 @@ const CassiteriteListPage = () => {
                 </span>
               ) : null}
 
-              {userData.permissions.entry.edit &&
+              {permissions.entry?.edit &&
               <span>
                   <FiEdit
                       className="text-lg"
@@ -338,7 +339,7 @@ const CassiteriteListPage = () => {
         subTitle={"Manage your cassiterite  entries"}
         navLinktext={"entry/add/cassiterite"}
         navtext={"Add new Entry"}
-        isAllowed={permissions.entry.create}
+        isAllowed={permissions.entry?.create}
         table={
           <>
             <Modal

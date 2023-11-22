@@ -23,9 +23,9 @@ import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
 import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/helperFunctions";
 
-const CassiteriteEntryCompletePage = () => {
+const CassiteriteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
-    const {entryId} = useParams();
+    // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
@@ -194,7 +194,6 @@ const CassiteriteEntryCompletePage = () => {
 
     const calculatePricePerUnit = (LME, grade, TC) => {
         if (LME && grade && TC) {
-            console.log(LME, grade, TC);
             return (((LME * grade/100) - TC)/1000).toFixed(3);
         }
     }
@@ -208,11 +207,38 @@ const CassiteriteEntryCompletePage = () => {
             const updatedItem = {
                 ...item,
                 ...row,
-                pricePerUnit: calculatePricePerUnit(row.londonMetalExchange, row.mineralGrade, row.treatmentCharges),
             };
-            if (updatedItem.pricePerUnit && updatedItem.weightOut) {
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * updatedItem.weightOut).toFixed(3);
+            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
+                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+                    return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
+                }
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                    return message.error("Non Sell Agreement Amount cannot be empty", 5);
+
+                updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
+                if (updatedItem.cumulativeAmount < 0) {
+                    updatedItem.cumulativeAmount = 0;
+                }
             }
+            if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+                    return message.error("Mineral Grade cannot be empty or zero", 5);
+            }
+            if (item.USDRate !== updatedItem.USDRate) {
+                if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+                    return message.error("USD rate cannot be empty or zero", 5);
+            }
+            if (item.londonMetalExchange !== updatedItem.londonMetalExchange) {
+                if (Boolean(item.londonMetalExchange) === true && Boolean(updatedItem.londonMetalExchange) === false)
+                    return message.error("LME cannot be empty or zero", 5);
+            }
+            if (item.treatmentCharges !== updatedItem.treatmentCharges) {
+                if (Boolean(item.treatmentCharges) === true && Boolean(updatedItem.treatmentCharges) === false)
+                    return message.error("Treatment Charges cannot be empty or zero", 5);
+            }
+            updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.londonMetalExchange), parseFloat(updatedItem.mineralGrade), parseFloat(updatedItem.treatmentCharges));
+            if (Boolean(updatedItem.pricePerUnit) === true)
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3);
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -334,7 +360,6 @@ const CassiteriteEntryCompletePage = () => {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-            editTable: true,
             sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
@@ -342,6 +367,13 @@ const CassiteriteEntryCompletePage = () => {
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        },
+        {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreementAmount",
+            key: "nonSellAgreementAmount",
+            editTable: true,
+            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
         },
     ];
 
@@ -381,7 +413,7 @@ const CassiteriteEntryCompletePage = () => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
-                              {permissions.payments.create ? (
+                              {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                       onClick={() => {
@@ -444,11 +476,7 @@ const CassiteriteEntryCompletePage = () => {
         const input = (
             <Input
                 style={{margin: 0}}
-                type={
-                    dataIndex === "weightOut" || dataIndex === "rmaFee"
-                        ? "number"
-                        : "text"
-                }
+                type={"number"}
             />
         );
         return (

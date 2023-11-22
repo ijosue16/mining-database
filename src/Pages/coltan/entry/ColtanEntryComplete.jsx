@@ -19,53 +19,46 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useMyContext } from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
-import { useSelector } from "react-redux";
-import { IoClose } from "react-icons/io5";
-import { AppUrls, filterColumns } from "../../../components/helperFunctions";
+import {useSelector} from "react-redux";
+import {IoClose} from "react-icons/io5";
+import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
 
-const getBase64FromServer = (fileUrl) => {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.src = fileUrl;
-    img.onload = () => {
-      resolve(fileUrl);
-    };
-  });
-};
+// const getBase64FromServer = (fileUrl) => {
+//     return new Promise((resolve) => {
+//         const img = new Image();
+//         img.src = fileUrl;
+//         img.onload = () => {
+//             resolve(fileUrl);
+//         };
+//     });
+// };
 
-const ColtanEntryCompletePage = () => {
-  const { permissions: userPermissions } = useSelector(
-    (state) => state.persistedReducer.global
-  );
-  const { entryId } = useParams();
-  const navigate = useNavigate();
-  const { loginData } = useMyContext();
-  const { profile, permissions } = loginData;
-  const [form] = Form.useForm();
-  const [selectedLotNumber, setSelectedLotNumber] = useState(null);
-  const [imageAvailable, setImageAvailable] = useState(false);
-  const [decision, setDecision] = useState("");
-  const { data, isLoading, isError, isSuccess, error, refetch } =
-    useGetOneColtanEntryQuery(
-      { entryId },
-      {
-        refetchOnMountOrArgChange: true,
-        refetchOnReconnect: true,
-      }
-    );
-  const [
-    updateColtanEntry,
-    {
-      isSuccess: isUpdateSuccess,
-      isLoading: isSending,
-      isError: isUpdateError,
-      error: updateError,
-    },
-  ] = useUpdateColtanEntryMutation();
 
-  useEffect(() => {
-    console.log("re-render");
-  }, []);
+
+const ColtanEntryCompletePage = ({entryId}) => {
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    // const {entryId} = useParams();
+    const navigate = useNavigate();
+    const {loginData} = useMyContext();
+    const {profile, permissions} = loginData;
+    const [form] = Form.useForm();
+    const [selectedLotNumber, setSelectedLotNumber] = useState(null);
+    const [imageAvailable, setImageAvailable] = useState(false);
+    const [decision, setDecision] = useState("");
+    const {data, isLoading, isError, isSuccess, error, refetch} =
+        useGetOneColtanEntryQuery({entryId},
+            {
+                refetchOnMountOrArgChange: true,
+                refetchOnReconnect: true
+            }
+        );
+    const [updateColtanEntry, {
+        isSuccess: isUpdateSuccess,
+        isLoading: isSending,
+        isError: isUpdateError,
+        error: updateError
+    }] = useUpdateColtanEntryMutation();
+
 
   const [
     deleteGradeImg,
@@ -227,180 +220,203 @@ const ColtanEntryCompletePage = () => {
     navigate(-1);
   };
 
-  const isEditing = (record) => {
-    return record._id === editRowKey;
-  };
-  const edit = (record) => {
-    form.setFieldsValue({
-      weightOut: record.weightOut,
-      rmaFee: record.rmaFee,
-      ...record,
-    });
-    setEditRowKey(record._id);
-    setShow(false);
-  };
-  const calculatePricePerUnit = (tantal, grade) => {
-    if (tantal && grade) {
-      return (tantal * grade).toFixed(3);
+    const isEditing = (record) => {
+        return record._id === editRowKey;
+    };
+    const edit = (record) => {
+        form.setFieldsValue({
+            weightOut: record.weightOut,
+            rmaFee: record.rmaFee,
+            ...record,
+        });
+        setEditRowKey(record._id);
+        setShow(false);
+    };
+    const calculatePricePerUnit = (tantal, grade) => {
+        if (tantal && grade) {
+            return (tantal * grade);
+        }
     }
-  };
-  const save = async (key) => {
-    const row = await form.validateFields();
-    const newData = [...lotInfo];
-    const index = newData.findIndex((item) => key === item._id);
-    if (index > -1) {
-      const item = newData[index];
-      const updatedItem = {
-        ...item,
-        ...row,
-        pricePerUnit: calculatePricePerUnit(row.tantalum, row.mineralGrade),
-      };
-      if (updatedItem.pricePerUnit && updatedItem.weightOut) {
-        updatedItem.mineralPrice = (
-          updatedItem.pricePerUnit * updatedItem.weightOut
-        ).toFixed(3);
-      }
-      newData.splice(index, 1, updatedItem);
-      setLotInfo(newData);
-      setEditRowKey("");
-      const body = { output: [updatedItem] };
-      await updateColtanEntry({ body, entryId });
+    const save = async (key) => {
+        const row = await form.validateFields();
+        const newData = [...lotInfo];
+        const index = newData.findIndex((item) => key === item._id);
+        if (index > -1) {
+            const item = newData[index];
+            const updatedItem = {
+                ...item,
+                ...row,
+            };
+            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
+                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+                    return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
+                }
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                    return message.error("Non Sell Agreement Amount cannot be empty", 5);
+
+                updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
+                if (updatedItem.cumulativeAmount < 0) {
+                    updatedItem.cumulativeAmount = 0;
+                }
+            }
+            if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+                    return message.error("Mineral Grade cannot be empty or zero", 5);
+            }
+            if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+                if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+                    return message.error("USD rate cannot be empty or zero", 5);
+            }
+            if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be empty or zero", 5);
+            if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
+            if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+                if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
+                    return message.error("Tantal cannot be empty or zero", 5);
+            }
+            if (Boolean(updatedItem.tantalum) === true && Boolean(updatedItem.mineralGrade) === true && parseFloat(updatedItem.mineralGrade) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3);
+            }
+            if (Boolean(updatedItem.pricePerUnit) === true)
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount))).toFixed(3);
+            newData.splice(index, 1, updatedItem);
+            setLotInfo(newData);
+            setEditRowKey("");
+            const body = { output: [updatedItem]};
+            await updateColtanEntry({body, entryId});
+        }
+    };
+    const handleActions = (id) => {
+        setShow(!show);
+        SetSelectedRow(id);
+    };
+    const restrictedColumns = {
+        mineralGrade: {
+            title: "Grade (%)",
+            dataIndex: "mineralGrade",
+            key: "mineralGrade",
+            // editTable: true, // adjust edit permission based on user permissions
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+        },
+        tantal: {
+            title: "Tantal ($)",
+            dataIndex: "tantalum",
+            key: "tantalum",
+            sorter: (a, b) => a.tantalum - b.tantalum,
+        },
+        gradeImg: {
+            title: "Grade Img",
+            dataIndex: "gradeImg",
+            key: "gradeImg",
+            // editTable: true,
+            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            render: (_, record) => {
+                if (record.gradeImg) {
+                    return (
+                        <div className="flex items-center">
+                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
+                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        </div>
+                    )
+                } else {
+                    return (
+                        <Upload
+                            beforeUpload={beforeUpload}
+                            name={record.lotNumber}
+                            action={`${AppUrls.server}/coltan/${entryId}`}
+                            method="PATCH"
+                            {...props}
+                            onRemove={() => removeFile(record.lotNumber, entryId)}
+                        >
+                            <Button icon={<UploadOutlined/>}/>
+                        </Upload>
+                    )
+                }
+
+            }
+        },
+        pricePerUnit: {
+            title: "price/kg ($)",
+            dataIndex: "pricePerUnit",
+            key: "pricePerUnit",
+            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            render: (_, record) => {
+                if (record.pricePerUnit) {
+                    return <span>{Number(record.pricePerUnit).toFixed(3)}</span>
+                }
+            }
+        },
+        mineralPrice: {
+            title: "Price ($)",
+            dataIndex: "mineralPrice",
+            key: "mineralPrice",
+            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
+            render: (_, record) => {
+                if (record.mineralPrice) {
+                    return <span>{Number(record.mineralPrice).toFixed(3)}</span>
+                }
+            }
+        },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            sorter: (a, b) => a.paid - b.paid,
+        },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            sorter: (a, b) => a.USDRate - b.USDRate,
+        },
+        rmaFee: {
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
+            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
+        },
     }
-  };
-  const handleActions = (id) => {
-    setShow(!show);
-    SetSelectedRow(id);
-  };
-  const restrictedColumns = {
-    mineralGrade: {
-      title: "Grade (%)",
-      dataIndex: "mineralGrade",
-      key: "mineralGrade",
-      // editTable: true, // adjust edit permission based on user permissions
-      sorter: (a, b) => a.mineralgrade - b.mineralgrade,
-    },
-    tantal: {
-      title: "Tantal ($)",
-      dataIndex: "tantalum",
-      key: "tantalum",
-      sorter: (a, b) => a.tantalum - b.tantalum,
-    },
-    gradeImg: {
-      title: "Grade Img",
-      dataIndex: "gradeImg",
-      key: "gradeImg",
-      // editTable: true,
-      sorter: (a, b) => a.mineralgrade - b.mineralgrade,
-      render: (_, record) => {
-        if (record.gradeImg) {
-          return (
-            <div className="flex items-center">
-              {record.gradeImg && (
-                <Button
-                  onClick={() => handlePreview(record.gradeImg.filePath)}
-                  icon={<FaImage title="Preview" className="text-lg" />}
-                />
-              )}
-              {userPermissions.gradeImg.edit && (
-                <IoClose
-                  title="Delete"
-                  className="text-lg"
-                  onClick={() => removeFile(record.lotNumber, entryId)}
-                />
-              )}
-            </div>
-          );
-        } else {
-          return (
-            <Upload
-              beforeUpload={beforeUpload}
-              name={record.lotNumber}
-              action={`${AppUrls.server}/coltan/${entryId}`}
-              method="PATCH"
-              {...props}
-              onRemove={() => removeFile(record.lotNumber, entryId)}
-            >
-              <Button icon={<UploadOutlined />} />
-            </Upload>
-          );
-        }
-      },
-    },
-    pricePerUnit: {
-      title: "price/kg ($)",
-      dataIndex: "pricePerUnit",
-      key: "pricePerUnit",
-      sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
-      render: (_, record) => {
-        if (record.pricePerUnit) {
-          return <span>{record.pricePerUnit.toFixed(3)}</span>;
-        }
-      },
-    },
-    mineralPrice: {
-      title: "Price ($)",
-      dataIndex: "mineralPrice",
-      key: "mineralPrice",
-      sorter: (a, b) => a.mineralPrice - b.mineralPrice,
-      render: (_, record) => {
-        if (record.mineralPrice) {
-          return <span>{record.mineralPrice.toFixed(3)}</span>;
-        }
-      },
-    },
-    paid: {
-      title: "paid ($)",
-      dataIndex: "paid",
-      key: "paid",
-      sorter: (a, b) => a.paid - b.paid,
-    },
-    USDRate: {
-      title: "USD Rate (rwf)",
-      dataIndex: "USDRate",
-      key: "USDRate",
-      sorter: (a, b) => a.USDRate - b.USDRate,
-    },
-    rmaFee: {
-      title: "RMA Fee ($)",
-      dataIndex: "rmaFeeUSD",
-      key: "rmaFeeUSD",
-      sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
-    },
-  };
-  const columns = [
-    {
-      title: "#",
-      dataIndex: "lotNumber",
-      key: "lotNumber",
-      sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
-    },
-    {
-      title: "Date",
-      dataIndex: "supplyDate",
-      key: "supplyDate",
-      sorter: (a, b) => a.supplyDate - b.supplyDate,
-      render: (text) => {
-        return (
-          <>
-            <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-          </>
-        );
-      },
-    },
-    {
-      title: "weight out (KG)",
-      dataIndex: "weightOut",
-      key: "weightOut",
-      editTable: true,
-      sorter: (a, b) => a.weightOut - b.weightOut,
-    },
-    {
-      title: "balance (KG)",
-      dataIndex: "cumulativeAmount",
-      key: "cumulativeAmount",
-      sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-    },
-  ];
+    const columns = [
+        {
+            title: "#",
+            dataIndex: "lotNumber",
+            key: "lotNumber",
+            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
+        },
+        {
+            title: "Date",
+            dataIndex: "supplyDate",
+            key: "supplyDate",
+            sorter: (a, b) => a.supplyDate - b.supplyDate,
+            render: (text) => {
+                return (
+                    <>
+                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+                    </>
+                );
+            },
+        },
+        {
+            title: "weight out (KG)",
+            dataIndex: "weightOut",
+            key: "weightOut",
+            // editTable: true,
+            sorter: (a, b) => a.weightOut - b.weightOut,
+        },
+        {
+            title: "balance (KG)",
+            dataIndex: "cumulativeAmount",
+            key: "cumulativeAmount",
+            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+        },
+        {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreementAmount",
+            key: "nonSellAgreementAmount",
+            editTable: true,
+            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
+        },
+
+    ];
 
   if (restrictedColumns && userPermissions && columns) {
     filterColumns(restrictedColumns, userPermissions, columns);
@@ -437,7 +453,7 @@ const ColtanEntryCompletePage = () => {
                           <BiSolidEditAlt className=" text-lg" />
                           <p>edit</p>
                         </li>
-                        {permissions.payments.create ? (
+                        {userPermissions.payments?.create ? (
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {
@@ -494,215 +510,182 @@ const ColtanEntryCompletePage = () => {
     };
   });
 
-  const EditableCell = ({
-    editing,
-    dataIndex,
-    title,
-    record,
-    children,
-    ...restProps
-  }) => {
-    const input = (
-      <Input
-        style={{ margin: 0 }}
-        type={
-          dataIndex === "weightOut" || dataIndex === "rmaFee"
-            ? "number"
-            : "text"
-        }
-      />
-    );
+    const EditableCell = ({
+                              editing,
+                              dataIndex,
+                              title,
+                              record,
+                              children,
+                              ...restProps
+                          }) => {
+        const input = (
+            <Input
+                style={{margin: 0}}
+                type={"number"}
+            />
+        );
+        return (
+            <td {...restProps}>
+                {editing ? (
+                    <Form.Item name={dataIndex} style={{margin: 0}}>
+                        {input}
+                    </Form.Item>
+                ) : (
+                    children
+                )}
+            </td>
+        );
+    };
     return (
-      <td {...restProps}>
-        {editing ? (
-          <Form.Item name={dataIndex} style={{ margin: 0 }}>
-            {input}
-          </Form.Item>
-        ) : (
-          children
-        )}
-      </td>
-    );
-  };
-  return (
-    <>
-      {isLoading ? (
-        <FetchingPage />
-      ) : (
-        <ActionsPagesContainer
-          title={"Coltan Details"}
-          subTitle={"View Coltan detailes"}
-          actionsContainer={
-            <AddComponent
-              component={
-                <>
-                  {isLoading ? (
-                    <div className="flex h-32 w-full items-center justify-center bg-white">
-                      <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400" />
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-6 w-full">
-                      <div className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                        <p className=" font-semibold text-lg">Entry details</p>
-                      </div>
-
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
-                        <li>
-                          <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                            Entry details
-                          </p>
-                          <p>Weight in: {suply?.weightIn}</p>
-                          <p>Mineral type: {suply?.mineralType}</p>
-                          {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                          <p>Number of tags: {suply?.numberOfTags}</p>
-                          <p>Beneficiary: {suply?.beneficiary}</p>
-                        </li>
-                        <li>
-                          <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                            Company info
-                          </p>
-                          <p>Name: {suply?.companyName}</p>
-                          <p>Email: {suply.email}</p>
-                          <p>TIN Number: {suply.TINNumber}</p>
-                          <p className=" shrink">
-                            License Number: {suply.licenseNumber}
-                          </p>
-                        </li>
-                        <li>
-                          <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                            Representative info
-                          </p>
-                          <p>Phone number: {suply.representativePhoneNumber}</p>
-                          <p>ID: {suply.representativeId}</p>
-                          {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                  <div className="w-full">
-                    <Form form={form} component={false}>
-                      <Table
-                        className="overflow-x-auto w-full"
-                        loading={{
-                          indicator: (
-                            <ImSpinner2
-                              style={{ width: "60px", height: "60px" }}
-                              className="animate-spin text-gray-500"
-                            />
-                          ),
-                          spinning: isLoading,
-                        }}
-                        dataSource={lotInfo}
-                        columns={mergedColumns}
-                        expandable={{
-                          expandedRowRender: (record) => {
-                            if (record.shipments) {
-                              let color = "";
-                              // const value='non-sell agreement'
-                              switch (record.status) {
-                                case "in stock": {
-                                  color = "bg-green-500";
-                                  break;
-                                }
-                                case "partially exported": {
-                                  color =
-                                    "bg-gradient-to-r from-slate-500 shadow-md";
-                                  break;
-                                }
-                                case "fully exported": {
-                                  color = "bg-slate-600";
-                                  break;
-                                }
-                                case "in progress": {
-                                  color = "bg-orange-400";
-                                  break;
-                                }
-                                case "rejected": {
-                                  color = "bg-red-500";
-                                  break;
-                                }
-                                case "non-sell agreement": {
-                                  color = "bg-indigo-400";
-                                  break;
-                                }
-                                default: {
-                                  color = "bg-green-300";
-                                }
-                              }
-                              return (
+        <>
+            {isLoading ? (
+                <FetchingPage/>
+            ) : (
+                <ActionsPagesContainer
+                    title={"LOT DETAILS"}
+                    // subTitle={"View Coltan detailes"}
+                    actionsContainer={
+                        <AddComponent
+                            component={
                                 <>
-                                  <div className=" space-y-3 w-full">
-                                    <p className=" text-lg font-bold">
-                                      More Details
-                                    </p>
-                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                      <span className=" space-y-2">
-                                        <p className="text-md font-semibold">
-                                          Exported Amount:{" "}
-                                          {record.exportedAmount}
-                                        </p>
-                                        <span className="flex">
-                                          <p className="text-md font-semibold">
-                                            RMA Fee decision
-                                          </p>
-                                          <select
-                                            value={decision}
-                                            className=" font-medium col-span-1 p-2 w-full border"
-                                            onChange={async (e) => {
-                                              setDecision(e.target.value);
-                                              const lot = {
-                                                ...lotInfo[
-                                                  lotInfo.indexOf(record)
-                                                ],
-                                                rmaFeeDecision: e.target.value,
-                                              };
-                                              const body = { output: [lot] };
-                                              await updateColtanEntry({
-                                                body,
-                                                entryId,
-                                              });
-                                            }}
-                                          >
-                                            <option value="pending">
-                                              Pending
-                                            </option>
-                                            <option value="collected">
-                                              Collected
-                                            </option>
-                                            <option value="exempted">
-                                              Exempted
-                                            </option>
-                                          </select>
-                                        </span>
-                                      </span>
-                                      <span className=" space-y-2">
-                                        <p className="text-md font-semibold">
-                                          paid: {record.paid}
-                                        </p>
-                                        <p className="text-md font-semibold">
-                                          Unpaid: {record.unpaid}
-                                        </p>
-                                      </span>
-                                      <span className=" space-y-2">
-                                        <p className="text-md font-semibold">
-                                          Payment status: {record.settled}
-                                        </p>
-                                        <p className="text-md font-semibold">
-                                          Unpaid: {record.unpaid}
-                                        </p>
-                                      </span>
-                                      <span className=" space-y-2">
-                                        <p className={"text-md font-semibold"}>
-                                          status:{" "}
-                                          <span
-                                            className={` px-3 py-1 ${color} w-fit text-white rounded`}
-                                          >
-                                            {record.status}
-                                          </span>
-                                        </p>
-                                      </span>
-                                    </div>
-                                  </div>
+                                    {/*{isLoading ? (*/}
+                                    {/*    <div className="flex h-32 w-full items-center justify-center bg-white">*/}
+                                    {/*        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>*/}
+                                    {/*    </div>*/}
+                                    {/*) : (*/}
+                                    {/*    <div className="flex flex-col gap-6 w-full">*/}
+                                    {/*        <div*/}
+                                    {/*            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                    {/*            <p className=" font-semibold text-lg">Entry details</p>*/}
+                                    {/*        </div>*/}
+
+                                    {/*        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Entry details*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Weight in: {suply?.weightIn}</p>*/}
+                                    {/*                <p>Mineral type: {suply?.mineralType}</p>*/}
+                                    {/*                /!* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> *!/*/}
+                                    {/*                <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                    {/*                <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Company info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Name: {suply?.companyName}</p>*/}
+                                    {/*                <p>Email: {suply.email}</p>*/}
+                                    {/*                <p>TIN Number: {suply.TINNumber}</p>*/}
+                                    {/*                <p className=" shrink">*/}
+                                    {/*                    License Number: {suply.licenseNumber}*/}
+                                    {/*                </p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Representative info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                    {/*                <p>ID: {suply.representativeId}</p>*/}
+                                    {/*                /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                    {/*            </li>*/}
+
+                                    {/*        </ul>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
+                                    <div className="w-full">
+                                        <Form form={form} component={false}>
+                                            <Table
+                                                className="overflow-x-auto w-full"
+                                                loading={{
+                                                    indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
+                                                                            className="animate-spin text-gray-500"/>),
+                                                    spinning: isLoading
+                                                }}
+                                                dataSource={lotInfo}
+                                                columns={mergedColumns}
+                                                expandable={{
+                                                    expandedRowRender: record => {
+                                                        if (record.shipments) {
+                                                            let color = "";
+                                                            // const value='non-sell agreement'
+                                                            switch (record.status) {
+                                                                case "in stock": {
+                                                                    color = "bg-green-500";
+                                                                    break;
+                                                                }
+                                                                case "partially exported": {
+                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
+                                                                    break;
+                                                                }
+                                                                case "fully exported": {
+                                                                    color = "bg-slate-600";
+                                                                    break;
+                                                                }
+                                                                case "in progress": {
+                                                                    color = "bg-orange-400";
+                                                                    break;
+                                                                }
+                                                                case "rejected": {
+                                                                    color = "bg-red-500";
+                                                                    break;
+                                                                }
+                                                                case "non-sell agreement": {
+                                                                    color = "bg-indigo-400";
+                                                                    break;
+                                                                }
+                                                                default: {
+                                                                    color = "bg-green-300";
+                                                                }
+                                                            }
+                                                            return (
+                                                                <>
+                                                                    <div className=" space-y-3 w-full">
+                                                                        <p className=" text-lg font-bold">More Details</p>
+                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Exported Amount: {record.exportedAmount}
+                                                                            </p>
+                                                                            <span className="flex">
+                                                                                <p className="text-md font-semibold">
+                                                                                    RMA Fee decision
+                                                                                </p>
+                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
+                                                                                    setDecision(e.target.value);
+                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
+                                                                                    const body = {output: [lot]};
+                                                                                    await updateColtanEntry({body, entryId});
+                                                                                }}>
+                                                                                  <option value="pending">Pending</option>
+                                                                                  <option value="collected">Collected</option>
+                                                                                  <option value="exempted">Exempted</option>
+                                                                                </select>
+                                                                            </span>
+                                                                          </span>
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              paid: {record.paid}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                          <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Payment status: {record.settled}
+                                                                            </p>
+                                                                            <p className="text-md font-semibold">
+                                                                              Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                          <span className=" space-y-2">
+                                                                              <p className={"text-md font-semibold"}>
+                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
+                                                                              </p>
+                                                                          </span>
+                                                                        </div>
+                                                                    </div>
 
                                   <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
                                     <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">

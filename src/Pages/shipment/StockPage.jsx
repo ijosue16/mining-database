@@ -208,6 +208,9 @@ const StockPage = () => {
       dataIndex: "exportedAmount",
       key: "exportedAmount",
       editTable: true,
+      render: (_, record) => {
+        return <span>{record.exportedAmount}</span>
+      }
     },
     {
       title: "Grade (%)",
@@ -291,6 +294,10 @@ const StockPage = () => {
       dataIndex: "exportedAmount",
       key: "exportedAmount",
       editTable: true,
+      render: (_, record) => {
+        console.log(record)
+        return <span>{record.exportedAmount}</span>
+      }
     },
     {
       title: "balance (KG)",
@@ -377,6 +384,7 @@ const StockPage = () => {
       setSelectedData([]);
       console.log("Shipment Info After Update:", { body });
       setConfirmModal(!confirmModal);
+      setShipmentNumber("");
     } else {
       setEmptyError("you can not send empty shipment slip");
     }
