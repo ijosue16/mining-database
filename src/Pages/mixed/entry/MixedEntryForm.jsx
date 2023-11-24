@@ -17,7 +17,10 @@ const MixedEntryForm = () => {
     const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
     const [createMixedEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateMixedEntryMutation()
     const [formval, setFormval] = useState({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'mixed', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
-    const [lotDetails, setlotDetails] = useState([
+    const [coltanLotDetails, setColtanLotDetails] = useState([
+        { lotNumber: "", weightOut: "" },
+    ]);
+    const [cassiteriteLotDetails, setCassiteriteLotDetails] = useState([
         { lotNumber: "", weightOut: "" },
     ]);
     const [checked, setchecked] = useState(false);
@@ -100,25 +103,51 @@ const MixedEntryForm = () => {
     const handleAddTime = (e) => {
         setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
     };
-    // const handleAddLot = () => {
-    //     setlotDetails([...lotDetails, { lotNumber: '', weightOut: '' }]);
-    // };
 
-    // const handleLotEntry = (index, e) => {
-    //     const values = [...lotDetails];
-    //     values[index][e.target.name] = e.target.value;
-    //     values[index].lotNumber = index + 1;
-    //     setlotDetails(values);
-    // };
+    const handleAddLot = () => {
+        setColtanLotDetails((prevLotDetails) => [
+          ...prevLotDetails,
+          { lotNumber: "", weightOut: "" },
+        ]);
 
-    // const handleLRemoveLot = (index) => {
-    //     const values = [...lotDetails];
-    //     values.splice(index, 1);
-    //     values.forEach((lot, i) => {
-    //         lot.lotNumber = i + 1;
-    //     });
-    //     setlotDetails(values);
-    // };
+      };
+    const handleAddCassiteriteLot = () => {
+        setCassiteriteLotDetails((prevLotDetails) => [
+          ...prevLotDetails,
+          { lotNumber: "", weightOut: "" },
+        ]);
+
+      };
+
+    const handleLotEntry = (index, e) => {
+        const values = [...coltanLotDetails];
+        values[index][e.target.name] = e.target.value;
+        values[index].lotNumber = index + 1;
+        setColtanLotDetails(values);
+    };
+    const handleCassiteriteLotEntry = (index, e) => {
+        const values = [...cassiteriteLotDetails];
+        values[index][e.target.name] = e.target.value;
+        values[index].lotNumber = index + 1;
+        setCassiteriteLotDetails(values);
+    };
+
+    const handleLRemoveLot = (index) => {
+        const values = [...coltanLotDetails];
+        values.splice(index, 1);
+        values.forEach((lot, i) => {
+            lot.lotNumber = i + 1;
+        });
+        setColtanLotDetails(values);
+    };
+    const handleCassiteriteRemoveLot = (index) => {
+        const values = [...cassiteriteLotDetails];
+        values.splice(index, 1);
+        values.forEach((lot, i) => {
+            lot.lotNumber = i + 1;
+        });
+        setCassiteriteLotDetails(values);
+    };
 
     const handleCheck = () => {
         setchecked((prev) => !prev);
@@ -133,14 +162,15 @@ const MixedEntryForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const body = { ...formval, output: lotDetails };
-        await createMixedEntry({ body });
+        const body = { ...formval,coltanOutput:coltanLotDetails,cassiteriteOutput:cassiteriteLotDetails  };
+        // await createMixedEntry({ body });
         console.log(body);
-        navigate(-1);
+        // navigate(-1);
+
     };
     const handleCancel = () => {
         setFormval({ weightIn: "", companyName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'mixed', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
-        setlotDetails([{ lotNumber: "", weightOut: "" },])
+        setColtanLotDetails([{ lotNumber: "", weightOut: "" },])
         console.log(checked)
     };
 
@@ -228,23 +258,40 @@ const MixedEntryForm = () => {
                                 </span>
                                 <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={formval.beneficiary || ''} onChange={handleEntry} />
                             </li>
-                            {/* 
+                            
                             <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot number (output)</p>
+                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot coltan number (output)</p>
                                 </span>
                                 <div className="col-span-1 space-y-3">
-                                    {lotDetails.map((lot, index) => (
+                                    {coltanLotDetails.map((lot, index) => (
                                         <div key={index} className="flex gap-2 items-center w-full">
                                             <p className=" font-semibold">{lot.lotNumber}</p>
                                             <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={lot.weightOut || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleLotEntry(index, e)} />
-                                            <HiMinus onClick={() => handleLRemoveLot(index)} className={`${lotDetails.length - 1 == 0 ? 'hidden' : ''}`} />
-                                            <HiPlus onClick={handleAddLot} className={`${lotDetails.length - 1 !== index ? 'hidden' : ''}`} />
+                                            <HiMinus onClick={() => handleLRemoveLot(index)} className={`${coltanLotDetails.length - 1 == 0 ? 'hidden' : ''}`} />
+                                            <HiPlus onClick={handleAddLot} className={`${coltanLotDetails.length - 1 !== index ? 'hidden' : ''}`} />
                                         </div>
                                     ))}
                                 </div>
 
-                            </li> */}
+                            </li>
+                            {/* CASSITERITE */}
+                            <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
+                                <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
+                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot cassiterie number (output)</p>
+                                </span>
+                                <div className="col-span-1 space-y-3">
+                                    {cassiteriteLotDetails.map((lot, index) => (
+                                        <div key={index} className="flex gap-2 items-center w-full">
+                                            <p className=" font-semibold">{lot.lotNumber}</p>
+                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={lot.weightOut || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleCassiteriteLotEntry(index, e)} />
+                                            <HiMinus onClick={() => handleCassiteriteRemoveLot(index)} className={`${cassiteriteLotDetails.length - 1 == 0 ? 'hidden' : ''}`} />
+                                            <HiPlus onClick={handleAddCassiteriteLot} className={`${cassiteriteLotDetails.length - 1 !== index ? 'hidden' : ''}`} />
+                                        </div>
+                                    ))}
+                                </div>
+
+                            </li>
 
                         </ul>
                     </div>

@@ -100,7 +100,8 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                 </ul>
             </div>
             {/* small sidebar menu */}
-            <ul className={`mini mt-20 flex flex-col space-y-2 w-full list-none ${open && 'hidden'}`} onMouseEnter={opennav}
+            <ul className={`mini mt-20 flex flex-col space-y-2 w-full list-none ${open && 'hidden'}`}
+            //  onMouseEnter={opennav}
             >
                 {filteredMenu.map(({ subHeaders }, index) => {
                     return (
@@ -111,9 +112,9 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                                     <Fragment key={index}>
                                         <li key={index} className={`hover:ml-4 justify-end pr-5 text-black hover:text-amber-500 hover:bg-amber-50 w-full p-3 rounded transform ease-in-out duration-300 flex
                 ${active === navtext && ' bg-amber-100 text-amber-800 rounded'}
-                `}
+                `} 
                                         >
-                                            <span className="w-4 h-4 ">{icon}</span>
+                                            <span className="w-4 h-4 " onClick={opennav}>{icon}</span>
                                         </li>
                                     </Fragment>
                                 )
