@@ -19,7 +19,7 @@ const StockPage = () => {
   const { model } = useParams();
   const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({model}, {
     refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true
+    refetchOnReconnect: true,
   });
   const [
     AddShipment,
@@ -45,23 +45,36 @@ const StockPage = () => {
   const [emptyError, setEmptyError] = useState("");
   const [form] = Form.useForm();
   const [shipmentNumber, setShipmentNumber] = useState("");
-  let initialData = [];
+  const [initialData, setInitialData] = useState([]);
 
-  // useEffect(() => {
-  if (isSuccess) {
-    const { data: dt } = data;
-    const { detailedStock: dtStk } = dt;
-    console.log(dtStk);
-    initialData = dtStk;
-  }
-  // },[isSuccess]);
+  useEffect(() => {
+    if (isSuccess) {
+      const { data: dt } = data;
+      const { detailedStock: dtStk } = dt;
+      const processedData = dtStk.map((record, index, array) => {
+        const cumulativeSum = array
+            .slice(0, index + 1)
+            .reduce((accumulator, currentRecord) => accumulator + currentRecord.cumulativeAmount, 0);
+
+        return {
+          ...record,
+          cumulative: cumulativeSum,
+        };
+      });
+      setInitialData(processedData);
+    }
+  },[isSuccess]);
+
+
+
+
 
   useEffect(() => {
     if (isSent) {
-      message.success("Shipment added successfully");
+      return message.success("Shipment added successfully");
     } else if (isFailed) {
       const { message: errorMessage } = fail.data;
-      message.error(errorMessage);
+      return message.error(errorMessage);
     }
   }, [isSent, isFailed, fail]);
 
@@ -191,10 +204,17 @@ const StockPage = () => {
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
     },
     { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
+
     {
       title: "balance (KG)",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
+      editTable: true,
+    },
+    {
+      title: "type",
+      dataIndex: "mineralType",
+      key: "mineralType",
       editTable: true,
     },
     {
@@ -266,52 +286,75 @@ const StockPage = () => {
 
   const columns2 = [
     {
-      title: "Lot number",
+      title: "lot number",
       dataIndex: "lotNumber",
       key: "lotNumber",
+      align: "center",
     },
     {
-      title: "Supply date",
+      title: "supply date",
       dataIndex: "supplyDate",
       key: "supplyDate",
-      sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
+      // sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
+      align: "center",
     },
-    { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
+    { title: "supplier name", dataIndex: "supplierName", key: "supplierName", align: "center" },
     {
-      title: "Beneficiary",
+      title: "type",
+      dataIndex: "mineralType",
+      key: "mineralType",
+    },
+    {
+      title: "beneficiary",
       dataIndex: "beneficiary",
       key: "beneficiary",
+      align: "center",
+    },
+    {
+      title: "weight In (KG)",
+      dataIndex: "weightIn",
+      key: "weightIn",
+      align: "center",
     },
     {
       title: "weight out (KG)",
       dataIndex: "weightOut",
       key: "weightOut",
       editTable: true,
+      align: "center",
     },
     {
-      title: "Exported (KG)",
+      title: "exported (KG)",
       dataIndex: "exportedAmount",
       key: "exportedAmount",
       editTable: true,
       render: (_, record) => {
-        console.log(record)
         return <span>{record.exportedAmount}</span>
-      }
+      },
+      align: "center",
     },
     {
       title: "balance (KG)",
       dataIndex: "cumulativeAmount",
       key: "cumulativeAmount",
       editTable: true,
+      align: "center",
     },
     {
-      title: "Grade (%)",
+      title: "cumulative (KG)",
+      dataIndex: "cumulative",
+      key: "cumulative",
+      align: "center",
+    },
+    {
+      title: "grade (%)",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
+      align: "center",
     },
     {
-      title: "Select",
+      title: "select",
       key: "select",
       render: (_, record) => (
         <Checkbox
@@ -323,6 +366,7 @@ const StockPage = () => {
           onChange={() => handleRowToggle(record)}
         />
       ),
+      align: "center",
     }, 
   ];
 
@@ -334,7 +378,6 @@ const StockPage = () => {
       ...col,
       onCell: (record) => ({
         record,
-        dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
       }),

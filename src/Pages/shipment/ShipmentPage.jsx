@@ -1,6 +1,6 @@
 import React, {useEffect, useState,useRef} from "react";
 import dayjs from "dayjs";
-import {Form, Input, Modal, Spin, Table} from "antd";
+import {Form, Input, message, Modal, Spin, Table} from "antd";
 import {motion} from "framer-motion";
 import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
 import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
@@ -13,6 +13,7 @@ import {HiOutlinePrinter} from "react-icons/hi";
 import {useGetAllShipmentsQuery, useShipmentReportMutation,} from "../../states/apislice";
 import {useNavigate} from "react-router-dom";
 import ListModalContainerHeader from "../../components/Listcomponents/ListModalContainerHeader";
+import EditShipment from "./EditShipment";
 
 const ShipmentPage = () => {
     const [form] = Form.useForm();
@@ -36,9 +37,19 @@ const ShipmentPage = () => {
         name: "",
         date: "",
     });
-    const [model, Setmodel] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
     const [editRowKey, setEditRowKey] = useState("");
+    const [updateMessage, setUpdateMessage] = useState("");
+    const [updateErrorMessage, setUpdateErrorMessage] = useState("");
+
+    useEffect(() => {
+        if (updateMessage) {
+            return message.success(updateMessage);
+        } else if (updateErrorMessage) {
+            return message.error(updateErrorMessage);
+        }
+    }, [updateMessage, updateErrorMessage]);
+
 
     let modalRef = useRef();
  
@@ -61,8 +72,6 @@ const ShipmentPage = () => {
         if (isSuccess) {
             const {data: dt} = data;
             const {shipments: ships} = dt;
-            console.log('-----------------------------------------------------');
-            console.log(ships);
             SetDataz(ships);
         }
     }, [isSuccess]);
@@ -70,7 +79,6 @@ const ShipmentPage = () => {
     const handleActions = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id);
-        console.log("Deleted ID:", id);
     };
 
 
@@ -222,13 +230,16 @@ const ShipmentPage = () => {
                               <RiFileListFill className=" text-lg"/>
                               <p>more details</p>
                           </li> */}
-                          <li
-                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                              onClick={() => {navigate(`/shipment/edit/${record.model}/${record._id}`)}}
-                          >
-                              <BiSolidEditAlt className=" text-lg"/>
-                              <p>edit</p>
-                          </li>
+                          {/*<li*/}
+                          {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                          {/*    onClick={() => {*/}
+                          {/*        handleExpandable(record._id);*/}
+                          {/*        // navigate(`/shipment/edit/${record.model}/${record._id}`)}*/}
+                          {/*    }}*/}
+                          {/*>*/}
+                          {/*    <BiSolidEditAlt className=" text-lg"/>*/}
+                          {/*    <p>edit</p>*/}
+                          {/*</li>*/}
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
@@ -390,6 +401,14 @@ const ShipmentPage = () => {
                                     loading={{indicator:< ImSpinner2 style={{width:'60px',height:'60px'}} className="animate-spin text-gray-500"/>, spinning:isLoading}}
                                     dataSource={dataz}
                                     columns={mergedColumns}
+                                    expandable={{
+                                        expandedRowRender: record => <EditShipment
+                                                                        record={record}
+                                                                        setUpdateErrorMessage={setUpdateErrorMessage}
+                                                                        setUpdateMessage={setUpdateMessage}/>,
+                                        rowExpandable: (record) => record.entries?.length > 0,
+                                        expandRowByClick: true,
+                                    }}
                                     components={{
                                         body: {
                                             cell: EditableCell,

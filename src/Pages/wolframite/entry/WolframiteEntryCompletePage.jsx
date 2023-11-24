@@ -208,7 +208,9 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                     return message.error("MTU cannot be empty or zero", 5);
                 updatedItem.metricTonUnit = parseFloat(updatedItem.metricTonUnit);
             }
+            // TODO 1: USE BOOLEAN TO INDICATE IF NON SELL OR NOT
             if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
+                // if (parseFloat(updatedItem.nonSellAgreementAmount) === 0) return message.error("Non Sell Agreement Amount cannot be zero", 5);
                 if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
@@ -216,17 +218,14 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
 
                 updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
-                // updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
-                // if (updatedItem.cumulativeAmount < 0) {
-                //     updatedItem.cumulativeAmount = 0;
-                // }
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
-            if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
             if (item.USDRate !== updatedItem.USDRate) {
+                if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be empty or zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
                     return message.error("USD rate cannot be empty or zero", 5);
             }
@@ -234,7 +233,7 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                 updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.metricTonUnit), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
             }
             if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3) || null;
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * updatedItem.weightOut).toFixed(3) || null;
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -477,6 +476,9 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             <Input
                 style={{margin: 0}}
                 type={"number"}
+                onWheelCapture={(e) => {
+                    e.target.blur();
+                }}
             />
         );
         return (
@@ -560,6 +562,12 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                                             }}
                                             dataSource={lotInfo}
                                             columns={mergedColumns}
+                                            rowClassName={(record) => {
+                                                if (record.status === "non-sell agreement") {
+                                                    return "bg-red-200";
+                                                }
+                                            }}
+                                            bordered={true}
                                             expandable={{
                                                 expandedRowRender: record => {
                                                     if (record.shipments) {
