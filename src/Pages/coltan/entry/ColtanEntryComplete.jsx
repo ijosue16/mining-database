@@ -192,16 +192,14 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
   ///////////////////////
 
-  useEffect(() => {
-    if (isSuccess) {
-      const { data: info } = data;
-      const { entry: entr } = info;
-      setSuply(entr);
-      setLotInfo(entr.output);
-      console.log(entr);
-      // console.log(lotInfo);
-    }
-  }, [isSuccess]);
+    useEffect(() => {
+        if (isSuccess) {
+            const {data: info} = data;
+            const {entry: entr} = info;
+            setSuply(entr);
+            setLotInfo(entr.output);
+        }
+    }, [isSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -254,30 +252,28 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
 
-                updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
-                if (updatedItem.cumulativeAmount < 0) {
-                    updatedItem.cumulativeAmount = 0;
-                }
+                updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
             if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+                if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
                     return message.error("USD rate cannot be empty or zero", 5);
             }
-            if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be empty or zero", 5);
-            if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
             if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+                if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be zero", 5);
                 if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
                     return message.error("Tantal cannot be empty or zero", 5);
             }
             if (Boolean(updatedItem.tantalum) === true && Boolean(updatedItem.mineralGrade) === true && parseFloat(updatedItem.mineralGrade) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
-                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3);
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
             }
             if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount))).toFixed(3);
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount))).toFixed(3) || null;
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -381,19 +377,6 @@ const ColtanEntryCompletePage = ({entryId}) => {
             dataIndex: "lotNumber",
             key: "lotNumber",
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
-        },
-        {
-            title: "Date",
-            dataIndex: "supplyDate",
-            key: "supplyDate",
-            sorter: (a, b) => a.supplyDate - b.supplyDate,
-            render: (text) => {
-                return (
-                    <>
-                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-                    </>
-                );
-            },
         },
         {
             title: "weight out (KG)",
@@ -522,6 +505,9 @@ const ColtanEntryCompletePage = ({entryId}) => {
             <Input
                 style={{margin: 0}}
                 type={"number"}
+                onWheelCapture={(e) => {
+                    e.target.blur();
+                }}
             />
         );
         return (
@@ -604,6 +590,12 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                 }}
                                                 dataSource={lotInfo}
                                                 columns={mergedColumns}
+                                                rowClassName={(record) => {
+                                                    if (record.status === "non-sell agreement") {
+                                                        return "bg-red-200";
+                                                    }
+                                                }}
+                                                bordered={true}
                                                 expandable={{
                                                     expandedRowRender: record => {
                                                         if (record.shipments) {

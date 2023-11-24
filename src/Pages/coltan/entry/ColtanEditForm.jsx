@@ -168,7 +168,7 @@ const ColtanEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      if (entr.mineTags.length > 0 || entr.negociantTags.length > 0) {
+      if (entr.mineTags?.length > 0 || entr.negociantTags?.length > 0) {
         setmineTags(entr.mineTags);
         setnegociantTags(entr.negociantTags);
       } else {
@@ -529,7 +529,7 @@ const ColtanEditForm = () => {
                         </ul> */}
 
                   <div className="flex justify-center">
-                    {editableFields.length > 0 ? (
+                    {editableFields?.length > 0 ? (
                             <Countdown
                                 date={dayjs(requestInfo?.editExpiresAt).valueOf()}
                                 onComplete={() => {

@@ -154,7 +154,7 @@ const WolframiteEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      if (entr.mineTags.length > 0 && entr.negociantTags.length > 0) {
+      if (entr.mineTags?.length > 0 && entr.negociantTags?.length > 0) {
         setmineTags(entr.mineTags);
         setnegociantTags(entr.negociantTags);
       } else {

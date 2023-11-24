@@ -209,36 +209,42 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 ...row,
             };
             if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
-                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+                // if (parseFloat(updatedItem.nonSellAgreementAmount) === 0) return message.error("Non Sell Agreement Amount cannot be zero", 5);
+                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
                 if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
-
-                updatedItem.cumulativeAmount -= updatedItem.nonSellAgreementAmount;
-                if (updatedItem.cumulativeAmount < 0) {
-                    updatedItem.cumulativeAmount = 0;
-                }
+                updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
             if (item.USDRate !== updatedItem.USDRate) {
+                if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
                     return message.error("USD rate cannot be empty or zero", 5);
             }
             if (item.londonMetalExchange !== updatedItem.londonMetalExchange) {
+                if (parseFloat(updatedItem.londonMetalExchange) === 0) return message.error("LME cannot be zero", 5);
                 if (Boolean(item.londonMetalExchange) === true && Boolean(updatedItem.londonMetalExchange) === false)
                     return message.error("LME cannot be empty or zero", 5);
             }
             if (item.treatmentCharges !== updatedItem.treatmentCharges) {
+                if (parseFloat(updatedItem.treatmentCharges) === 0) return message.error("Treatment Charges cannot be zero", 5);
                 if (Boolean(item.treatmentCharges) === true && Boolean(updatedItem.treatmentCharges) === false)
                     return message.error("Treatment Charges cannot be empty or zero", 5);
             }
-            updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.londonMetalExchange), parseFloat(updatedItem.mineralGrade), parseFloat(updatedItem.treatmentCharges));
+            if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true && Boolean(parseFloat(updatedItem.mineralGrade)) === true && Boolean(parseFloat(updatedItem.treatmentCharges)) === true)
+                updatedItem.pricePerUnit = calculatePricePerUnit(
+                    parseFloat(updatedItem.londonMetalExchange),
+                    parseFloat(updatedItem.mineralGrade),
+                    parseFloat(updatedItem.treatmentCharges)
+                ) || null;
             if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3);
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3) || null;
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -343,19 +349,19 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             key: "lotNumber",
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
-        {
-            title: "Date",
-            dataIndex: "supplyDate",
-            key: "supplyDate",
-            sorter: (a, b) => a.supplyDate - b.supplyDate,
-            render: (text) => {
-                return (
-                    <>
-                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-                    </>
-                );
-            },
-        },
+        // {
+        //     title: "Date",
+        //     dataIndex: "supplyDate",
+        //     key: "supplyDate",
+        //     sorter: (a, b) => a.supplyDate - b.supplyDate,
+        //     render: (text) => {
+        //         return (
+        //             <>
+        //                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+        //             </>
+        //         );
+        //     },
+        // },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
@@ -477,6 +483,9 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             <Input
                 style={{margin: 0}}
                 type={"number"}
+                onWheelCapture={(e) => {
+                    e.target.blur();
+                }}
             />
         );
         return (
@@ -497,57 +506,57 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
         <FetchingPage />
       ) : (
             <ActionsPagesContainer
-                title={"Cassiterite Details"}
-                subTitle={"View Cassiterite detailes"}
+                title={"LOT DETAILS"}
+                // subTitle={"View Cassiterite detailes"}
                 actionsContainer={
                     <AddComponent
                         component={
                             <>
-                                {isLoading ? (
-                                    <div className="flex h-32 w-full items-center justify-center bg-white">
-                                        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-6 w-full">
-                                        <div
-                                            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">
-                                            <p className=" font-semibold text-lg">Entry details</p>
-                                        </div>
+                                {/*{isLoading ? (*/}
+                                {/*    <div className="flex h-32 w-full items-center justify-center bg-white">*/}
+                                {/*        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>*/}
+                                {/*    </div>*/}
+                                {/*) : (*/}
+                                {/*    <div className="flex flex-col gap-6 w-full">*/}
+                                {/*        <div*/}
+                                {/*            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                {/*            <p className=" font-semibold text-lg">Entry details</p>*/}
+                                {/*        </div>*/}
 
-                                        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Entry details
-                                                </p>
-                                                <p>Weight in: {suply?.weightIn}</p>
-                                                <p>Mineral type: {suply?.mineralType}</p>
-                                                {/* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                                <p>Number of tags: {suply?.numberOfTags}</p>
-                                                <p>Beneficiary: {suply?.beneficiary}</p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Company info
-                                                </p>
-                                                <p>Name: {suply?.companyName}</p>
-                                                <p>Email: {suply.email}</p>
-                                                <p>TIN Number: {suply.TINNumber}</p>
-                                                <p className=" shrink">
-                                                    License Number: {suply.licenseNumber}
-                                                </p>
-                                            </li>
-                                            <li>
-                                                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">
-                                                    Representative info
-                                                </p>
-                                                <p>Phone number: {suply.representativePhoneNumber}</p>
-                                                <p>ID: {suply.representativeId}</p>
-                                                {/*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*/}
-                                            </li>
+                                {/*        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Entry details*/}
+                                {/*                </p>*/}
+                                {/*                <p>Weight in: {suply?.weightIn}</p>*/}
+                                {/*                <p>Mineral type: {suply?.mineralType}</p>*/}
+                                {/*                /!* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> *!/*/}
+                                {/*                <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                {/*                <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                {/*            </li>*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Company info*/}
+                                {/*                </p>*/}
+                                {/*                <p>Name: {suply?.companyName}</p>*/}
+                                {/*                <p>Email: {suply.email}</p>*/}
+                                {/*                <p>TIN Number: {suply.TINNumber}</p>*/}
+                                {/*                <p className=" shrink">*/}
+                                {/*                    License Number: {suply.licenseNumber}*/}
+                                {/*                </p>*/}
+                                {/*            </li>*/}
+                                {/*            <li>*/}
+                                {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                {/*                    Representative info*/}
+                                {/*                </p>*/}
+                                {/*                <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                {/*                <p>ID: {suply.representativeId}</p>*/}
+                                {/*                /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                {/*            </li>*/}
 
-                                        </ul>
-                                    </div>
-                                )}
+                                {/*        </ul>*/}
+                                {/*    </div>*/}
+                                {/*)}*/}
                                 <div className="w-full">
                                     <Form form={form} component={false}>
                                         <Table
@@ -559,6 +568,12 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                                             }}
                                             dataSource={lotInfo}
                                             columns={mergedColumns}
+                                            rowClassName={(record) => {
+                                                if (record.status === "non-sell agreement") {
+                                                    return "bg-red-200";
+                                                }
+                                            }}
+                                            bordered={true}
                                             expandable={{
                                                 expandedRowRender: record => {
                                                     if (record.shipments) {

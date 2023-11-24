@@ -450,6 +450,10 @@ const CassiteriteListPage = () => {
                 }}
                 dataSource={dataz}
                 columns={columns}
+                expandable={{
+                  expandedRowRender: (record) => <CassiteriteEntryComplete entryId={record._id}/>,
+                  rowExpandable: (record) => record.output?.length > 0,
+                }}
                 rowKey="_id"
               />
             </div>

@@ -234,7 +234,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         updateEntry: builder.mutation({
             query: ({body, model, entryId}) => ({
@@ -242,14 +242,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteEntry: builder.mutation({
             query: ({model, entryId}) => ({
                 url: `/entries/${model}/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createColtanEntry: builder.mutation({
             query: ({body}) => ({
@@ -257,7 +257,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         getAllColtanEntries: builder.query({
             query: () => `/coltan`,
@@ -273,14 +273,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteColtanEntry: builder.mutation({
             query: ({entryId}) => ({
                 url: `/coltan/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createCassiteriteEntry: builder.mutation({
             query: ({body}) => ({
@@ -288,7 +288,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         getAllCassiteriteEntries: builder.query({
             query: () => `/cassiterite`,
@@ -304,14 +304,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteCassiteriteEntry: builder.mutation({
             query: ({entryId}) => ({
                 url: `/cassiterite/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createBerylliumEntry: builder.mutation({
             query: ({body}) => ({
@@ -319,7 +319,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         getAllBerylliumEntries: builder.query({
             query: () => `/beryllium`,
@@ -335,14 +335,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteBerylliumEntry: builder.mutation({
             query: ({entryId}) => ({
                 url: `/beryllium/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createLithiumEntry: builder.mutation({
             query: ({body}) => ({
@@ -350,7 +350,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         getAllLithiumEntries: builder.query({
             query: () => `/lithium`,
@@ -366,14 +366,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteLithiumEntry: builder.mutation({
             query: ({entryId}) => ({
                 url: `/lithium/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createWolframiteEntry: builder.mutation({
             query: ({body}) => ({
@@ -381,7 +381,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         getAllWolframiteEntries: builder.query({
             query: () => `/wolframite`,
@@ -397,14 +397,14 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         deleteWolframiteEntry: builder.mutation({
             query: ({entryId}) => ({
                 url: `/wolframite/${entryId}`,
                 method: 'DELETE',
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         createMixedEntry: builder.mutation({
             query: ({body}) => ({
@@ -412,7 +412,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipment']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
         }),
         detailedStock: builder.query({
             query: ({model}) => `/stock/details/${model}`,
