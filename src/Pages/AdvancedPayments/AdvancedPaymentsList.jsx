@@ -1,5 +1,6 @@
 import React,{useState,useRef,useEffect} from "react";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
+import ListContainer from "../../components/Listcomponents/ListContainer";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 import {motion} from "framer-motion";
@@ -268,10 +269,13 @@ SetSelectedRow("");
 
   return (
     <>
-    <ActionsPagesContainer
+    <ListContainer
       title={"Advanced payments"}
       subTitle={"Advanced payments list"}
-      actionsContainer={
+      navLinktext={"payment/advanced/entry"}
+      navtext={"Add new advanced payment Entry"}
+      isAllowed={true}
+      table={
         <>
                             <Modal 
                          width= {'95%'}
