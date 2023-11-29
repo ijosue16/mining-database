@@ -17,6 +17,7 @@ import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { toast } from "react-toastify";
+import { toInitialCase } from "../../components/helperFunctions";
 
 const UsersListPage = () => {
   let dataz = [];
@@ -106,6 +107,7 @@ const UsersListPage = () => {
       key: "role",
       sorter: (a, b) => a.role.localeCompare(b.role),
       filteredValue: [searchText],
+      render:(text)=><span>{toInitialCase(text)}</span>,
       onFilter: (value, record) => {
         return (
           String(record.name)

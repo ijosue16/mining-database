@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {useGetOneUserQuery, useAddMessageMutation, useLazyGetMessagesQuery} from "../../states/apislice";
+import {useGetOneUserQuery, useAddMessageMutation, useLazyGetMessagesQuery,useCreateChatMutation} from "../../states/apislice";
 // import { format } from "timeago";
 import InputEmoji from 'react-input-emoji'
 import { VscSend } from "react-icons/vsc";
@@ -17,6 +17,7 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
     const [getMessages, {isLoading, isSuccess}] = useLazyGetMessagesQuery();
     const {data, isSuccess: isGettingUserSuccess} = useGetOneUserQuery(userId, {skip: !userId});
     const [addMessage, {isError: isAddMessageError, error: addMessageError}] = useAddMessageMutation();
+    // const [createChat] = useCreateChatMutation({senderId,receiverId});   TO DO LATER  IN THE CHAT 
 
     // respond to failure to send message
     useEffect(() => {
@@ -113,11 +114,11 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
 
     return (
         <>
-            <div className="ChatBox-container w-full h-full overflow-y-hidden overflow-x-hidden relative">
+            <div className="ChatBox-container w-full h-full overflow-y-hidden overflow-x-hidden relative ">
                 {chat ? (
                     <>
                         {/* chat-header */}
-                        <div className="chat-header border-b shadow-lg p-2 w-full absolute top-0 z-50 bg-zinc-50">
+                        <div className="chat-header border-b shadow-lg p-2 w-full absolute z-20 bg-zinc-700">
                            
                                 <div className="flex items-center gap-3">
                                     <Avatar size={40} icon={<UserOutlined/>}/>
@@ -141,7 +142,7 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
                             ))}
                         </div>
                         {/* chat-sender */}
-                        <div className="flex items-center absolute shadow-md bottom-0 w-full z-50 bg-zinc-50">
+                        <div className="flex items-center absolute shadow-md bottom-0 w-full z-20 bg-zinc-50">
                             <GrAdd onClick={() => imageRef.current.click()}/>
                             <InputEmoji
                                 value={newMessage}

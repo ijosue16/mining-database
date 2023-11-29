@@ -9,10 +9,12 @@ import { Avatar } from "antd";
 
 import { UserOutlined } from "@ant-design/icons";
 import { setUserData } from "../../states/slice";
+import { Skeleton } from "antd";
 // import { getUser } from "../../api/UserRequests";
 const Conversation = ({
   data,
   currentUser,
+  fetch,
   online,
   fetchLastMessage,
   setFetchLastMessage,
@@ -59,7 +61,15 @@ const Conversation = ({
     <>
       <div className="follower conversation">
 
-        <div className="flex items-center gap-2 hover:bg-gray-300 rounded-md py-3 px-2">
+        {fetch?(<div className="flex items-center gap-2 hover:bg-gray-300 rounded-md py-3 px-2">
+        <Skeleton.Avatar active size={40}/>
+        <div className="w-fit text-center flex flex-col items-center justify-center">
+          <Skeleton.Input active size={12} block/>
+          <Skeleton.Input active size={12} />
+          </div>
+        
+        
+          </div>):(<div className="flex items-center gap-2 hover:bg-gray-300 rounded-md py-3 px-2">
           {/*{online && <div className="online-dot"/>}*/}
           <Avatar size={40}>{user?.name.slice(0, 2)}</Avatar>
           <div className="name flex flex-col">
@@ -73,7 +83,7 @@ const Conversation = ({
             </span>
             {/*<span style={{color: online?"#51e200":"", marginRight: 5}}>{online? "Online" : "Offline"}</span>*/}
           </div>
-        </div>
+        </div>)}
         {/*CONVERSATION*/}
       </div>
       {/* <hr style={{ width: "85%", border: "0.1px solid #ececec" }} /> */}

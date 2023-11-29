@@ -9,6 +9,9 @@ import {GrAddCircle} from "react-icons/gr";
 import {IoMdAddCircle} from "react-icons/io";
 import { FiEdit } from "react-icons/fi";
 import { IoFilterOutline } from "react-icons/io5";
+import {UserOutlined} from "@ant-design/icons";
+import {Avatar, message} from "antd";
+import NewUSerChart from "./NewUserChat";
 
 // const socket = io.connect("http://localhost:5001");
 const Chat = () => {
@@ -30,6 +33,7 @@ const Chat = () => {
     const [receiveMessage, setReceiveMessage] = useState(null);
     const [lastMessage, setLastMessage] = useState(null);
     const [fetchLastMessage, setFetchLastMessage] = useState(false);
+    const [newUserModal, setNewUserModal] = useState(false);
     const [users, setUsers] = useState([]);
     // const [currentUserTyping, setCurrentUserTyping] = useState({status: false, receiverId: null});
 
@@ -87,16 +91,172 @@ const Chat = () => {
 
     return (
         <>
-        <div className="flex h-full space-y-3">
+        <div className="flex h-full space-y-3 item">
             {/*CHATTING*/}
 
             <div className="w-1/4 bg-zinc-50 overflow-y-hidden rounded-[4px] p-2 rounded-tr-none rounded-br-none border-r border-gray-200 ">
             <div className="add chatt flex justify-between items-center p-2">
           <p className=" font-bold text-xl">Chats</p>
           <div className="flex justify-end items-center">
-            <span className=" p-4 hover:bg-gray-300 rounded-md">
+            <span className=" p-4 hover:bg-gray-300 rounded-md relative" onClick={()=>setNewUserModal(!newUserModal)}>
               <FiEdit />
             </span>
+            {/* ADD NEW CHAT USER MODAL */}
+
+            {/* <div className=" bg-red-500 rounded-md shadow-lg h-96 max-w-72 absolute top-36 left-60 z-50 p-2 space-y-1">
+                <p className=" text-lg font-bold">New Chat</p>
+                <input type="text" className="w-full px-2 py-1 rounded-md"/>
+                <div className=" space-y-2 max-h-[290px] w-full overflow-y-auto">
+                    <p>all contacts</p>
+
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                    <div className="flex items-center gap-3">
+                                    <Avatar size={40} icon={<UserOutlined/>}/>
+                                    <div className="name" style={{fontSize: "0.9rem"}}>
+                                        <span className=" font-bold">
+                                         Alfred
+                                        </span>
+                                    </div>
+                                </div>
+                </div>
+            </div> */}
+            <NewUSerChart visible={newUserModal} position={"top-36 left-60"}/> 
+
             <span className=" p-4 hover:bg-gray-300 rounded-md">
               <IoFilterOutline />
             </span>
@@ -107,13 +267,13 @@ const Chat = () => {
                 {/*</div>*/}
                 {chats.map((chat, index) => (
                     <div key={index} onClick={() => setCurrentChat(chat)}>
-                        <Conversation data={chat} currentUser={userData._id}  fetchLastMessage={fetchLastMessage} setFetchLastMessage={setFetchLastMessage}/>
+                        <Conversation fetch={isLoading} data={chat} currentUser={userData._id}  fetchLastMessage={fetchLastMessage} setFetchLastMessage={setFetchLastMessage}/>
                     </div>
                 ))}
             </div>
-            <div className="w-full">
+            {/* <div className="w-full"> */}
                 <ChatBox chat={currentChat} currentUser={userData._id}  setSendMessage={setSendMessage} receivedMessage={receiveMessage}/>
-            </div>
+            {/* </div> */}
         </div>
         </> 
     )
