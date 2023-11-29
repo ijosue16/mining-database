@@ -38,7 +38,7 @@ const AdvancedPaymentEntry = () => {
         setDropdownOpen(false);
       }
     };
-  
+
     useEffect(() => {
       document.addEventListener("click", handleClickOutside, true);
       return () => {
@@ -57,11 +57,11 @@ const AdvancedPaymentEntry = () => {
         const companyName = supplier.companyName || "";
         return companyName.toLowerCase().includes(searchText.toLowerCase());
       });
-    
+
       const handleSearchInputChange = (e) => {
         setSearchText(e.target.value);
       };
-    
+
 
     const handleEntry = (e) => {
         setPaymentInfo((prevState) => ({
@@ -82,7 +82,7 @@ const AdvancedPaymentEntry = () => {
         setDropdownOpen(false);
         setSearchText("");
       };
-      
+
     const handleAddPaymentDate = (e) => {
         setPaymentInfo((prevState) => ({
             ...prevState,
@@ -92,10 +92,10 @@ const AdvancedPaymentEntry = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            message.success("Advanced payment added successfully");
+            return message.success("Advanced payment added successfully");
         } else if (isError) {
             const {message: errorMessage} = error.data;
-            message.error(errorMessage);
+            return message.error(errorMessage);
         }
     }, [isSuccess, isError, error]);
 
@@ -117,8 +117,7 @@ const AdvancedPaymentEntry = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = paymentInfo;
-        console.log(body);
-        // await AddAdvancedPayment({body});
+        await AddAdvancedPayment({body});
         handleCancel();
     };
 

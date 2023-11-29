@@ -237,14 +237,16 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.treatmentCharges) === true && Boolean(updatedItem.treatmentCharges) === false)
                     return message.error("Treatment Charges cannot be empty or zero", 5);
             }
-            if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true && Boolean(parseFloat(updatedItem.mineralGrade)) === true && Boolean(parseFloat(updatedItem.treatmentCharges)) === true)
+            if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true && Boolean(parseFloat(updatedItem.mineralGrade)) === true && Boolean(parseFloat(updatedItem.treatmentCharges)) === true) {
                 updatedItem.pricePerUnit = calculatePricePerUnit(
                     parseFloat(updatedItem.londonMetalExchange),
                     parseFloat(updatedItem.mineralGrade),
                     parseFloat(updatedItem.treatmentCharges)
                 ) || null;
-            if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (updatedItem.weightOut - updatedItem.nonSellAgreementAmount)).toFixed(3) || null;
+            }
+            if (Boolean(updatedItem.pricePerUnit) === true) {
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+            }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");

@@ -32,7 +32,7 @@ const ColtanPaymentsPage = () => {
     const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()
-    const{data,isLoading,isSuccess,isError,error}=useGetOneColtanEntryQuery({entryId});
+    const {data,isLoading,isSuccess,isError,error} = useGetOneColtanEntryQuery({entryId});
     const [advancedListModal,SetAdvancedListModal]=useState(false);
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
     const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, currency: "" });
@@ -44,20 +44,20 @@ const ColtanPaymentsPage = () => {
     const [editRowKey, setEditRowKey] = useState("");
     const [showForm, setShowForm] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
-    let paymentHistory = [];
-    if (isPaymentHistoryReady) {
-        console.log('-----------------------------------------------------------');
-        console.log(paymentHistoryData.data);
-        const { lotPaymentHistory } = paymentHistoryData.data;
-        paymentHistory = lotPaymentHistory;
-    }
+    const [paymentHistory, setPaymentHistory] = useState([]);
+    useEffect(() => {
+        if (isPaymentHistoryReady) {
+            const { lotPaymentHistory } = paymentHistoryData.data;
+            setPaymentHistory(lotPaymentHistory);
+        }
+    }, [isPaymentHistoryReady]);
 
     useEffect(() => {
         if (isPaymentSuccess) {
-            toast.success("Payment Completed Successfully");
+            return message.success("Payment Completed Successfully");
         } else if (isPaymentError) {
-            const { message } = paymentError.data;
-            toast.error(message);
+            const { message: errorMessage } = paymentError.data;
+            return message.error(errorMessage);
         }
     }, [isPaymentError, isPaymentSuccess, paymentError]);
 
@@ -112,7 +112,15 @@ const ColtanPaymentsPage = () => {
             title: 'location',
             dataIndex: 'location',
             key: 'location',
-            sorter: (a, b) => a.location.localeCompare(b.location),
+            render: (_, record) => {
+                if (typeof record.location === 'object' && !Array.isArray(record.location) && record.location !== null) {
+                    const { province, district, sector, cell } = record.location;
+                    return (
+                        <span>{`${cell}, ${sector}, ${district}, ${province}`}</span>
+                    )
+                }
+            }
+            // sorter: (a, b) => a.location.localeCompare(b.location),
         },
         {
             title: 'payment amount',
@@ -396,11 +404,11 @@ const ColtanPaymentsPage = () => {
 
       const handleUseButtonClick = async (item) => {
         // setSelectedAccordData({item:item});
-        const advancedPaymentId=item;
-        const body = {entryId, lotNumber, model,advancedPaymentId};
+        const paymentInAdvanceId=item;
+        const body = {entryId, lotNumber, model,paymentInAdvanceId};
+          // console.log(body);
         await addPayment({body});
         // setIsModalVisible(true);
-        console.log(item);
       };
 
     const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
@@ -424,8 +432,6 @@ const ColtanPaymentsPage = () => {
         e.preventDefault();
         const body = {...payment, entryId, lotNumber, model};
         await addPayment({body});
-        console.log('after payment');
-        console.log(body);
         handleCancel();
         handleShowForm();
     };

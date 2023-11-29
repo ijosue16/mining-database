@@ -1,10 +1,11 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
+// const existingUrl = "https://mining-company-management-system.onrender.com/api/v1/";
 
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/"
+        baseUrl: "http://localhost:5001/api/v1/"
         // prepareHeaders: (headers, {getState}) => {
         //     const token = getState.auth.token;
         //     if (token) {
@@ -446,6 +447,18 @@ export const apiSlice = createApi({
             query: ({shipmentId}) => `/shipments/tags/${shipmentId}`,
             providesTags: ["shipments", "entries", "tags"]
         }),
+        generateNegociantTagsList: builder.mutation({
+            query: ({shipmentId}) => ({
+                url: `/shipments/negociant-tags/${shipmentId}`,
+                method: "POST"
+            })
+        }),
+        generatePackingList: builder.mutation({
+            query: ({shipmentId}) => ({
+                url: `/shipments/packing-list/${shipmentId}`,
+                method: "POST"
+            })
+        }),
         updateTag: builder.mutation({
             query: ({body, tagNumber}) => ({
                 url: `/tags/${tagNumber}`,
@@ -748,4 +761,6 @@ export const {
     useGetAllLogsQuery,
     useGetNotificationsQuery,
     useUpdateNotificationStatusMutation,
+    useGenerateNegociantTagsListMutation,
+    useGeneratePackingListMutation,
 } = apiSlice

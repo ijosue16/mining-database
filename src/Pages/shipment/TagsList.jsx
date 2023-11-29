@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from "react";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import { useGetTagsListQuery, useUpdateTagMutation, useGenerateTagListMutation, useGetOneShipmentQuery } from "../../states/apislice";
+import { useGetTagsListQuery,
+    useUpdateTagMutation,
+    useGenerateTagListMutation,
+    useGetOneShipmentQuery,
+    useGenerateNegociantTagsListMutation,
+    useGeneratePackingListMutation,
+} from "../../states/apislice";
 import { Table, message } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
@@ -12,9 +18,13 @@ const TagsList = () => {
     const { data, isLoading, isSuccess } = useGetTagsListQuery({shipmentId}, {refetchOnMountOrArgChange: true, refetchOnReconnect: true});
     const [updateTag, {isSuccess: isUpdateTagSuccess, isError: isUpdateTagError, error: updateTagError}] = useUpdateTagMutation();
     const [generateTagList, {isSuccess: isGenerateTagListSuccess, isError: isGenerateTagListError, error: generateTagListError}] = useGenerateTagListMutation();
+    const [generateNegociantTagsList, {isSuccess: isGenerateNegociantTagsListSuccess, isError: isGenerateNegociantTagsListError, error: generateNegociantTagsListError}] = useGenerateNegociantTagsListMutation();
+    const [generatePackingList, {isSuccess: isGeneratePackingListSuccess, isError: isGeneratePackingListError, error: generatePackingListError}] = useGeneratePackingListMutation();
 
     const [entries, setEntries] = useState([]);
     const [tagListFile, setTagListFile] = useState(null);
+    const [packingListFile, setPackingListFile] = useState(null);
+    const [negociantTagListFile, setNegociantTagListFile] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -25,13 +35,32 @@ const TagsList = () => {
     }, [isSuccess]);
 
     useEffect(() => {
+        if (isGenerateNegociantTagsListSuccess) {
+            return message.success("Negociant tag list generated successfully");
+        } else if (isGenerateNegociantTagsListError) {
+            const { message: errorMessage } = generateNegociantTagsListError.data;
+            return message.error(errorMessage);
+        }
+    }, [isGenerateNegociantTagsListSuccess, isGenerateNegociantTagsListError, generateNegociantTagsListError]);
+
+    useEffect(() => {
+        if (isGeneratePackingListSuccess) {
+            return message.success("Packing list generated successfully");
+        } else if (isGeneratePackingListError) {
+            const { message: errorMessage } = generatePackingListError.data;
+            return message.error(errorMessage);
+        }
+    }, [isGeneratePackingListSuccess, isGeneratePackingListError, generatePackingListError]);
+
+    useEffect(() => {
         if (isShipmentSuccess) {
             const { shipment } = shipmentData.data;
-            if (shipment && shipment.tagListFile) {
-                setTagListFile(shipment.tagListFile);
-            }
+            if (shipment.tagListFile) setTagListFile(shipment.tagListFile.url);
+            if (shipment.packingListFile) setPackingListFile(shipment.packingListFile.url);
+            if (shipment.negociantTagListFile) setNegociantTagListFile(shipment.negociantTagListFile.url);
         }
     }, [isShipmentSuccess]);
+
 
     const columns = [
         {
@@ -108,6 +137,23 @@ const TagsList = () => {
         if (response.data) {
             const { tagListFile: tagFile } = response.data.data;
             setTagListFile(tagFile);
+        }
+    }
+
+    const handleGenerateNegociantTagList = async () => {
+        const response = await generateNegociantTagsList({shipmentId});
+        if (response.data) {
+            const { negociantTagsListFile: tagFile } = response.data.data;
+            setNegociantTagListFile(tagFile);
+        }
+    }
+
+
+    const handleGeneratePackingList = async () => {
+        const response = await generatePackingList({shipmentId});
+        if (response.data) {
+            const { packingListFile: packingFile } = response.data.data;
+            setPackingListFile(packingFile);
         }
     }
 
@@ -195,11 +241,25 @@ const TagsList = () => {
                             }}
                             rowKey="_id"
                         />
-                        <div>
-                            <button onClick={handleGenerateTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">Generate tag list</button>
-                            <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
-                               href={tagListFile ? tagListFile : ""}>
-                                Download tag list</a>
+                        <div className="flex justify-center">
+                            <div className="flex flex-col items-center gap-2">
+                                <button onClick={handleGenerateTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">Generate tag list</button>
+                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
+                                   href={tagListFile ? tagListFile : ""}>
+                                    Download tag list</a>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <button onClick={handleGenerateNegociantTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE NEGOCIANT TAG LIST</button>
+                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
+                                   href={negociantTagListFile ? negociantTagListFile : ""}>
+                                    Download negociant tags</a>
+                            </div>
+                            <div className="flex flex-col items-center gap-2">
+                                <button onClick={handleGeneratePackingList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE PACKING LIST</button>
+                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
+                                   href={packingListFile ? packingListFile : ""}>
+                                    Download packing list</a>
+                            </div>
                         </div>
                     </>
 

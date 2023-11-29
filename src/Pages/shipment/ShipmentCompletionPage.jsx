@@ -58,10 +58,14 @@ const ShipmentCompletionPage = () => {
     buyerId: "",
     shipmentSamplingDate: "",
     shipmentContainerLoadingDate: "",
-    totalShipmentQuantity: "",
+    netWeight: "",
     averageGrade: "",
     averagePrice: "",
     shipmentNumber: "",
+    dustWeight: null,
+    sampleWeight: null,
+    iTSCiShipmentNumber: "",
+    shipmentDate: "",
     mineralType: "coltan",
   });
   const [fileData, setFileData] = useState({
@@ -93,10 +97,14 @@ const ShipmentCompletionPage = () => {
         buyerId: ships.buyerId,
         shipmentSamplingDate: ships.shipmentSamplingDate,
         shipmentContainerLoadingDate: ships.shipmentContainerLoadingDate,
-        totalShipmentQuantity: ships.totalShipmentQuantity,
+        netWeight: ships.netWeight,
         averageGrade: ships.averageGrade,
         averagePrice: ships.averagePrice,
         shipmentNumber: ships.shipmentNumber,
+        dustWeight: ships.dustWeight,
+        sampleWeight: ships.sampleWeight,
+        iTSCiShipmentNumber: ships.iTSCiShipmentNumber,
+        shipmentDate: ships.shipmentDate,
         mineralType: "coltan",
       });
 
@@ -176,6 +184,14 @@ const ShipmentCompletionPage = () => {
       shipmentSamplingDate: e,
     }));
   };
+
+  const handleShipmentDate = (e) => {
+    setShipmentDetails((prevState) => ({
+      ...prevState,
+      shipmentDate: e,
+    }));
+  };
+
   const handleAddLoadingDate = (e) => {
     setShipmentDetails((prevState) => ({
       ...prevState,
@@ -226,18 +242,20 @@ const ShipmentCompletionPage = () => {
       buyerId: "",
       shipmentSamplingDate: "",
       shipmentContainerLoadingDate: "",
-      totalShipmentQuantity: "",
+      netWeight: "",
       averageGrade: "",
       averagePrice: "",
       shipmentNumber: "",
       mineralType: "coltan",
+      iTSCiShipmentNumber: null,
+      shipmentDate: "",
+      dustWeight: null,
+      sampleWeight: null,
       analysisCertificate: null,
       containerForwardNote: null,
       certificateOfOrigin: null,
       rmbIcglrCertificate: null,
     });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    console.log(checked);
   };
 
   return (
@@ -310,49 +328,61 @@ const ShipmentCompletionPage = () => {
                       </select>
                     </li>
                     <li className=" space-y-1">
-                      <p className="pl-1">Sampling date</p>
-                      <DatePicker
-                        placeholder=""
-                        value={
-                          shipmentDetails.shipmentSamplingDate
-                            ? dayjs(shipmentDetails.shipmentSamplingDate)
-                            : null
-                        }
-                        onChange={handleAddSamplingDate}
-                        id="shipmentSamplingDate"
-                        name="shipmentSamplingDate"
-                        className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Container loading date</p>
-                      <DatePicker
-                        placeholder=""
-                        value={
-                          shipmentDetails.shipmentContainerLoadingDate
-                            ? dayjs(
-                                shipmentDetails.shipmentContainerLoadingDate
-                              )
-                            : null
-                        }
-                        onChange={handleAddLoadingDate}
-                        id="shipmentContainerLoadingDate"
-                        name="shipmentContainerLoadingDate"
-                        className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Total quantity</p>
+                      <p className="pl-1">Net Weight</p>
                       <input
                         type="text"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-md w-full"
-                        name="totalShipmentQuantity"
-                        id="totalShipmentQuantity"
-                        value={shipmentDetails.totalShipmentQuantity || ""}
+                        name="netWeight"
+                        id="netWeight"
+                        value={shipmentDetails.netWeight || null}
                         onChange={handleEntry}
                       />
                     </li>
+
+                    {/* commenteeeee */}
+                  <li className=" space-y-1">
+                    <p className="pl-1">Sample Weight</p>
+                    <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="sampleWeight"
+                        id="sampleWeight"
+                        value={shipmentDetails.sampleWeight || null}
+                        onChange={handleEntry}
+                    />
+                  </li>
+                  <li className=" space-y-1">
+                  <p className="pl-1">Dust Weight</p>
+                  <input
+                      type="text"
+                      autoComplete="off"
+                      className="focus:outline-none p-2 border rounded-md w-full"
+                      name="dustWeight"
+                      id="dustWeight"
+                      value={shipmentDetails.dustWeight || null}
+                      onChange={handleEntry}
+                  />
+                </li>
+                <li className=" space-y-1">
+                  <p className="pl-1">Shipment Date</p>
+                  <DatePicker
+                      placeholder=""
+                      value={
+                        shipmentDetails.shipmentDate
+                            ? dayjs(shipmentDetails.shipmentDate)
+                            : null
+                      }
+                      onChange={handleShipmentDate}
+                      id="shipmentDate"
+                      name="shipmentDate"
+                      className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
+                  />
+                </li>
+
+                    {/* commenteeeee */}
+
                     <li className=" space-y-1">
                       <p className="pl-1">Average grade</p>
                       <input
@@ -390,6 +420,53 @@ const ShipmentCompletionPage = () => {
                         onChange={handleEntry}
                       />
                     </li>
+
+                    <li className=" space-y-1">
+                      <p className="pl-1">iTSCi Shipment Number</p>
+                      <input
+                          type="text"
+                          autoComplete="off"
+                          className="focus:outline-none p-2 border rounded-md w-full"
+                          name="iTSCiShipmentNumber"
+                          id="iTSCiShipmentNumber"
+                          value={shipmentDetails.iTSCiShipmentNumber || null}
+                          onChange={handleEntry}
+                      />
+                    </li>
+
+                    <li className=" space-y-1">
+                      <p className="pl-1">Sampling date</p>
+                      <DatePicker
+                          placeholder=""
+                          value={
+                            shipmentDetails.shipmentSamplingDate
+                                ? dayjs(shipmentDetails.shipmentSamplingDate)
+                                : null
+                          }
+                          onChange={handleAddSamplingDate}
+                          id="shipmentSamplingDate"
+                          name="shipmentSamplingDate"
+                          className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Container loading date</p>
+                      <DatePicker
+                          placeholder=""
+                          value={
+                            shipmentDetails.shipmentContainerLoadingDate
+                                ? dayjs(
+                                shipmentDetails.shipmentContainerLoadingDate
+                                )
+                                : null
+                          }
+                          onChange={handleAddLoadingDate}
+                          id="shipmentContainerLoadingDate"
+                          name="shipmentContainerLoadingDate"
+                          className=" focus:outline-none p-2 border rounded-md w-full border-[#e8eaed]"
+                      />
+                    </li>
+
                     <li className="col-span-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
                       <p className="col-span-full text-lg font-semibold">
                         Attached documents
