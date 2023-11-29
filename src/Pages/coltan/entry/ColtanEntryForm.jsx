@@ -224,7 +224,7 @@ const ColtanEntryForm = () => {
       <ActionsPagesContainer
         title={"Register coltan entry"}
         subTitle={"Add new coltan entry"}
-        actionsContainer={
+        actionsContainer={ 
           <AddComponent
             component={
               <div className="grid grid-cols-1 gap-1">
