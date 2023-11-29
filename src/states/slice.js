@@ -27,7 +27,7 @@ export const globalSlice = createSlice({
         },
         setUserData: (state, action) => {
             state.userData = action.payload
-            state.role = state.userData.role
+            state.role = state.userData?.role
         },
         setPermissions: (state, action) => {
             state.permissions = action.payload;

@@ -79,6 +79,7 @@ import {socket, SocketContext} from "./context files/socket";
 import UsersActivityLogs from "./Pages/UsersActivityLogs";
 import TagsList from "./Pages/shipment/TagsList";
 import ShipmentEdit from './Pages/shipment/ShipmentEdit';
+import NewUSerChart from './Pages/Chat/NewUserChat';
 
 function App() {
 
@@ -117,7 +118,8 @@ function App() {
                                 <Route path='/beryllium' element={<BerylliumListPage/>}/>
                                 <Route path='/mixed' element={<MixedEntryForm/>}/>
 
-                                <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/>
+                                {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
+                                <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
                                 <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
                                 <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
                                 <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
@@ -184,6 +186,7 @@ function App() {
                                 <Route path="/edit-requests" element={<EditRequests/>}/>
                                 <Route path="/user" element={<UserPermissionPage/>}/>
                                 <Route path="/chat" element={<Chat/>}/>
+                                <Route path="/new" element={<NewUSerChart/>}/>
                                 <Route path="/structure" element={<FileStructure/>}/>
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
                                 <Route path='/wee' element={<RoleBasedRoute/>}/>

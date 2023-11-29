@@ -1,8 +1,8 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { PiWindowsLogoDuotone, PiCaretRightLight} from "react-icons/pi";
+import { PiWindowsLogoDuotone, PiCaretRightLight,PiSignInDuotone} from "react-icons/pi";
 
-const Sidebar = ({ filteredMenu, opennav, open }) => {
+const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
     const [openSubmenu, setOpenSubmenu] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [active, setActive] = useState("");
@@ -96,6 +96,17 @@ const Sidebar = ({ filteredMenu, opennav, open }) => {
                             </Fragment>
                         )
                     })}
+     {/* ${line && ' border-b mb-2'} ${active === navtext && ' bg-amber-100 text-amber-500 rounded'} */}
+                    <li  className={`flex flex-row items-center p-2 pl-6 space-x-3  hover:text-amber-500 hover:bg-amber-50 h-full w-full text-black transform ease-in-out duration-300 `}
+                                                onClick={logOut}
+                                            >
+                                                <span className="w-4 h-4 "><PiSignInDuotone /></span>
+                                                <p className="">Logout</p>
+                                                {/* {submenu && <PiCaretRightLight className={`text-xs duration-500 ${openSubmenu && 'rotate-90'}`} onClick={() => {
+                                                    setOpenSubmenu(!openSubmenu);
+                                                    setChoseNav(id)
+                                                }} />} */}
+                                            </li>
 
                 </ul>
             </div>

@@ -7,12 +7,18 @@ import { PiCurrencyEthDuotone } from "react-icons/pi"
 import { TbArrowsCross } from "react-icons/tb"
 import Appbar from "./Appbar";
 import Sidebar from "./sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { useLogoutMutation } from "../states/apislice";
+import { setAuthToken, setPermissions, setUserData } from "../states/slice";
 
 const Layout = () => {
+    const { userData } = useSelector(state => state.persistedReducer.global);
+    const dispatch =useDispatch();
     const [open, setOpen] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [userSubmenuMobile, setUserSubmenuMobile] = useState(false);
     const navigate = useNavigate();
+    const[userLogout,{isLoading,isSuccess,isError,error}]=useLogoutMutation();
 
     const opennav = () => {
         setOpen(!open)
@@ -25,6 +31,15 @@ const Layout = () => {
         setUserSubmenuMobile(!userSubmenuMobile);
     }
 
+    const handleLogOut=async()=>{
+        const body={userName:userData.username,_id:userData._id}
+        await userLogout({body});
+        dispatch(setAuthToken(null));
+        dispatch(setUserData(null));
+        dispatch(setPermissions(null));
+        console.log(body);
+        navigate('/login');
+    }
     const menu = [
         {
             heading: "Main", hId: 1, subHeaders: [
@@ -133,7 +148,8 @@ const Layout = () => {
                         // { title: "Tax Rates", id: 55 },
                     ],
                 },
-                { title: "Logout", icon: <PiSignInDuotone />, id: 56 },]
+                // { title: "Logout", icon: <PiSignInDuotone />, id: 56 },
+            ]
         },
 
     ]
@@ -197,7 +213,8 @@ const Layout = () => {
                 {/* side bar */}
                 <Sidebar filteredMenu={filteredMenu}
                     opennav={opennav}
-                    open={open} />
+                    open={open} 
+                    logOut={handleLogOut}/>
                 <div className={`content ml-14 -translate-x-0  transform ease-in-out duration-700 pt-20 px-2 h-screen md:px-5 pb-4 ${open && ' ml-[194px]'}`}>
                     <Outlet />
                 </div>

@@ -9,6 +9,7 @@ import { useGetNotificationsQuery, useUpdateNotificationStatusMutation } from ".
 import {useSelector} from "react-redux";
 import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
+import { toInitialCase } from "../components/helperFunctions";
 
 
 
@@ -85,6 +86,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                 setNotifications(notificationsArray.slice(0,10));
             }
         }
+        console.log(userData)
     }, [isSuccess]);
 
 
@@ -138,7 +140,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
 
 
                 <div className="hidden relative flex-none h-full text-center sm:flex items-center justify-center">
-                    <ul className="flex items-center justify-evenly gap-4">
+                   { userData?<ul className="flex items-center justify-evenly gap-4 ">
                         <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiGlobeSimpleLight className="text-xl text-gray-500" />
 
@@ -147,10 +149,10 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <PiEnvelopeLight className="text-xl text-gray-500" />
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
                         </li>
-                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                       {userData.permissions.editRequests?.view? <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <BiSolidCalendarEdit onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
-                        </li>
+                        </li>:null}
                         <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiBellSimpleLight className="text-xl text-gray-500" onClick={showDrawer}/>
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications.length}</span>
@@ -168,7 +170,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                                 </div>
                             </span>
 
-                            <p className="hidden md:block text-sm md:text-md text-black dark:text-white">{profile?.name}</p>
+                            <p className="hidden md:block text-sm md:text-md text-black dark:text-white">{userData?.name}</p>
                             <PiCaretRightLight  className={`duration-500 ${userSubmenu && 'rotate-90'}`} onClick={()=>{setUserSubmenu((prev)=>!prev)}} />
                         </li>
                         <div className={`absolute right-0 top-[65px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenu ? 'block' : 'hidden'} }`} ref={modalRef}>
@@ -177,8 +179,8 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                                 <img className=" w-[36px] h-[36px] object-cover rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user profile" />
 
                                 <span className=" text-left">
-                                    <p className="text-sm">{profile?.name}</p>
-                                    <p className="text-sm">{profile?.role}</p>
+                                    <p className="text-sm">{userData?.name}</p>
+                                    <p className="text-sm">{userData?.role}</p>
                                 </span>
                             </div>
                             <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
@@ -201,7 +203,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                                 </li>
                             </ul> */}
                         </div>
-                    </ul>
+                    </ul>:null}
                 </div>
 
                 <div className="relative sm:hidden">
@@ -212,8 +214,8 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <img className=" w-[36px] h-[36px] object-cover rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user profile" />
 
                             <span className=" text-left">
-                            <p className="text-sm">{profile?.name}</p>
-                                    <p className="text-sm">{profile?.role}</p>
+                            <p className="text-sm">{userData?.name}</p>
+                                    <p className="text-sm">{userData?.role}</p>
                             </span>
                         </div>
                         <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
