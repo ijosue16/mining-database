@@ -272,8 +272,9 @@ const ColtanEntryCompletePage = ({entryId}) => {
             if (Boolean(updatedItem.tantalum) === true && Boolean(updatedItem.mineralGrade) === true && parseFloat(updatedItem.mineralGrade) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
                 updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
             }
-            if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * (parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount))).toFixed(3) || null;
+            if (Boolean(updatedItem.pricePerUnit) === true) {
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+            }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");

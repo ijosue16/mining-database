@@ -113,7 +113,7 @@ const ShipmentPage = () => {
             filteredValue: [searchText],
             onFilter: (value, record) => {
               return (
-                String(record.totalShipmentQuantity)
+                String(record.netWeight)
                   .toLowerCase()
                   .includes(value.toLowerCase()) ||
                 String(record.averageGrade)
@@ -130,12 +130,12 @@ const ShipmentPage = () => {
             },
         },
         {
-            title: "T. Quantity",
-            dataIndex: "totalShipmentQuantity",
-            key: "totalShipmentQuantity",
+            title: "Net Weight",
+            dataIndex: "netWeight",
+            key: "netWeight",
             editTable: true,
             sorter: (a, b) =>
-                a.totalShipmentQuantity - b.totalShipmentQuantity,
+                a.netWeight - b.netWeight,
         },
         {
             title: "Avg.Grade",
@@ -256,7 +256,7 @@ const ShipmentPage = () => {
                               }}
                           >
                               <RiFileEditFill className=" text-lg"/>
-                              <p>tags list</p>
+                              <p>Shipment documents</p>
                           </li>
                           {/* <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -322,7 +322,7 @@ const ShipmentPage = () => {
             newData.splice(index, 1, {...item, ...row});
             SetDataz(newData);
             setEditRowKey("");
-            const info = {...item, ...row, totalShipmentQuantity: parseFloat(row.totalShipmentQuantity),}
+            const info = {...item, ...row, netWeight: parseFloat(row.netWeight),}
             console.log("Shipment Info After Update:", {
                 info
             });

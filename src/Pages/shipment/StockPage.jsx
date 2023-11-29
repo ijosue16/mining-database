@@ -31,7 +31,7 @@ const StockPage = () => {
     entries: "",
     averageGrade: "",
     averagePrice: "",
-    totalShipmentQuantity: "",
+    netWeight: "",
     model: model,
   });
   const [totalWeight, setTotalWeight] = useState(null);
@@ -117,7 +117,7 @@ const StockPage = () => {
       entries: newTransformedData,
       averageGrade: averagegrade,
       averagePrice: "22",
-      totalShipmentQuantity: newTotalWeight,
+      netWeight: newTotalWeight,
     }));
   }, [selectedData]);
 
@@ -186,7 +186,7 @@ const StockPage = () => {
         entries: newTransformedData,
         averageGrade: averagegrade,
         averagePrice: "22",
-        totalShipmentQuantity: newTotalWeight,
+        netWeight: newTotalWeight,
       }));
     }
 
@@ -418,8 +418,8 @@ const StockPage = () => {
 
   const handleShipmentSubmit = async () => {
     if (
-      shipmentInfo.totalShipmentQuantity !== 0 &&
-      shipmentInfo.totalShipmentQuantity !== null &&
+      shipmentInfo.netWeight !== 0 &&
+      shipmentInfo.netWeight !== null &&
       shipmentInfo.entries.length > 0
     ) {
       const body = {...shipmentInfo, shipmentNumber};
