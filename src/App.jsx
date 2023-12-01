@@ -97,7 +97,7 @@ function App() {
                             <Route element={<Layout/>}>
 
                                 <Route path='*' element={<DefaultPages/>}/>
-                                <Route path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
+                                <Route path='/payment/:model/:entryId/:lotNumber?' element={<ColtanPaymentsPage/>}/>
                                 <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
                                 <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                 <Route path='/shipment/add/:model' element={<StockPage/>}/>
@@ -129,8 +129,8 @@ function App() {
                                 <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
                                 <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
                                 <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
-                                <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                <Route path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
+                                <Route path='/entry/edit/lithium/:entryId/:requestId?' element={<LithiumEditForm/>}/>
+                                {/*<Route path='/entry/edit/beryllium/:entryId/:requestId?' element={<BerylliumEditForm/>}/>*/}
 
                                 <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
                                 <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>
