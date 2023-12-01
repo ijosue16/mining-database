@@ -22,7 +22,8 @@ const AdvancedPaymentEntry = () => {
         paymentAmount: null,
         currency: '',
         paymentDate: '',
-        contractName: ''
+        contractName: '',
+        USDRate: null,
     });
     const [AddAdvancedPayment, {isLoading, isSuccess, isError, error}] = useAddAdvancePaymentMutation();
     const {data,isloading:isFetching,isSuccess:isDone,isError:isFail,error:fail}=useGetAllSuppliersQuery()
@@ -133,7 +134,8 @@ const AdvancedPaymentEntry = () => {
             paymentAmount: null,
             currency: '',
             paymentDate: '',
-            contractName: ''
+            contractName: '',
+            USDRate: null,
         });
     };
 
@@ -362,6 +364,20 @@ const AdvancedPaymentEntry = () => {
                                         <option value="USD">USD</option>
                                         <option value="RWF">RWF</option>
                                     </select>
+                                </li>
+                                <li className=" space-y-1">
+                                    <p className="pl-1">USD Rate</p>
+                                    <input
+                                        type="number"
+                                        autoComplete="off"
+                                        className="focus:outline-none p-2 border rounded-md w-full"
+                                        name="USDRate"
+                                        id="USDRate"
+                                        value={paymentInfo.USDRate || ""}
+                                        disabled={paymentInfo.currency === "USD"}
+                                        required={paymentInfo.currency === "RWF"}
+                                        onChange={handleEntry}
+                                    />
                                 </li>
                                 <li className=" space-y-1">
                                     <p className="pl-1">Payment date</p>
