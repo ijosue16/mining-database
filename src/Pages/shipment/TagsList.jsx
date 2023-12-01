@@ -10,6 +10,7 @@ import { useGetTagsListQuery,
 import { Table, message } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import {ImSpinner2} from "react-icons/im";
 
 
 const TagsList = () => {
@@ -17,15 +18,36 @@ const TagsList = () => {
     const { data: shipmentData, isSuccess: isShipmentSuccess } = useGetOneShipmentQuery(shipmentId, {refetchOnMountOrArgChange: true, refetchOnReconnect: true});
     const { data, isLoading, isSuccess } = useGetTagsListQuery({shipmentId}, {refetchOnMountOrArgChange: true, refetchOnReconnect: true});
     const [updateTag, {isSuccess: isUpdateTagSuccess, isError: isUpdateTagError, error: updateTagError}] = useUpdateTagMutation();
-    const [generateTagList, {isSuccess: isGenerateTagListSuccess, isError: isGenerateTagListError, error: generateTagListError}] = useGenerateTagListMutation();
-    const [generateNegociantTagsList, {isSuccess: isGenerateNegociantTagsListSuccess, isError: isGenerateNegociantTagsListError, error: generateNegociantTagsListError}] = useGenerateNegociantTagsListMutation();
-    const [generatePackingList, {isSuccess: isGeneratePackingListSuccess, isError: isGeneratePackingListError, error: generatePackingListError}] = useGeneratePackingListMutation();
+    const [generateTagList, {isLoading: isGeneratingTagList, isSuccess: isGenerateTagListSuccess, isError: isGenerateTagListError, error: generateTagListError}] = useGenerateTagListMutation();
+    const [generateNegociantTagsList, {isLoading: isGeneratingNegTagList, isSuccess: isGenerateNegociantTagsListSuccess, isError: isGenerateNegociantTagsListError, error: generateNegociantTagsListError}] = useGenerateNegociantTagsListMutation();
+    const [generatePackingList, {isLoading: isGeneratingPackingList, isSuccess: isGeneratePackingListSuccess, isError: isGeneratePackingListError, error: generatePackingListError}] = useGeneratePackingListMutation();
 
     const [entries, setEntries] = useState([]);
     const [tagListFile, setTagListFile] = useState(null);
     const [packingListFile, setPackingListFile] = useState(null);
     const [negociantTagListFile, setNegociantTagListFile] = useState(null);
     const navigate = useNavigate();
+
+    const LoadingButton = ({name, isProcessing, onClickFunction}) => {
+        return (
+            <div className=" self-end flex gap-2 flex-col sm:flex-row w-full justify-start sm:gap-2 items-start action-buttons">
+                {isProcessing ? (
+                    <button
+                        className="px-2 flex gap-1 items-center justify-start py-1 bg-orange-200 rounded-md text-gray-500"
+                        type="submit"
+                        disabled={true}
+                    >
+                        <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                        Sending
+                    </button>
+                ) : (
+                    <button className="px-6 py-1 bg-orange-300 rounded-md" onClick={onClickFunction} type="button">
+                        {name}
+                    </button>
+                )}
+            </div>
+        )
+    }
 
     useEffect(() => {
         if (isSuccess) {
@@ -165,7 +187,7 @@ const TagsList = () => {
         <>
             <ListContainer
                 title={'Prepare tags list'}
-                subTitle={'Manage your contracts'}
+                subTitle={'Prepare tags list for this shipment'}
                 table={
                     <>
                         <Table
@@ -241,24 +263,28 @@ const TagsList = () => {
                             }}
                             rowKey="_id"
                         />
-                        <div className="flex justify-center">
+                        <div className="flex justify-center gap-2">
                             <div className="flex flex-col items-center gap-2">
-                                <button onClick={handleGenerateTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">Generate tag list</button>
-                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
-                                   href={tagListFile ? tagListFile : ""}>
-                                    Download tag list</a>
+                                <LoadingButton name={"GENERATE MINE TAG LIST"} isProcessing={isGeneratingTagList} onClickFunction={handleGenerateTagList}/>
+                                {/*<button onClick={handleGenerateTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">Generate tag list</button>*/}
+                                {tagListFile && <a target='_blank' className="text-white p-1 bg-blue-400 border rounded-[4px]" rel='noopener noreferrer'
+                                                   href={tagListFile ? tagListFile : ""}>
+                                    Download tag list</a>}
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <button onClick={handleGenerateNegociantTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE NEGOCIANT TAG LIST</button>
-                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
-                                   href={negociantTagListFile ? negociantTagListFile : ""}>
-                                    Download negociant tags</a>
+                                <LoadingButton name={"GENERATE NEGOCIANT TAG LIST"} isProcessing={isGeneratingNegTagList} onClickFunction={handleGenerateNegociantTagList}/>
+                                {/*<button onClick={handleGenerateNegociantTagList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE NEGOCIANT TAG LIST</button>*/}
+                                {negociantTagListFile && <a target='_blank' className="text-white p-1 bg-blue-400 border rounded-[4px]" rel='noopener noreferrer'
+                                                            href={negociantTagListFile ? negociantTagListFile : ""}>
+                                    Download negociant tags</a>}
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <button onClick={handleGeneratePackingList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE PACKING LIST</button>
-                                <a target='_blank' className="text-white p-1 bg-amber-500 border rounded-[4px]" rel='noopener noreferrer'
-                                   href={packingListFile ? packingListFile : ""}>
+                                <LoadingButton name={"GENERATE PACKING LIST"} isProcessing={isGeneratingPackingList} onClickFunction={handleGeneratePackingList}/>
+                                {/*<button onClick={handleGeneratePackingList} className="p-1 bg-blue-400 text-white border rounded-[4px]">GENERATE PACKING LIST</button>*/}
+                                {packingListFile && <a target='_blank' className="text-white p-1 bg-blue-400 border rounded-[4px]" rel='noopener noreferrer'
+                                                       href={packingListFile ? packingListFile : ""}>
                                     Download packing list</a>
+                                }
                             </div>
                         </div>
                     </>
