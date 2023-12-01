@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { Modal, Spin, Table } from "antd";
+import {DatePicker, Modal, Space, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
@@ -19,16 +19,23 @@ import { BsCardList } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
+import {useSelector} from "react-redux";
+import isBetween from "dayjs/plugin/isBetween"
+import BerylliumEntryCompletePage from "../beryllium/entry/BerylliumEntryCompletePage";
+import LithiumEntryCompletePage from "./entry/LithiumEntryCompletePage";
+dayjs.extend(isBetween);
 
 const LithiumListPage = () => {
-  let dataz = [];
-  const { loginData } = useMyContext();
-  const{profile,permissions}=loginData;
+  // const { loginData } = useMyContext();
+  // const{profile,permissions}=loginData;
+  const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
   const { data, isLoading, isSuccess, isError, error } =
   useGetAllLithiumEntriesQuery("", {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true
   });
+
+  const [dataz, setDataz] = useState([]);
   const [
     deleteLithium,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
@@ -44,9 +51,10 @@ const LithiumListPage = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
-  console.log(loginData);
 
   let modalRef = useRef();
+
+  const { RangePicker } = DatePicker;
 
   const handleClickOutside = (event) => {
     if (!modalRef.current || !modalRef.current.contains(event.target)) {
@@ -61,22 +69,21 @@ const LithiumListPage = () => {
     };
   }, []);
 
-  if (isSuccess) {
-    const { data: dt } = data;
-    const { entries: entrz } = dt;
-    console.log(entrz);
-    dataz = entrz;
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      const { data: dt } = data;
+      const { entries: entrz } = dt;
+      setDataz(entrz);
+    }
+  }, [isSuccess]);
 
   const handleActions = (id) => {
     if (selectedRow === id) {
-      console.log("uri muduki sha");
       SetShowActions(false);
       SetSelectedRow("");
     } else {
       SetSelectedRow(id);
       SetShowActions(true);
-      console.log("Clicked ID:", id);
     }
   };
 
@@ -93,13 +100,63 @@ const LithiumListPage = () => {
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-      render: (text) => {
-        return (
-          <>
-            <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-          </>
-        );
+      render: (text) => (
+          <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+      ),
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Space>
+              <RangePicker
+                  value={selectedKeys}
+                  onChange={(dates) => setSelectedKeys(dates)}
+              />
+              <button
+                  className="px-6 py-1 bg-orange-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess && selectedKeys.length > 0) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                      const startDate = selectedKeys[0] || dayjs();
+                      const endDate = selectedKeys[1] || dayjs();
+                      const sortedData = entrz.filter(dt => dayjs(dt.supplyDate).isBetween(startDate, endDate, null, '[]'))
+                      setDataz(sortedData);
+                    }
+                    confirm();
+                  }}
+              >
+                OK
+              </button>
+              <button
+                  className="px-6 py-1 bg-red-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                    }
+                    clearFilters()
+                  }}>
+                Reset
+              </button>
+            </Space>
+          </div>
+      ),
+      onFilter: (value, record) => {
+        const startDate = value[0];
+        const endDate = value[1];
+
+        return dayjs(record.supplyDate).isBetween(startDate, endDate, null, '[]');
       },
+      filterIcon: (filtered) => (
+          <span>{filtered ? '📅' : '📅'}</span>
+      ),
     },
     {
       title: "Supplier",
@@ -177,7 +234,7 @@ const LithiumListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
-                      {permissions.entry.edit? (
+                      {userPermissions.entry?.edit? (
                         <>
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -212,7 +269,7 @@ const LithiumListPage = () => {
                 </span>
               </span>
 
-              {permissions.entry.delete ? (
+              {userPermissions.entry?.delete ? (
                 <span>
                   <MdDelete
                     className="text-lg"
@@ -242,7 +299,7 @@ const LithiumListPage = () => {
         subTitle={"Manage your lithium  entries"}
         navLinktext={"entry/add/lithium"}
         navtext={"Add new Entry"}
-        isAllowed={permissions.entry.create}
+        isAllowed={userPermissions.entry?.create}
         table={
           <>
             <Modal
@@ -333,6 +390,10 @@ const LithiumListPage = () => {
                 }}
                 dataSource={dataz}
                 columns={columns}
+                expandable={{
+                  expandedRowRender: (record) => <LithiumEntryCompletePage entryId={record._id}/>,
+                  rowExpandable: (record) => record.supplierName !== "Not Expandable",
+                }}
                 rowKey="_id"
               />
             </div>
