@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect, useContext} from "react";
 import dayjs from "dayjs";
-import {Checkbox, message, Modal, Spin, Table} from "antd";
+import {Checkbox, DatePicker, message, Modal, Space, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
@@ -21,16 +21,19 @@ import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
 import {useSelector} from "react-redux";
 import {SocketContext} from "../../context files/socket";
-import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
 import {FiEdit} from "react-icons/fi";
 import CassiteriteEntryComplete from "./entry/CassiteriteEntryComplete";
+import isBetween from "dayjs/plugin/isBetween"
+dayjs.extend(isBetween);
+
 
 const CassiteriteListPage = () => {
   const { userData } = useSelector(state => state.persistedReducer.global);
   const socket = useContext(SocketContext);
-  let dataz = [];
+  const [dataz, setDataz] = useState([]);
   const { loginData } = useMyContext();
-  const{permissions}=userData;
+  const{permissions} = userData;
   const [createEditRequest, {
     isLoading: isCreateRequestLoading,
     isSuccess: isCreateRequestSuccess,
@@ -59,6 +62,17 @@ const CassiteriteListPage = () => {
   const [showmodal, setShowmodal] = useState(false);
   const [record, setRecord] = useState(null);
 
+  useEffect(() => {
+    if (isSuccess) {
+      const { data: dt } = data;
+      const { entries: entrz } = dt;
+      setDataz(entrz);
+    }
+  }, [isSuccess]);
+
+  const {RangePicker} = DatePicker;
+
+
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {
@@ -74,11 +88,7 @@ const CassiteriteListPage = () => {
     };
   }, []);
 
-  if (isSuccess) {
-    const { data: dt } = data;
-    const { entries: entrz } = dt;
-    dataz = entrz;
-  }
+
 
   const handleActions = (id) => {
     if (selectedRow === id) {
@@ -98,7 +108,6 @@ const CassiteriteListPage = () => {
   };
 
 
-  const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
 
   const initialCheckboxValues = fields.reduce((acc, field) => {
     acc[toCamelCase(field)] = false;
@@ -156,13 +165,63 @@ const CassiteriteListPage = () => {
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-      render: (text) => {
-        return (
-          <>
-            <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-          </>
-        );
+      render: (text) => (
+          <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+      ),
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Space>
+              <RangePicker
+                  value={selectedKeys}
+                  onChange={(dates) => setSelectedKeys(dates)}
+              />
+              <button
+                  className="px-6 py-1 bg-orange-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess && selectedKeys.length > 0) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                      const startDate = selectedKeys[0] || dayjs();
+                      const endDate = selectedKeys[1] || dayjs();
+                      const sortedData = entrz.filter(dt => dayjs(dt.supplyDate).isBetween(startDate, endDate, null, '[]'))
+                      setDataz(sortedData);
+                    }
+                    confirm();
+                  }}
+              >
+                OK
+              </button>
+              <button
+                  className="px-6 py-1 bg-red-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                    }
+                    clearFilters()
+                  }}>
+                Reset
+              </button>
+            </Space>
+          </div>
+      ),
+      onFilter: (value, record) => {
+        const startDate = value[0];
+        const endDate = value[1];
+
+        return dayjs(record.supplyDate).isBetween(startDate, endDate, null, '[]');
       },
+      filterIcon: (filtered) => (
+          <span>{filtered ? '📅' : '📅'}</span>
+      ),
     },
     {
       title: "Company name",

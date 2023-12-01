@@ -214,10 +214,10 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                 if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
-
-                updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
+                }
+                updatedItem.cumulativeAmount = 0;
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
                 if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be empty or zero", 5);
@@ -232,8 +232,9 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             if (Boolean(updatedItem.metricTonUnit) === true && Boolean(updatedItem.mineralGrade) === true) {
                 updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.metricTonUnit), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
             }
-            if (Boolean(updatedItem.pricePerUnit) === true)
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * updatedItem.weightOut).toFixed(3) || null;
+            if (Boolean(updatedItem.pricePerUnit) === true) {
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+            }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
@@ -307,12 +308,6 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             key: "paid",
             sorter: (a, b) => a.paid - b.paid,
         },
-        // unpaid: {
-        //     title: "unpaid ($)",
-        //     dataIndex: "unpaid",
-        //     key: "unpaid",
-        //     sorter: (a, b) => a.unpaid - b.unpaid,
-        // },
         USDRate: {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
@@ -333,19 +328,6 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             key: "lotNumber",
             sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
-        // {
-        //     title: "Date",
-        //     dataIndex: "supplyDate",
-        //     key: "supplyDate",
-        //     sorter: (a, b) => a.supplyDate - b.supplyDate,
-        //     render: (text) => {
-        //         return (
-        //             <>
-        //                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-        //             </>
-        //         );
-        //     },
-        // },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
@@ -364,6 +346,11 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             key: "nonSellAgreementAmount",
             editTable: true,
             sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
+            render: (_, record) => {
+                if (record.nonSellAgreementAmount?.weight) {
+                    return <span>{record.nonSellAgreementAmount.weight}</span>
+                }
+            }
         },
     ];
 

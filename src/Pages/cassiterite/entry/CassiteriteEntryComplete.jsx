@@ -213,9 +213,10 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false)
+                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
-                updatedItem.cumulativeAmount = parseFloat(updatedItem.weightOut) - parseFloat(updatedItem.nonSellAgreementAmount) - parseFloat(updatedItem.exportedAmount);
+                }
+                updatedItem.cumulativeAmount = 0;
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
                 if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
@@ -382,6 +383,11 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             key: "nonSellAgreementAmount",
             editTable: true,
             sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
+            render: (_, record) => {
+                if (record.nonSellAgreementAmount?.weight) {
+                    return <span>{record.nonSellAgreementAmount.weight}</span>
+                }
+            }
         },
     ];
 

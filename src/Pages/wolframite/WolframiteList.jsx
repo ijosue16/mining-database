@@ -1,6 +1,6 @@
 import React, {useState, useRef, useEffect, useContext} from "react";
 import dayjs from "dayjs";
-import {Checkbox, message, Modal, Spin, Table} from "antd";
+import {Checkbox, DatePicker, message, Modal, Space, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
@@ -21,9 +21,11 @@ import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
 import {useSelector} from "react-redux";
 import {SocketContext} from "../../context files/socket";
-import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
 import {FiEdit} from "react-icons/fi";
 import WolframiteEntryCompletePage from "./entry/WolframiteEntryCompletePage";
+import isBetween from "dayjs/plugin/isBetween"
+dayjs.extend(isBetween);
 
 const WolframiteListPage = () => {
   const {userData} = useSelector(state => state.persistedReducer.global);
@@ -35,7 +37,7 @@ const WolframiteListPage = () => {
     isError: isCreateRequestError,
     error: createRequestError
   }] = useCreateEditRequestMutation();
-  let dataz = [];
+  const [dataz, setDataz] = useState([]);
   const { loginData } = useMyContext();
   // const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
@@ -47,6 +49,7 @@ const WolframiteListPage = () => {
     deleteWolframite,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
   ] = useDeleteWolframiteEntryMutation();
+
 
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
@@ -75,11 +78,16 @@ const WolframiteListPage = () => {
     };
   }, []);
 
-  if (isSuccess) {
-    const { data: dt } = data;
-    const { entries: entrz } = dt;
-    dataz = entrz;
-  }
+  useEffect(() => {
+    if (isSuccess) {
+      const { data: dt } = data;
+      const { entries: entrz } = dt;
+      setDataz(entrz);
+    }
+  }, [isSuccess]);
+
+  const { RangePicker } = DatePicker;
+
 
   const handleActions = (id) => {
     if (selectedRow === id) {
@@ -98,8 +106,6 @@ const WolframiteListPage = () => {
     setShowmodal(!showmodal);
   };
 
-  const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
-
   const initialCheckboxValues = fields.reduce((acc, field) => {
     acc[toCamelCase(field)] = false;
     return acc;
@@ -115,12 +121,12 @@ const WolframiteListPage = () => {
 
   useEffect(() => {
     if (isCreateRequestLoading) {
-      message.info("Creating edit request...");
+      return message.info("Creating edit request...");
     } else if(isCreateRequestSuccess) {
-      message.success("Edit Request created successfully");
+      return message.success("Edit Request created successfully");
     } else if (isCreateRequestError) {
       const {message: errorMessage} = createRequestError.data;
-      message.error(errorMessage);
+      return message.error(errorMessage);
     }
   }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
 
@@ -159,13 +165,63 @@ const WolframiteListPage = () => {
       dataIndex: "supplyDate",
       key: "supplyDate",
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-      render: (text) => {
-        return (
-          <>
-            <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-          </>
-        );
+      render: (text) => (
+          <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+      ),
+      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+          <div style={{ padding: 8 }}>
+            <Space>
+              <RangePicker
+                  value={selectedKeys}
+                  onChange={(dates) => setSelectedKeys(dates)}
+              />
+              <button
+                  className="px-6 py-1 bg-orange-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess && selectedKeys.length > 0) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                      const startDate = selectedKeys[0] || dayjs();
+                      const endDate = selectedKeys[1] || dayjs();
+                      const sortedData = entrz.filter(dt => dayjs(dt.supplyDate).isBetween(startDate, endDate, null, '[]'))
+                      setDataz(sortedData);
+                    }
+                    confirm();
+                  }}
+              >
+                OK
+              </button>
+              <button
+                  className="px-6 py-1 bg-red-300 rounded-md"
+                  type= "button"
+                  onClick={() => {
+                    if (isSuccess) {
+                      const {data: dt} = data;
+                      const {entries: entrz} = dt;
+                      if (entrz) {
+                        setDataz(entrz);
+                      }
+                    }
+                    clearFilters()
+                  }}>
+                Reset
+              </button>
+            </Space>
+          </div>
+      ),
+      onFilter: (value, record) => {
+        const startDate = value[0];
+        const endDate = value[1];
+
+        return dayjs(record.supplyDate).isBetween(startDate, endDate, null, '[]');
       },
+      filterIcon: (filtered) => (
+          <span>{filtered ? '📅' : '📅'}</span>
+      ),
     },
     {
       title: "Company name",

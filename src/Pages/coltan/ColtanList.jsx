@@ -20,7 +20,7 @@ import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
 import {useSelector} from "react-redux";
-import {toCamelCase, toInitialCase} from "../../components/helperFunctions";
+import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
 import {SocketContext} from "../../context files/socket";
 import {GiGiftOfKnowledge} from "react-icons/gi";
 dayjs.extend(isBetween);
@@ -105,7 +105,6 @@ const ColtanListPage = () => {
     };
 
 
-    const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
 
     const initialCheckboxValues = fields.reduce((acc, field) => {
         acc[toCamelCase(field)] = false;
@@ -182,18 +181,6 @@ const ColtanListPage = () => {
             render: (text) => (
                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
             ),
-            // filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-            //     <div style={{ padding: 8 }}>
-            //         <Space>
-            //             <RangePicker
-            //                 value={selectedKeys}
-            //                 onChange={(dates) => setSelectedKeys(dates)}
-            //                 onPressEnter={() => confirm()}
-            //                 onReset={() => clearFilters()}
-            //             />
-            //         </Space>
-            //     </div>
-            // ),
             filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
                 <div style={{ padding: 8 }}>
                     <Space>
@@ -201,12 +188,11 @@ const ColtanListPage = () => {
                             value={selectedKeys}
                             onChange={(dates) => setSelectedKeys(dates)}
                         />
-                        <Button
-                            type="primary"
+                        <button
+                            className="px-6 py-1 bg-orange-300 rounded-md"
+                            type= "button"
                             onClick={() => {
-
                                 if (isSuccess && selectedKeys.length > 0) {
-                                    console.log(isSuccess)
                                     const {data: dt} = data;
                                     const {entries: entrz} = dt;
                                     if (entrz) {
@@ -214,18 +200,18 @@ const ColtanListPage = () => {
                                     }
                                     const startDate = selectedKeys[0] || dayjs();
                                     const endDate = selectedKeys[1] || dayjs();
-                                    console.log(startDate, endDate);
                                     const sortedData = entrz.filter(dt => dayjs(dt.supplyDate).isBetween(startDate, endDate, null, '[]'))
                                     setDataz(sortedData);
                                 }
                                 confirm();
-
                             }}
-                            icon={<GiGiftOfKnowledge/>}
                         >
                             OK
-                        </Button>
-                        <Button onClick={() => {
+                        </button>
+                        <button
+                            className="px-6 py-1 bg-red-300 rounded-md"
+                            type= "button"
+                            onClick={() => {
                             if (isSuccess) {
                                 const {data: dt} = data;
                                 const {entries: entrz} = dt;
@@ -234,9 +220,9 @@ const ColtanListPage = () => {
                                 }
                             }
                             clearFilters()
-                        }} icon={<GiGiftOfKnowledge />}>
+                            }}>
                             Reset
-                        </Button>
+                        </button>
                     </Space>
                 </div>
             ),
@@ -298,7 +284,6 @@ const ColtanListPage = () => {
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
             render: (_, record) => {
-                console.log(record);
                 if (record.output) {
                     let sum = 0;
                     record.output.forEach((item) => {
