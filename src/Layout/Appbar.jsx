@@ -5,11 +5,12 @@ import { FiChevronsLeft, } from "react-icons/fi"
 import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 import {Drawer, Space, Button, Badge, notification} from "antd";
-import { useGetNotificationsQuery, useUpdateNotificationStatusMutation } from "../states/apislice";
-import {useSelector} from "react-redux";
+import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useGetOneUserQuery } from "../states/apislice";
+import { useSelector, useDispatch } from "react-redux";
 import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
 import { toInitialCase } from "../components/helperFunctions";
+import {setPermissions, setUserData} from "../states/slice";
 
 
 
@@ -22,6 +23,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const {userData} = useSelector(state => state.persistedReducer.global);
     const [userId, setUserId] = useState(null);
     const socket = useContext(SocketContext);
+    const dispatch = useDispatch();
 
     const openNotification = ({message, description, type}) => {
         notification.open({
@@ -60,6 +62,22 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     );
     const [updateNotificationStatus, {isSuccess: updateSuccess}] = useUpdateNotificationStatusMutation();
 
+    const { data: userDataObj, isLoading: userLoading, isSuccess: userSuccess } = useGetOneUserQuery(userId, {
+        skip: userId === null,
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    })
+
+    useEffect(() => {
+        if (userSuccess) {
+            const { user } = userDataObj.data;
+            if (user) {
+                dispatch(setUserData(user));
+                dispatch(setPermissions(user.permissions));
+            }
+        }
+    }, [userId, userSuccess, userDataObj]);
+
     let modalRef = useRef();
     const{loginData}=useMyContext();
     let profile;
@@ -86,7 +104,6 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                 setNotifications(notificationsArray.slice(0,10));
             }
         }
-        console.log(userData)
     }, [isSuccess]);
 
 
