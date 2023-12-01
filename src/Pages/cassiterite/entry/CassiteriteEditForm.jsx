@@ -85,10 +85,10 @@ const CassiteriteEditForm = () => {
     { lotNumber: "", weightOut: "" },
   ]);
   const [mineTags, setmineTags] = useState([
-    { weight: "", tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", sheetNumber: "", status: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
-    { weight: "", tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", sheetNumber: "", status: "" },
   ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
@@ -160,7 +160,6 @@ const CassiteriteEditForm = () => {
         setmineTags(mineTags);
         setnegociantTags(negociantTags);
       }
-      console.log(entr.output);
     }
   }, [isSuccess]);
 
@@ -296,7 +295,7 @@ const CassiteriteEditForm = () => {
   const handleAddMinesTag = () => {
     setmineTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     updateLotNumbers();
   };
@@ -342,7 +341,7 @@ const CassiteriteEditForm = () => {
   const handleAddNegociantTags = () => {
     setnegociantTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     updateLotNumbers();
   };
@@ -442,9 +441,9 @@ const CassiteriteEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -472,9 +471,9 @@ const CassiteriteEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: "", tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -802,7 +801,7 @@ const CassiteriteEditForm = () => {
                           <HiMinus
                             onClick={() => handleLRemoveMinesTag(index)}
                             className={`${
-                              mineTags.length - 1 == 0 ? "hidden" : ""
+                              mineTags.length - 1 === 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus
@@ -812,6 +811,21 @@ const CassiteriteEditForm = () => {
                             }`}
                           />
                         </span>
+
+                        <li>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                              type="text"
+                              name="sheetNumber"
+                              autoComplete="off"
+                              className="focus:outline-none p-2 border rounded-lg w-full"
+                              value={tag.sheetNumber || ""}
+                              onWheelCapture={(e) => {
+                                e.target.blur();
+                              }}
+                              onChange={(e) => handleMinesTagEntry(index, e)}
+                          />
+                        </li>
 
                         <li>
                           <p className="mb-1">Tag weight</p>
@@ -853,8 +867,8 @@ const CassiteriteEditForm = () => {
                             <option value="defaultstatus" hidden>
                               {tag.status ? `${tag.status}` : "status"}
                             </option>
-                            <option value="inStock">In stock</option>
-                            <option value="exported">Exported</option>
+                            <option value="in store">In Store</option>
+                            <option value="out of store">Out of Store</option>
                           </select>
                         </li>
                       </ul>
@@ -877,7 +891,7 @@ const CassiteriteEditForm = () => {
                           <HiMinus
                             onClick={() => handleLRemoveNegociantTags(index)}
                             className={`${
-                              negociantTags.length - 1 == 0 ? "hidden" : ""
+                              negociantTags.length - 1 === 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus
@@ -888,8 +902,23 @@ const CassiteriteEditForm = () => {
                           />
                         </span>
 
+
                         <li>
-                          <p className="mb-1">Weight out</p>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                              type="text"
+                              name="sheetNumber"
+                              autoComplete="off"
+                              className="focus:outline-none p-2 border rounded-lg w-full"
+                              value={tag.sheetNumber || ""}
+                              onWheelCapture={(e) => {
+                                e.target.blur();
+                              }}
+                              onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1">Tag weight</p>
                           <input
                             type="text"
                             name="weight"

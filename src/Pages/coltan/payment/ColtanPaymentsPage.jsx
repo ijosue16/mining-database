@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import moment from "moment";
 import dayjs from "dayjs";
-import { Spin, Table, Form, Input, Button, Modal, DatePicker,Collapse,Space } from 'antd';
+import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm} from 'antd';
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
@@ -18,16 +18,18 @@ import { BsCheck2 } from "react-icons/bs";
 import { IoAdd } from "react-icons/io5";
 import { ImSpinner2 } from "react-icons/im";
 import { IoCaretForward } from "react-icons/io5";
+import {handleConvertToUSD} from "../../../components/helperFunctions";
 
 
 const ColtanPaymentsPage = () => {
     const { Panel } = Collapse;
-    let dataz=[];
+    // let dataz=[];
     const { entryId, model, lotNumber} = useParams();
     const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     });
+    const [dataz, setDataz] = useState([]);
     const {data:adv,isLoading:isFetching,isError:isFail,error:fail,isSuccess:isDone}=useGetAllAdvancePaymentsQuery();
     const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
@@ -45,12 +47,16 @@ const ColtanPaymentsPage = () => {
     const [showForm, setShowForm] = useState(false);
     const [showPayModel, setShowPayModel] = useState(false);
     const [paymentHistory, setPaymentHistory] = useState([]);
+    const [USDRate, setUSDRate] = useState({ USDRate: null });
+    const [USDEquivalent, setUSDEquivalent] = useState(null);
     useEffect(() => {
         if (isPaymentHistoryReady) {
             const { lotPaymentHistory } = paymentHistoryData.data;
             setPaymentHistory(lotPaymentHistory);
         }
     }, [isPaymentHistoryReady]);
+
+
 
     useEffect(() => {
         if (isPaymentSuccess) {
@@ -69,11 +75,13 @@ const ColtanPaymentsPage = () => {
         console.log(pHist);
     };
 
-    if(isDone){
-        const {payments}=adv.data;
-        dataz=payments;
-        // console.log(payments);
-    };
+    useEffect(() => {
+        if(isDone){
+            const {payments}=adv.data;
+            setDataz(payments);
+        };
+    },[isDone]);
+
 
     const columns = [
         // {
@@ -138,86 +146,6 @@ const ColtanPaymentsPage = () => {
 
             sorter: (a, b) => a.currency.localeCompare(b.currency),
         },
-        // {
-        //     title: 'status',
-        //     dataIndex: 'status',
-        //     key: 'status',
-        //     sorter: (a, b) => a.status.localeCompare(b.status),
-        //     render: (text) => {
-        //         // "in stock", "fully exported", "rejected", "non-sell agreement", "partially exported"
-        //         let color = (text === 'in stock') ? 'bg-green-500' : ((text === 'ordered') ? 'bg-amber-500' : 'bg-red-500');
-        //         return (
-        //             <p className={` px-3 py-1 ${color} w-fit text-white rounded`}>{text}</p>
-        //         )
-        //     }
-        // },
-        // {
-        //     title: 'Action',
-        //     dataIndex: 'action',
-        //     key: 'action',
-        //     render: (_, record) => {
-        //         const editable = isEditing(record);
-        //         return (
-        //             <>
-        //                 <div className="flex items-center gap-1">
-        //                     <span className="relative">
-        //                         <PiDotsThreeVerticalBold className=" text-xl"
-        //                             onClick={() => handleActions(record._id)}
-        //                         />
-        //                         {selectedRow === record._id && (
-        //                             <motion.ul animate={show ? { opacity: 1, x: -10, display: "block" } : { opacity: 0, x: 0, display: "none", }} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
-
-        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { navigate(`/buyer/details/${record._id}`) }}>
-        //                                     <RiFileListFill className=" text-lg" />
-        //                                     <p>more details</p>
-        //                                 </li>
-        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/edit/coltan/${record._id}`) } }}>
-        //                                     <BiSolidEditAlt className=" text-lg" />
-        //                                     <p>edit</p>
-        //                                 </li>
-        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => { { navigate(`/complete/coltan/${record._id}`) } }}>
-        //                                     <RiFileEditFill className=" text-lg" />
-        //                                     <p>complete entry</p>
-        //                                 </li>
-        //                                 <li className="flex gap-4 p-2 items-center hover:bg-slate-100" onClick={() => setShowPayModel(true)} >
-        //                                     <MdPayments className=" text-lg" />
-        //                                     <p>Pay</p>
-        //                                 </li>
-        //                             </motion.ul>)}
-        //                     </span>
-
-
-        //                     <BiSolidEditAlt className=" text-xl" onClick={() => {
-        //                         setEditingRow(record._id);
-        //                         form.setFieldsValue({
-        //                             weightOut: record.weightOut,
-        //                             rmaFee: record.rmaFee,
-        //                         })
-        //                     }} />
-
-        //                     {editable ? (
-        //                         <div className="flex items-center gap-3">
-        //                             <FaSave className=" text-xl" onClick={() => save(record._id)} />
-        //                             <MdOutlineClose className=" text-xl" onClick={() => setEditRowKey("")} />
-
-        //                         </div>
-
-        //                     ) : (
-
-        //                         <BiSolidEditAlt className=" text-xl" onClick={() => edit(record)} />
-
-        //                     )}
-
-
-
-
-        //                 </div>
-
-
-        //             </>
-        //         )
-        //     }
-        // },
     ];
     const columns2 = [
         {
@@ -278,121 +206,6 @@ const ColtanPaymentsPage = () => {
           key: "remainingAmount",
           sorter: (a, b) => a.remainingAmount - b.remainingAmount,
         },
-       
-        // {
-        //     title: "Action",
-        //     dataIndex: "action",
-        //     key: "_id",
-        //     render: (_, record) => {
-        //         return (
-        //             <>
-        //                 <div className="flex items-center gap-4">
-        //                   <span>
-        //                     <span className="relative">
-        //                       <PiDotsThreeVerticalBold
-        //                           className="text-lg"
-        //                           onClick={() => handleActions(record._id)}
-        //                       />
-        //                         {selectedRow === record._id ? (
-        //                             <motion.ul
-        //                                 ref={modalRef}
-        //                                 animate={
-        //                                     showActions
-        //                                         ? {opacity: 1, x: -10, y: 1, display: "block"}
-        //                                         : {opacity: 0, x: 0, y: 0, display: "none"}
-        //                                 }
-        //                                 className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-        //                             >
-        //                                 <li
-        //                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
-        //                                     onClick={() => {
-        //                                       setPaymentDetailsModal((prevstate)=>({...prevstate,companyName:record.companyName,beneficiary:record.beneficiary,nationalId:record.nationalId,phoneNumber:record.phoneNumber,email:record.email,paymentAmount:record.paymentAmount,currency:record.currency,paymentDate:record.paymentDate,consumed:record.consumed,remainingAmount:record.remainingAmount,consumptionDetails:"",id:record._id}));
-        //                                        setShowPyDetailsModal(!showPyDetailsModal);
-                                             
-        //                                     }}
-        //                                 >
-        //                                     <FaClipboardList className=" text-lg"/>
-        //                                     <p>details</p>
-        //                                 </li>
-        //                                 <li
-        //                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
-        //                                     onClick={() => {
-        //                                         navigate(`/entry/edit/coltan/${record._id}`);
-        //                                     }}
-        //                                 >
-        //                                     <BiSolidEditAlt className=" text-lg"/>
-        //                                     <p>edit</p>
-        //                                 </li>
-        //                                 {permissions.entry.edit ? (
-        //                                     <>
-        //                                         <li
-        //                                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
-        //                                             onClick={() => {
-        //                                                 {
-        //                                                     navigate(`/complete/coltan/${record._id}`);
-        //                                                 }
-        //                                             }}
-        //                                         >
-        //                                             <RiFileEditFill className=" text-lg"/>
-        //                                             <p>complete entry</p>
-        //                                         </li>
-        //                                         {permissions.entry.delete ? (<li
-        //                                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
-        //                                             onClick={() => {
-        //                                                 SetSelectedRow(record._id);
-        //                                                 SetSelectedRowInfo({
-        //                                                     ...selectedRowInfo,
-        //                                                     name: record.companyName,
-        //                                                     date: record.supplyDate,
-        //                                                 });
-        //                                                 setShowmodal(!showmodal);
-        //                                             }}
-        //                                         >
-        //                                             <MdDelete className=" text-lg"/>
-        //                                             <p>delete</p>
-        //                                         </li>) : null}
-        //                                     </>
-        //                                 ) : null}
-        //                             </motion.ul>
-        //                         ) : null}
-        //                     </span>
-        //                   </span>
-    
-        //                     {permissions.entry.delete ? (
-        //                         <span>
-        //                           <MdDelete
-        //                               className="text-lg"
-        //                               onClick={() => {
-        //                                   SetSelectedRow(record._id);
-        //                                   SetSelectedRowInfo({
-        //                                       ...selectedRowInfo,
-        //                                       name: record.companyName,
-        //                                       date: record.supplyDate,
-        //                                   });
-        //                                   setShowmodal(!showmodal);
-        //                               }}
-        //                           />
-        //                         </span>
-        //                     ) : null}
-    
-        //                     <span>
-        //                         <FiEdit
-        //                             className="text-lg"
-        //                             onClick={() => {
-        //                                 setRecord(record);
-        //                                 showModal();
-        //                             }}
-        //                         />
-        //                     </span>
-    
-        //                     {/*{permissions.entry.edit ? (*/}
-    
-        //                     {/*) : null}*/}
-        //                 </div>
-        //             </>
-        //         );
-        //     },
-        // },
       ];
       useEffect(() => {
         // Handle confirmation logic, e.g., send data to the state
@@ -439,6 +252,12 @@ const ColtanPaymentsPage = () => {
     const handleShowForm = () => {
         setShowForm(!showForm);
     };
+
+    useEffect(() => {
+        console.log('---------------------------------')
+        console.log(USDRate);
+        console.log(USDEquivalent);
+    }, [USDEquivalent, USDRate]);
 
 
     return (
@@ -626,7 +445,7 @@ const ColtanPaymentsPage = () => {
         <p>{item.nationalId}</p>
         </li>
       </ul>
-      <Button onClick={()=>handleUseButtonClick(item._id)}>Use</Button>
+            <Button onClick={() => handleUseButtonClick(item._id)}>Pay</Button>
         </Panel>
       ))}
     </Collapse>

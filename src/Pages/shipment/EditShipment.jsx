@@ -16,7 +16,7 @@ import {CiCirclePlus} from "react-icons/ci";
 const EditShipment = ({record: shipment}) => {
     const [form] = Form.useForm();
     const {data, isLoading, isSuccess} = useGetOneShipmentQuery(shipment._id);
-    const [updateShipment, {isSuccess: isUpdateSuccess, isError, error}] = useUpdateShipmentMutation();
+    const [updateShipment, {isLoading: isUpdatingShipment, isSuccess: isUpdateSuccess, isError, error}] = useUpdateShipmentMutation();
     const [model, setModel] = useState(null);
     const {data: stockData, isLoading: isStockLoading, isSuccess: isStockSuccess} = useDetailedStockQuery({model}, {skip: model === null});
     const [shipmentLots, setShipmentLots] = useState([]);
@@ -29,7 +29,7 @@ const EditShipment = ({record: shipment}) => {
         date: "",
     });
     const [stock, setStock] = useState([]);
-    const [selectedStock, setSelectedStock] = useState([]);
+    const [selectedStock, setSelectedStock] = useState(new Set());
 
     useEffect(() => {
         if (isStockSuccess) {
@@ -321,7 +321,14 @@ const EditShipment = ({record: shipment}) => {
     }
 
     const handleRowSelected = (e) => {
-        setSelectedStock([...selectedStock, e.target.value]);
+        if (selectedStock.has(e.target.value)) {
+            const newSet = new Set(selectedStock);
+            newSet.delete(e.target.value);
+            setSelectedStock(newSet);
+            return;
+        }
+        const newSet = new Set([...selectedStock, e.target.value]);
+        setSelectedStock(newSet);
     }
 
     const handleSubmit = async () => {
@@ -463,7 +470,7 @@ const EditShipment = ({record: shipment}) => {
                                         rowKey="index"
                                     />
                                     <div className=" self-end flex gap-2 flex-col sm:flex-row w-full justify-start sm:gap-2 items-start action-buttons">
-                                        {isLoading ? (
+                                        {isUpdatingShipment ? (
                                             <button
                                                 className="px-2 flex gap-1 items-center justify-start py-2 bg-orange-200 rounded-md text-gray-500"
                                                 type="submit"

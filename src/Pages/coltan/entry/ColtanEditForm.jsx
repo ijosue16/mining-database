@@ -98,10 +98,10 @@ const ColtanEditForm = () => {
     { lotNumber: "", weightOut: "" },
   ]);
   const [mineTags, setmineTags] = useState([
-    { weight: null, tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", sheetNumber: "", status: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
-    { weight: null, tagNumber: "", status: "" },
+    { weight: null, tagNumber: "", sheetNumber: "", status: "" },
   ]);
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
@@ -310,7 +310,7 @@ const ColtanEditForm = () => {
   const handleAddMinesTag = () => {
     setmineTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weight: null, tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", status: "", sheetNumber: "" },
     ]);
     updateLotNumbers();
   };
@@ -356,7 +356,7 @@ const ColtanEditForm = () => {
   const handleAddNegociantTags = () => {
     setnegociantTags((prevLotDetails) => [
       ...prevLotDetails,
-      { weight: "", tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", status: "", sheetNumber: "" },
     ]);
     updateLotNumbers();
   };
@@ -456,9 +456,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: null, tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: null, tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -486,9 +486,9 @@ const ColtanEditForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: null, tagNumber: "", status: "" }]);
+    setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
-      { weight: null, tagNumber: "", status: "" },
+      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     navigate(-1);
   };
@@ -763,7 +763,7 @@ const ColtanEditForm = () => {
                             <HiMinus
                               onClick={() => handleLRemoveLot(index)}
                               className={`${
-                                lotDetails.length - 1 == 0 ? "hidden" : ""
+                                lotDetails.length - 1 === 0 ? "hidden" : ""
                               }`}
                             />
                             <HiPlus
@@ -817,7 +817,7 @@ const ColtanEditForm = () => {
                           <HiMinus
                             onClick={() => handleLRemoveMinesTag(index)}
                             className={`${
-                              mineTags.length - 1 == 0 ? "hidden" : ""
+                              mineTags.length - 1 === 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus
@@ -827,6 +827,21 @@ const ColtanEditForm = () => {
                             }`}
                           />
                         </span>
+
+                        <li>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                              type="text"
+                              name="sheetNumber"
+                              autoComplete="off"
+                              className="focus:outline-none p-2 border rounded-lg w-full"
+                              value={tag.sheetNumber || ""}
+                              onWheelCapture={(e) => {
+                                e.target.blur();
+                              }}
+                              onChange={(e) => handleMinesTagEntry(index, e)}
+                          />
+                        </li>
 
                         <li>
                           <p className="mb-1">Tag weight</p>
@@ -892,7 +907,7 @@ const ColtanEditForm = () => {
                           <HiMinus
                             onClick={() => handleLRemoveNegociantTags(index)}
                             className={`${
-                              negociantTags.length - 1 == 0 ? "hidden" : ""
+                              negociantTags.length - 1 === 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus
@@ -904,7 +919,22 @@ const ColtanEditForm = () => {
                         </span>
 
                         <li>
-                          <p className="mb-1">Weight out</p>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                              type="text"
+                              name="sheetNumber"
+                              autoComplete="off"
+                              className="focus:outline-none p-2 border rounded-lg w-full"
+                              value={tag.sheetNumber || ""}
+                              onWheelCapture={(e) => {
+                                e.target.blur();
+                              }}
+                              onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          />
+                        </li>
+
+                        <li>
+                          <p className="mb-1">Tag weight</p>
                           <input
                             type="text"
                             name="weight"
