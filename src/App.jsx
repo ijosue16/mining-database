@@ -80,6 +80,8 @@ import UsersActivityLogs from "./Pages/UsersActivityLogs";
 import TagsList from "./Pages/shipment/TagsList";
 import ShipmentEdit from './Pages/shipment/ShipmentEdit';
 import NewUSerChart from './Pages/Chat/NewUserChat';
+import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
+import MyEditor from './test elements/CustomForm';
 
 function App() {
 
@@ -130,7 +132,8 @@ function App() {
                                 <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
                                 <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
                                 <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                <Route path='/entry/edit/lithium/:entryId' element={<ColtanEditForm/>}/>
+                                <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/>
+                               
 
                                 <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
                                 <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>
@@ -181,7 +184,7 @@ function App() {
                                 <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
                                 <Route path="/invoice" element={<InvoiceList/>}/>
                                 {/*<Route path="/invoice/temp" element={<InvoiceTemp/>}/>*/}
-                                {/*<Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/>*/}
+                                {/* <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/> */}
 
                                 <Route path="/edit-requests" element={<EditRequests/>}/>
                                 <Route path="/user" element={<UserPermissionPage/>}/>
@@ -189,7 +192,8 @@ function App() {
                                 <Route path="/new" element={<NewUSerChart/>}/>
                                 <Route path="/structure" element={<FileStructure/>}/>
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
-                                <Route path='/wee' element={<RoleBasedRoute/>}/>
+                                <Route path="/texteditor" element={<MyEditor/>}/>
+                                {/* <Route path='/wee' element={<RoleBasedRoute/>}/> */}
                             </Route>
                         </Route>
 
