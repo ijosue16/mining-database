@@ -1,11 +1,12 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 
 // const existingUrl = "https://mining-company-management-system.onrender.com/api/v1/";
+// "http://localhost:5001/api/v1/"
 
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/"
+        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
         // prepareHeaders: (headers, {getState}) => {
         //     const token = getState.auth.token;
         //     if (token) {

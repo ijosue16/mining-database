@@ -255,7 +255,7 @@ const Chat = () => {
                                 </div>
                 </div>
             </div> */}
-            <NewUSerChart visible={newUserModal} position={"top-36 left-60"}/> 
+            <NewUSerChart visible={newUserModal} setChats={setChats} chats={chats} setNewUserModal={setNewUserModal} position={"top-36 left-60"}/>
 
             <span className=" p-4 hover:bg-gray-300 rounded-md">
               <IoFilterOutline />

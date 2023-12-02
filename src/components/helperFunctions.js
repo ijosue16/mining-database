@@ -60,8 +60,13 @@ export function openNotification  ({message, description, type}) {
 }
 
 export const AppUrls = {
-    server: "http://localhost:5001/api/v1",
+    server: "https://mining-company-management-system.onrender.com/api/v1/",
 }
+
+export function handleConvertToUSD (amount, USDRate) {
+    return amount / USDRate;
+}
+
 
 export const getModelAcronym = (model) => {
     if (model.toLowerCase() === "cassiterite") return "SNO2";
@@ -71,3 +76,5 @@ export const getModelAcronym = (model) => {
     if (model.toLowerCase() === "lithium") return "LITHIUM";
     if (model.toLowerCase() === "beryllium") return "BERYLLIUM";
 }
+
+export const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];

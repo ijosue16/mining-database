@@ -99,7 +99,7 @@ function App() {
                             <Route element={<Layout/>}>
 
                                 <Route path='*' element={<DefaultPages/>}/>
-                                <Route path='/payment/:model/:entryId/:lotNumber' element={<ColtanPaymentsPage/>}/>
+                                <Route path='/payment/:model/:entryId/:lotNumber?' element={<ColtanPaymentsPage/>}/>
                                 <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
                                 <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                 <Route path='/shipment/add/:model' element={<StockPage/>}/>

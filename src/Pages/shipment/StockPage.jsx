@@ -207,9 +207,8 @@ const StockPage = () => {
       }));
     }
 
-    console.log(newData);
   };
-   const handleshipmentNumber=(e)=>{
+  const handleShipmentNumber = (e) => {
      setShipmentNumber(e.target.value);
    }
   const columns = [
@@ -409,7 +408,7 @@ const StockPage = () => {
     children,
     ...restProps
   }) => {
-    const input = <Input style={{ margin: 0 }} type="text" />;
+    const input = <Input style={{ margin: 0 }} type="number" />;
     return (
       <td {...restProps}>
         {editing ? (
@@ -432,7 +431,6 @@ const StockPage = () => {
       const body = {...shipmentInfo, shipmentNumber};
       await AddShipment({ body });
       setSelectedData([]);
-      console.log("Shipment Info After Update:", { body });
       setConfirmModal(!confirmModal);
       setShipmentNumber("");
     } else {
@@ -531,8 +529,7 @@ const StockPage = () => {
                             </div>
                           </div>
                         ),
-                        rowExpandable: (record) =>
-                          record.supplierName !== "not expandale",
+                        rowExpandable: (record) => record.supplierName !== "not expandable",
                       }}
                       rowKey="index"
                     />
@@ -555,7 +552,7 @@ const StockPage = () => {
                   </div>
                       <div className="w-full space-y-2">
                       <p className=" font-semibold">Shipment number</p>
-                  <input type="text" name="shipmentNumber" id="shipmentNumber" value={shipmentNumber} className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleshipmentNumber}/>
+                  <input type="text" name="shipmentNumber" id="shipmentNumber" value={shipmentNumber} className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleShipmentNumber}/>
                       </div>
                   <button
                     className=" bg-orange-500 text-white py-2 px-4 rounded-md"
