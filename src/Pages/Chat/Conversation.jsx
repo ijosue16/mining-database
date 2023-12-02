@@ -59,7 +59,7 @@ const Conversation = ({
   }, [isGettingUserSuccess]);
   return (
     <>
-      <div className="follower conversation">
+      <div className="follower conversation overflow-y-auto">
 
         {fetch?(<div className="flex items-center gap-2 hover:bg-gray-300 rounded-md py-3 px-2">
         <Skeleton.Avatar active size={40}/>
