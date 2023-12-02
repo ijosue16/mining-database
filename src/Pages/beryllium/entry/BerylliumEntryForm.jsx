@@ -200,6 +200,10 @@ const BerylliumEntryForm = () => {
                                 <p className="pl-1">Weight out</p>
                                 <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={formval.weightOut || ''} onChange={handleEntry} />
                             </li>
+                            <li className=" space-y-1">
+                                <p className="pl-1">Mineral grade</p>
+                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="mineralGrade" id="mineralGrade" value={formval.mineralGrade || ''} onChange={handleEntry} />
+                            </li>
                             {/* <li className=" space-y-1">
                                 <p className="pl-1">Number of Tags</p>
                                 <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onChange={handleEntry} />
