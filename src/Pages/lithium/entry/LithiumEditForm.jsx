@@ -34,6 +34,7 @@ const LithiumEditForm = () => {
   ] = useUpdateLithiumEntryMutation();
   const [formval, setFormval] = useState({
     weightIn: "",
+    weightOut: "",
     companyName: "",
     licenseNumber: "",
     TINNumber: "",
@@ -50,8 +51,11 @@ const LithiumEditForm = () => {
     mineralType: "",
     mineralgrade: "",
     mineralprice: "",
+    mineralGrade:"",
     shipmentnumber: "",
     beneficiary: "",
+    supplierName: "", 
+    phoneNumber: "",
     isSupplierBeneficiary: false,
   });
   const [lotDetails, setlotDetails] = useState([
@@ -81,6 +85,7 @@ const LithiumEditForm = () => {
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
+        weightOut: entr.weightOut,
         companyName: entr.companyName,
         licenseNumber: entr.licenseNumber,
         TINNumber: entr.TINNumber,
@@ -95,8 +100,11 @@ const LithiumEditForm = () => {
         mineralType: entr.mineralType,
         mineralgrade: "",
         mineralprice: "",
+        mineralGrade: entr.mineralGrade,
         shipmentnumber: "",
         beneficiary: entr.beneficiary,
+        supplierName: entr.supplierName, 
+        phoneNumber: entr.phoneNumber,
         isSupplierBeneficiary: false,
       });
     //   setlotDetails(entr.output);
@@ -372,6 +380,8 @@ const LithiumEditForm = () => {
       mineralprice: "",
       shipmentnumber: "",
       beneficiary: "",
+      supplierName: "", 
+      phoneNumber: "",
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
@@ -384,6 +394,7 @@ const LithiumEditForm = () => {
   const handleCancel = () => {
     setFormval({
       weightIn: "",
+      weightOut:"",
       companyName: "",
       licenseNumber: "",
       TINNumber: "",
@@ -400,8 +411,11 @@ const LithiumEditForm = () => {
       mineralType: "",
       mineralgrade: "",
       mineralprice: "",
+      mineralGrade:"",
       shipmentnumber: "",
       beneficiary: "",
+      supplierName: "", 
+      phoneNumber: "",
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
@@ -444,89 +458,31 @@ const LithiumEditForm = () => {
 
                   <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                     <li className=" space-y-1">
-                      <p className="pl-1">Company name</p>
+                      <p className="pl-1">Supplier</p>
                       <input
                         type="text"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-md w-full"
-                        name="companyName"
-                        id="companyName"
-                        value={formval.companyName || ""}
+                        name="supplierName"
+                        id="supplierName"
+                        value={formval.supplierName || ""}
                         onChange={handleEntry}
                       />
                     </li>
-                    {/* <li className=" space-y-1">
-                      <p className="pl-1">Email</p>
-                      <input
-                        type="email"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="email"
-                        id="email"
-                        value={formval.email || ""}
-                        onChange={handleEntry}
-                      />
-                    </li> */}
+                  
                     <li className=" space-y-1">
-                      <p className="pl-1">TIN Number</p>
+                      <p className="pl-1">Phone number</p>
                       <input
                         type="text"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-md w-full"
-                        name="TINNumber"
-                        id="TINNumber"
-                        value={formval.TINNumber || ""}
+                        name="phoneNumber"
+                        id="phoneNumber"
+                        value={formval.phoneNumber || ""}
                         onChange={handleEntry}
                       />
                     </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Licence number</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="licenseNumber"
-                        id="licenseNumber"
-                        value={formval.licenseNumber || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Company representative</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="companyRepresentative"
-                        id="companyRepresentative"
-                        value={formval.companyRepresentative || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Representative ID number</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="representativeId"
-                        id="representativeId"
-                        value={formval.representativeId || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Representative phone nbr</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="representativePhoneNumber"
-                        id="representativePhoneNumber"
-                        value={formval.representativePhoneNumber || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
+
                     <li className=" space-y-1">
                       <p className="pl-1">Minerals Types</p>
                       <input
@@ -578,26 +534,32 @@ const LithiumEditForm = () => {
                       />
                     </li>
                     <li className=" space-y-1">
-                      <p className="pl-1">Number of Tags</p>
+                      <p className="pl-1">Weight out</p>
                       <input
-                        type="number"
+                        type="text"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-md w-full"
-                        name="numberOfTags"
-                        id="numberOfTags"
-                        value={formval.numberOfTags || ""}
-                        onWheelCapture={(e) => {
-                          e.target.blur();
-                        }}
+                        name="weightOut"
+                        id="weightOut"
+                        value={formval.weightOut || ""}
                         onChange={handleEntry}
                       />
                     </li>
                     <li className=" space-y-1">
+                      <p className="pl-1">Mineral grade</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="mineralGrade"
+                        id="mineralGrade"
+                        value={formval.mineralGrade || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    {/* <li className=" space-y-1">
                       <span className=" flex gap-2 items-center">
                         <p>Beneficiary</p>
-                        {/* <span className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${checked ? ' justify-end bg-green-400' : ' justify-start bg-slate-400'}`} onClick={handleCheck}>
-                                        <span className={` w-4 h- border bg-white rounded-full `}></span>
-                                    </span> */}
                       </span>
                       <input
                         type="text"
@@ -608,32 +570,8 @@ const LithiumEditForm = () => {
                         value={formval.beneficiary || ""}
                         onChange={handleEntry}
                       />
-                    </li>
+                    </li> */}
 
-
-                    {/* <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                                <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Mine Tags (tickets)</p>
-                                </span>
-                                <div className="col-span-full space-y-3">
-                                    {mineTags.map((tag, index) => (
-                                        <div key={index} className="flex gap-2 items-center w-full">
-                                            <p className=" font-semibold">{(index+1)}</p>
-                                            <span className="space-y-1"> 
-                                            <p className="pl-1 font-medium">Tag Weight</p>
-                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full sm:max-w-[150px]" name="weightInPerMineTag" value={tag.weightInPerMineTag || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleMinesTagEntry(index, e)} />
-                                            </span>
-                                            <span className="space-y-1">
-                                            <p className="pl-1 font-medium">Tag nbr</p>
-                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full sm:max-w-[150px]" name="tagNumber" value={tag.tagNumber || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleMinesTagEntry(index, e)} />
-                                             </span>
-                                            <HiMinus onClick={() => handleLRemoveMinesTag(index)} className={`${mineTags.length - 1 == 0 ? 'hidden' : ''}`} />
-                                            <HiPlus onClick={handleAddMinesTag} className={`${mineTags.length - 1 !== index ? 'hidden' : ''}`} />
-                                        </div>
-                                    ))}
-                                </div>
-
-                            </li> */}
                   </ul>
 
                 </div>
