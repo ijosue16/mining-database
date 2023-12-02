@@ -8,7 +8,7 @@ import {Table, Tooltip, Checkbox, Input, Form, Modal, Spin, message} from "antd"
 import { BiSolidEditAlt } from "react-icons/bi";
 import { FaSave } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import {
   useDetailedStockQuery,
   useAddShipmentMutation,
@@ -17,6 +17,8 @@ import dayjs from "dayjs";
 
 const StockPage = () => {
   const { model } = useParams();
+  const navigate =useNavigate();
+  // let stkData=[];
   const { data, isLoading, isSuccess, isError, error } = useDetailedStockQuery({model}, {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true,
@@ -62,11 +64,14 @@ const StockPage = () => {
         };
       });
       setInitialData(processedData);
+      console.log(dt);
     }
-  },[isSuccess]);
+    // window.location.reload();
+  },[isSuccess,data]);
 
-
-
+  // useEffect(()=>{
+  //   navigate(`/shipment/add/${model}`);
+  // },[model,navigate]);
 
 
   useEffect(() => {
@@ -80,7 +85,19 @@ const StockPage = () => {
 
   const handleBillOpen = () => {
     setOpenBill(!openBill);
-    console.log("koko corona!!!");
+  };
+
+  
+  const handleRowToggle = (record) => {
+    if (selectedData.some((selected) => selected.index === record.index)) {
+      setSelectedData((prevSelectedData) =>
+        prevSelectedData.filter((selected) => selected.index !== record.index)
+      );
+    } else {
+      setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
+    }
+    console.log(selectedData)
+  
   };
 
   useMemo(() => {
@@ -97,7 +114,7 @@ const StockPage = () => {
     setTotalWeight(newTotalWeight);
 
     const totalGrade = selectedData.reduce(
-      (total, item) => total + item.cumulativeAmount * item.mineralGrade,
+      (total, item) => total + (item.cumulativeAmount * ((item.mineralGrade || 1))),
       0
     );
 
@@ -106,10 +123,10 @@ const StockPage = () => {
     //   0
     // );
     const averagegrade =
-      newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
+      (newTotalWeight !== 0 && totalGrade!==newTotalWeight)  ? (totalGrade / newTotalWeight) : "0.000";
 
     setAvg(averagegrade);
-    console.log(avg);
+    console.log(totalGrade);
     setAvgPrice(newTotalWeight); //TO ADD  AVG PRICE FORMULA
     setTransformedData(newTransformedData);
     setShipmentInfo((prevState) => ({
@@ -406,16 +423,6 @@ const StockPage = () => {
     );
   };
 
-  const handleRowToggle = (record) => {
-    if (selectedData.some((selected) => selected.index === record.index)) {
-      setSelectedData((prevSelectedData) =>
-        prevSelectedData.filter((selected) => selected.index !== record.index)
-      );
-    } else {
-      setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
-    }
-  };
-
   const handleShipmentSubmit = async () => {
     if (
       shipmentInfo.netWeight !== 0 &&
@@ -447,7 +454,7 @@ const StockPage = () => {
               dataSource={initialData}
               loading={{indicator:< ImSpinner2 style={{width:'60px',height:'60px'}} className="animate-spin text-gray-500"/>, spinning:isLoading}}
               columns={columns2}
-              rowKey="_id"
+              rowKey="index"
             />
             <div
               className=" w-full p-2 bg-orange-500 rounded-md flex justify-center"
