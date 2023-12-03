@@ -1,3 +1,4 @@
+import './Editor.css'
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AddProductPage from './Pages/AddProductPage';
 import SalesListPage from './Pages/SalesListPage';
@@ -82,6 +83,7 @@ import ShipmentEdit from './Pages/shipment/ShipmentEdit';
 import NewUSerChart from './Pages/Chat/NewUserChat';
 import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
 import MyEditor from './test elements/CustomForm';
+import EditorWrapper from './texteditor/LexicalEditor';
 
 function App() {
 
@@ -192,7 +194,7 @@ function App() {
                                 <Route path="/new" element={<NewUSerChart/>}/>
                                 <Route path="/structure" element={<FileStructure/>}/>
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
-                                <Route path="/texteditor" element={<MyEditor/>}/>
+                                <Route path="/texteditor" element={<EditorWrapper/>}/>
                                 {/* <Route path='/wee' element={<RoleBasedRoute/>}/> */}
                             </Route>
                         </Route>
