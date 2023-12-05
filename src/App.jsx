@@ -84,6 +84,7 @@ import NewUSerChart from './Pages/Chat/NewUserChat';
 import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
 import MyEditor from './test elements/CustomForm';
 import EditorWrapper from './texteditor/LexicalEditor';
+import DashboardPage from './Pages/dashboards/DashboardHomePage';
 
 function App() {
 
@@ -195,6 +196,7 @@ function App() {
                                 <Route path="/structure" element={<FileStructure/>}/>
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
                                 <Route path="/texteditor" element={<EditorWrapper/>}/>
+                                <Route path="/dashboard" element={<DashboardPage/>}/>
                                 {/* <Route path='/wee' element={<RoleBasedRoute/>}/> */}
                             </Route>
                         </Route>

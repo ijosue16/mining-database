@@ -43,7 +43,7 @@ const Layout = () => {
     const menu = [
         {
             heading: "Main", hId: 1, subHeaders: [
-                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10 },
+                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10,navtext:'dashboard' },
                 {
                     title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
                     submenuItems: [
