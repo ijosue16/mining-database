@@ -41,10 +41,10 @@ const WolframiteListPage = () => {
   const { loginData } = useMyContext();
   // const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
-  useGetAllWolframiteEntriesQuery("", {
-    refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true
-  });
+      useGetAllWolframiteEntriesQuery("", {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+      });
   const [
     deleteWolframite,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
@@ -144,20 +144,14 @@ const WolframiteListPage = () => {
       }
     }
     finalBody.recordId = record._id;
-    if(finalBody.editableFields.length > 0 ){
-      const response = await createEditRequest({body: finalBody});
-      socket.emit("new-edit-request", {username: userData.username});
-      message.success("Edit Request sent successfully");
-
-      if (response) {
-          const {editRequest} = response.data.data;
-          if (editRequest) {
-              setRequestId(editRequest._id);
-          }
+    const response = await createEditRequest({body: finalBody});
+    socket.emit("new-edit-request", {username: userData.username});
+    if (response) {
+      const {editRequest} = response.data.data;
+      if (editRequest) {
+        setRequestId(editRequest._id);
       }
-  }else{
-      message.error("Can't send empty request!!");
-  }
+    }
   }
 
   const handleCancel = () => {
@@ -237,19 +231,19 @@ const WolframiteListPage = () => {
       filteredValue: [searchText],
       onFilter: (value, record) => {
         return (
-          String(record.companyName)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.beneficiary)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.mineralType)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
-          String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
-            .toLowerCase()
-            .includes(value.toLowerCase())
+            String(record.companyName)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.beneficiary)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.mineralType)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
+            String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
+                .toLowerCase()
+                .includes(value.toLowerCase())
         );
       },
     },
@@ -293,87 +287,87 @@ const WolframiteListPage = () => {
       key: "action",
       render: (_, record) => {
         return (
-          <>
-            <div className="flex items-center gap-4">
+            <>
+              <div className="flex items-center gap-4">
               <span>
                 <span className="relative">
                   <PiDotsThreeVerticalBold
-                    className="text-lg"
-                    onClick={() => handleActions(record._id)}
+                      className="text-lg"
+                      onClick={() => handleActions(record._id)}
                   />
                   {selectedRow === record._id ? (
-                    <motion.ul
-                      ref={modalRef}
-                      animate={
-                        showActions
-                          ? { opacity: 1, x: -10, y: 1, display: "block" }
-                          : { opacity: 0, x: 0, y: 0, display: "none" }
-                      }
-                      className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                    >
-                      <li
-                        className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                        onClick={() => {
-                          navigate(`/entry/edit/wolframite/${record._id}`);
-                        }}
+                      <motion.ul
+                          ref={modalRef}
+                          animate={
+                            showActions
+                                ? { opacity: 1, x: -10, y: 1, display: "block" }
+                                : { opacity: 0, x: 0, y: 0, display: "none" }
+                          }
+                          className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                       >
-                        <BiSolidEditAlt className=" text-lg" />
-                        <p>edit</p>
-                      </li>
-                      {userPermissions.entry?.edit ? (
-                        <>
-                          <li
+                        <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {
-                              {
-                                navigate(`/complete/wolframite/${record._id}`);
-                              }
+                              navigate(`/entry/edit/wolframite/${record._id}`);
                             }}
-                          >
-                            <RiFileEditFill className=" text-lg" />
-                            <p>complete entry</p>
-                          </li>
-                          <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              SetSelectedRow(record._id);
-                              SetSelectedRowInfo({
-                                ...selectedRowInfo,
-                                name: record.companyName,
-                                date: record.supplyDate,
-                              });
-                              setShowmodal(!showmodal);
-                            }}
-                          >
-                            <MdDelete className=" text-lg" />
-                            <p>delete</p>
-                          </li>
-                        </>
-                      ) : null}
-                    </motion.ul>
+                        >
+                          <BiSolidEditAlt className=" text-lg" />
+                          <p>edit</p>
+                        </li>
+                        {userPermissions.entry?.edit ? (
+                            <>
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => {
+                                    {
+                                      navigate(`/complete/wolframite/${record._id}`);
+                                    }
+                                  }}
+                              >
+                                <RiFileEditFill className=" text-lg" />
+                                <p>complete entry</p>
+                              </li>
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => {
+                                    SetSelectedRow(record._id);
+                                    SetSelectedRowInfo({
+                                      ...selectedRowInfo,
+                                      name: record.companyName,
+                                      date: record.supplyDate,
+                                    });
+                                    setShowmodal(!showmodal);
+                                  }}
+                              >
+                                <MdDelete className=" text-lg" />
+                                <p>delete</p>
+                              </li>
+                            </>
+                        ) : null}
+                      </motion.ul>
                   ) : null}
                 </span>
               </span>
 
-              {userPermissions.entry?.delete ? (
-                <span>
+                {userPermissions.entry?.delete ? (
+                    <span>
                   <MdDelete
-                    className="text-lg"
-                    onClick={() => {
-                      SetSelectedRow(record._id);
-                      SetSelectedRowInfo({
-                        ...selectedRowInfo,
-                        name: record.companyName,
-                        date: record.supplyDate,
-                      });
-                      setShowmodal(!showmodal);
-                    }}
+                      className="text-lg"
+                      onClick={() => {
+                        SetSelectedRow(record._id);
+                        SetSelectedRowInfo({
+                          ...selectedRowInfo,
+                          name: record.companyName,
+                          date: record.supplyDate,
+                        });
+                        setShowmodal(!showmodal);
+                      }}
                   />
                 </span>
-              ) : null}
+                ) : null}
 
-              {userPermissions.entry?.edit &&
-              <span>
+                {userPermissions.entry?.edit &&
+                <span>
                   <FiEdit
                       className="text-lg"
                       onClick={() => {
@@ -382,9 +376,9 @@ const WolframiteListPage = () => {
                       }}
                   />
               </span>
-              }
-            </div>
-          </>
+                }
+              </div>
+            </>
         );
       },
     },
@@ -398,168 +392,134 @@ const WolframiteListPage = () => {
   };
 
   return (
-    <>
-      <ListContainer
-        title={"Wolframite entries list"}
-        subTitle={"Manage your wolframite  entries"}
-        navLinktext={"entry/add/wolframite"}
-        navtext={"Add new Entry"}
-        isAllowed={userPermissions.entry?.create}
-        table={
-          <>
-            <Modal
-              open={showmodal}
-              onOk={() => handleDelete()}
-              onCancel={() => {
-                setShowmodal(!showmodal);
-                SetSelectedRow("");
-              }}
-              destroyOnClose
-              footer={[
-                <span
-                  key="actions"
-                  className=" flex w-full justify-center gap-4 text-base text-white"
-                >
-                  {isDeleting ? (
-                    <button
-                      key="back"
-                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                    >
-                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                      Deleting
-                    </button>
-                  ) : (
-                    <button
-                      key="back"
-                      className=" bg-green-400 p-2 rounded-lg"
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <button
-                    key="submit"
-                    className=" bg-red-400 p-2 rounded-lg"
-                    type="primary"
-                    onClick={() => {
+      <>
+        <ListContainer
+            title={"Wolframite entries list"}
+            subTitle={"Manage your wolframite  entries"}
+            navLinktext={"entry/add/wolframite"}
+            navtext={"Add new Entry"}
+            isAllowed={userPermissions.entry?.create}
+            table={
+              <>
+                <Modal
+                    open={showmodal}
+                    onOk={() => handleDelete()}
+                    onCancel={() => {
                       setShowmodal(!showmodal);
                       SetSelectedRow("");
                     }}
-                  >
+                    destroyOnClose
+                    footer={[
+                      <span
+                          key="actions"
+                          className=" flex w-full justify-center gap-4 text-base text-white"
+                      >
+                  {isDeleting ? (
+                      <button
+                          key="back"
+                          className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                      >
+                        <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                        Deleting
+                      </button>
+                  ) : (
+                      <button
+                          key="back"
+                          className=" bg-green-400 p-2 rounded-lg"
+                          onClick={handleDelete}
+                      >
+                        Delete
+                      </button>
+                  )}
+                        <button
+                            key="submit"
+                            className=" bg-red-400 p-2 rounded-lg"
+                            type="primary"
+                            onClick={() => {
+                              setShowmodal(!showmodal);
+                              SetSelectedRow("");
+                            }}
+                        >
                     Cancel
                   </button>
                 </span>,
-              ]}
-            >
-              <h2 className="modal-title text-center font-bold text-xl">
-                Confirm Delete
-              </h2>
-              <p className=" text-lg">
-                Are you sure you want to delete transaction with:
-              </p>
-              <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
-              <li className=" text-lg">{`Supply date: ${dayjs(
-                selectedRowInfo.date
-              ).format("MMM/DD/YYYY")}`}</li>
-            </Modal>
+                    ]}
+                >
+                  <h2 className="modal-title text-center font-bold text-xl">
+                    Confirm Delete
+                  </h2>
+                  <p className=" text-lg">
+                    Are you sure you want to delete transaction with:
+                  </p>
+                  <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
+                  <li className=" text-lg">{`Supply date: ${dayjs(
+                      selectedRowInfo.date
+                  ).format("MMM/DD/YYYY")}`}</li>
+                </Modal>
 
-            <Modal
-                title="Basic Modal"
-                open={isModalOpen}
-                onOk={handleOk}
-                onCancel={handleCancel}
-                destroyOnClose
-                footer={[
-                  <span
-                      key="actions"
-                      className=" flex w-full justify-end gap-4 text-base text-white"
-                  >
-                      <button
-                          key="submit"
-                          className=" bg-red-400 px-2 py-[6px] rounded-md text-sm shadow-lg"
-                          type="primary"
-                          onClick={handleCancel}
-                      >
-      Cancel
-    </button>
+                <Modal
+                    title="Basic Modal"
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    destroyOnClose
+                >
+                  {fields.map((item, index) => (
+                      <div key={index}>
+                        <Checkbox
+                            checked={checkboxValues[toCamelCase(item)]}
+                            onChange={() => handleCheckboxChange(toCamelCase(item))}
+                        >
+                          {item}
+                        </Checkbox>
+                      </div>
+                  ))}
+                </Modal>
 
-    {isCreateRequestLoading? (
-        <button
-            key="back"
-            className=" bg-green-200 flex items-center gap-1 px-2 py-[6px] text-gray-500 rounded-md text-sm shadow-lg"
-        >
-            <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500"/>
-            Requesting
-        </button>
-    ) : (
-        <button
-            key="back"
-            className=" bg-green-400 px-2 py-[6px] rounded-md text-sm shadow-lg"
-            onClick={handleOk}
-        >
-            Request
-        </button>
-    )}
-
-  </span>,
-              ]}
-            >
-              {fields.map((item, index) => (
-                  <div key={index}>
-                    <Checkbox
-                        checked={checkboxValues[toCamelCase(item)]}
-                        onChange={() => handleCheckboxChange(toCamelCase(item))}
-                    >
-                      {item}
-                    </Checkbox>
-                  </div>
-              ))}
-            </Modal>
-
-            <div className=" w-full overflow-x-auto h-full min-h-[320px]">
-              <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
+                <div className=" w-full overflow-x-auto h-full min-h-[320px]">
+                  <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
                 <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
                   <PiMagnifyingGlassDuotone className="h-4 w-4" />
                   <input
-                    type="text"
-                    className=" w-full focus:outline-none"
-                    name="tableFilter"
-                    id="tableFilter"
-                    placeholder="Search..."
-                    onChange={(e) => SetSearchText(e.target.value)}
+                      type="text"
+                      className=" w-full focus:outline-none"
+                      name="tableFilter"
+                      id="tableFilter"
+                      placeholder="Search..."
+                      onChange={(e) => SetSearchText(e.target.value)}
                   />
                 </span>
 
-                <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
+                    <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
                   <BiSolidFilePdf className=" text-2xl" />
                   <BsCardList className=" text-2xl" />
                   <HiOutlinePrinter className=" text-2xl" />
                 </span>
-              </div>
-              <Table
-                className=" w-full"
-                loading={{
-                  indicator: (
-                    <ImSpinner2
-                      style={{ width: "60px", height: "60px" }}
-                      className="animate-spin text-gray-500"
-                    />
-                  ),
-                  spinning: isLoading,
-                }}
-                dataSource={dataz}
-                columns={columns}
-                expandable={{
-                  expandedRowRender: record1 => <WolframiteEntryCompletePage entryId={record1._id}/>,
-                  rowExpandable: record1 => record1.output?.length > 0,
-                }}
-                rowKey="_id"
-              />
-            </div>
-          </>
-        }
-      />
-    </>
+                  </div>
+                  <Table
+                      className=" w-full"
+                      loading={{
+                        indicator: (
+                            <ImSpinner2
+                                style={{ width: "60px", height: "60px" }}
+                                className="animate-spin text-gray-500"
+                            />
+                        ),
+                        spinning: isLoading,
+                      }}
+                      dataSource={dataz}
+                      columns={columns}
+                      expandable={{
+                        expandedRowRender: record1 => <WolframiteEntryCompletePage entryId={record1._id}/>,
+                        rowExpandable: record1 => record1.output?.length > 0,
+                      }}
+                      rowKey="_id"
+                  />
+                </div>
+              </>
+            }
+        />
+      </>
   );
 };
 export default WolframiteListPage;

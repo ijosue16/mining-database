@@ -147,10 +147,10 @@ const LithiumEntryForm = () => {
     return (
         <>
             <ActionsPagesContainer title={'Register lithium entry'}
-                subTitle={'Add new lithium entry'}
-                actionsContainer={<AddComponent component={
-                    <div className="grid grid-cols-1 gap-1">
-                        {/* <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
+                                   subTitle={'Add new lithium entry'}
+                                   actionsContainer={<AddComponent component={
+                                       <div className="grid grid-cols-1 gap-1">
+                                           {/* <ul className="grid grid-cols-1 gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
 
 
                             <li className=" space-y-2">
@@ -168,47 +168,43 @@ const LithiumEntryForm = () => {
 
                         </ul> */}
 
-                        <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                                           <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 
-                            <li className=" space-y-1">
-                                <p className="pl-1">Supplier</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplierName" id="supplierName" value={formval.supplierName || ''} onChange={handleEntry} />
-                            </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Supplier</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplierName" id="supplierName" value={formval.supplierName || ''} onChange={handleEntry} />
+                                               </li>
 
-                            <li className=" space-y-1">
-                                <p className="pl-1">Phone number</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={formval.phoneNumber || ''} onChange={handleEntry} />
-                            </li>
-                            <li className=" space-y-1">
-                                <p className="pl-1">Minerals Type</p>
-                                <input autoComplete="off" disabled name="mineralType" id="mineralType" className="focus:outline-none p-2 border rounded-md w-full" value={formval.mineralType || ''} onChange={handleEntry} />
-                            </li>
-                            <li className=" space-y-1">
-                                <p className="pl-1">Date</p>
-                                <DatePicker onChange={handleAddDate} id="supplyDate" name="supplyDate" className=" focus:outline-none p-2 border rounded-md w-full" />
-                            </li>
-                            <li className=" space-y-1">
-                                <p className="pl-1">Time</p>
-                                <TimePicker onChange={handleAddTime} format={'HH:mm'} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
-                            </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Phone number</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={formval.phoneNumber || ''} onChange={handleEntry} />
+                                               </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Minerals Type</p>
+                                                   <input autoComplete="off" disabled name="mineralType" id="mineralType" className="focus:outline-none p-2 border rounded-md w-full" value={formval.mineralType || ''} onChange={handleEntry} />
+                                               </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Date</p>
+                                                   <DatePicker onChange={handleAddDate} id="supplyDate" name="supplyDate" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                               </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Time</p>
+                                                   <TimePicker onChange={handleAddTime} format={'HH:mm'} id="date" name="date" className=" focus:outline-none p-2 border rounded-md w-full" />
+                                               </li>
 
-                            <li className=" space-y-1">
-                                <p className="pl-1">Weight in</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightIn" id="weightIn" value={formval.weightIn || ''} onChange={handleEntry} />
-                            </li>
-                            <li className=" space-y-1">
-                                <p className="pl-1">Weight out</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={formval.weightOut || ''} onChange={handleEntry} />
-                            </li>
-                            <li className=" space-y-1">
-                                <p className="pl-1">Mineral grade</p>
-                                <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="mineralGrade" id="mineralGrade" value={formval.mineralGrade || ''} onChange={handleEntry} />
-                            </li>
-                            {/* <li className=" space-y-1">
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Weight in</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightIn" id="weightIn" value={formval.weightIn || ''} onChange={handleEntry} />
+                                               </li>
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Weight out</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="weightOut" id="weightOut" value={formval.weightOut || ''} onChange={handleEntry} />
+                                               </li>
+                                               {/* <li className=" space-y-1">
                                 <p className="pl-1">Number of Tags</p>
                                 <input type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="numberOfTags" id="numberOfTags" value={formval.numberOfTags || ''} onChange={handleEntry} />
                             </li> */}
-                            {/* <li className=" space-y-1">
+                                               {/* <li className=" space-y-1">
                                 <span className=" flex gap-2 items-center">
                                     <p>Beneficiary</p>
                                     <span className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${checked ? ' justify-end bg-green-400' : ' justify-start bg-slate-400'}`} onClick={handleCheck}>
@@ -217,7 +213,7 @@ const LithiumEntryForm = () => {
                                 </span>
                                 <input type="text" autoComplete="off" disabled={checked} className="focus:outline-none p-2 border rounded-md w-full" name="beneficiary" id="beneficiary" value={formval.beneficiary || ''} onChange={handleEntry} />
                             </li> */}
-                            {/* 
+                                               {/*
                             <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
                                     <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Lot number (output)</p>
@@ -235,13 +231,13 @@ const LithiumEntryForm = () => {
 
                             </li> */}
 
-                        </ul>
-                    </div>
-                }
-                    Add={handleSubmit}
-                    Cancel={handleCancel}
-                    isloading={isSending}
-                />} />
+                                           </ul>
+                                       </div>
+                                   }
+                                                                   Add={handleSubmit}
+                                                                   Cancel={handleCancel}
+                                                                   isloading={isSending}
+                                   />} />
         </>
     )
 }

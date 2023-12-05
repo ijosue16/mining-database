@@ -1,5 +1,5 @@
 import React from "react";
-import {notification} from "antd";
+import {message, notification} from "antd";
 
 const specialStrings = ["TINNumber", "rmaFee", "USDRate", "rmaFeeUSD"];
 
@@ -35,12 +35,15 @@ export function getBase64FromServer (fileUrl) {
     });
 }
 
-export function filterColumns (restrictedColumns, userPermissions, columns) {
+export function filterColumns (restrictedColumns, userPermissions, columns, model = "lithium" || "beryllium") {
     for (const key in restrictedColumns) {
         if (restrictedColumns.hasOwnProperty(key)) {
             if (Object.keys(userPermissions).includes(key)) {
                 if (userPermissions[key].view) {
                     if (userPermissions[key].edit && !["gradeImg", "mineralPrice", "pricePerUnit"].includes(`${key}`)) {
+                        restrictedColumns[key].editTable = true;
+                    }
+                    if (userPermissions[key].edit && ["lithium", "beryllium"].includes(model) && `${key}` === "pricePerUnit") {
                         restrictedColumns[key].editTable = true;
                     }
                     columns.push(restrictedColumns[key]);
@@ -60,7 +63,7 @@ export function openNotification  ({message, description, type}) {
 }
 
 export const AppUrls = {
-    server: "https://mining-company-management-system.onrender.com/api/v1/",
+    server: "http://localhost:5001/api/v1/",
 }
 
 export function handleConvertToUSD (amount, USDRate) {
@@ -75,6 +78,23 @@ export const getModelAcronym = (model) => {
     if (model.toLowerCase() === "mixed") return "MIXED";
     if (model.toLowerCase() === "lithium") return "LITHIUM";
     if (model.toLowerCase() === "beryllium") return "BERYLLIUM";
+}
+
+export const validateWeightInEntry = (index, lotDetails, e, weightIn) => {
+    if (e.target.name === "weightOut") {
+        if (index <= lotDetails.length) {
+            const totalWeight = lotDetails.reduce((acc, lot, lotIndex) => {
+                if (lot.weightOut && lotIndex !== index) {
+                    return acc + parseFloat(lot.weightOut);
+                }
+                return acc;
+            }, 0);
+            const newTotal = totalWeight + parseFloat(e.target.value);
+            if (newTotal > parseFloat(weightIn)) {
+                message.error("Total weight out cannot be greater than weight in");
+            }
+        }
+    }
 }
 
 export const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];

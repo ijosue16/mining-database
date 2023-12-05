@@ -164,14 +164,13 @@ const ContractsistPage = () => {
                         />
                         {showPdf && <PdfView pdfUrl={"https://ik.imagekit.io/mqrq0nywc/contracts/MITSINDO_DIEUDONNE_CV_vfV1EfRuA.pdf"}/>}
                         <Modal
-                            width={'50%'}
-                            style={{top:0}}
+                            width={'70%'}
                             open={previewVisible}
                             title="Image Preview"
                             footer={null}
                             onCancel={handleClose}
                         >
-                            <img alt="example" className="w-fit h-fit" src={previewImage}/>
+                            <img alt="example" style={{width: '100%', height: "100%"}} src={previewImage}/>
                         </Modal>
                     </div>
                 }

@@ -31,10 +31,10 @@ const BerylliumEntryCompletePage = ({entryId}) => {
     // const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneBerylliumEntryQuery({entryId}, {
-        refetchOnMountOrArgChange: true,
-        refetchOnReconnect: true
-    });
+        useGetOneBerylliumEntryQuery({entryId}, {
+            refetchOnMountOrArgChange: true,
+            refetchOnReconnect: true
+        });
     const [updateBerylliumiteEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
@@ -199,12 +199,13 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                 }
                 updatedItem.cumulativeAmount = 0;
             }
-            if (updatedItem.pricePerUnit) {
+            if (Boolean(parseFloat(updatedItem.pricePerUnit)) === true) {
                 updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
+            await updateBerylliumiteEntry({ body: updatedItem, entryId: updatedItem._id });
         }
     };
     const handleActions = (id) => {
@@ -419,38 +420,38 @@ const BerylliumEntryCompletePage = ({entryId}) => {
     };
     return (
         <>
-         {isLoading ? (
-        <FetchingPage />
-      ) : (
-            <ActionsPagesContainer
-                title={"Berylliumite Details"}
-                subTitle={"View Berylliumite detailes"}
-                actionsContainer={
-                    <AddComponent
-                        component={
-                            <>
-                                {isLoading ? (
-                                    <div className="flex h-32 w-full items-center justify-center bg-white">
-                                        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                    </div>
-                                ) : (
-                                    <div className="flex flex-col gap-6 w-full">
-                                        {/*<div*/}
-                                        {/*    className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
-                                        {/*    <p className=" font-semibold text-lg">Entry details</p>*/}
-                                        {/*</div>*/}
+            {isLoading ? (
+                <FetchingPage />
+            ) : (
+                <ActionsPagesContainer
+                    title={"Berylliumite Details"}
+                    subTitle={"View Berylliumite detailes"}
+                    actionsContainer={
+                        <AddComponent
+                            component={
+                                <>
+                                    {isLoading ? (
+                                        <div className="flex h-32 w-full items-center justify-center bg-white">
+                                            <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col gap-6 w-full">
+                                            {/*<div*/}
+                                            {/*    className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                            {/*    <p className=" font-semibold text-lg">Entry details</p>*/}
+                                            {/*</div>*/}
 
-                                        {/*<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
-                                        {/*    <li>*/}
-                                        {/*        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
-                                        {/*            Entry details*/}
-                                        {/*        </p>*/}
-                                        {/*        <p>Weight in: {suply?.weightIn}</p>*/}
-                                        {/*        <p>Mineral type: {suply?.name}</p>*/}
-                                        {/*         <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                        {/*        <p>Number of tags: {suply?.numberOfTags}</p>*/}
-                                        {/*        <p>Beneficiary: {suply?.beneficiary}</p>*/}
-                                        {/*    </li>*/}
+                                            {/*<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                            {/*    <li>*/}
+                                            {/*        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                            {/*            Entry details*/}
+                                            {/*        </p>*/}
+                                            {/*        <p>Weight in: {suply?.weightIn}</p>*/}
+                                            {/*        <p>Mineral type: {suply?.name}</p>*/}
+                                            {/*         <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
+                                            {/*        <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                            {/*        <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                            {/*    </li>*/}
                                             {/*<li>*/}
                                             {/*    <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
                                             {/*        Company info*/}
@@ -471,65 +472,65 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                                             {/*    /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
                                             {/*</li>*/}
 
-                                        {/*</ul>*/}
-                                    </div>
-                                )}
-                                <div className="w-full">
-                                    <Form form={form} component={false}>
-                                        <Table
-                                            className="overflow-x-auto w-full"
-                                            loading={{
-                                                indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
-                                                                        className="animate-spin text-gray-500"/>),
-                                                spinning: isLoading
-                                            }}
-                                            dataSource={lotInfo}
-                                            columns={mergedColumns}
-                                            expandable={{
-                                                expandedRowRender: (record) => {
-                                                    if (record.shipments) {
-                                                        let color = "";
-                                                        // const value='non-sell agreement'
-                                                        switch (record.status) {
-                                                            case "in stock": {
-                                                                color = "bg-green-500";
-                                                                break;
+                                            {/*</ul>*/}
+                                        </div>
+                                    )}
+                                    <div className="w-full">
+                                        <Form form={form} component={false}>
+                                            <Table
+                                                className="overflow-x-auto w-full"
+                                                loading={{
+                                                    indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
+                                                                            className="animate-spin text-gray-500"/>),
+                                                    spinning: isLoading
+                                                }}
+                                                dataSource={lotInfo}
+                                                columns={mergedColumns}
+                                                expandable={{
+                                                    expandedRowRender: (record) => {
+                                                        if (record.shipments) {
+                                                            let color = "";
+                                                            // const value='non-sell agreement'
+                                                            switch (record.status) {
+                                                                case "in stock": {
+                                                                    color = "bg-green-500";
+                                                                    break;
+                                                                }
+                                                                case "partially exported": {
+                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
+                                                                    break;
+                                                                }
+                                                                case "fully exported": {
+                                                                    color = "bg-slate-600";
+                                                                    break;
+                                                                }
+                                                                case "in progress": {
+                                                                    color = "bg-orange-400";
+                                                                    break;
+                                                                }
+                                                                case "rejected": {
+                                                                    color = "bg-red-500";
+                                                                    break;
+                                                                }
+                                                                case "non-sell agreement": {
+                                                                    color = "bg-indigo-400";
+                                                                    break;
+                                                                }
+                                                                default: {
+                                                                    color = "bg-green-300";
+                                                                }
                                                             }
-                                                            case "partially exported": {
-                                                                color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                break;
-                                                            }
-                                                            case "fully exported": {
-                                                                color = "bg-slate-600";
-                                                                break;
-                                                            }
-                                                            case "in progress": {
-                                                                color = "bg-orange-400";
-                                                                break;
-                                                            }
-                                                            case "rejected": {
-                                                                color = "bg-red-500";
-                                                                break;
-                                                            }
-                                                            case "non-sell agreement": {
-                                                                color = "bg-indigo-400";
-                                                                break;
-                                                            }
-                                                            default: {
-                                                                color = "bg-green-300";
-                                                            }
-                                                        }
-                                                        return (
-                                                            <>
-                                                                <div className=" space-y-3 w-full">
-                                                                    <p className=" text-lg font-bold">More Details</p>
-                                                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                                            return (
+                                                                <>
+                                                                    <div className=" space-y-3 w-full">
+                                                                        <p className=" text-lg font-bold">More Details</p>
+                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                                                                         <span className=" space-y-2">
                                                                             <p className="text-md font-semibold">
                                                                               Exported Amount: {record.exportedAmount}
                                                                             </p>
                                                                           </span>
-                                                                        <span className=" space-y-2">
+                                                                            <span className=" space-y-2">
                                                                             <p className="text-md font-semibold">
                                                                               paid: {record.paid}
                                                                             </p>
@@ -537,7 +538,7 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                                                                               Unpaid: {record.unpaid}
                                                                             </p>
                                                                           </span>
-                                                                        <span className=" space-y-2">
+                                                                            <span className=" space-y-2">
                                                                             <p className="text-md font-semibold">
                                                                               Payment status: {record.settled}
                                                                             </p>
@@ -545,56 +546,56 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                                                                               Unpaid: {record.unpaid}
                                                                             </p>
                                                                           </span>
-                                                                        <span className=" space-y-2">
+                                                                            <span className=" space-y-2">
                                                                               <p className={"text-md font-semibold"}>
                                                                                   status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
                                                                               </p>
                                                                           </span>
+                                                                        </div>
                                                                     </div>
-                                                                </div>
-                                                                <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+                                                                    <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
                                                                     <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
                                                                       <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
                                                                       <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
                                                                       <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
                                                                     </span>
-                                                                    {record.shipments.map((shipment, index) => {
-                                                                        if (!Array.isArray(shipment)) {
-                                                                            return (
-                                                                                <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                        {record.shipments.map((shipment, index) => {
+                                                                            if (!Array.isArray(shipment)) {
+                                                                                return (
+                                                                                    <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
                                                                                   <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
                                                                                   <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
+                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{dayjs(shipment.date).format("MMM DD, YYYY")}</p>
                                                                                 </span>
-                                                                            )
-                                                                        }
-                                                                    })}
-                                                                </div>
-                                                            </>
-                                                        )
-                                                    }
-                                                },
-                                                rowExpandable: (record) => record.supplierName !== "Not Expandable",
-                                            }}
-                                            components={{
-                                                body: {
-                                                    cell: EditableCell,
-                                                },
-                                            }}
-                                            rowKey="_id"
-                                        />
-                                    </Form>
-                                </div>
-                                <Modal
-                                    open={showPayModel}
-                                    onOk={""}
-                                    onCancel={() => setShowPayModel(!showPayModel)}
-                                    destroyOnClose
-                                    footer={[
-                                        <span
-                                            key="actions"
-                                            className=" flex w-full justify-center gap-4 text-base text-white"
-                                        >
+                                                                                )
+                                                                            }
+                                                                        })}
+                                                                    </div>
+                                                                </>
+                                                            )
+                                                        }
+                                                    },
+                                                    rowExpandable: (record) => record.supplierName !== "Not Expandable",
+                                                }}
+                                                components={{
+                                                    body: {
+                                                        cell: EditableCell,
+                                                    },
+                                                }}
+                                                rowKey="_id"
+                                            />
+                                        </Form>
+                                    </div>
+                                    <Modal
+                                        open={showPayModel}
+                                        onOk={""}
+                                        onCancel={() => setShowPayModel(!showPayModel)}
+                                        destroyOnClose
+                                        footer={[
+                                            <span
+                                                key="actions"
+                                                className=" flex w-full justify-center gap-4 text-base text-white"
+                                            >
                       {isSending ?
                           <button
                               key="back"
@@ -610,46 +611,46 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                               Confirm
                           </button>}
 
-                                            <button
-                                                key="submit"
-                                                className=" bg-red-400 p-2 rounded-lg"
-                                                type="primary"
-                                                onClick={() => setShowPayModel(!showPayModel)}
-                                            >
+                                                <button
+                                                    key="submit"
+                                                    className=" bg-red-400 p-2 rounded-lg"
+                                                    type="primary"
+                                                    onClick={() => setShowPayModel(!showPayModel)}
+                                                >
                         Cancel
                       </button>
                     </span>,
-                                    ]}
-                                >
-                                    <h2 className="modal-title text-center font-bold text-xl">
-                                        Proceed Payment
-                                    </h2>
-                                    <p className="text-center text-lg">
-                                        {`Please verify all the information before proceeding`}.
-                                    </p>
-                                </Modal>
+                                        ]}
+                                    >
+                                        <h2 className="modal-title text-center font-bold text-xl">
+                                            Proceed Payment
+                                        </h2>
+                                        <p className="text-center text-lg">
+                                            {`Please verify all the information before proceeding`}.
+                                        </p>
+                                    </Modal>
 
-                                <Modal
-                                    width={"70%"}
-                                    open={previewVisible}
-                                    title="Image Preview"
-                                    footer={null}
-                                    onCancel={handleClose}
-                                >
-                                    <img
-                                        alt="example"
-                                        style={{ width: "100%", height: "100%" }}
-                                        src={previewImage}
-                                    />
-                                </Modal>
-                            </>
-                        }
-                        Add={handleSubmit}
-                        Cancel={handleCancel}
-                        isloading={isSending}
-                    />
-                }
-            />)}
+                                    <Modal
+                                        width={"70%"}
+                                        open={previewVisible}
+                                        title="Image Preview"
+                                        footer={null}
+                                        onCancel={handleClose}
+                                    >
+                                        <img
+                                            alt="example"
+                                            style={{ width: "100%", height: "100%" }}
+                                            src={previewImage}
+                                        />
+                                    </Modal>
+                                </>
+                            }
+                            Add={handleSubmit}
+                            Cancel={handleCancel}
+                            isloading={isSending}
+                        />
+                    }
+                />)}
         </>
     );
 };

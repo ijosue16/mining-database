@@ -11,7 +11,8 @@ import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import ToolbarEditor from './toolbar/ToolbarEditor';
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
+import { LinkPlugin, } from "@lexical/react/LexicalLinkPlugin";
+import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
 import lexicalEditorConfig from './config';
 
 

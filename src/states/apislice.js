@@ -15,7 +15,7 @@ export const apiSlice = createApi({
         //     return headers;
         // }
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', "tags", 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -460,6 +460,22 @@ export const apiSlice = createApi({
                 method: "POST"
             })
         }),
+        getListTags: builder.query({
+            query: () => `/tags`,
+            providesTags: ["tags"]
+        }),
+        createTag: builder.mutation({
+            query: ({body}) => ({
+                url: `/tags`,
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ["tags"]
+        }),
+        getSupplierTags: builder.query({
+            query: ({supplierId}) => `/tags/supplier/${supplierId}`,
+            providesTags: ["tags"]
+        }),
         updateTag: builder.mutation({
             query: ({body, tagNumber}) => ({
                 url: `/tags/${tagNumber}`,
@@ -656,6 +672,14 @@ export const apiSlice = createApi({
                 method: "PATCH",
             }),
             invalidatesTags: ['notifications']
+        }),
+        getStockSummary: builder.query({
+            query: () => `/stock/stock-summary`,
+            providesTags: ['stock']
+        }),
+        getYearStockSummary: builder.query({
+            query: ({year}) => `/stock/stock-summary/${year ? year : new Date().getFullYear()}`,
+            invalidatesTags: ['stock']
         })
     })
 })
@@ -764,4 +788,9 @@ export const {
     useUpdateNotificationStatusMutation,
     useGenerateNegociantTagsListMutation,
     useGeneratePackingListMutation,
+    useGetListTagsQuery,
+    useCreateTagMutation,
+    useGetSupplierTagsQuery,
+    useGetStockSummaryQuery,
+    useGetYearStockSummaryMutation,
 } = apiSlice

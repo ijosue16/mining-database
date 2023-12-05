@@ -192,7 +192,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
   ///////////////////////
 
-    useEffect(() => {
+  useEffect(() => {
         if (isSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
@@ -674,6 +674,15 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                             </p>
                                                                             <p className="text-md font-semibold">
                                                                               Unpaid: {record.unpaid}
+                                                                            </p>
+                                                                          </span>
+                                                                            <span className=" space-y-2">
+                                                                            <p className="text-md font-semibold">
+                                                                              Niobium: {record.niobium}
+                                                                            </p>
+                                                                                {/*<input value={record.niobium}/>*/}
+                                                                            <p className="text-md font-semibold">
+                                                                              Iron: {record.iron}
                                                                             </p>
                                                                           </span>
                                                                           <span className=" space-y-2">
