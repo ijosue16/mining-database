@@ -146,14 +146,14 @@ const EditRequests = () => {
                     <span className="flex gap-1">
                         <button
                             disabled={record.requestStatus !== "pending"}
-                            className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
+                            className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px] shadow-md"
                             onClick={() => handleUpdate({decision: true}, record)}
                         >
                             Authorize
                         </button>
                         <button
                             disabled={record.requestStatus !== "pending"}
-                            className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"
+                            className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px] shadow-md"
                             onClick={() => handleUpdate({decision: false}, record)}
                         >
                             Reject
