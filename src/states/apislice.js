@@ -508,6 +508,25 @@ export const apiSlice = createApi({
             query: () => `/file-structure`,
             providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
         }),
+        getExistingFileForEdit: builder.query({
+            query: ({url}) => `/file-structure/file?url=${encodeURIComponent(url)}`,
+            providesTags: ["dd-reports"]
+        }),
+        saveFile: builder.mutation({
+            query: ({body}) => ({
+                url: "/file-structure/file",
+                method: "PATCH",
+                body
+            })
+        }),
+        convertToSFDT: builder.mutation({
+            query: ({body}) => ({
+                url: "/file-structure/convert",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: ["dd-reports"]
+        }),
         downloadFile: builder.mutation({
             query: () => ({
                 url: "/file-structure/download",
@@ -681,8 +700,24 @@ export const apiSlice = createApi({
             query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
             providesTags: ['stock']
         }),
+        generateLabReport: builder.mutation({
+            query: ({body, model}) => ({
+                url: `/coltan/lab-report/${model}`,
+                method: "POST",
+                body,
+            })
+        }),
+        generateForwardNote: builder.mutation({
+            query: ({shipmentId}) => ({
+                url: `/shipments/forward-note/${shipmentId}`,
+                method: "POST",
+            }),
+            invalidatesTags: ['shipments']
+        }),
+            query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
+            providesTags: ['stock']
+        }),
     })
-})
 export const {
     useEndpointnameQuery,
     useSignupMutation,
@@ -793,4 +828,9 @@ export const {
     useGetSupplierTagsQuery,
     useGetStockSummaryQuery,
     useGetYearStockSummaryQuery,
+    useGetExistingFileForEditQuery,
+    useSaveFileMutation,
+    useConvertToSFDTMutation,
+    useGenerateLabReportMutation,
+    useGenerateForwardNoteMutation,
 } = apiSlice

@@ -22,6 +22,7 @@ import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
 import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/helperFunctions";
+import {TbReport} from "react-icons/tb";
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
@@ -427,6 +428,17 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
+                              { /* // TODO 6: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */ }
+                              {userPermissions.entry?.create ? (
+                                  <li
+                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                      onClick={() => navigate(`/lab-report/cassiterite/${entryId}/${record.lotNumber}`)}
+                                  >
+                                      <TbReport  className=" text-lg"/>
+                                      <p>Lab Report</p>
+                                  </li>
+                              ) : null}
+
                               {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"

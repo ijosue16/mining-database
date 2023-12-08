@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FileTree from './FileTree';
 import { useGetFileStructureQuery } from "../states/apislice";
 import {message} from "antd";
+import FetchingPage from "../Pages/FetchingPage";
 
 const FileStructure = () => {
     const { data, isSuccess, isLoading, isError, error } = useGetFileStructureQuery("",
@@ -20,9 +21,8 @@ const FileStructure = () => {
     }, [isSuccess, isError, error]);
 
     return (
-        <div>
-            <h2>File Structure</h2>
-            <FileTree data={fileStructure} />
+        <div className="h-full w-full">
+            {isLoading ? <FetchingPage/> : <FileTree data={fileStructure} />}
         </div>
     );
 };

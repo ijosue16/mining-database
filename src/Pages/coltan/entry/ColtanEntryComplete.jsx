@@ -22,6 +22,7 @@ import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
 import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
+import {TbReport} from "react-icons/tb";
 
 // const getBase64FromServer = (fileUrl) => {
 //     return new Promise((resolve) => {
@@ -441,6 +442,19 @@ const ColtanEntryCompletePage = ({entryId}) => {
                           <BiSolidEditAlt className=" text-lg" />
                           <p>edit</p>
                         </li>
+
+                          { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */ }
+
+                          {userPermissions.entry?.create ? (
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}
+                              >
+                                  <TbReport className=" text-lg" />
+                                  <p>Lab Report</p>
+                              </li>
+                          ) : null}
+
                         {userPermissions.payments?.create ? (
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"

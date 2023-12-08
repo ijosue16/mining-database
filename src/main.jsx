@@ -11,6 +11,8 @@ import storage from 'redux-persist/lib/storage';
 import { persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import { registerLicense } from '@syncfusion/ej2-base';
+registerLicense("ORg4AjUWIQA/Gnt2VlhhQlJCfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hSn9RdkJhWH5dc3FcQWNa");
 
 const persistConfig = {
     key: "root",

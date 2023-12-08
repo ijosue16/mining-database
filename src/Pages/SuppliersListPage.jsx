@@ -211,7 +211,7 @@ const SuppliersListPage = () => {
                     <li
                       className="flex gap-2 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
-                        navigate(`/report/${record._id}`);
+                        navigate(`/due-diligence-report/${record._id}`);
                       }}
                     >
                       <FaFileAlt className=" text-xl" />

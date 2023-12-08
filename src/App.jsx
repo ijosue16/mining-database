@@ -85,6 +85,12 @@ import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
 import MyEditor from './test elements/CustomForm';
 import EditorWrapper from './texteditor/LexicalEditor';
 import DashboardPage from './Pages/dashboards/DashboardHomePage';
+import PrepareDDReport from "./Pages/PrepareDDReport";
+import EditExistingFile from "./Pages/EditExistingFile";
+import DocumentEditor from "./Pages/DocumentEditor";
+import DocumentEditorComponent from "./Pages/DocumentEditor";
+import GenerateLabReport from "./Pages/GenerateLabReport";
+import GenerateForwardNote from "./Pages/GenerateForwardNote";
 import ReasonsToVisit from './test elements/DummyPage';
 import ListTags from './Pages/ListTags';
 import AddTag from './Pages/AddTag';
@@ -200,6 +206,11 @@ function App() {
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
                                 <Route path="/texteditor" element={<EditorWrapper/>}/>
                                 <Route path="/dashboard" element={<DashboardPage/>}/>
+                                <Route path="/due-diligence-report/:supplierId" element={<PrepareDDReport/>}/>
+                                <Route path="/structure/file" element={<EditExistingFile/>}/>
+                                <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
+                                <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
+                                <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
                                 <Route path='/wee' element={<ListTags/>}/>
                                 <Route path='/add/tag' element={<AddTag/>}/>
                             </Route>
