@@ -10,7 +10,7 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const {data: supplierTags, isLoading, isSuccess: isSupplierTagsSuccess} = useGetSupplierTagsQuery({supplierId},{skip: supplierId === ""});
     const [tags, setTags] = useState([]);
-    const [selectedTags, setSelectedTags] = useState(new Set());
+    const [selectedTags, setSelectedTags] = useState([]);
 
     const tagModalRef = useRef();
     const handleClickOutside = (event) => {
@@ -27,7 +27,7 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
     }, []);
 
     const handleOpenTagModal = () => {
-        setDropdownOpen(true);
+        setDropdownOpen(!dropdownOpen);
     }
 
     useEffect(() => {
@@ -38,19 +38,19 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
     }, [supplierTags, isSupplierTagsSuccess])
 
     const handleSelectedTag = (tag) => {
-        if (selectedTags.has(tag)) {
-            const newSet = new Set(selectedTags);
-            newSet.delete(tag);
-            setSelectedTags(newSet);
-            return;
-        }
-        const newSet = new Set([...selectedTags, tag]);
-        setSelectedTags(newSet);
-    }
+        if (selectedTags.some((selected) => selected._id === tag._id)) {
+            setSelectedTags((prevSelectedData) =>
+                prevSelectedData.filter((selected) => selected._id !== tag._id)
+            );
+          } else {
+            setSelectedTags((prevSelectedData) => [...prevSelectedData, tag]);
+          }
+    };
+    console.log(tags)
 
     return (
 
-    <div ref={tagModalRef} className="w-fit h-fit relative ">
+    <div ref={tagModalRef} className="w-fit h-fit relative">
         <button type="button" disabled={tags.length === 0} className="px-3 py-1 bg-orange-300 rounded-md" onClick={handleOpenTagModal}>Existing Tags</button>
         <motion.div
             style={{zIndex: 100}}
@@ -71,14 +71,14 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
                 <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
                 <p className=" text-slate-400">Fetching Tags...</p>
             </div>:<ul className={`list-none  overflow-auto `}>
-                <div>
+                <li>
                     <div className="flex items-center justify-between gap-12">
                         <p className="font-semibold">#</p>
                         <p className="font-semibold">Tag Number</p>
                         <p className="font-semibold">Weight</p>
                         <p className="font-semibold">Sheet Number</p>
                     </div>
-                </div>
+                </li>
                 {tags.map((tag, index) => (
                     <li
                         key={index}
@@ -88,7 +88,10 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
                         <div className="flex items-center justify-between gap-12">
                             <Checkbox
                                 name="checkbox"
-                                checked={selectedTags.has(tag)}
+                                checked={
+                                    selectedTags.length > 0 &&
+                                    selectedTags.some((selected) => selected._id === tag._id)
+                                  }
                                 onChange={() => handleSelectedTag(tag)}
                             />
                             <p className="font-semibold">{tag.tagNumber}</p>
@@ -99,11 +102,12 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
                 ))}
                 <div className="flex gap-3 justify-end">
                     <button type="button" className="px-3 py-1 bg-orange-300 rounded-md" onClick={() => {
-                        if (selectedTags.size === 0) return;
-                        const newSet = new Set([...selectedTags, ...mineTags]);
+                        // if (selectedTags.size === 0) return;
+                        const newSet = [...selectedTags, mineTags];
                         setmineTags([...newSet]);
                         // setSelectedTags(new Set());
-                        setDropdownOpen(false);
+                        // setDropdownOpen(false);
+                        console.log(newSet)
                     }}>Submit</button>
                     <button type="button" className="px-3 py-1 bg-blue-200 rounded-md" onClick={() => {
                         // setSelectedTags(new Set());
