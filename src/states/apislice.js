@@ -6,7 +6,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        baseUrl: "http://localhost:5001/api/v1/",
         // prepareHeaders: (headers, {getState}) => {
         //     const token = getState.auth.token;
         //     if (token) {
@@ -508,6 +508,25 @@ export const apiSlice = createApi({
             query: () => `/file-structure`,
             providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
         }),
+        getExistingFileForEdit: builder.query({
+            query: ({url}) => `/file-structure/file?url=${encodeURIComponent(url)}`,
+            providesTags: ["dd-reports"]
+        }),
+        saveFile: builder.mutation({
+            query: ({body}) => ({
+                url: "/file-structure/file",
+                method: "PATCH",
+                body
+            })
+        }),
+        convertToSFDT: builder.mutation({
+            query: ({body}) => ({
+                url: "/file-structure/convert",
+                method: "POST",
+                body,
+            }),
+            invalidatesTags: ["dd-reports"]
+        }),
         downloadFile: builder.mutation({
             query: () => ({
                 url: "/file-structure/download",
@@ -680,7 +699,21 @@ export const apiSlice = createApi({
         getYearStockSummary: builder.query({
             query: ({year}) => `/stock/stock-summary/${year ? year : new Date().getFullYear()}`,
             invalidatesTags: ['stock']
-        })
+        }),
+        generateLabReport: builder.mutation({
+            query: ({body, model}) => ({
+                url: `/coltan/lab-report/${model}`,
+                method: "POST",
+                body,
+            })
+        }),
+        generateForwardNote: builder.mutation({
+            query: ({shipmentId}) => ({
+                url: `/shipments/forward-note/${shipmentId}`,
+                method: "POST",
+            }),
+            invalidatesTags: ['shipments']
+        }),
     })
 })
 export const {
@@ -793,4 +826,9 @@ export const {
     useGetSupplierTagsQuery,
     useGetStockSummaryQuery,
     useGetYearStockSummaryMutation,
+    useGetExistingFileForEditQuery,
+    useSaveFileMutation,
+    useConvertToSFDTMutation,
+    useGenerateLabReportMutation,
+    useGenerateForwardNoteMutation,
 } = apiSlice
