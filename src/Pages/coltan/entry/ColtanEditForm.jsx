@@ -343,16 +343,22 @@ const ColtanEditForm = () => {
       return updatedLotDetails;
     });
   };
-
+// IZI NIZO CODE NDAKOMEREZAHO
   const handleLRemoveMinesTag = (index) => {
     const values = [...mineTags];
     values.splice(index, 1);
-    const updatedValues = values.map((lot, i) => {
-      return {
-        ...lot,
-      };
-    });
+    // const updatedValues = values.map((lot, i) => {
+    //   return {
+    //     ...lot,
+    //   };
+    // });
+    
+    const updatedValues = mineTags.filter((_, i) => i !== index);
     setmineTags(updatedValues);
+    const removedTag = mineTags[index];
+
+    // setmineTags(updatedValues);
+    handleSelectedTag(removedTag);
   };
 
   const handleAddNegociantTags = () => {
@@ -466,32 +472,14 @@ const ColtanEditForm = () => {
   };
   const handleCancel = () => {
     setFormval({
-      weightIn: "",
-      companyName: "",
-      licenseNumber: "",
-      TINNumber: "",
-      email: "",
-      supplierId: "",
-      companyRepresentative: "",
-      representativeId: "",
-      representativePhoneNumber: "",
-      supplyDate: "",
-      time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
-      beneficiary: "",
-      isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
     setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
       { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
+    setchecked(false);
+    setBeneficial("");
     navigate(-1);
   };
 
@@ -802,13 +790,14 @@ const ColtanEditForm = () => {
 
                             </li> */}
                           </ul>
+                          <ExistingMineTags mineTags={mineTags} setmineTags={setmineTags} supplierId={supplierId}/>
 
                           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t relative p-2 shadow-lg rounded-md bg-gray-100">
                             <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
                               Mine Tags (tickets)
                             </p>
 
-                            <ExistingMineTags mineTags={mineTags} setmineTags={setmineTags} supplierId={supplierId}/>
+                           
 
                             {mineTags.map((tag, index) => (
                                 <ul
