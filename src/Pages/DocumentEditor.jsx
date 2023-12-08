@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
 import {
     DocumentEditorContainerComponent,
-    Toolbar
+    Toolbar, Editor
 } from '@syncfusion/ej2-react-documenteditor';
 import {useNavigate} from "react-router-dom";
 import { useSaveFileMutation } from "../states/apislice";
 import {message} from "antd";
 import LoadingButton from "./LoadingButton";
 
-DocumentEditorContainerComponent.Inject(Toolbar);
+DocumentEditorContainerComponent.Inject(Toolbar, Editor);
 
 // const DocumentEditor = () => {
 //     let container;
