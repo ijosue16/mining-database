@@ -678,9 +678,9 @@ export const apiSlice = createApi({
             providesTags: ['stock']
         }),
         getYearStockSummary: builder.query({
-            query: ({year}) => `/stock/stock-summary/${year ? year : new Date().getFullYear()}`,
-            invalidatesTags: ['stock']
-        })
+            query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
+            providesTags: ['stock']
+        }),
     })
 })
 export const {
@@ -792,5 +792,5 @@ export const {
     useCreateTagMutation,
     useGetSupplierTagsQuery,
     useGetStockSummaryQuery,
-    useGetYearStockSummaryMutation,
+    useGetYearStockSummaryQuery,
 } = apiSlice
