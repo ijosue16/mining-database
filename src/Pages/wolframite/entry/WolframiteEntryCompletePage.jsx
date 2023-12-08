@@ -22,6 +22,7 @@ import {useSelector} from "react-redux";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
+import {TbReport} from "react-icons/tb";
 
 const WolframiteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
@@ -390,6 +391,18 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
+
+                              { /* // TODO 7: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */ }
+                              {userPermissions.entry?.create ? (
+                                  <li
+                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                      onClick={() => navigate(`/lab-report/wolframite/${entryId}/${record.lotNumber}`)}
+                                  >
+                                      <TbReport  className=" text-lg"/>
+                                      <p>Lab Report</p>
+                                  </li>
+                              ) : null}
+
                               {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
