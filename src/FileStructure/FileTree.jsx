@@ -7,10 +7,13 @@ import {toast} from "react-toastify";
 import {Link} from 'react-router-dom'
 import {FcDownload, FcFolder} from "react-icons/fc";
 import {ImDownload3} from "react-icons/im";
+import { useNavigate } from "react-router-dom";
 
 const FileTree = ({ data }) => {
     const [downloadFile, {isSuccess, isLoading, isError, error}] = useDownloadFileMutation();
     const [openDirectories, setOpenDirectories] = useState([]);
+    const navigate = useNavigate();
+    // TODO 5: ADD EDIT BUTTON ON WORD DOCUMENTS -> DONE
 
     const toggleDirectory = (name) => {
         if (openDirectories.includes(name)) {
@@ -72,6 +75,22 @@ const FileTree = ({ data }) => {
         }
     }
 
+    const getDocxFile = (node) => {
+        if(node.type === "file") {
+            const ext = node.name.split('.').pop();
+            if (ext.toLowerCase() === "docx" || ext.toLowerCase() === "doc") {
+                return true;
+            }
+        }
+    }
+
+    const handleEditFile = async (url, filePath, fileId, name) => {
+        localStorage.setItem("url", url);
+        localStorage.setItem("filePath", filePath);
+        localStorage.setItem("fileId", fileId);
+        navigate(`/structure/file`);
+    }
+
 
     const isDirectoryOpen = (name) => openDirectories.includes(name);
 
@@ -111,6 +130,10 @@ const FileTree = ({ data }) => {
                             <ImDownload3 color="#2b579a" style={{ marginLeft: 8 }} className="text-lg text-[#7393B3" />
                         </Link>
                     )}
+                    {getDocxFile(node) && (
+                        <button onClick={() => handleEditFile(node.url, node.filePath, node.fileId, node.name.replace(/_/g, ' '))}>Edit</button>
+                    )}
+
                 </span>
                     {isDirectory && isOpen && node.content && (
                         renderChildren(node.content, level + 1)
