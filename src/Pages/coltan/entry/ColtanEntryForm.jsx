@@ -186,6 +186,9 @@ const ColtanEntryForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
+    setBeneficial("");
+    setchecked(false);
+    setSelectedSupplierName("");
     console.log(checked);
   };
 
