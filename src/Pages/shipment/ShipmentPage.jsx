@@ -14,6 +14,7 @@ import {useGetAllShipmentsQuery, useShipmentReportMutation,} from "../../states/
 import {useNavigate} from "react-router-dom";
 import ListModalContainerHeader from "../../components/Listcomponents/ListModalContainerHeader";
 import EditShipment from "./EditShipment";
+import {HiOutlineClipboardDocumentCheck} from "react-icons/hi2";
 
 const ShipmentPage = () => {
     const [form] = Form.useForm();
@@ -249,6 +250,19 @@ const ShipmentPage = () => {
                               <RiFileEditFill className=" text-lg"/>
                               <p>complete shipment</p>
                           </li>
+
+
+                          {!["beryllium", "lithium"].includes(record.model) && (
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => navigate(`/shipment/forward-note/${record._id}`)}
+                              >
+                                  <HiOutlineClipboardDocumentCheck className=" text-lg"/>
+                                  <p>Forward Note</p>
+                              </li>
+                          )}
+
+
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {
