@@ -85,6 +85,9 @@ import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
 import MyEditor from './test elements/CustomForm';
 import EditorWrapper from './texteditor/LexicalEditor';
 import DashboardPage from './Pages/dashboards/DashboardHomePage';
+import ReasonsToVisit from './test elements/DummyPage';
+import ListTags from './Pages/ListTags';
+import AddTag from './Pages/AddTag';
 
 function App() {
 
@@ -150,7 +153,7 @@ function App() {
 
                                 <Route path='/user/edit/:userId' element={<UserPermissionPage/>}/>
 
-                                <Route path='/test' element={<EditMinesitePage/>}/>
+                                <Route path='/test' element={<ReasonsToVisit/>}/>
                                 <Route path='/sales' element={<SalesListPage/>}/>
                                 <Route path='/purchases' element={<PurchasesListPage/>}/>
                                 <Route path='/profile' element={<UsersListPage/>}/>
@@ -197,7 +200,8 @@ function App() {
                                 <Route path="/simbo" element={<SingleImageUpload/>}/>
                                 <Route path="/texteditor" element={<EditorWrapper/>}/>
                                 <Route path="/dashboard" element={<DashboardPage/>}/>
-                                {/* <Route path='/wee' element={<RoleBasedRoute/>}/> */}
+                                <Route path='/wee' element={<ListTags/>}/>
+                                <Route path='/add/tag' element={<AddTag/>}/>
                             </Route>
                         </Route>
 
