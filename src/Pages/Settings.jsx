@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {useGetSettingsQuery, useUpdateSettingsMutation} from "../states/apislice";
 import ActionsPagesContainer from '../components/Actions components/ActionsComponentcontainer';
 import AddComponent from '../components/Actions components/AddComponent';
-import {toast} from "react-toastify";
+import { message } from "antd";
 
 
 const Settings = () => {
@@ -15,25 +15,23 @@ const Settings = () => {
     }] = useUpdateSettingsMutation();
 
     const [settings, setSettings] = useState(
-        {rmaFeeColtan: 0, rmaFeeCassiterite: 0, rmaFeeWolframite: 0, nameOfCompany: ""}
+        {rmaFeeColtan: null, rmaFeeCassiterite: null, rmaFeeWolframite: null, nameOfCompany: "", representative: "",
+            address: {province: "", district: "", sector: ""},
+            editExpiresIn: null, logsLifeTime: null}
     );
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Settings updated successfully");
+            return message.success("Settings updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message: errorMessage} = updateError.data;
+            return message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
 
     useEffect(() => {
-        console.log('----------------------------------------------------')
-
         if (isSuccess) {
             const {settings: existingSettings} = data.data;
-            console.log(existingSettings);
-            console.log('----------------------------------------------------')
             setSettings(prevState => (
                 {
                     ...prevState,
@@ -46,7 +44,9 @@ const Settings = () => {
                         district: existingSettings.address.district,
                         sector: existingSettings.address.sector,
                     },
-                    representative: existingSettings.representative
+                    representative: existingSettings.representative,
+                    editExpiresIn: existingSettings.editExpiresIn,
+                    logsLifeTime: existingSettings.logsLifeTime
                 })
             );
         }
@@ -78,14 +78,13 @@ const Settings = () => {
 
     const handleCancel = () => {
         setSettings({
-            nameOfCompany: "", rmaFeeWolframite: 0, rmaFeeColtan: 0, rmaFeeCassiterite: 0, representative: "",
-            supplier: {province: "", district: "", sector: ""}
+            nameOfCompany: "", rmaFeeWolframite: null, rmaFeeColtan: null, rmaFeeCassiterite: null, representative: "",
+            address: {province: "", district: "", sector: ""}, editExpiresIn: null, logsLifeTime: null
         });
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(settings);
         const body = settings
         await updateSettings({body});
     }
@@ -147,28 +146,51 @@ const Settings = () => {
                                                           className="focus:outline-none p-2 border rounded-lg w-full"
                                                           onChange={handleChange}/>
                                                </li>
-                                               {/*<li>*/}
-                                               {/*    <p className="mb-1">Province</p>*/}
-                                               {/*    <input type="text" name="address.province" id="province"*/}
-                                               {/*           autoComplete="off" value={settings.address.province}*/}
-                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
-                                               {/*           onChange={handleChange}*/}
-                                               {/*    />*/}
-                                               {/*</li>*/}
-                                               {/*<li>*/}
-                                               {/*    <p className="mb-1">District</p>*/}
-                                               {/*    <input type="text" name="address.district" id="district"*/}
-                                               {/*           autoComplete="off" value={settings.address.district}*/}
-                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
-                                               {/*           onChange={handleChange}/>*/}
-                                               {/*</li>*/}
-                                               {/*<li>*/}
-                                               {/*    <p className="mb-1">Sector</p>*/}
-                                               {/*    <input type="text" name="address.sector" id="sector"*/}
-                                               {/*           autoComplete="off" value={settings.address.sector}*/}
-                                               {/*           className="focus:outline-none p-2 border rounded-lg w-full"*/}
-                                               {/*           onChange={handleChange}/>*/}
-                                               {/*</li>*/}
+                                               <li>
+                                                   <p className="mb-1">Province</p>
+                                                   <input type="text" name="address.province" id="province"
+                                                          autoComplete="off" value={settings.address.province}
+                                                          className="focus:outline-none p-2 border rounded-lg w-full"
+                                                          onChange={handleChange}
+                                                   />
+                                               </li>
+                                               <li>
+                                                   <p className="mb-1">District</p>
+                                                   <input type="text" name="address.district" id="district"
+                                                          autoComplete="off" value={settings.address.district}
+                                                          className="focus:outline-none p-2 border rounded-lg w-full"
+                                                          onChange={handleChange}/>
+                                               </li>
+                                               <li>
+                                                   <p className="mb-1">Sector</p>
+                                                   <input type="text" name="address.sector" id="sector"
+                                                          autoComplete="off" value={settings.address.sector}
+                                                          className="focus:outline-none p-2 border rounded-lg w-full"
+                                                          onChange={handleChange}/>
+                                               </li>
+                                               <li>
+                                                   <p className="mb-1">Edit Request Expires In (min)</p>
+                                                   <input type="number" name="editExpiresIn" id="editExpiresIn"
+                                                          title="Enter value in minutes"
+                                                          autoComplete="off" value={settings.editExpiresIn ||""}
+                                                          className="focus:outline-none p-2 border rounded-lg w-full"
+                                                          onChange={handleChange}
+                                                          onWheelCapture={(e) => {
+                                                              e.target.blur()
+                                                          }}
+                                                   />
+                                               </li>
+                                               <li>
+                                                   <p className="mb-1">Logs Life Time (days)</p>
+                                                   <input type="number" name="logsLifeTime" id="logsLifeTime"
+                                                          autoComplete="off" value={settings.logsLifeTime ||""}
+                                                          className="focus:outline-none p-2 border rounded-lg w-full"
+                                                          onChange={handleChange}
+                                                          onWheelCapture={(e) => {
+                                                              e.target.blur()
+                                                          }}
+                                                   />
+                                               </li>
                                            </ul>
                                        </div>
                                    }

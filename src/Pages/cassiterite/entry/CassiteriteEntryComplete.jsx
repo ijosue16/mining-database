@@ -156,8 +156,6 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             const {entry: entr} = info;
             setSuply(entr);
             setLotInfo(entr.output);
-            console.log(entr);
-            // console.log(lotInfo);
         }
     }, [isSuccess]);
 
@@ -165,9 +163,6 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
         await updateCassiteriteEntry({body, entryId});
-
-        console.log(lotInfo);
-        // navigate(-1);
     };
     const handleModelAdvance = async () => {
         const body = {...suply, output: lotInfo};
@@ -217,7 +212,14 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                updatedItem.cumulativeAmount = 0;
+                // console.log(updatedItem.nonSellAgreementAmount);
+                if (updatedItem.nonSellAgreementAmount > 0) {
+                    updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
+                    updatedItem.cumulativeAmount = 0;
+                } else {
+                    updatedItem.nonSellAgreement = {weight: 0};
+                    updatedItem.cumulativeAmount = updatedItem.weightOut;
+                }
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
                 if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
@@ -271,8 +273,8 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
+            width: 40,
             // editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
             render: (_, record) => {
                 if (record.gradeImg) {
                     return (
@@ -304,9 +306,10 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             sorter: (a, b) => a.londonMetalExchange - b.londonMetalExchange,
         },
         treatmentCharges: {
-            title: "TC ($)",
+            title: "Treat. Charges ($)",
             dataIndex: "treatmentCharges",
             key: "treatmentCharges",
+            width: 130,
             sorter: (a, b) => a.treatmentCharges - b.treatmentCharges,
         },
         pricePerUnit: {
@@ -351,7 +354,8 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             title: "#",
             dataIndex: "lotNumber",
             key: "lotNumber",
-            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
+            width: 30,
+            // sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
         // {
         //     title: "Date",
@@ -376,7 +380,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
-            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+            // sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
         },
         {
             title: "non-sell agreement (KG)",
@@ -385,8 +389,8 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             editTable: true,
             sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
             render: (_, record) => {
-                if (record.nonSellAgreementAmount?.weight) {
-                    return <span>{record.nonSellAgreementAmount.weight}</span>
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
                 }
             }
         },
@@ -394,7 +398,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
 
 
     if (restrictedColumns && userPermissions && columns) {
-        filterColumns(restrictedColumns, userPermissions, columns);
+        filterColumns(restrictedColumns, userPermissions, columns, "cassiterite");
         columns.push({
             title: "Action",
             dataIndex: "action",

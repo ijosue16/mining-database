@@ -91,6 +91,7 @@ import DocumentEditor from "./Pages/DocumentEditor";
 import DocumentEditorComponent from "./Pages/DocumentEditor";
 import GenerateLabReport from "./Pages/GenerateLabReport";
 import GenerateForwardNote from "./Pages/GenerateForwardNote";
+import PDFViewer from "./Pages/PDFViewer";
 
 function App() {
 
@@ -207,6 +208,7 @@ function App() {
                                 <Route path="/structure/file" element={<EditExistingFile/>}/>
                                 <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
                                 <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
+                                <Route path="/pdf-viewer" element={<PDFViewer/>}/>
                                 <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
                                 {/* <Route path='/wee' element={<RoleBasedRoute/>}/> */}
                             </Route>

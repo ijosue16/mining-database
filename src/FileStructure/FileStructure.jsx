@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import FileTree from './FileTree';
-import { useGetFileStructureQuery } from "../states/apislice";
+import { useGetFileStructureMutation } from "../states/apislice";
 import {message} from "antd";
 import FetchingPage from "../Pages/FetchingPage";
 
 const FileStructure = () => {
-    const { data, isSuccess, isLoading, isError, error } = useGetFileStructureQuery("",
-        { refetchOnMountOrArgChange: true, refetchOnReconnect: true }
-    );
+    const [getFileStructure, { data, isSuccess, isLoading, isError, error }] = useGetFileStructureMutation();
     const [fileStructure, setFileStructure] = useState([]);
+    const [toggledFolders, setToggledFolders] = useState(null);
+
 
     useEffect(() => {
-        if (isSuccess) {
-            const { files } = data.data;
-            setFileStructure(files);
-        } else if (isError) {
-            const { message: fetchError } = error.data;
-            message.error(fetchError);
+        const fetchFileStructure = async () => {
+            const response = await getFileStructure({ body: { directory: "/" }});
+            if (response.data) {
+                const { files } = response.data?.data;
+                setFileStructure(files);
+            }
         }
-    }, [isSuccess, isError, error]);
+        fetchFileStructure();
+    }, [])
+
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         const { files } = data.data;
+    //         setFileStructure(files);
+    //     } else if (isError) {
+    //         const { message: fetchError } = error.data;
+    //         message.error(fetchError);
+    //     }
+    // }, [isSuccess, isError, error]);
 
     return (
         <div className="h-full w-full">
-            {isLoading ? <FetchingPage/> : <FileTree data={fileStructure} />}
+            {!fileStructure ? <FetchingPage/> : <FileTree getFileStructure={getFileStructure} data={fileStructure} setFileStructure={setFileStructure} />}
         </div>
     );
 };

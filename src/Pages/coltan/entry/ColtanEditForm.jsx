@@ -737,47 +737,6 @@ const ColtanEditForm = () => {
                               />
                             </li>
 
-                            <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full shadow-lg rounded-md p-4 mt-4 pb-6 bg-gray-100">
-                      <span className=" border  border-b-0 relative col-span-full mb-3">
-                        <p className="pl-1 bg-white absolute -top-4 left-2 px-1 rounded-lg font-semibold mx-2">
-                          Lots
-                        </p>
-                      </span>
-                              <div className="col-span-1 space-y-3">
-                                {lotDetails.map((lot, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex gap-2 items-center w-full"
-                                    >
-                                      <p className=" font-semibold">{lot.lotNumber}</p>
-                                      <input
-                                          animate={{}}
-                                          type="number"
-                                          autoComplete="off"
-                                          className="focus:outline-none p-2 border rounded-md w-full"
-                                          name="weightOut"
-                                          value={lot.weightOut || ""}
-                                          onWheelCapture={(e) => {
-                                            e.target.blur();
-                                          }}
-                                          onChange={(e) => handleLotEntry(index, e)}
-                                      />
-                                      <HiMinus
-                                          onClick={() => handleLRemoveLot(index)}
-                                          className={`${
-                                              lotDetails.length - 1 === 0 ? "hidden" : ""
-                                          }`}
-                                      />
-                                      <HiPlus
-                                          onClick={handleAddLot}
-                                          className={`${
-                                              lotDetails.length - 1 !== index ? "hidden" : ""
-                                          }`}
-                                      />
-                                    </div>
-                                ))}
-                              </div>
-                            </li>
                             {/* <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
                                     <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Mine Tags (tickets)</p>

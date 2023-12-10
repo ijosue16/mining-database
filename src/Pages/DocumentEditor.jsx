@@ -153,6 +153,12 @@ const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
             filePath?.split('/').pop().replace(/\.docx[^_]*\.docx/, '') || "Untitled",
             'Docx'
         );
+
+        // const sfdtContent = container.documentEditor.serialize();
+        // console.log(sfdtContent);
+
+        // Now you can use sfdtContent as needed, for example, log it to the console
+        // console.log('SFDT Content:', sfdtContent);
     }
 
     function onContentChange() {

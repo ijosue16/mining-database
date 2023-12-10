@@ -9,19 +9,44 @@ import {FcDownload, FcFolder} from "react-icons/fc";
 import {ImDownload3} from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 
-const FileTree = ({ data }) => {
+const FileTree = ({ data, getFileStructure, setFileStructure }) => {
     const [downloadFile, {isSuccess, isLoading, isError, error}] = useDownloadFileMutation();
     const [openDirectories, setOpenDirectories] = useState([]);
     const navigate = useNavigate();
     // TODO 5: ADD EDIT BUTTON ON WORD DOCUMENTS -> DONE
 
-    const toggleDirectory = (name) => {
-        if (openDirectories.includes(name)) {
+    const toggleDirectory = async (directory, fileId) => {
+        const findAndUpdateDirectory = (files, fileIdToUpdate, updatedFiles) => {
+            return files.map((file) => {
+                if (file.fileId === fileIdToUpdate) {
+                    return { ...file, content: updatedFiles };
+                } else if (file.content) {
+                    return { ...file, content: findAndUpdateDirectory(file.content, fileIdToUpdate, updatedFiles) };
+                } else {
+                    return file;
+                }
+            });
+        };
+
+        if (directory) {
+            const response = await getFileStructure({ body: { directory } });
+            if (response.data) {
+                const { files } = response.data?.data;
+                if (files?.length === 0) return;
+                setFileStructure((prevState) => {
+                    return findAndUpdateDirectory(prevState, fileId, files);
+                });
+            }
+        }
+
+
+
+        if (openDirectories.includes(fileId)) {
             // If the directory is open, close it
-            setOpenDirectories(openDirectories.filter((dir) => dir !== name));
+            setOpenDirectories(openDirectories.filter((dir) => dir !== fileId));
         } else {
             // If the directory is closed, open it
-            setOpenDirectories([...openDirectories, name]);
+            setOpenDirectories([...openDirectories, fileId]);
         }
     };
 
@@ -92,22 +117,22 @@ const FileTree = ({ data }) => {
     }
 
 
-    const isDirectoryOpen = (name) => openDirectories.includes(name);
+    const isDirectoryOpen = (fileId) => openDirectories.includes(fileId);
 
     const renderNode = (node, level) => {
         const isDirectory = node.type === 'folder';
-        const isOpen = isDirectory && isDirectoryOpen(node.name);
+        const isOpen = isDirectory && isDirectoryOpen(node.fileId);
 
         const fileIcon = getFileIcon(node.name);
 
         return (
-            <ul key={`${node.type}-${node.name}`}>
+            <ul key={node.fileId}>
                 <li>
                 <span style={{ marginLeft: level * 20 }} className="flex items-center">
                     {isDirectory && (
                         <span
                             style={{ marginRight: 3 }}
-                            onClick={() => toggleDirectory(node.name)}
+                            onClick={() => toggleDirectory(node.filePath, node.fileId)}
                         >
                             {isOpen ? (
                                 <HiChevronDown />

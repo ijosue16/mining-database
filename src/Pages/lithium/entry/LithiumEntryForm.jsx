@@ -12,14 +12,11 @@ import { useNavigate } from "react-router-dom";
 
 
 const LithiumEntryForm = () => {
-    let sup = [''];
+    const [sup, setSup] = useState([]);
     const navigate = useNavigate();
     const { data, isLoading, isError, error, isSuccess } = useGetAllSuppliersQuery()
     const [createLithiumEntry, { isLoading: isSending, isError: isFail, error: failError, isSuccess: isDone }] = useCreateLithiumEntryMutation()
-    const [formval, setFormval] = useState({ weightIn: "", weightOut: '', supplierName: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
-    const [lotDetails, setlotDetails] = useState([
-        { lotNumber: "", weightOut: "" },
-    ]);
+    const [formval, setFormval] = useState({ weightIn: "", weightOut: '', supplierName: "", phoneNumber: "", supplyDate: "", time: "", mineralType: 'lithium', beneficiary: '', });
     const [checked, setchecked] = useState(false);
     const [openlist, setOpenlist] = useState(false);
     const [search, setSearch] = useState("");
@@ -29,13 +26,14 @@ const LithiumEntryForm = () => {
     const [beneficial, setBeneficial] = useState("");
     const [admin, setAdmin] = useState({ role: 'admin' });
 
-    if (isSuccess) {
-        const { data: dt } = data;
-        const { suppliers: sups } = dt;
-        sup = sups;
-        console.log(sup);
 
-    }
+    useEffect(() => {
+        if (isSuccess) {
+            const { data: dt } = data;
+            const { suppliers: sups } = dt;
+            setSup(sups);
+        }
+    }, [isSuccess, data]);
 
 
     // const handleSearch = (e) => {
@@ -100,47 +98,15 @@ const LithiumEntryForm = () => {
     const handleAddTime = (e) => {
         setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
     };
-    // const handleAddLot = () => {
-    //     setlotDetails([...lotDetails, { lotNumber: '', weightOut: '' }]);
-    // };
-
-    // const handleLotEntry = (index, e) => {
-    //     const values = [...lotDetails];
-    //     values[index][e.target.name] = e.target.value;
-    //     values[index].lotNumber = index + 1;
-    //     setlotDetails(values);
-    // };
-
-    // const handleLRemoveLot = (index) => {
-    //     const values = [...lotDetails];
-    //     values.splice(index, 1);
-    //     values.forEach((lot, i) => {
-    //         lot.lotNumber = i + 1;
-    //     });
-    //     setlotDetails(values);
-    // };
-
-    // const handleCheck = () => {
-    //     setchecked((prev) => !prev);
-    //     console.log(checked)
-    //     if (Boolean(checked) === false) {
-    //         setFormval({ ...formval, beneficiary: beneficial, isSupplierBeneficiary: true });
-    //     }
-    //     else if (Boolean(checked) === true) {
-    //         setFormval({ ...formval, beneficiary: '', isSupplierBeneficiary: false });
-    //     }
-    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const body = { ...formval, output: lotDetails };
+        const body = { ...formval };
         await createLithiumEntry({ body });
-        console.log(body);
         navigate(-1);
     };
     const handleCancel = () => {
-        setFormval({ weightIn: "", weightOut: '', supplierName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'lithium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
-        setlotDetails([{ lotNumber: "", weightOut: "" },])
+        setFormval({ weightIn: "", weightOut: '', supplierName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", mineralType: 'lithium', beneficiary: '' });
         console.log(checked)
     };
 
