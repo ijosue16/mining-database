@@ -73,23 +73,16 @@ const Layout = () => {
                     { title: "Wolframite", id: 26,navtext:"shipment/add/wolframite" },
                     { title: "Lithium", id: 27,navtext:"shipment/add/lithium" },
                     { title: "Beryllium", id: 28,navtext:"shipment/add/beryllium" }
-                ],line: true },
-                // { title: "Sales Return", icon: <PiFilesDuotone />, id: 18,navtext:"" },
-                // { title: "Quation", icon: <PiFloppyDiskDuotone />, id: 19,navtext:"" },
-                // {
-                //     title: "Transfer", icon: <TbArrowsCross />, submenu: true, id: 57, submenuItems: [
-                //         { title: "transfer List", id: 20 },
-                //         { title: "Import Transfer", id: 21 }
-                //     ]
-                // },
-                // {
-                //     title: "Return", icon: <PiArrowBendUpLeftDuotone />, submenu: true, id: 29, submenuItems: [
-                //         { title: "Sales Return", id: 30 },
-                //         { title: "Purchases Return", id: 31 }
-                //     ], line: true
-                // }
+                ]},
+
             ]
         },
+                
+        {
+            heading: "Tags", hId: 79, subHeaders: [
+                { title: "Tags list", icon: <PiShoppingCartSimpleDuotone />, id: 80,navtext:"tags-list",line: true },
+            ]
+    },
 
         {
             heading: "Suppliers", hId: 4, subHeaders: [
@@ -151,13 +144,12 @@ const Layout = () => {
                 // { title: "Logout", icon: <PiSignInDuotone />, id: 56 },
             ]
         },
-
     ]
 
     // Define the roles and their associated menu item IDs and restricted item IDs
     const roleMenus = {
         admin: {
-            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48],
+            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48,79],
             restrictedItems: {
                 7: [11, 12], // For section with hId 7, restrict items 11 and 12
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
@@ -165,14 +157,14 @@ const Layout = () => {
             }
         },
         ceo: {
-            allowedSections: [1, 2,3,4,5,6,7,8,9],
+            allowedSections: [1, 2,3,4,5,6,7,8,9,79],
             restrictedItems: {
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
                 // Add more restricted items for specific sections as needed
             }
         },
         employee: {
-            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48],
+            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48,79],
             restrictedItems: {
                 // Define restricted items for employee role if needed
             }
