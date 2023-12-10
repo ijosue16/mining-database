@@ -91,9 +91,7 @@ import DocumentEditor from "./Pages/DocumentEditor";
 import DocumentEditorComponent from "./Pages/DocumentEditor";
 import GenerateLabReport from "./Pages/GenerateLabReport";
 import GenerateForwardNote from "./Pages/GenerateForwardNote";
-import ReasonsToVisit from './test elements/DummyPage';
-import ListTags from './Pages/ListTags';
-import AddTag from './Pages/AddTag';
+import PDFViewer from "./Pages/PDFViewer";
 
 function App() {
 
@@ -159,7 +157,7 @@ function App() {
 
                                 <Route path='/user/edit/:userId' element={<UserPermissionPage/>}/>
 
-                                <Route path='/test' element={<ReasonsToVisit/>}/>
+                                <Route path='/test' element={<EditMinesitePage/>}/>
                                 <Route path='/sales' element={<SalesListPage/>}/>
                                 <Route path='/purchases' element={<PurchasesListPage/>}/>
                                 <Route path='/profile' element={<UsersListPage/>}/>
@@ -210,9 +208,9 @@ function App() {
                                 <Route path="/structure/file" element={<EditExistingFile/>}/>
                                 <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
                                 <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
+                                <Route path="/pdf-viewer" element={<PDFViewer/>}/>
                                 <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
-                                <Route path='/tags-list' element={<ListTags/>}/>
-                                <Route path='/add/tag' element={<AddTag/>}/>
+                                {/* <Route path='/tags-list' element={<RoleBasedRoute/>}/> */}
                             </Route>
                         </Route>
 

@@ -158,7 +158,6 @@ const ColtanEntryForm = () => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
     await createColtanEntry({ body });
-    console.log(body);
     navigate(-1);
   };
   const handleCancel = () => {
@@ -185,10 +184,6 @@ const ColtanEntryForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setBeneficial("");
-    setchecked(false);
-    setSelectedSupplierName("");
-    console.log(checked);
   };
 
   const filteredSuppliers = sup.filter((supplier) => {

@@ -102,7 +102,7 @@ const UsersActivityLogs = () => {
                         )
                     }
                 },
-                rowExpandable: record => record.modifications.length > 0,
+                rowExpandable: record => record.modifications?.length > 0,
             }}
             dataSource={usersLogs}
             bordered

@@ -87,7 +87,7 @@ const AddUserPage = () => {
                                            <ul className="grid grid-cols-1 gap-4 h-fit">
                                                <li>
                                                    <p className="mb-1 pl-1">Role</p>
-                                                   <select value={formval.role || ''} defaultValue="storekeeper"
+                                                   <select value={formval.role || ''}
                                                            required name="role" id="role"
                                                            className="focus:outline-none p-2 border rounded-md w-full"
                                                            onChange={handleAddproduct}>
@@ -99,6 +99,7 @@ const AddUserPage = () => {
                                                        <option value="accountant">Accountancy office</option>
                                                        <option value="traceabilityOfficer">Traceability office</option>
                                                        <option value="storekeeper">Storekeeper</option>
+                                                       <option value={"laboratoryOfficer"}>Laboratory officer</option>
                                                    </select>
                                                </li>
                                                <li>
@@ -133,7 +134,7 @@ const AddUserPage = () => {
                                            <span className="">
                             <p className="mb-1 pl-1">User image</p>
                             <input type="file" name="userImage" id="userImage"
-                                   className=" p-2 border rounded-lg w-full h-fit md:h-52"/>
+                                   className=" p-2 border rounded-lg w-full h-fit md:h-52" value={""} onChange={handleAddproduct}/>
                         </span>
 
                                        </div>

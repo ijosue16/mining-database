@@ -59,25 +59,10 @@ const LithiumEditForm = () => {
     representativePhoneNumber: "",
     supplyDate: "",
     time: "",
-    numberOfTags: "",
-    mineTags: "",
-    negociantTags: "",
-    mineralType: "",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
     beneficiary: "",
-    isSupplierBeneficiary: false,
   });
-  const [lotDetails, setlotDetails] = useState([
-    { lotNumber: "", weightOut: "" },
-  ]);
-  const [mineTags, setmineTags] = useState([
-    { weightInPerMineTag: "", tagNumber: "", status: "" },
-  ]);
-  const [negociantTags, setnegociantTags] = useState([
-    { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-  ]);
+
+
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
   const [search, setSearch] = useState("");
@@ -126,11 +111,7 @@ const LithiumEditForm = () => {
         time: dayjs(entr.time, "HH:mm"),
         numberOfTags: entr.numberOfTags,
         mineralType: entr.mineralType,
-        mineralgrade: "",
-        mineralprice: "",
-        shipmentnumber: "",
         beneficiary: entr.beneficiary,
-        isSupplierBeneficiary: false,
       });
     }
   }, [isSuccess]);
@@ -240,146 +221,6 @@ const LithiumEditForm = () => {
       time: timeString,
     }));
   };
-  const updateLotNumbers = () => {
-    setlotDetails((prevLotDetails) => {
-      return prevLotDetails.map((lot, index) => ({
-        ...lot,
-        lotNumber: index + 1,
-      }));
-    });
-  };
-//   const handleAddLot = () => {
-//     setlotDetails((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { lotNumber: "", weightOut: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleLotEntry = (index, e) => {
-//     setlotDetails((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveLot = (index) => {
-//     const values = [...lotDetails];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//         lotNumber: i + 1,
-//       };
-//     });
-//     setlotDetails(updatedValues);
-//   };
-//   const handleAddMinesTag = () => {
-//     setmineTags((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { weightInPerMineTag: "", tagNumber: "", status: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleMinesTagEntry = (index, e) => {
-//     setmineTags((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveMinesTag = (index) => {
-//     const values = [...mineTags];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//       };
-//     });
-//     setmineTags(updatedValues);
-//   };
-
-//   const handleAddNegociantTags = () => {
-//     setnegociantTags((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleNegociantTagsEntry = (index, e) => {
-//     setnegociantTags((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveNegociantTags = (index) => {
-//     const values = [...mineTags];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//       };
-//     });
-//     setnegociantTags(updatedValues);
-//   };
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
@@ -399,9 +240,9 @@ const LithiumEditForm = () => {
     e.preventDefault();
     const body = {
       ...formval,
-      output: lotDetails,
-      mineTags: mineTags,
-      negociantTags: negociantTags,
+      // output: lotDetails,
+      // mineTags: mineTags,
+      // negociantTags: negociantTags,
     };
     console.log(body);
     await updateLithiumEntry({ entryId, body });
@@ -418,21 +259,8 @@ const LithiumEditForm = () => {
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
-      isSupplierBeneficiary: false,
     });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
-    setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-    ]);
     navigate(-1);
   };
   const handleCancel = () => {
@@ -448,21 +276,9 @@ const LithiumEditForm = () => {
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
       isSupplierBeneficiary: false,
     });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
-    setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-    ]);
     navigate(-1);
   };
 
@@ -699,21 +515,6 @@ const LithiumEditForm = () => {
                                   name="weightIn"
                                   id="weightIn"
                                   value={formval.weightIn || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Number of Tags</p>
-                              <input
-                                  type="number"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="numberOfTags"
-                                  id="numberOfTags"
-                                  value={formval.numberOfTags || ""}
-                                  onWheelCapture={(e) => {
-                                    e.target.blur();
-                                  }}
                                   onChange={handleEntry}
                               />
                             </li>

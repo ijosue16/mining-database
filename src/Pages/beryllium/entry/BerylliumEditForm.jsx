@@ -46,27 +46,13 @@ const BerylliumEditForm = () => {
     supplyDate: "",
     time: "",
     numberOfTags: "",
-    mineTags: "",
-    negociantTags: "",
     mineralType: "",
-    mineralgrade: "",
-    mineralprice: "",
     mineralGrade:"",
-    shipmentnumber: "",
     beneficiary: "",
     supplierName: "", 
     phoneNumber: "",
-    isSupplierBeneficiary: false,
   });
-  const [lotDetails, setlotDetails] = useState([
-    { lotNumber: "", weightOut: "" },
-  ]);
-  const [mineTags, setmineTags] = useState([
-    { weightInPerMineTag: "", tagNumber: "", status: "" },
-  ]);
-  const [negociantTags, setnegociantTags] = useState([
-    { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-  ]);
+
   const [checked, setchecked] = useState(false);
   const [openlist, setOpenlist] = useState(false);
   const [search, setSearch] = useState("");
@@ -83,7 +69,6 @@ const BerylliumEditForm = () => {
       // sup = sups;
       console.log(entr);
       setFormval({
-        ...formval,
         weightIn: entr.weightIn,
         weightOut: entr.weightOut,
         companyName: entr.companyName,
@@ -98,24 +83,11 @@ const BerylliumEditForm = () => {
         time: dayjs(entr.time, "HH:mm"),
         numberOfTags: entr.numberOfTags,
         mineralType: entr.mineralType,
-        mineralgrade: "",
-        mineralprice: "",
         mineralGrade: entr.mineralGrade,
-        shipmentnumber: "",
         beneficiary: entr.beneficiary,
         supplierName: entr.supplierName, 
         phoneNumber: entr.phoneNumber,
-        isSupplierBeneficiary: false,
       });
-    //   setlotDetails(entr.output);
-    //   if (entr.mineTags.length > 0 && entr.negociantTags.length > 0) {
-    //     setmineTags(entr.mineTags);
-    //     setnegociantTags(entr.negociantTags);
-    //   } else {
-    //     setmineTags(mineTags);
-    //     setnegociantTags(negociantTags);
-    //   }
-    //   console.log(entr.output);
     }
   }, [isSuccess]);
 
@@ -140,35 +112,6 @@ const BerylliumEditForm = () => {
     setSearchData([]);
     setSelectedItem(-1);
   };
-//   const handleSelectedSearch = (e) => {
-//     setSearch(e);
-//     setBeneficial(e);
-//     setOpenlist(false);
-//   };
-//   const handleKeydown = (e) => {
-//     if (selectedItem < searchData.length) {
-//       if (e.key === "ArrowUp" && selectedItem > 0) {
-//         setSelectedItem((prev) => prev - 1);
-//       } else if (
-//         e.key === "ArrowDown" &&
-//         selectedItem < searchData.length - 1
-//       ) {
-//         setSelectedItem((prev) => prev + 1);
-//       } else if (e.key === "Enter" && selectedItem >= 0) {
-//         setBeneficial(searchData[selectedItem].companyName);
-//         console.log(searchData[selectedItem].companyName);
-//         setSearch(searchData[selectedItem].companyName);
-//         setSelectedItem(-1);
-//         setSearchData([]);
-//         setOpenlist(false);
-//       }
-//     } else {
-//       selectedItem(-1);
-//     }
-//     if (e.key === "Enter") {
-//       setSearchData([]);
-//     }
-//   };
 
   const handleEntry = (e) => {
     setFormval((prevState) => ({
@@ -194,150 +137,9 @@ const BerylliumEditForm = () => {
       time: timeString,
     }));
   };
-  const updateLotNumbers = () => {
-    setlotDetails((prevLotDetails) => {
-      return prevLotDetails.map((lot, index) => ({
-        ...lot,
-        lotNumber: index + 1,
-      }));
-    });
-  };
-//   const handleAddLot = () => {
-//     setlotDetails((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { lotNumber: "", weightOut: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleLotEntry = (index, e) => {
-//     setlotDetails((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveLot = (index) => {
-//     const values = [...lotDetails];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//         lotNumber: i + 1,
-//       };
-//     });
-//     setlotDetails(updatedValues);
-//   };
-//   const handleAddMinesTag = () => {
-//     setmineTags((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { weightInPerMineTag: "", tagNumber: "", status: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleMinesTagEntry = (index, e) => {
-//     setmineTags((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveMinesTag = (index) => {
-//     const values = [...mineTags];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//       };
-//     });
-//     setmineTags(updatedValues);
-//   };
-
-//   const handleAddNegociantTags = () => {
-//     setnegociantTags((prevLotDetails) => [
-//       ...prevLotDetails,
-//       { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-//     ]);
-//     updateLotNumbers();
-//   };
-
-//   const handleNegociantTagsEntry = (index, e) => {
-//     setnegociantTags((prevLotDetails) => {
-//       const updatedLotDetails = prevLotDetails.map((lot, i) => {
-//         if (i === index) {
-//           return {
-//             ...lot,
-//             [e.target.name]: e.target.value,
-//           };
-//         }
-//         return lot;
-//       });
-
-//       if (index === prevLotDetails.length) {
-//         return [
-//           ...updatedLotDetails,
-//           {
-//             lotNumber: prevLotDetails.length + 1,
-//             [e.target.name]: e.target.value,
-//           },
-//         ];
-//       }
-
-//       return updatedLotDetails;
-//     });
-//   };
-
-//   const handleLRemoveNegociantTags = (index) => {
-//     const values = [...mineTags];
-//     values.splice(index, 1);
-//     const updatedValues = values.map((lot, i) => {
-//       return {
-//         ...lot,
-//       };
-//     });
-//     setnegociantTags(updatedValues);
-//   };
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -353,12 +155,12 @@ const BerylliumEditForm = () => {
     e.preventDefault();
     const body = {
       ...formval,
-      output: lotDetails,
-      mineTags: mineTags,
-      negociantTags: negociantTags,
+      // output: lotDetails,
+      // mineTags: mineTags,
+      // negociantTags: negociantTags,
     };
     console.log(body);
-    await updateBerylliumEntry({ entryId, body });
+    // await updateBerylliumEntry({ entryId, body });
     // console.log(body);
     setFormval({
       weightIn: "",
@@ -372,23 +174,12 @@ const BerylliumEditForm = () => {
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
       mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
       supplierName: "", 
       phoneNumber: "",
       isSupplierBeneficiary: false,
     });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
-    setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-    ]);
     navigate(-1);
   };
   const handleCancel = () => {
@@ -405,24 +196,13 @@ const BerylliumEditForm = () => {
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
       mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
       mineralGrade:"",
-      shipmentnumber: "",
       beneficiary: "",
       supplierName: "", 
       phoneNumber: "",
       isSupplierBeneficiary: false,
     });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weightInPerMineTag: "", tagNumber: "", status: "" }]);
-    setnegociantTags([
-      { weightOutPerNegociantTag: "", tagNumber: "", status: "" },
-    ]);
     navigate(-1);
   };
 
@@ -547,12 +327,13 @@ const BerylliumEditForm = () => {
                     <li className=" space-y-1">
                       <p className="pl-1">Mineral grade</p>
                       <input
-                        type="text"
+                        type="number"
                         autoComplete="off"
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="mineralGrade"
                         id="mineralGrade"
                         value={formval.mineralGrade || ""}
+                        onWheelCapture={(e) => e.target.blur()}
                         onChange={handleEntry}
                       />
                     </li>

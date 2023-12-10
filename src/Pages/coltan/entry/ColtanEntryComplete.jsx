@@ -253,7 +253,13 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                updatedItem.cumulativeAmount = 0;
+                if (updatedItem.nonSellAgreementAmount > 0) {
+                    updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
+                    updatedItem.cumulativeAmount = 0;
+                } else {
+                    updatedItem.nonSellAgreement = {weight: 0};
+                    updatedItem.cumulativeAmount = updatedItem.weightOut;
+                }
             }
             if (item.mineralGrade !== updatedItem.mineralGrade) {
                 if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
@@ -305,6 +311,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
+            width: 100,
             // editTable: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
             render: (_, record) => {
@@ -400,15 +407,15 @@ const ColtanEntryCompletePage = ({entryId}) => {
             editTable: true,
             sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
             render: (_, record) => {
-                if (record.nonSellAgreementAmount?.weight) {
-                    return <span>{record.nonSellAgreementAmount.weight}</span>
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
                 }
             }
         },
     ];
 
   if (restrictedColumns && userPermissions && columns) {
-    filterColumns(restrictedColumns, userPermissions, columns);
+    filterColumns(restrictedColumns, userPermissions, columns, "coltan");
     columns.push({
       title: "Action",
       dataIndex: "action",
@@ -617,7 +624,12 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                 bordered={true}
                                                 expandable={{
                                                     expandedRowRender: record => {
-                                                        if (record.shipments) {
+
+                                                        const handleChange = async (body) => {
+                                                            await updateColtanEntry({body, entryId});
+                                                        }
+
+                                                        if (record) {
                                                             let color = "";
                                                             // const value='non-sell agreement'
                                                             switch (record.status) {
@@ -694,6 +706,11 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                             <p className="text-md font-semibold">
                                                                               Niobium: {record.niobium}
                                                                             </p>
+                                                                                <input value={record.niobium} onChange={(e) => {
+                                                                                    // const body = {output: [{...record, niobium: e.target.value}]};
+                                                                                    // handleChange(body);
+
+                                                                                }}/>
                                                                                 {/*<input value={record.niobium}/>*/}
                                                                             <p className="text-md font-semibold">
                                                                               Iron: {record.iron}
@@ -707,41 +724,41 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                         </div>
                                                                     </div>
 
-                                  <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
-                                        Shipment Number
-                                      </p>
-                                      <p className=" font-medium col-span-1 p-2 w-full border ">
-                                        Weight
-                                      </p>
-                                      <p className=" font-medium col-span-1 p-2 w-full border ">
-                                        Date
-                                      </p>
-                                    </span>
-                                    {record.shipments.map((shipment, index) => {
-                                      if (!Array.isArray(shipment)) {
-                                        return (
-                                          <span
-                                            key={index}
-                                            className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm"
-                                          >
-                                            <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
-                                              {shipment.shipmentNumber}
-                                            </p>
-                                            <p className=" font-medium col-span-1 p-2 w-full border ">
-                                              {shipment.weight}
-                                            </p>
-                                            <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                {dayjs(shipment.date).format("MMM DD, YYYY")}
-                                            </p>
-                                          </span>
-                                        );
-                                      }
-                                    })}
+                                                                  <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
+                                                                        Shipment Number
+                                                                      </p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">
+                                                                        Weight
+                                                                      </p>
+                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">
+                                                                        Date
+                                                                      </p>
+                                                                    </span>
+                                                                    {record.shipments.map((shipment, index) => {
+                                                                      if (!Array.isArray(shipment)) {
+                                                                        return (
+                                                                          <span
+                                                                            key={index}
+                                                                            className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm"
+                                                                          >
+                                                                            <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
+                                                                              {shipment.shipmentNumber}
+                                                                            </p>
+                                                                            <p className=" font-medium col-span-1 p-2 w-full border ">
+                                                                              {shipment.weight}
+                                                                            </p>
+                                                                            <p className=" font-medium col-span-1 p-2 w-full border ">
+                                                                                {dayjs(shipment.date).format("MMM DD, YYYY")}
+                                                                            </p>
+                                                                          </span>
+                                                                        );
+                                                                      }
+                                                                    })}
 
-                                  </div>
-                                </>
+                                                                  </div>
+                                                                </>
                               );
                             }
                           },

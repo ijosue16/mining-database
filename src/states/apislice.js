@@ -6,14 +6,14 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
-        // prepareHeaders: (headers, {getState}) => {
-        //     const token = getState.auth.token;
-        //     if (token) {
-        //         headers.append('Authorization', `Bearer ${token}`)
-        //     }
-        //     return headers;
-        // }
+        baseUrl: "http://localhost:5001/api/v1/",
+        prepareHeaders: (headers, {getState}) => {
+            const token = getState().persistedReducer?.global?.token
+            if (token) {
+                headers.append('authorization', `Bearer ${token}`)
+            }
+            return headers;
+        }
     }),
     tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', "tags", 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
@@ -504,9 +504,13 @@ export const apiSlice = createApi({
             query: ({entryId, model, lotNumber}) => `/stock/payment-history/${model}/${entryId}/${lotNumber}`,
             providesTags: ["payments", "advance-payment", "statistics"]
         }),
-        getFileStructure: builder.query({
-            query: () => `/file-structure`,
-            providesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
+        getFileStructure: builder.mutation({
+            query: ({body}) =>  ({
+                url: "/file-structure",
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ["shipments", "buyers", "contracts", "advance-payment", "dd-reports"]
         }),
         getExistingFileForEdit: builder.query({
             query: ({url}) => `/file-structure/file?url=${encodeURIComponent(url)}`,
@@ -697,8 +701,8 @@ export const apiSlice = createApi({
             providesTags: ['stock']
         }),
         getYearStockSummary: builder.query({
-            query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
-            providesTags: ['stock']
+            query: ({year}) => `/stock/stock-summary/${year ? year : new Date().getFullYear()}`,
+            invalidatesTags: ['stock']
         }),
         generateLabReport: builder.mutation({
             query: ({body, model}) => ({
@@ -714,10 +718,8 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['shipments']
         }),
-            query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
-            providesTags: ['stock']
-        }),
     })
+})
 export const {
     useEndpointnameQuery,
     useSignupMutation,
@@ -791,7 +793,7 @@ export const {
     useShipmentReportMutation,
     useGetPaymentHistoryQuery,
     useDetailedStockQuery,
-    useGetFileStructureQuery,
+    useGetFileStructureMutation,
     useDownloadFileMutation,
     useUpdateSettingsMutation,
     useGetSettingsQuery,
@@ -827,7 +829,7 @@ export const {
     useCreateTagMutation,
     useGetSupplierTagsQuery,
     useGetStockSummaryQuery,
-    useGetYearStockSummaryQuery,
+    useGetYearStockSummaryMutation,
     useGetExistingFileForEditQuery,
     useSaveFileMutation,
     useConvertToSFDTMutation,

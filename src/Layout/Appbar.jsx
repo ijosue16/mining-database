@@ -19,6 +19,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const navigate=useNavigate();
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [notifications, setNotifications] = useState([]);
+    const [user, setUser] = useState(null);
     const [open, setOpen] = useState(false);
     const {userData} = useSelector(state => state.persistedReducer.global);
     const [userId, setUserId] = useState(null);
@@ -72,6 +73,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         if (userSuccess) {
             const { user } = userDataObj.data;
             if (user) {
+                setUser(user);
                 dispatch(setUserData(user));
                 dispatch(setPermissions(user.permissions));
             }
@@ -104,7 +106,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                 setNotifications(notificationsArray.slice(0,10));
             }
         }
-    }, [isSuccess]);
+    }, [isSuccess, data]);
 
 
     const handleClickOutside = (event) => {
@@ -228,11 +230,11 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                     <div className={`absolute -right-9 top-[45px] bg-white w-[162px] rounded-br rounded-bl flex flex-col shadow-xl ${userSubmenuMobile ? 'block ' : 'hidden'} }`}>
 
                         <div className=" flex gap-2 items-center p-2">
-                            <img className=" w-[36px] h-[36px] object-cover rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="user profile" />
+                            <img className=" w-[36px] h-[36px] object-cover rounded-full" src={user?.profilePicture?.url} alt="user profile" />
 
                             <span className=" text-left">
-                            <p className="text-sm">{userData?.name}</p>
-                                    <p className="text-sm">{userData?.role}</p>
+                            <p className="text-sm">{user?.name}</p>
+                                    <p className="text-sm">{user?.role}</p>
                             </span>
                         </div>
                         <div className="w-full bg-gray-500 h-[0.5px] divider"></div>

@@ -190,7 +190,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
                 ...item,
                 ...row,
             };
-            // TODO 2: HOW TO CALCULATE MINERAL PRICE FOR LITHIUM
+            // TODO 2: HOW TO CALCULATE MINERAL PRICE FOR LITHIUM -> DONE
             if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
                 if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
@@ -198,7 +198,13 @@ const LithiumEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                updatedItem.cumulativeAmount = 0;
+                if (updatedItem.nonSellAgreementAmount > 0) {
+                    updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
+                    updatedItem.cumulativeAmount = 0;
+                } else {
+                    updatedItem.nonSellAgreement = {weight: 0};
+                    updatedItem.cumulativeAmount = updatedItem.weightOut;
+                }
             }
             if (Boolean(parseFloat(updatedItem.pricePerUnit)) === true) {
                 updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
@@ -308,15 +314,15 @@ const LithiumEntryCompletePage = ({entryId}) => {
             editTable: true,
             sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
             render: (_, record) => {
-                if (record.nonSellAgreementAmount?.weight) {
-                    return <span>{record.nonSellAgreementAmount.weight}</span>
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
                 }
             }
         },
     ];
 
     if (restrictedColumns && userPermissions && columns) {
-        filterColumns(restrictedColumns, userPermissions, columns);
+        filterColumns(restrictedColumns, userPermissions, columns, "lithium");
         columns.push({
             title: "Action",
             dataIndex: "action",

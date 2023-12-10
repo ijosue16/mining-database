@@ -35,17 +35,17 @@ export function getBase64FromServer (fileUrl) {
     });
 }
 
-export function filterColumns (restrictedColumns, userPermissions, columns, model = "lithium" || "beryllium") {
+export function filterColumns (restrictedColumns, userPermissions, columns, model) {
     for (const key in restrictedColumns) {
         if (restrictedColumns.hasOwnProperty(key)) {
             if (Object.keys(userPermissions).includes(key)) {
                 if (userPermissions[key].view) {
-                    if (userPermissions[key].edit && !["gradeImg", "mineralPrice", "pricePerUnit"].includes(`${key}`)) {
-                        restrictedColumns[key].editTable = true;
+                    if (userPermissions[key].edit && !["gradeImg", "mineralPrice"].includes(`${key}`)) {
+                        restrictedColumns[key].editTable = !(`${key}` === "pricePerUnit" && ["coltan", "cassiterite", "wolframite"].includes(model));
                     }
-                    if (userPermissions[key].edit && ["lithium", "beryllium"].includes(model) && `${key}` === "pricePerUnit") {
-                        restrictedColumns[key].editTable = true;
-                    }
+                    // if (userPermissions[key].edit && ["lithium", "beryllium"].includes(model) && `${key}` === "pricePerUnit") {
+                    //     restrictedColumns[key].editTable = true;
+                    // }
                     columns.push(restrictedColumns[key]);
                 }
             }

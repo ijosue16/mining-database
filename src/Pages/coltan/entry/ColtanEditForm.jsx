@@ -400,22 +400,16 @@ const ColtanEditForm = () => {
       return updatedLotDetails;
     });
   };
-// IZI NIZO CODE NDAKOMEREZAHO
+
   const handleLRemoveMinesTag = (index) => {
     const values = [...mineTags];
     values.splice(index, 1);
-    // const updatedValues = values.map((lot, i) => {
-    //   return {
-    //     ...lot,
-    //   };
-    // });
-    
-    const updatedValues = mineTags.filter((_, i) => i !== index);
+    const updatedValues = values.map((lot, i) => {
+      return {
+        ...lot,
+      };
+    });
     setmineTags(updatedValues);
-    const removedTag = mineTags[index];
-
-    // setmineTags(updatedValues);
-    handleSelectedTag(removedTag);
   };
 
   const handleAddNegociantTags = () => {
@@ -529,14 +523,32 @@ const ColtanEditForm = () => {
   };
   const handleCancel = () => {
     setFormval({
+      weightIn: "",
+      companyName: "",
+      licenseNumber: "",
+      TINNumber: "",
+      email: "",
+      supplierId: "",
+      companyRepresentative: "",
+      representativeId: "",
+      representativePhoneNumber: "",
+      supplyDate: "",
+      time: "",
+      numberOfTags: "",
+      mineTags: "",
+      negociantTags: "",
+      mineralType: "",
+      mineralgrade: "",
+      mineralprice: "",
+      shipmentnumber: "",
+      beneficiary: "",
+      isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
     setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
       { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
-    setchecked(false);
-    setBeneficial("");
     navigate(-1);
   };
 
@@ -853,47 +865,6 @@ const ColtanEditForm = () => {
                               />
                             </li>
 
-                            <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full shadow-lg rounded-md p-4 mt-4 pb-6 bg-gray-100">
-                      <span className=" border  border-b-0 relative col-span-full mb-3">
-                        <p className="pl-1 bg-white absolute -top-4 left-2 px-1 rounded-lg font-semibold mx-2">
-                          Lots
-                        </p>
-                      </span>
-                              <div className="col-span-1 space-y-3">
-                                {lotDetails.map((lot, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex gap-2 items-center w-full"
-                                    >
-                                      <p className=" font-semibold">{lot.lotNumber}</p>
-                                      <input
-                                          animate={{}}
-                                          type="number"
-                                          autoComplete="off"
-                                          className="focus:outline-none p-2 border rounded-md w-full"
-                                          name="weightOut"
-                                          value={lot.weightOut || ""}
-                                          onWheelCapture={(e) => {
-                                            e.target.blur();
-                                          }}
-                                          onChange={(e) => handleLotEntry(index, e)}
-                                      />
-                                      <HiMinus
-                                          onClick={() => handleLRemoveLot(index)}
-                                          className={`${
-                                              lotDetails.length - 1 === 0 ? "hidden" : ""
-                                          }`}
-                                      />
-                                      <HiPlus
-                                          onClick={handleAddLot}
-                                          className={`${
-                                              lotDetails.length - 1 !== index ? "hidden" : ""
-                                          }`}
-                                      />
-                                    </div>
-                                ))}
-                              </div>
-                            </li>
                             {/* <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                                 <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
                                     <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Mine Tags (tickets)</p>
@@ -918,14 +889,13 @@ const ColtanEditForm = () => {
 
                             </li> */}
                           </ul>
-                          <ExistingMineTags mineTags={mineTags} setmineTags={setmineTags} supplierId={supplierId}/>
 
                           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t relative p-2 shadow-lg rounded-md bg-gray-100">
                             <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
                               Mine Tags (tickets)
                             </p>
 
-                           
+                            <ExistingMineTags mineTags={mineTags} setmineTags={setmineTags} supplierId={supplierId}/>
 
                             {mineTags.map((tag, index) => (
                                 <ul

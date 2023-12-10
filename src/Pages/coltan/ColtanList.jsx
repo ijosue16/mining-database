@@ -367,8 +367,6 @@ const ColtanListPage = () => {
                     String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
                     String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
                         .toLowerCase()
-                        .includes(value.toLowerCase())||String(record.cumulativeAmount)
-                        .toLocaleLowerCase()
                         .includes(value.toLowerCase())
                 );
             },

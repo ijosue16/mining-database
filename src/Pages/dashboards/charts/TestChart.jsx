@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactECharts from 'echarts-for-react';
-// import { ECharts } from 'echarts';
 
 const TestChart = ({ options }) => {
   return (
