@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState,useRef } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
@@ -7,11 +7,13 @@ import ActionsPagesContainer from "../../../components/Actions components/Action
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useUpdateCassiteriteEntryMutation,
-  useGetOneCassiteriteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,
+  useGetOneCassiteriteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
-import { HiPlus, HiMinus } from "react-icons/hi";
+import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
+import {BsChevronDown} from "react-icons/bs";
+import {ImSpinner2} from "react-icons/im";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
 import {toCamelCase, openNotification, validateWeightInEntry} from "../../../components/helperFunctions";
@@ -19,6 +21,7 @@ import Countdown from "react-countdown";
 import ExistingMineTags from "../../ExistingMineTags";
 
 const CassiteriteEditForm = () => {
+  let sup = [""];
   const { entryId, requestId } = useParams();
   const navigate = useNavigate();
   const [isRequestAvailable, setIsRequestAvailable] = useState(() => {
@@ -52,6 +55,17 @@ const CassiteriteEditForm = () => {
       isSuccess: isDone,
     },
   ] = useUpdateCassiteriteEntryMutation();
+
+  const { data:supps, isLoading:isGetting, isError:isFault, error:fault, isSuccess:isGot } =
+  useGetAllSuppliersQuery();
+
+      if (isGot) {
+        const { data: dt } = supps;
+        const { suppliers: sups } = dt;
+        sup = sups;
+        console.log(sup);
+      };
+
   const [formval, setFormval] = useState({
     weightIn: "",
     companyName: "",
@@ -93,6 +107,25 @@ const CassiteriteEditForm = () => {
   const [admin, setAdmin] = useState({ role: "admin" });
   const [editableFields, setEditableFields] = useState([]);
   const [requestInfo, setRequestInfo] = useState({});
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedSupplierName, setSelectedSupplierName] = useState(null);
+  const [searchText, setSearchText] = useState("");
+
+  let modalRef = useRef();
+
+  
+  const handleClickOutside = (event) => {
+    if (!modalRef.current || !modalRef.current.contains(event.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+    return () => {
+      document.removeEventListener("click", handleClickOutside, true);
+    };
+  }, []);
 
   useEffect(() => {
     if (isRequestSuccess) {
@@ -156,6 +189,36 @@ const CassiteriteEditForm = () => {
       }
     }
   }, [isSuccess]);
+
+  const filteredSuppliers = sup.filter((supplier) => {
+    const companyName = supplier.companyName || "";
+    return companyName.toLowerCase().includes(searchText.toLowerCase());
+  });
+
+  const handleSearchInputChange = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  const handleSupplierSelect = (supplier) => {
+    setSelectedSupplierName(supplier.companyName);
+    const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
+    if (chosenSupplier) {
+      setFormval({
+        ...formval,
+        companyName: chosenSupplier.companyName,
+        licenseNumber: chosenSupplier.licenseNumber,
+        TINNumber: chosenSupplier.TINNumber,
+        email: chosenSupplier.email,
+        supplierId: chosenSupplier._id,
+      });
+      setBeneficial(chosenSupplier.companyName);
+    }
+    setchecked(false);
+    setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
+    console.log(supplier._id);
+    setDropdownOpen(false);
+    setSearchText("");
+  };
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
@@ -536,6 +599,77 @@ const CassiteriteEditForm = () => {
                           </div>
 
                           <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                          <li className=" space-y-2 flex items-end gap-3 col-span-full ">
+                    <div>
+                      <p>Trade in Company</p>
+
+                      <div ref={modalRef} className="w-fit h-fit relative ">
+                        <div
+                          className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
+                          onClick={() => {
+                            setDropdownOpen((prev) => !prev);
+                          }}
+                        >
+                          <p className=" ">
+                            {selectedSupplierName
+                              ? selectedSupplierName
+                              : "select a supplier"}
+                          </p>
+                          <BsChevronDown
+                            className={`text-md transition ease-in-out duration-500 ${
+                              dropdownOpen ? "rotate-180" : null
+                            }`}
+                          />
+                        </div>
+                        <motion.div
+                          animate={
+                            dropdownOpen
+                              ? { opacity: 1, x: -8, y: 1, display: "block" }
+                              : { opacity: 0, x: 0, y: 0, display: "none" }
+                          }
+                          transition={{
+                            type: "spring",
+                            duration: 0.8,
+                            bounce: 0.35,
+                          }}
+                          className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl z-50`}
+                        >
+                          <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
+                            <HiOutlineSearch className={`text-lg `} />
+                            <input
+                              type="text"
+                              name="searchTextInput"
+                              id="searchTextInput"
+                              placeholder="Search"
+                              className="w-full focus:outline-none"
+                              value={searchText}
+                              onChange={handleSearchInputChange}
+                            />
+                          </div>
+                          {isGetting?<div className="w-full flex justify-start items-center gap-1">
+                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                          <p className=" text-slate-400">Fetching suppliers...</p>
+                          </div>:<ul className={`list-none  overflow-auto `}>
+                            {filteredSuppliers.map((supplier, index) => (
+                              <li
+                                key={index}
+                                className=" hover:bg-slate-300 rounded-md p-2"
+                                onClick={() => handleSupplierSelect(supplier)}
+                              >
+                                {supplier.companyName}
+                              </li>
+                            ))}
+                          </ul>}
+                        </motion.div>
+                      </div>
+                    </div>
+                    <button
+                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                      onClick={() => navigate("/add/supplier")}
+                    >
+                      New supplier
+                    </button>
+                  </li>
                             <li className=" space-y-1">
                               <p className="pl-1">Company name</p>
                               <input

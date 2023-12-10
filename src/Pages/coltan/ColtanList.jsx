@@ -19,6 +19,7 @@ import {MdDelete} from "react-icons/md";
 import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
+import { IoTrashBinOutline } from "react-icons/io5";
 import {useSelector} from "react-redux";
 import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
 import {SocketContext} from "../../context files/socket";
@@ -28,6 +29,115 @@ import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
 
 
 const ColtanListPage = () => {
+    const dummyarch=[{
+        "comment": null,
+        "_id": "6569c317aedda1c127e88b08",
+        "supplierId": "64bfeddfbb0da81a7853a114",
+        "companyName": "DEMIKARU",
+        "licenseNumber": "RW09/2022/20/2028",
+        "TINNumber": "38987867445",
+        "companyRepresentative": "Rudakubana",
+        "beneficiary": "Rudakubana",
+        "representativeId": "784545779887988",
+        "representativePhoneNumber": "2507867554478",
+        "name": "coltan",
+        "mineTags": [],
+        "negociantTags": [],
+        "output": [
+            {
+                "nonSellAgreement": {
+                    "weight": 0,
+                    "date": null
+                },
+                "comment": null,
+                "niobium": null,
+                "iron": null,
+                "lotNumber": 1,
+                "weightOut": 507,
+                "mineralGrade": null,
+                "mineralPrice": null,
+                "exportedAmount": 0,
+                "cumulativeAmount": 507,
+                "rmaFee": null,
+                "USDRate": null,
+                "rmaFeeUSD": null,
+                "rmaFeeDecision": "pending",
+                "paid": 0,
+                "unpaid": null,
+                "settled": false,
+                "pricePerUnit": null,
+                "status": "in stock",
+                "_id": "6569c317aedda1c127e88b0a",
+                "tantalum": null,
+                "shipments": [],
+                "paymentHistory": []
+            },
+            {
+                "nonSellAgreement": {
+                    "weight": 0,
+                    "date": null
+                },
+                "comment": null,
+                "niobium": null,
+                "iron": null,
+                "lotNumber": 2,
+                "weightOut": 744,
+                "mineralGrade": null,
+                "mineralPrice": null,
+                "exportedAmount": 0,
+                "cumulativeAmount": 744,
+                "rmaFee": null,
+                "USDRate": null,
+                "rmaFeeUSD": null,
+                "rmaFeeDecision": "pending",
+                "paid": 0,
+                "unpaid": null,
+                "settled": false,
+                "pricePerUnit": null,
+                "status": "in stock",
+                "_id": "6569c317aedda1c127e88b0b",
+                "tantalum": null,
+                "shipments": [],
+                "paymentHistory": []
+            },
+            {
+                "nonSellAgreement": {
+                    "weight": 0,
+                    "date": null
+                },
+                "comment": null,
+                "niobium": null,
+                "iron": null,
+                "lotNumber": 3,
+                "weightOut": 870,
+                "mineralGrade": null,
+                "mineralPrice": null,
+                "exportedAmount": 0,
+                "cumulativeAmount": 870,
+                "rmaFee": null,
+                "USDRate": null,
+                "rmaFeeUSD": null,
+                "rmaFeeDecision": "pending",
+                "paid": 0,
+                "unpaid": null,
+                "settled": false,
+                "pricePerUnit": null,
+                "status": "in stock",
+                "_id": "6569c317aedda1c127e88b0c",
+                "tantalum": null,
+                "shipments": [],
+                "paymentHistory": []
+            }
+        ],
+        "createdAt": "2023-12-01T11:27:19.224Z",
+        "updatedAt": "2023-12-01T11:27:19.532Z",
+        "mineralType": "coltan",
+        "numberOfTags": 30,
+        "supplyDate": "2023-12-12T22:00:00.000Z",
+        "time": "13:26",
+        "weightIn": 2087,
+        "id": "6569c317aedda1c127e88b08"
+    }];
     const {userData} = useSelector(state => state.persistedReducer.global);
     const socket = useContext(SocketContext);
     const [dataz, setDataz] = useState([]);
@@ -83,6 +193,7 @@ const ColtanListPage = () => {
             const {entries: entrz} = dt;
             if (entrz) {
                 setDataz(entrz);
+                console.log(entrz)
             }
         }
     }, [isSuccess, data]);
@@ -297,7 +408,16 @@ const ColtanListPage = () => {
         },
 
         {
-            title: "Action",
+            title: (
+                <div className=" grid grid-cols-1 gap-1 lg:grid-cols-2 items-center">
+                    <p>Action</p>
+                    <IoTrashBinOutline className=" text-lg" onClick={()=>{
+                        if(dataz!==dummyarch){
+                            setDataz(dummyarch);
+                        } 
+                       }}/>
+                </div>
+            ),
             dataIndex: "action",
             key: "action",
             render: (_, record) => {
