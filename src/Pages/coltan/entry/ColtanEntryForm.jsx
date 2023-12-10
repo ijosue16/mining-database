@@ -63,7 +63,6 @@ const ColtanEntryForm = () => {
   const [beneficial, setBeneficial] = useState("");
   const [admin, setAdmin] = useState({ role: "admin" });
 
-  
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {

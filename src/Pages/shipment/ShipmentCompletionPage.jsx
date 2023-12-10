@@ -229,10 +229,10 @@ const ShipmentCompletionPage = () => {
     for (const [key, value] of formData.entries()) {
       formDataObject[key] = value;
     }
-    console.log("Form Data:", formDataObject);
-    console.log("yeweee", body);
-    console.log("_____________________________");
-    // navigate(-1);
+    // console.log("Form Data:", formDataObject);
+    // console.log("yeweee", body);
+    // console.log("_____________________________");
+    navigate(-1);
   };
   const handleCancel = () => {
     setShipmentDetails({
@@ -335,7 +335,7 @@ const ShipmentCompletionPage = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="netWeight"
                         id="netWeight"
-                        value={shipmentDetails.netWeight || null}
+                        value={shipmentDetails.netWeight || ""}
                         onChange={handleEntry}
                       />
                     </li>
@@ -349,7 +349,7 @@ const ShipmentCompletionPage = () => {
                         className="focus:outline-none p-2 border rounded-md w-full"
                         name="sampleWeight"
                         id="sampleWeight"
-                        value={shipmentDetails.sampleWeight || null}
+                        value={shipmentDetails.sampleWeight || ""}
                         onChange={handleEntry}
                     />
                   </li>
@@ -361,7 +361,7 @@ const ShipmentCompletionPage = () => {
                       className="focus:outline-none p-2 border rounded-md w-full"
                       name="dustWeight"
                       id="dustWeight"
-                      value={shipmentDetails.dustWeight || null}
+                      value={shipmentDetails.dustWeight || ""}
                       onChange={handleEntry}
                   />
                 </li>
@@ -372,7 +372,7 @@ const ShipmentCompletionPage = () => {
                       value={
                         shipmentDetails.shipmentDate
                             ? dayjs(shipmentDetails.shipmentDate)
-                            : null
+                            : ""
                       }
                       onChange={handleShipmentDate}
                       id="shipmentDate"
@@ -429,7 +429,7 @@ const ShipmentCompletionPage = () => {
                           className="focus:outline-none p-2 border rounded-md w-full"
                           name="iTSCiShipmentNumber"
                           id="iTSCiShipmentNumber"
-                          value={shipmentDetails.iTSCiShipmentNumber || null}
+                          value={shipmentDetails.iTSCiShipmentNumber || ""}
                           onChange={handleEntry}
                       />
                     </li>
@@ -441,7 +441,7 @@ const ShipmentCompletionPage = () => {
                           value={
                             shipmentDetails.shipmentSamplingDate
                                 ? dayjs(shipmentDetails.shipmentSamplingDate)
-                                : null
+                                : ""
                           }
                           onChange={handleAddSamplingDate}
                           id="shipmentSamplingDate"
@@ -458,7 +458,7 @@ const ShipmentCompletionPage = () => {
                                 ? dayjs(
                                 shipmentDetails.shipmentContainerLoadingDate
                                 )
-                                : null
+                                : ""
                           }
                           onChange={handleAddLoadingDate}
                           id="shipmentContainerLoadingDate"
