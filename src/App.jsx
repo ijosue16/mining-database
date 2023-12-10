@@ -211,7 +211,7 @@ function App() {
                                 <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
                                 <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
                                 <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
-                                <Route path='/wee' element={<ListTags/>}/>
+                                <Route path='/tags-list' element={<ListTags/>}/>
                                 <Route path='/add/tag' element={<AddTag/>}/>
                             </Route>
                         </Route>
