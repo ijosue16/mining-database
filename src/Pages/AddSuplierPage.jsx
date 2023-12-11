@@ -30,28 +30,50 @@ const AddSuplierPage = () => {
     };
 
 
-    const handleSiteEntry = (index, e) => {
-        const values = [...mineSitesDetails];
-        console.log(`change value ${index}`, values[index]);
-        if (e.target.name.startsWith("coordinates.")) {
-            const cordsFields = e.target.name.split(".")[1];
-            values[index].coordinates[cordsFields] = e.target.value;
-            // console.log(cords)
-        }
-        values[index][e.target.name] = e.target.value;
-        // values[index].lotNumber = index + 1;
-        setmineSitesDetails(values);
-    };
+    const handleSiteEntry =  (index, e) => {
+        setmineSitesDetails((prevmineDetails) => {
+            const updatedmineDetails = prevmineDetails.map((mine, i) => {
+                if (i === index) {
+                    if (e.target.name.startsWith("coordinates.")) {
+                        const coordField = e.target.name.split(".")[1];
+                        return {
+                            ...mine,
+                            coordinates: {
+                                ...mine.coordinates,
+                                [coordField]: e.target.value,
+                            },
+                        };
+                    } else {
+                        return {
+                            ...mine,
+                            [e.target.name]: e.target.value,
+                        };
+                    }
+                }
+                return mine;
+            });
+            if (index === prevmineDetails.length) {
+                if (e.target.name.startsWith("coordinates.")) {
+                    const coordField = e.target.name.split(".")[1];
+                    return [
+                        ...updatedmineDetails,
+                        {
+                            coordinates: {
+                                [coordField]: e.target.value,
+                            },
+                        },
+                    ];
+                } else {
+                    return [
+                        ...updatedmineDetails,
+                        { [e.target.name]: e.target.value },
+                    ];
+                }
+            }
 
-    const handleSiteRemoveLot = (index) => {
-        const values = [...mineSitesDetails];
-        values.splice(index, 1);
-        values.forEach((lot, i) => {
-            // lot.lotNumber = i + 1;
+            return updatedmineDetails;
         });
-        setmineSitesDetails(values);
     };
-
     const handleAddproduct = (e) => {
 
         if (e.target.name.startsWith("address.")) {
@@ -201,7 +223,7 @@ const AddSuplierPage = () => {
                                     {/* ******* */}
                                     <li>
                                         <p className="mb-1">Latitude</p>
-                                        <input type="text" name="coordinates.lat${index}"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleSiteEntry(index, e)} />
+                                        <input type="text" name="coordinates.lat"  autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={site.coordinates.lat || ''} onChange={e => handleSiteEntry(index, e)} />
                                     </li>
                                     {/* ******* */}
                                     <li>
@@ -219,7 +241,23 @@ const AddSuplierPage = () => {
 
                             <li>
                                 <p className="mb-1">Type of Mining</p>
-                                <input type="text" name="typeOfMining" id="typeOfMining" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.typeOfMining || ''} onChange={handleAddproduct} />
+                                {/* <input type="text" name="typeOfMining" id="typeOfMining" autoComplete="off" className="focus:outline-none p-2 border rounded-lg w-full" value={formval.typeOfMining || ''} onChange={handleAddproduct} /> */}
+                                <select
+                                    name="typeOfMining"
+                                    id="typeOfMining"
+                                    autoComplete="off"
+                                    className="focus:outline-none p-2 border rounded-md w-full"
+                                    defaultValue="typeOfMining"
+                                    onChange={handleAddproduct}
+                                >
+                                    <option value="typeOfMining" hidden>
+                                        Select a mineral type
+                                    </option>
+                                    <option value="Underground">Underground</option>
+                                    <option value="Open Pits">Open Pits</option>
+                                    <option value="Both">Both</option>
+                                </select>
+
                             </li>
                             {/* ******* */}
                             <li>
