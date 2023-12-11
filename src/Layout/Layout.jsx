@@ -80,7 +80,7 @@ const Layout = () => {
                 
         {
             heading: "Tags", hId: 79, subHeaders: [
-                { title: "Tags list", icon: <PiShoppingCartSimpleDuotone />, id: 80,navtext:"tags-list",line: true },
+                { title: "Tags list", icon: <PiShoppingCartSimpleDuotone />, id: 80,navtext:"tags",line: true },
             ]
     },
 
