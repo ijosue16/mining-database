@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight } from "react-icons/pi";
+import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight,PiHandshakeDuotone,PiTruckDuotone } from "react-icons/pi";
 import { LuBarChart2 } from "react-icons/lu"
 import { GiDiamondHard } from "react-icons/gi"
 import { PiCurrencyEthDuotone } from "react-icons/pi"
@@ -86,12 +86,19 @@ const Layout = () => {
 
         {
             heading: "Suppliers", hId: 4, subHeaders: [
-                { title: "Suppliers List", icon: <PiUsersDuotone />, id: 32,navtext:"suppliers" },
+                { title: "Suppliers List", icon: <PiTruckDuotone />, id: 32,navtext:"suppliers" },
                 { title: "Add", icon: <PiUserPlusDuotone />, id: 33,navtext:"add/supplier", line: true, },
                 // { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27,navtext:"" },
                 // { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28,navtext:"" },
             ]
         },
+
+        {
+            heading: "Buyers", hId: 81, subHeaders: [
+                { title: "Buyers", icon: <PiHandshakeDuotone />, id: 82,navtext:"buyers"},
+                { title: "Add", icon: <PiUserPlusDuotone />, id: 83,navtext:"add/buyer",line: true },
+            ]
+    },
         // {
         //     heading: "Finance & acconts", hId: 5, subHeaders: [
         //         {
@@ -149,7 +156,7 @@ const Layout = () => {
     // Define the roles and their associated menu item IDs and restricted item IDs
     const roleMenus = {
         admin: {
-            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48,79],
+            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48,79,81],
             restrictedItems: {
                 7: [11, 12], // For section with hId 7, restrict items 11 and 12
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
@@ -157,14 +164,14 @@ const Layout = () => {
             }
         },
         ceo: {
-            allowedSections: [1, 2,3,4,5,6,7,8,9,79],
+            allowedSections: [1, 2,3,4,5,6,7,8,9,79,81],
             restrictedItems: {
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
                 // Add more restricted items for specific sections as needed
             }
         },
         employee: {
-            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48,79],
+            allowedSections: [1, 7, 15, 24, 32,29, 37, 44, 48,79,81],
             restrictedItems: {
                 // Define restricted items for employee role if needed
             }
