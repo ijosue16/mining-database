@@ -13,6 +13,7 @@ import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import {BsChevronDown} from "react-icons/bs";
+import {ImSpinner2} from "react-icons/im";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
 import {toCamelCase, openNotification, validateWeightInEntry} from "../../../components/helperFunctions";

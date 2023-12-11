@@ -29,115 +29,7 @@ import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
 
 
 const ColtanListPage = () => {
-    const dummyarch=[{
-        "comment": null,
-        "_id": "6569c317aedda1c127e88b08",
-        "supplierId": "64bfeddfbb0da81a7853a114",
-        "companyName": "DEMIKARU",
-        "licenseNumber": "RW09/2022/20/2028",
-        "TINNumber": "38987867445",
-        "companyRepresentative": "Rudakubana",
-        "beneficiary": "Rudakubana",
-        "representativeId": "784545779887988",
-        "representativePhoneNumber": "2507867554478",
-        "name": "coltan",
-        "mineTags": [],
-        "negociantTags": [],
-        "output": [
-            {
-                "nonSellAgreement": {
-                    "weight": 0,
-                    "date": null
-                },
-                "comment": null,
-                "niobium": null,
-                "iron": null,
-                "lotNumber": 1,
-                "weightOut": 507,
-                "mineralGrade": null,
-                "mineralPrice": null,
-                "exportedAmount": 0,
-                "cumulativeAmount": 507,
-                "rmaFee": null,
-                "USDRate": null,
-                "rmaFeeUSD": null,
-                "rmaFeeDecision": "pending",
-                "paid": 0,
-                "unpaid": null,
-                "settled": false,
-                "pricePerUnit": null,
-                "status": "in stock",
-                "_id": "6569c317aedda1c127e88b0a",
-                "tantalum": null,
-                "shipments": [],
-                "paymentHistory": []
-            },
-            {
-                "nonSellAgreement": {
-                    "weight": 0,
-                    "date": null
-                },
-                "comment": null,
-                "niobium": null,
-                "iron": null,
-                "lotNumber": 2,
-                "weightOut": 744,
-                "mineralGrade": null,
-                "mineralPrice": null,
-                "exportedAmount": 0,
-                "cumulativeAmount": 744,
-                "rmaFee": null,
-                "USDRate": null,
-                "rmaFeeUSD": null,
-                "rmaFeeDecision": "pending",
-                "paid": 0,
-                "unpaid": null,
-                "settled": false,
-                "pricePerUnit": null,
-                "status": "in stock",
-                "_id": "6569c317aedda1c127e88b0b",
-                "tantalum": null,
-                "shipments": [],
-                "paymentHistory": []
-            },
-            {
-                "nonSellAgreement": {
-                    "weight": 0,
-                    "date": null
-                },
-                "comment": null,
-                "niobium": null,
-                "iron": null,
-                "lotNumber": 3,
-                "weightOut": 870,
-                "mineralGrade": null,
-                "mineralPrice": null,
-                "exportedAmount": 0,
-                "cumulativeAmount": 870,
-                "rmaFee": null,
-                "USDRate": null,
-                "rmaFeeUSD": null,
-                "rmaFeeDecision": "pending",
-                "paid": 0,
-                "unpaid": null,
-                "settled": false,
-                "pricePerUnit": null,
-                "status": "in stock",
-                "_id": "6569c317aedda1c127e88b0c",
-                "tantalum": null,
-                "shipments": [],
-                "paymentHistory": []
-            }
-        ],
-        "createdAt": "2023-12-01T11:27:19.224Z",
-        "updatedAt": "2023-12-01T11:27:19.532Z",
-        "mineralType": "coltan",
-        "numberOfTags": 30,
-        "supplyDate": "2023-12-12T22:00:00.000Z",
-        "time": "13:26",
-        "weightIn": 2087,
-        "id": "6569c317aedda1c127e88b08"
-    }];
+    const dummyarch=[''];
     const {userData} = useSelector(state => state.persistedReducer.global);
     const socket = useContext(SocketContext);
     const [dataz, setDataz] = useState([]);
@@ -613,10 +505,10 @@ const ColtanListPage = () => {
                             <p className=" text-lg">
                                 Are you sure you want to delete transaction with:
                             </p>
-                            <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
-                            <li className=" text-lg">{`Supply date: ${dayjs(
+                            <p className=" text-lg">{`company name: ${selectedRowInfo.name}`}</p>
+                            <p className=" text-lg">{`Supply date: ${dayjs(
                                 selectedRowInfo.date
-                            ).format("MMM/DD/YYYY")}`}</li>
+                            ).format("MMM/DD/YYYY")}`}</p>
                         </Modal>
 
                         <Modal

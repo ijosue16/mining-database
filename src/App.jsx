@@ -119,7 +119,6 @@ function App() {
                                 <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
                                 <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                 <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
-                                <Route path='/payment' element={<ColtanPaymentsPage/>}/>
                                 <Route path='/dummy' element={<DummyPage/>}/>
                                 <Route path='/dummy2' element={<FetchingPage/>}/>
                                 <Route path='/dummy3' element={<FilesytemMangerSample/>}/>
@@ -168,7 +167,7 @@ function App() {
                                 <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
                                 <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
                                 <Route path='/edit/supplier/minesite/:supplierId' element={<EditMinesitePage/>}/>
-                                <Route path='/payments' element={<PaymentsListPage/>}/>
+                                <Route path='/payments' element={<RoleBasedRoute element={<PaymentsListPage />} permissionKey="payments"/>}/>
                                 <Route path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
                                 <Route path='/add/payment' element={<AddPaymentPage/>}/>
                                 <Route path='/buyers' element={<BuyersListPage/>}/>

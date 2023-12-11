@@ -28,8 +28,8 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
+    // const {loginData} = useMyContext();
+    // const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [decision, setDecision] = useState("");

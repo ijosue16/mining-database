@@ -72,7 +72,7 @@ const ColtanPaymentsPage = () => {
         const{entry:entr}=dt;
         const{output:pt}=entr;
         const{paymentHistory:pHist}=pt;
-        console.log(pHist);
+        console.log(data);
     };
 
     useEffect(() => {
@@ -244,7 +244,8 @@ const ColtanPaymentsPage = () => {
     const handlePaymentSubmit = async (e) => {
         e.preventDefault();
         const body = {...payment, entryId, lotNumber, model};
-        await addPayment({body});
+        // await addPayment({body});
+        console.log(body)
         handleCancel();
         handleShowForm();
     };
@@ -299,6 +300,7 @@ const ColtanPaymentsPage = () => {
                             <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
                                 <p className=" font-semibold text-lg">Sum(Paid):</p>
                                 <p>{total}</p>
+                            <p>owing(to be paid)</p>
                             </div>
 
                             <div className="w-full space-y-6">
