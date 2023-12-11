@@ -92,6 +92,8 @@ import DocumentEditorComponent from "./Pages/DocumentEditor";
 import GenerateLabReport from "./Pages/GenerateLabReport";
 import GenerateForwardNote from "./Pages/GenerateForwardNote";
 import PDFViewer from "./Pages/PDFViewer";
+import ListTags from './Pages/ListTags';
+import AddTag from './Pages/AddTag';
 
 function App() {
 
@@ -210,7 +212,8 @@ function App() {
                                 <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
                                 <Route path="/pdf-viewer" element={<PDFViewer/>}/>
                                 <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
-                                {/* <Route path='/tags-list' element={<RoleBasedRoute/>}/> */}
+                                <Route path='/tags' element={<ListTags/>}/>
+                                <Route path='/add/tag' element={<AddTag/>}/>
                             </Route>
                         </Route>
 
