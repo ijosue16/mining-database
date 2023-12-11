@@ -213,8 +213,10 @@ const CassiteriteEntryForm = () => {
         TINNumber: chosenSupplier.TINNumber,
         email: chosenSupplier.email,
         supplierId: chosenSupplier._id,
+        companyRepresentative:chosenSupplier.companyRepresentative,
+        representativePhoneNumber:chosenSupplier.phoneNumber,
       });
-      setBeneficial(chosenSupplier.companyName);
+      setBeneficial(chosenSupplier.companyRepresentative);
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));

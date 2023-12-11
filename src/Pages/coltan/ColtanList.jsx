@@ -449,7 +449,7 @@ const ColtanListPage = () => {
                                         </li>
                                         {permissions.entry?.edit ? (
                                             <>
-                                                <li
+                                                {/* <li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                     onClick={() => {
                                                         {
@@ -459,7 +459,7 @@ const ColtanListPage = () => {
                                                 >
                                                     <RiFileEditFill className=" text-lg"/>
                                                     <p>complete entry</p>
-                                                </li>
+                                                </li> */}
                                                 {permissions.entry?.delete ? (<li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                     onClick={() => {
