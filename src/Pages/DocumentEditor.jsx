@@ -287,7 +287,7 @@ const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
     }
 
     return (
-        <div>
+        <div className='space-y-2'>
             {/*<button onClick={onClick}>Import from Remote URL</button>*/}
             <div>
                 {showSave && <LoadingButton name={"Save"} onClickFunction={onSave} isProcessing={isLoading}/>}

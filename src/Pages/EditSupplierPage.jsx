@@ -23,7 +23,7 @@ const EditSuplierPage = () => {
             const { data: dt } = data;
             const { supplier: sup } = dt;
             const { address: adr } = sup;
-            setFormval({ companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals, phoneNumber: sup.phoneNumber, address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters,companyRepresentative:sup.companyRepresentative });
+            setFormval({ companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals.join(' '), phoneNumber: sup.phoneNumber, address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters,companyRepresentative:sup.companyRepresentative });
             SetMineSites(sup.mineSites)
             console.log(sup);
         }
@@ -70,6 +70,7 @@ const EditSuplierPage = () => {
             }
         } else {
             setFormval((prevFormval) => ({ ...prevFormval, [e.target.name]: e.target.value }));
+            console.log(e.target.value)
         }
     };
     // const updateLotNumbers = () => {
@@ -142,9 +143,8 @@ const EditSuplierPage = () => {
 
     const handleProductSubmit = async (e) => {
         e.preventDefault();
-        const body = { ...formval,mineSites:mineSites };
+        const body = { ...formval,mineSites:mineSites,typeOfMinerals: formval.typeOfMinerals.split(' ') };
         await updateSupplier({ body, supplierId });
-        console.log(body);
         setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '' }, numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         SetMineSites([{ coordinates: { lat: '', long: '', }, name: '', code: '' }]);
         navigate(-1);
@@ -200,14 +200,8 @@ const EditSuplierPage = () => {
 
                           <li>
                               <p className="mb-1">Type Of Minerals</p>
-                              <select autoComplete="off" required name="typeOfMinerals" id="typeOfMinerals" className="focus:outline-none p-2 border rounded-md w-full" value={formval.typeOfMinerals || ''} onChange={handleAddproduct} >
-                                  <option value="casiterite">Casiterite</option>
-                                  <option value="coltan">Coltan</option>
-                                  <option value="wolframite">Wolframite</option>
-                                  <option value="berlyium">Berlyium</option>
-                                  <option value="lithium">Lithium</option>
-                                  <option value="mixed">Mixed</option>
-                              </select>
+                              <input type="text" autoComplete="off" name="typeOfMinerals" id="typeOfMinerals" className="focus:outline-none p-2 border rounded-md w-full" value={formval.typeOfMinerals || ''} onChange={handleAddproduct} />
+
                           </li>
                           {/* ******* */}
                           <li>
