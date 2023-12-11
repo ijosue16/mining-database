@@ -48,7 +48,8 @@ const ColtanEntryCompletePage = ({entryId}) => {
     const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error, refetch} =
         useGetOneColtanEntryQuery({entryId},
-            {
+            {  
+                skip:entryId===undefined,
                 refetchOnMountOrArgChange: true,
                 refetchOnReconnect: true
             }
@@ -674,7 +675,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                                 <p className="text-md font-semibold">
                                                                                     RMA Fee decision
                                                                                 </p>
-                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
+                                                                                <select value={decision || ""} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
                                                                                     setDecision(e.target.value);
                                                                                     const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
                                                                                     const body = {output: [lot]};
@@ -706,7 +707,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                             <p className="text-md font-semibold">
                                                                               Niobium: {record.niobium}
                                                                             </p>
-                                                                                <input value={record.niobium} onChange={(e) => {
+                                                                                <input value={record.niobium || ""} onChange={(e) => {
                                                                                     // const body = {output: [{...record, niobium: e.target.value}]};
                                                                                     // handleChange(body);
 
