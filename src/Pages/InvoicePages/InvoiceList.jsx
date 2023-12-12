@@ -10,49 +10,61 @@ import {motion} from "framer-motion";
 import {BiSolidDetail} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {FaSave} from "react-icons/fa";
+import {useParams} from "react-router-dom";
+import EditInvoice from "./EditInvoice";
 
 const InvoiceList = () => {
-    let dataz=[];
-    // const {data, isLoading, isSuccess, isError, error} = useGetSuppliersInvoiceQuery();
-    const { data, isLoading, isSuccess, isError, error } = useGetAllInvoicesQuery();
+    const { supplierId } = useParams();
+    const [dataz, setDataz] = useState([]);
+    const {data, isLoading, isSuccess, isError, error} = useGetSuppliersInvoiceQuery(supplierId, {
+        skip: supplierId === undefined,
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true,
+    });
+    // const { data, isLoading, isSuccess, isError, error } = useGetAllInvoicesQuery();
     const { loginData } = useMyContext();
     const{profile,permissions}=loginData;
     const [showActions, SetShowActions] = useState(false);
     const [selectedRow, SetSelectedRow] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
-    if (isSuccess) {
+
+    useEffect(() => {
+        if (isSuccess) {
             const {invoices}=data.data;
-            dataz=invoices;
-            console.log(dataz);
-        } else if (isError) {
-            console.log(error.data.message);
-        };
-        let modalRef = useRef();
+            setDataz(invoices);
+        }
+    }, [isSuccess, data]);
 
-        const handleClickOutside = (event) => {
-          if (!modalRef.current || !modalRef.current.contains(event.target)) {
+    let modalRef = useRef();
+
+    const handleClickOutside = (event) => {
+        if (!modalRef.current || !modalRef.current.contains(event.target)) {
             SetShowActions(false);
-          }
-        };
-      
-        useEffect(() => {
-          document.addEventListener("click", handleClickOutside, true);
-          return () => {
-            document.removeEventListener("click", handleClickOutside, true);
-          };
-        }, []);
-          const handleActions = (id) => {
-            if (selectedRow === id) {
-              console.log("uri muduki sha");
-              SetShowActions(false);
-              SetSelectedRow("");
-            } else {
-              SetSelectedRow(id);
-              SetShowActions(true);
-              console.log("Clicked ID:", id);
-            }
-          };
+        }
+    };
 
+    const [editInvoiceInfo, setEditInvoiceInfo] = useState({
+        supplierId: '',
+        invoiceId: '',
+    })
+
+    useEffect(() => {
+        document.addEventListener("click", handleClickOutside, true);
+        return () => {
+            document.removeEventListener("click", handleClickOutside, true);
+        };
+    }, []);
+    const handleActions = (id) => {
+        if (selectedRow === id) {
+            console.log("uri muduki sha");
+            SetShowActions(false);
+            SetSelectedRow("");
+        } else {
+            SetSelectedRow(id);
+            SetShowActions(true);
+            console.log("Clicked ID:", id);
+        }
+    };
           
     const columns = [
         {
@@ -186,6 +198,14 @@ const InvoiceList = () => {
                                   <BiSolidDetail className=" text-lg"/>
                                   <p>details</p>
                               </li>
+
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => setEditInvoiceInfo({invoiceId: record._id, supplierId: record.supplierId})}
+                              >
+                                  <BiSolidDetail className=" text-lg"/>
+                                  <p>details</p>
+                              </li>
                               {/* {permissions.payments.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -261,6 +281,10 @@ const InvoiceList = () => {
                     </div>
               
             </Modal>
+
+           {editInvoiceInfo.invoiceId && editInvoiceInfo.invoiceId && (
+               <EditInvoice invoiceId={editInvoiceInfo.invoiceId} supplierId={editInvoiceInfo.supplierId}/>
+           )}
        </>
     )
 }

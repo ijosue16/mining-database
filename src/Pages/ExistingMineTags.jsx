@@ -46,15 +46,14 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
             setSelectedTags((prevSelectedData) => [...prevSelectedData, tag]);
           }
     };
-    console.log(tags)
 
     return (
 
     <div ref={tagModalRef} className="w-fit h-fit ">
-        <button type="button" 
-        disabled={tags.length === 0} className="px-3 py-1 bg-orange-300 rounded-md" onClick={handleOpenTagModal}>Existing Tags</button>
+        {/*<button type="button" className="px-3 py-1 bg-orange-300 rounded-md" onClick={handleOpenTagModal}>Existing Tags</button>*/}
         <motion.div
             style={{zIndex: 100}}
+            initial={{ opacity: 0, x: 0, y: 0, display: "none" }}
             animate={
                 dropdownOpen
                     ? { opacity: 1, x: -8, y: 1, display: "block" }

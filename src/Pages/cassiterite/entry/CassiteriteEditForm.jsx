@@ -304,6 +304,9 @@ const CassiteriteEditForm = () => {
     });
   };
   const handleAddLot = () => {
+    if (editableFields.length > 0) {
+      if (decideEditable("output")) return;
+    }
     setlotDetails((prevLotDetails) => [
       ...prevLotDetails,
       { lotNumber: "", weightOut: "" },
@@ -340,6 +343,9 @@ const CassiteriteEditForm = () => {
   };
 
   const handleLRemoveLot = (index) => {
+    if (editableFields.length > 0) {
+      if (decideEditable("output")) return;
+    }
     const values = [...lotDetails];
     values.splice(index, 1);
     const updatedValues = values.map((lot, i) => {
@@ -867,6 +873,7 @@ const CassiteriteEditForm = () => {
                                           autoComplete="off"
                                           className="focus:outline-none p-2 border rounded-md w-full"
                                           name="weightOut"
+                                          disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                           value={lot.weightOut || ""}
                                           onWheelCapture={(e) => {
                                             e.target.blur();
@@ -948,6 +955,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="sheetNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.sheetNumber || ""}
                                         onWheelCapture={(e) => {
@@ -963,6 +971,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="weight"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.weight || ""}
                                         onWheelCapture={(e) => {
@@ -977,6 +986,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="tagNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.tagNumber || ""}
                                         onWheelCapture={(e) => {
@@ -990,6 +1000,7 @@ const CassiteriteEditForm = () => {
                                     <select
                                         name={`status`}
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-md w-full"
                                         defaultValue={tag.status || "defaultstatus"}
                                         onChange={(e) => handleMinesTagEntry(index, e)}
@@ -1039,6 +1050,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="sheetNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.sheetNumber || ""}
                                         onWheelCapture={(e) => {
@@ -1053,6 +1065,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="weight"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.weight || ""}
                                         onWheelCapture={(e) => {
@@ -1067,6 +1080,7 @@ const CassiteriteEditForm = () => {
                                         type="text"
                                         name="tagNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.tagNumber || ""}
                                         onWheelCapture={(e) => {
@@ -1080,6 +1094,7 @@ const CassiteriteEditForm = () => {
                                     <select
                                         name={`status`}
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-md w-full"
                                         defaultValue={tag.status || "defaultstatus"}
                                         onChange={(e) => handleNegociantTagsEntry(index, e)}

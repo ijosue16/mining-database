@@ -76,7 +76,6 @@ const StockPage = () => {
 
   const handleBillOpen = () => {
     setOpenBill(!openBill);
-    console.log("koko corona!!!");
   };
 
   useMemo(() => {

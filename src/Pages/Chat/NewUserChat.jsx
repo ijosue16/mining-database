@@ -53,6 +53,11 @@ const NewUSerChart = ({ chats, currentUser, setChats, visible, position, setNewU
   };
   const handleNewChartUser = async (id) => {
     const body={senderId:userData._id,receiverId:id};
+    const user = filteredUsers.find(user => user._id === id);
+    if (user) {
+      setNewUserModal(!visible);
+      return;
+    }
     const response = await createNewChart({body});
     if (response) {
         const { newChat } = response.data.data;
@@ -66,7 +71,7 @@ const NewUSerChart = ({ chats, currentUser, setChats, visible, position, setNewU
   return (
     <>
       <div
-        className={`bg-red-500 rounded-md shadow-lg h-96 max-w-72 absolute ${position} z-50 p-2 space-y-1 ${
+        className={`rounded-md shadow-lg h-96 max-w-72 absolute ${position} z-50 p-2 space-y-1 ${
           visible ? "block" : "hidden"
         }`}
         ref={newChatRef}

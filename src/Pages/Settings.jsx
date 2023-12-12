@@ -15,9 +15,9 @@ const Settings = () => {
     }] = useUpdateSettingsMutation();
 
     const [settings, setSettings] = useState(
-        {rmaFeeColtan: null, rmaFeeCassiterite: null, rmaFeeWolframite: null, nameOfCompany: "", representative: "",
+        {rmaFeeColtan: "", rmaFeeCassiterite: "", rmaFeeWolframite: "", nameOfCompany: "", representative: "",
             address: {province: "", district: "", sector: ""},
-            editExpiresIn: null, logsLifeTime: null}
+            editExpiresIn: "", logsLifeTime: ""}
     );
 
     useEffect(() => {
@@ -78,8 +78,8 @@ const Settings = () => {
 
     const handleCancel = () => {
         setSettings({
-            nameOfCompany: "", rmaFeeWolframite: null, rmaFeeColtan: null, rmaFeeCassiterite: null, representative: "",
-            address: {province: "", district: "", sector: ""}, editExpiresIn: null, logsLifeTime: null
+            nameOfCompany: "", rmaFeeWolframite: "", rmaFeeColtan: "", rmaFeeCassiterite: "", representative: "",
+            address: {province: "", district: "", sector: ""}, editExpiresIn: "", logsLifeTime: ""
         });
     }
 

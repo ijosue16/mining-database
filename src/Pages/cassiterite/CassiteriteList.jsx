@@ -366,7 +366,7 @@ const CassiteriteListPage = () => {
                 </span>
                 ) : null}
 
-                {permissions.entry?.edit &&
+                {!permissions.entry?.edit &&
                 <span>
                   <FiEdit
                       className="text-lg"

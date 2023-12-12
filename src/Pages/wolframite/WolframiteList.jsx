@@ -366,7 +366,7 @@ const WolframiteListPage = () => {
                 </span>
                 ) : null}
 
-                {userPermissions.entry?.edit &&
+                {!userPermissions.entry?.edit &&
                 <span>
                   <FiEdit
                       className="text-lg"

@@ -10,6 +10,8 @@ import { BiEditAlt } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../FetchingPage";
+import { message } from "antd";
+import {toInitialCase} from "../../components/helperFunctions";
 
 const UserPermissionPage = () => {
   const { userId } = useParams();
@@ -37,11 +39,19 @@ const UserPermissionPage = () => {
   ] = useUpdateUserMutation();
 
   useEffect(() => {
+    if (isDone) {
+      message.success("User updated successfully");
+      return navigate("/users");
+    } else if (isProblem) {
+      const { message: errorMessage } = problem.data;
+        return message.error(errorMessage);
+    }
+  }, [isDone, isProblem, problem]);
+
+  useEffect(() => {
     if (isSuccess) {
       const { user } = data.data;
       const { permissions } = data.data.user;
-      console.log(permissions)
-      console.log(user);
       setUserData(user);
       setPermissions(permissions);
     }
@@ -96,7 +106,7 @@ const UserPermissionPage = () => {
     // console.log(permissions);
     const body={permissions,userData};
     await updateUser({body,userId});
-    localStorage.setItem('permissions',JSON.stringify(permissions));
+    // localStorage.setItem('permissions',JSON.stringify(permissions));
     // setIsEdit(false);
     navigate(-1);
     // console.log(permissions);
@@ -203,7 +213,7 @@ const UserPermissionPage = () => {
                         }`}
                       >
                         <p className=" font-semibold b md:text-base md:font-normal">
-                          {category} Management
+                          {toInitialCase(category)}
                         </p>
                       </div>
                       <ul

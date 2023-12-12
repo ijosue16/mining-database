@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import moment from "moment";
 import dayjs from "dayjs";
-import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm} from 'antd';
+import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm, message} from 'antd';
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
@@ -23,7 +23,6 @@ import {handleConvertToUSD} from "../../../components/helperFunctions";
 
 const ColtanPaymentsPage = () => {
     const { Panel } = Collapse;
-    // let dataz=[];
     const { entryId, model, lotNumber} = useParams();
     const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber}, {
         refetchOnMountOrArgChange: true,
@@ -264,7 +263,7 @@ const ColtanPaymentsPage = () => {
     return (
         <>
             <ActionsPagesContainer title={'Coltan Payments'}
-                subTitle={'Make Coltan Payments'}
+                // subTitle={'Make Coltan Payments'}
                 actionsContainer={
                     // <AddComponent component={
                     <>

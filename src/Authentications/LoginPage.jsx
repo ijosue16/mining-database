@@ -1,12 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import { PiEnvelopeBold, PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLoginMutation } from "../states/apislice";
 import { setAuthToken, setUserData, setPermissions } from "../states/slice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
 import {SocketContext} from "../context files/socket";
+import { message } from "antd";
 
 
 const LoginPage = () => {
@@ -16,12 +17,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const socket = useContext(SocketContext);
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dashboard";
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Logged in Successfully");
+      return message.success("Logged in Successfully")
     } else if (isError) {
-      // const { message } = error.data;
-      // toast.error(message);
+      const { message: errorMessage } = error.data;
+      return message.error(errorMessage);
     }
   }, [isSuccess, isError, error]);
 
@@ -35,11 +38,11 @@ const LoginPage = () => {
       dispatch(setAuthToken(token));
       dispatch(setUserData(user));
       dispatch(setPermissions(user.permissions));
-      localStorage.setItem("profile", JSON.stringify(user));
-      localStorage.setItem("role", user.role);
-      localStorage.setItem("permissions", JSON.stringify(user.permissions));
+      // localStorage.setItem("profile", JSON.stringify(user));
+      // localStorage.setItem("role", user.role);
+      // localStorage.setItem("permissions", JSON.stringify(user.permissions));
       socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
-      navigate("/chat");
+      navigate(from, {replace: true});
     }
   };
 
@@ -98,12 +101,12 @@ const LoginPage = () => {
                 )}
               </span>
             </span>
-            <p
-              className="mb-2 hover:underline "
-              onClick={() => navigate("/password/forgot")}
-            >
-              Forgot password ?
-            </p>
+            {/*<p*/}
+            {/*  className="mb-2 hover:underline "*/}
+            {/*  onClick={() => navigate("/password/forgot")}*/}
+            {/*>*/}
+            {/*  Forgot password ?*/}
+            {/*</p>*/}
             {isLoading ? (
              <button
              className="px-2 flex gap-1 items-center justify-center py-3 bg-amber-100 rounded-md text-gray-500"
@@ -120,15 +123,15 @@ const LoginPage = () => {
                 Login
               </button>
             )}
-            <span className="flex items-center justify-center gap-2">
-              <p>Don’t have an account?</p>
-              <p
-                className=" hover:underline"
-                onClick={() => navigate("/register")}
-              >
-                Sign Up
-              </p>
-            </span>
+            {/*<span className="flex items-center justify-center gap-2">*/}
+            {/*  <p>Don’t have an account?</p>*/}
+            {/*  <p*/}
+            {/*    className=" hover:underline"*/}
+            {/*    onClick={() => navigate("/register")}*/}
+            {/*  >*/}
+            {/*    Sign Up*/}
+            {/*  </p>*/}
+            {/*</span>*/}
           </form>
         </div>
 

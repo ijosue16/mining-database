@@ -7,6 +7,8 @@ import FetchingPage from "../FetchingPage";
 import {useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery} from "../../states/apislice";
 import { useParams } from "react-router-dom";
 import PdfPreview from "../../components/PdfView";
+import {getModelAcronym} from "../../components/helperFunctions";
+import { useNavigate } from "react-router-dom";
 
 
 const AddInvoice = () => {
@@ -29,12 +31,14 @@ const AddInvoice = () => {
             items: [{
                 itemName: "",
                 quantity: "",
-                rmaFee: "",
+                rmaFeeUSD: "",
                 lotNumber: "",
                 supplyDate: "",
                 pricePerUnit: "",
                 concentration: "",
-                amount: ""
+                amount: "",
+                mineralType: "",
+                entryId: "",
             }],
             supplierId: supplierId,
             supplierAddress: {
@@ -46,11 +50,14 @@ const AddInvoice = () => {
         }
     );
     const [accumulator, setAccumulator] = useState(0);
+    const [rmaFeeAccumulator, setRmaFeeAccumulator] = useState(0);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
         if (selectedData) {
             setAccumulator(selectedData.reduce((acc, currentValue) => acc + currentValue.mineralPrice, 0));
+            setRmaFeeAccumulator(selectedData.reduce((acc, currentValue) => acc + currentValue.rmaFeeUSD, 0));
         }
     }, [selectedData]);
 
@@ -75,6 +82,8 @@ const AddInvoice = () => {
         if (isComplete) {
             const {lots} = info.data;
             setDataz(lots);
+            console.log("-------------------------------")
+            console.log(lots)
         }
     }, [isComplete]);
 
@@ -90,6 +99,7 @@ const AddInvoice = () => {
         }
 
     };
+
 
     const columns = [
         {
@@ -115,6 +125,16 @@ const AddInvoice = () => {
             sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
             render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
         },
+        {
+            title: "Mineral Type",
+            dataIndex: "mineralType",
+            key: "mineralType",
+            render: (text) => {
+                if (text) {
+                    return <p>{getModelAcronym(text)}</p>;
+                }
+            }
+        },
         {title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary"},
         {
             title: "weight out (KG)",
@@ -123,26 +143,31 @@ const AddInvoice = () => {
 
         },
         {
-            title: "mineralGrade",
+            title: "mineral Grade",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
 
         },
         {
             title: "pricePerUnit",
-            dataIndex: "priscePerUnit",
+            dataIndex: "pricePerUnit",
             key: "pricePerUnit",
 
         },
-        {
-            title: "Grade (%)",
-            dataIndex: "mineralGrade",
-            key: "mineralGrade",
-        },
+        // {
+        //     title: "Grade (%)",
+        //     dataIndex: "mineralGrade",
+        //     key: "mineralGrade",
+        // },
         {
             title: "Mineral Price",
             dataIndex: "mineralPrice",
             Key: "mineralPrice",
+        },
+        {
+            title: "RMA Fee USD",
+            dataIndex: "rmaFeeUSD",
+            Key: "rmaFeeUSD",
         },
 
         // {
@@ -187,6 +212,16 @@ const AddInvoice = () => {
             sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
             render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
         },
+        {
+            title: "Mineral Type",
+            dataIndex: "mineralType",
+            key: "mineralType",
+            render: (text) => {
+                if (text) {
+                    return <p>{getModelAcronym(text)}</p>;
+                }
+            }
+        },
         {title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary"},
         {
             title: "weight out (KG)",
@@ -195,26 +230,31 @@ const AddInvoice = () => {
 
         },
         {
-            title: "mineralGrade",
+            title: "mineral Grade",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
 
         },
         {
             title: "pricePerUnit",
-            dataIndex: "priscePerUnit",
+            dataIndex: "pricePerUnit",
             key: "pricePerUnit",
 
         },
-        {
-            title: "Grade (%)",
-            dataIndex: "mineralGrade",
-            key: "mineralGrade",
-        },
+        // {
+        //     title: "Grade (%)",
+        //     dataIndex: "mineralGrade",
+        //     key: "mineralGrade",
+        // },
         {
             title: "Mineral Price",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
+        },
+        {
+            title: "RMA Fee USD",
+            dataIndex: "rmaFeeUSD",
+            Key: "rmaFeeUSD",
         },
 
         // {
@@ -288,12 +328,14 @@ const AddInvoice = () => {
     const keyMap = {
 
         "weightOut": "quantity",
-        "rmaFee": "rmaFee",
+        "rmaFeeUSD": "rmaFeeUSD",
         "lotNumber": "lotNumber",
         "supplyDate": "supplyDate",
         "pricePerUnit": "pricePerUnit",
         "mineralGrade": "concentration",
         "mineralPrice": "amount",
+        "mineralType": "mineralType",
+        "_id": "entryId",
 
     };
 
@@ -341,11 +383,16 @@ const AddInvoice = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = invoiceInfo;
+        // console.log(body);
         const response = await generateInvoice({body});
-        const url = window.URL.createObjectURL(
-            new Blob([response.data], {type: "application/pdf"})
-        );
-        window.open(url);
+        if (response.data) {
+            const { invoiceFile, invoiceFileId } = response.data.data;
+            navigate(`/pdf-viewer/${encodeURIComponent(invoiceFile)}`);
+        }
+        // const url = window.URL.createObjectURL(
+        //     new Blob([response.data], {type: "application/pdf"})
+        // );
+        // window.open(url);
     };
 
 
@@ -369,12 +416,14 @@ const AddInvoice = () => {
             items: [{
                 itemName: "",
                 quantity: "",
-                rmaFee: "",
+                rmaFeeUSD: "",
                 lotNumber: "",
                 supplyDate: "",
                 pricePerUnit: "",
                 concentration: "",
-                amount: ""
+                amount: "",
+                entryId: "",
+                mineralType: ""
             }],
             supplierId: "",
             supplierAddress: {
@@ -413,6 +462,7 @@ const AddInvoice = () => {
                                                        <input type="text" name="invoiceNo"
                                                               value={invoiceInfo.invoiceNo || ''}
                                                               className="focus:outline-none p-2 border rounded-lg w-full"
+                                                              required
                                                               onChange={handleChange}/>
                                                    </li>
                                                    {/* ******* */}
@@ -495,7 +545,8 @@ const AddInvoice = () => {
                                                            />
                                                            <div
                                                                className="w-full p-3 flex justify-end gap-2 align-bottom">
-                                                               <p className=" font-semibold text-lg">total: {accumulator}</p>
+                                                               <p className=" font-semibold text-lg">Total Mineral Price: {accumulator}</p>
+                                                               <p className=" font-semibold text-lg">Total RMA Fee: {rmaFeeAccumulator}</p>
                                                                {/*<p>4000(dummy nbr)</p>*/}
                                                            </div>
                                                        </>) : null}

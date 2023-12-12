@@ -217,6 +217,15 @@ const SuppliersListPage = () => {
                       <FaFileAlt className=" text-xl" />
                       <p>Make report</p>
                     </li>
+                    <li
+                        className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                        onClick={() => {
+                          navigate(`/supplier/invoices/${record._id}`);
+                        }}
+                    >
+                      <FaFileAlt className=" text-xl" />
+                      <p>Invoice List</p>
+                    </li>
                   </motion.ul>
                 )}
               </span>

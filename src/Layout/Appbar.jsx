@@ -11,6 +11,7 @@ import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
 import { toInitialCase } from "../components/helperFunctions";
 import {setPermissions, setUserData} from "../states/slice";
+import {IoChatbubbleEllipsesOutline} from "react-icons/io5";
 
 
 
@@ -154,31 +155,30 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
             {/* App bar */}
             <div className="  w-full fixed flex z-10 bg-white p-2 items-center justify-between h-16 px-10 border-b">
                 <div className={`logo ml-12 dark:text-white  transform ease-in-out duration-300 flex-none h-full flex items-center justify-center`} >
-                    MINE
+                    KANZAMIN
                 </div>
 
 
                 <div className="hidden relative flex-none h-full text-center sm:flex items-center justify-center">
                    { userData?<ul className="flex items-center justify-evenly gap-4 ">
-                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                            <PiGlobeSimpleLight className="text-xl text-gray-500" />
+                        {/*<li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">*/}
+                        {/*    <PiGlobeSimpleLight className="text-xl text-gray-500" />*/}
 
+                        {/*</li>*/}
+                        <li onClick={() => navigate('/chat')} title={"Chats"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                            <IoChatbubbleEllipsesOutline className="text-xl text-gray-500" />
+                            {/*<span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>*/}
                         </li>
-                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                            <PiEnvelopeLight className="text-xl text-gray-500" />
-                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
-                        </li>
-                       {userData.permissions.editRequests?.view? <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                            <BiSolidCalendarEdit onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
-                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>
+                       {userData.permissions.editRequests?.view? <li title="Edit Requests" className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                            <BiSolidCalendarEdit  onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
+                            {/*<span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs"></span>*/}
                         </li>:null}
-                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                       <li onClick={() => navigate('/settings')} title={"Settings"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                           <PiGearLight className="text-xl text-gray-500" />
+                       </li>
+                       <li title={"Notifications"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiBellSimpleLight className="text-xl text-gray-500" onClick={showDrawer}/>
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications.length}</span>
-                        </li>
-                        <li className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                            <PiGearLight className="text-xl text-gray-500" />
-
                         </li>
 
 

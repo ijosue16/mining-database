@@ -55,7 +55,8 @@
     "slate": "^0.100.0",
     "slate-react": "^0.101.0",
     "socket.io-client": "^4.7.2",
-    "timeago": "^1.6.7"
+    "timeago": "^1.6.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@hookform/devtools": "^4.3.1",

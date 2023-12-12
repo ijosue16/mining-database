@@ -75,7 +75,6 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
 
     // Send Message
     const handleSend = async (e) => {
-        e.preventDefault();
         if (newMessage === "") return;
         const message = {
             senderId: currentUser,
@@ -147,6 +146,7 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
                             <InputEmoji
                                 value={newMessage}
                                 onChange={handleChange}
+                                onEnter={handleSend}
                                 // onFocus={() => setCurrentUserTyping({status: true, receiverId: chat?.members?.find((id) => id !== currentUser)})}
                             />
                             <button className="bg-blue-400 flex items-center gap-1 p-2 rounded-[4px] text-white" onClick={handleSend}>

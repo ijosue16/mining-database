@@ -6,11 +6,11 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        baseUrl: "http://localhost:5001/api/v1/",
         prepareHeaders: (headers, {getState}) => {
             const token = getState().persistedReducer?.global?.token
             if (token) {
-                headers.append('authorization', `Bearer ${token}`)
+                headers.append('authorization', `Bearer ${token}`);
             }
             return headers;
         }
@@ -221,6 +221,14 @@ export const apiSlice = createApi({
         getOneAdvancePayment: builder.query({
             query: (paymentId) => `/advance-payment/${paymentId}`,
             providesTags: ["advance-payment", "payments", "entries", "statistics"]
+        }),
+        updateAdvancePayment: builder.mutation({
+            query: ({body, paymentId}) => ({
+                url: `/advance-payment/${paymentId}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ["advance-payment"]
         }),
         getAllEntries: builder.query({
             query: () => `/entries`,
@@ -597,7 +605,7 @@ export const apiSlice = createApi({
                 url: `/invoice`,
                 method: "POST",
                 body,
-                responseHandler:response=>response.blob()
+                // responseHandler:response=>response.blob()
             }),
             invalidatesTags: ['invoice']
         }),
@@ -752,6 +760,7 @@ export const {
     useGetAllAdvancePaymentsQuery,
     useGetOneAdvancePaymentQuery,
     useAddAdvancePaymentMutation,
+    useUpdateAdvancePaymentMutation,
     useGetAllEntriesQuery,
     useGetOneEntryQuery,
     useUpdateEntryMutation,

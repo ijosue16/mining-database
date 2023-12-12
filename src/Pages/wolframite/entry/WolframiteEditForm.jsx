@@ -21,9 +21,10 @@ import Countdown from "react-countdown";
 import ExistingMineTags from "../../ExistingMineTags";
 
 const WolframiteEditForm = () => {
-  let sup = [""];
   const { entryId, requestId } = useParams();
   const navigate = useNavigate();
+
+  const [sup, setSup] = useState([]);
 
   const [isRequestAvailable, setIsRequestAvailable] = useState(() => {
     return !!requestId;
@@ -62,12 +63,14 @@ const WolframiteEditForm = () => {
   const { data:supps, isLoading:isGetting, isError:isFault, error:fault, isSuccess:isGot } =
   useGetAllSuppliersQuery();
 
+
+  useEffect(() => {
     if (isGot) {
       const { data: dt } = supps;
       const { suppliers: sups } = dt;
-      sup = sups;
-      console.log(sup);
-    };
+      setSup(sups);
+    }
+  }, [isGot, supps]);
 
 
   const [formval, setFormval] = useState({
@@ -314,6 +317,9 @@ const WolframiteEditForm = () => {
     });
   };
   const handleAddLot = () => {
+    if (editableFields.length > 0) {
+      if (decideEditable("output")) return;
+    }
     setlotDetails((prevLotDetails) => [
       ...prevLotDetails,
       { lotNumber: "", weightOut: "" },
@@ -350,6 +356,9 @@ const WolframiteEditForm = () => {
   };
 
   const handleLRemoveLot = (index) => {
+    if (editableFields.length > 0) {
+      if (decideEditable("output")) return;
+    }
     const values = [...lotDetails];
     values.splice(index, 1);
     const updatedValues = values.map((lot, i) => {
@@ -454,7 +463,6 @@ const WolframiteEditForm = () => {
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -959,6 +967,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="sheetNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.sheetNumber || ""}
                                         onWheelCapture={(e) => {
@@ -974,6 +983,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="weight"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.weight || ""}
                                         onWheelCapture={(e) => {
@@ -988,6 +998,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="tagNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.tagNumber || ""}
                                         onWheelCapture={(e) => {
@@ -1001,6 +1012,7 @@ const WolframiteEditForm = () => {
                                     <select
                                         name={`status`}
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
                                         className="focus:outline-none p-2 border rounded-md w-full"
                                         defaultValue={tag.status || "defaultstatus"}
                                         onChange={(e) => handleMinesTagEntry(index, e)}
@@ -1049,6 +1061,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="sheetNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.sheetNumber || ""}
                                         onWheelCapture={(e) => {
@@ -1064,6 +1077,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="weight"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.weight || ""}
                                         onWheelCapture={(e) => {
@@ -1078,6 +1092,7 @@ const WolframiteEditForm = () => {
                                         type="text"
                                         name="tagNumber"
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-lg w-full"
                                         value={tag.tagNumber || ""}
                                         onWheelCapture={(e) => {
@@ -1091,6 +1106,7 @@ const WolframiteEditForm = () => {
                                     <select
                                         name={`status`}
                                         autoComplete="off"
+                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
                                         className="focus:outline-none p-2 border rounded-md w-full"
                                         defaultValue={tag.status || "defaultstatus"}
                                         onChange={(e) => handleNegociantTagsEntry(index, e)}

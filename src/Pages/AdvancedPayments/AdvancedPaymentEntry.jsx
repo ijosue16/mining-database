@@ -4,10 +4,13 @@ import { motion } from "framer-motion";
 import { DatePicker, message } from "antd";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
-import {useAddAdvancePaymentMutation, useGetAllSuppliersQuery} from "../../states/apislice";
+import {useAddAdvancePaymentMutation, useGetAllSuppliersQuery, useSaveFileMutation} from "../../states/apislice";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
+import DocumentEditorComponent from "../DocumentEditor";
+import NewDocumentEditorComponent from "../NewDocumentEditorComponent";
+import { useNavigate } from "react-router-dom";
 
 const AdvancedPaymentEntry = () => {
     let sup = [""];
@@ -22,17 +25,20 @@ const AdvancedPaymentEntry = () => {
         paymentAmount: null,
         currency: '',
         paymentDate: '',
-        contractName: '',
         USDRate: null,
     });
     const [AddAdvancedPayment, {isLoading, isSuccess, isError, error}] = useAddAdvancePaymentMutation();
     const {data,isloading:isFetching,isSuccess:isDone,isError:isFail,error:fail}=useGetAllSuppliersQuery()
+    const [saveFile, {isSuccess: isDocumentSaved, isError: isSaveError, isLoading: isSaving, error: saveError}] = useSaveFileMutation();
+    const navigate = useNavigate();
 
     let modalRef = useRef();
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [selectedSupplierName, setSelectedSupplierName] = useState(null);
     const [searchText, setSearchText] = useState("");
+
+    const [documentEditor, setDocumentEditor] = useState(null);
 
     const handleClickOutside = (event) => {
       if (!modalRef.current || !modalRef.current.contains(event.target)) {
@@ -114,12 +120,40 @@ const AdvancedPaymentEntry = () => {
         }
     };
 
+    const onDownload = () => {
+        if (documentEditor?.documentEditor) {
+            documentEditor.documentEditor.save("Untitled", 'Docx');
+        }
+    }
+
+    const onSave = async () => {
+        if (!documentEditor.documentEditor) return;
+        const file = await documentEditor.documentEditor.saveAsBlob('Docx');
+        const formData = new FormData();
+        formData.append('data', file);
+        return file;
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = paymentInfo;
-        await AddAdvancedPayment({body});
+        const formData = new FormData();
+        for (const [key, value] of Object.entries(body)) {
+            if (value === null || value === "") {
+                formData.append(key, "");
+            } else {
+                if (value instanceof Object) {
+                    formData.append(key, JSON.stringify(value));
+                    continue;
+                }
+                formData.append(key, value);
+            }
+        }
+        const file = await onSave();
+        formData.append('data', file);
+        await AddAdvancedPayment({body: formData});
         handleCancel();
+        navigate(-1);
     };
 
     const handleCancel = () => {
@@ -393,20 +427,25 @@ const AdvancedPaymentEntry = () => {
                                     />
                                 </li>
 
-                                <li className=" space-y-1">
-                                    <p className="pl-1">Contract name</p>
-                                    <input
-                                        autoComplete="off"
-                                        type="text"
-                                        name="contractName"
-                                        id="contractName"
-                                        className="focus:outline-none p-2 border rounded-md w-full"
-                                        value={paymentInfo.contractName || ""}
-                                        onChange={handleEntry}
+                                {/*<li className=" space-y-1">*/}
+                                {/*    <p className="pl-1">Contract name</p>*/}
+                                {/*    <input*/}
+                                {/*        autoComplete="off"*/}
+                                {/*        type="text"*/}
+                                {/*        name="contractName"*/}
+                                {/*        id="contractName"*/}
+                                {/*        className="focus:outline-none p-2 border rounded-md w-full"*/}
+                                {/*        value={paymentInfo.contractName || ""}*/}
+                                {/*        onChange={handleEntry}*/}
 
-                                    />
-                                </li>
+                                {/*    />*/}
+                                {/*</li>*/}
                             </ul>
+                            <div>
+                                <NewDocumentEditorComponent
+                                    setDocumentEditor={setDocumentEditor}
+                                />
+                            </div>
                         </div>
                     }
                     Add={handleSubmit}

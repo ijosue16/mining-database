@@ -10,6 +10,7 @@ import Sidebar from "./sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "../states/apislice";
 import { setAuthToken, setPermissions, setUserData } from "../states/slice";
+import {GoFileDirectory} from "react-icons/go";
 
 const Layout = () => {
     const { userData } = useSelector(state => state.persistedReducer.global);
@@ -37,7 +38,6 @@ const Layout = () => {
         dispatch(setAuthToken(null));
         dispatch(setUserData(null));
         dispatch(setPermissions(null));
-        console.log(body);
         navigate('/login');
     }
     const menu = [
@@ -82,7 +82,7 @@ const Layout = () => {
             heading: "Tags", hId: 79, subHeaders: [
                 { title: "Tags list", icon: <PiShoppingCartSimpleDuotone />, id: 80,navtext:"tags",line: true },
             ]
-    },
+        },
 
         {
             heading: "Suppliers", hId: 4, subHeaders: [
@@ -133,7 +133,12 @@ const Layout = () => {
                 {
                     title: "Advanced Payment", icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment"
                 },
-                { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
+                // { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
+            ]
+        },
+        {
+            heading: "File Directory", hId: 84, subHeaders: [
+                { title: "Directory", icon: <GoFileDirectory />, id: 85,navtext:"structure",line: true },
             ]
         },
         {
@@ -156,7 +161,7 @@ const Layout = () => {
     // Define the roles and their associated menu item IDs and restricted item IDs
     const roleMenus = {
         admin: {
-            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48,79,81],
+            allowedSections: [1, 7, 15, 24, 29, 32, 37, 44, 48,79,81, 84, 84],
             restrictedItems: {
                 7: [11, 12], // For section with hId 7, restrict items 11 and 12
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
@@ -164,7 +169,7 @@ const Layout = () => {
             }
         },
         ceo: {
-            allowedSections: [1, 2,3,4,5,6,7,8,9,79,81],
+            allowedSections: [1, 2,3,4,5,6,7,8,9,79,81,84, 85],
             restrictedItems: {
                 15: [19, 58], // For section with hId 15, restrict items 19 and 58
                 // Add more restricted items for specific sections as needed

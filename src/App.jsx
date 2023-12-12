@@ -1,5 +1,5 @@
 import './Editor.css'
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import AddProductPage from './Pages/AddProductPage';
 import SalesListPage from './Pages/SalesListPage';
 import PurchasesListPage from './Pages/PurchasesListPage';
@@ -82,18 +82,19 @@ import TagsList from "./Pages/shipment/TagsList";
 import ShipmentEdit from './Pages/shipment/ShipmentEdit';
 import NewUSerChart from './Pages/Chat/NewUserChat';
 import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
-import MyEditor from './test elements/CustomForm';
 import EditorWrapper from './texteditor/LexicalEditor';
 import DashboardPage from './Pages/dashboards/DashboardHomePage';
 import PrepareDDReport from "./Pages/PrepareDDReport";
 import EditExistingFile from "./Pages/EditExistingFile";
-import DocumentEditor from "./Pages/DocumentEditor";
 import DocumentEditorComponent from "./Pages/DocumentEditor";
 import GenerateLabReport from "./Pages/GenerateLabReport";
 import GenerateForwardNote from "./Pages/GenerateForwardNote";
 import PDFViewer from "./Pages/PDFViewer";
-import ListTags from './Pages/ListTags';
+import ListTags from "./Pages/ListTags";
 import AddTag from './Pages/AddTag';
+import EditAdvancePayment from "./Pages/AdvancedPayments/EditAdvancePayment";
+import RequireAuth from "./Authentications/requireAuth";
+import React from "react";
 
 function App() {
 
@@ -108,111 +109,115 @@ function App() {
                 <SocketContext.Provider value={socket}>
                     <Routes>
                         <Route element={<LoginDatacontextProvider/>}>
+                            <Route exact path="/" element={<Navigate to="/dashboard"/>}/>
+                            <Route path='/login' element={<LoginPage/>}/>
                             <Route element={<Layout/>}>
+                                <Route element={<RequireAuth/>}>
+                                    <Route path='/payment/:model/:entryId/:lotNumber?' element={<ColtanPaymentsPage/>}/>
+                                    <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
+                                    <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
+                                    <Route path='/shipment/add/:model' element={<StockPage/>}/>
+                                    <Route path='/shipments' element={<ShipmentPage/>}/>
+                                    <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
+                                    <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
+                                    <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
+                                    <Route path='/dummy' element={<DummyPage/>}/>
+                                    <Route path='/dummy2' element={<FetchingPage/>}/>
+                                    <Route path='/dummy3' element={<FilesytemMangerSample/>}/>
+                                    <Route path='/report/:supplierId' element={<ReportPage/>}/>
 
-                                <Route path='*' element={<DefaultPages/>}/>
-                                <Route path='/payment/:model/:entryId/:lotNumber?' element={<ColtanPaymentsPage/>}/>
-                                <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
-                                <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
-                                <Route path='/shipment/add/:model' element={<StockPage/>}/>
-                                <Route path='/shipments' element={<ShipmentPage/>}/>
-                                <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
-                                <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
-                                <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
-                                <Route path='/dummy' element={<DummyPage/>}/>
-                                <Route path='/dummy2' element={<FetchingPage/>}/>
-                                <Route path='/dummy3' element={<FilesytemMangerSample/>}/>
-                                <Route path='/report/:supplierId' element={<ReportPage/>}/>
+                                    <Route path='/coltan' element={<ColtanListPage/>}/>
+                                    <Route path='/cassiterite' element={<CassiteriteListPage/>}/>
+                                    <Route path='/wolframite' element={<WolframiteListPage/>}/>
+                                    <Route path='/lithium' element={<LithiumListPage/>}/>
+                                    <Route path='/beryllium' element={<BerylliumListPage/>}/>
+                                    <Route path='/mixed' element={<MixedEntryForm/>}/>
 
-                                <Route path='/coltan' element={<ColtanListPage/>}/>
-                                <Route path='/cassiterite' element={<CassiteriteListPage/>}/>
-                                <Route path='/wolframite' element={<WolframiteListPage/>}/>
-                                <Route path='/lithium' element={<LithiumListPage/>}/>
-                                <Route path='/beryllium' element={<BerylliumListPage/>}/>
-                                <Route path='/mixed' element={<MixedEntryForm/>}/>
-
-                                {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
-                                <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
-                                <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
-                                <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
-                                <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
-                                <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
+                                    {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
+                                    <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
+                                    <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
+                                    <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
+                                    <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
+                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
 
 
-                                <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
-                                <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
-                                <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
-                                <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/>
-                               
+                                    <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
+                                    <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
+                                    <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
+                                    <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
+                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/>
 
-                                <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
-                                <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>
-                                <Route path='/complete/wolframite/:entryId' element={<WolframiteEntryCompletePage/>}/>
-                                <Route path='/complete/beryllium/:entryId' element={<BerylliumEntryCompletePage/>}/>
-                                <Route path='/complete/lithium/:entryId' element={<LithiumEntryCompletePage/>}/>
 
-                                <Route path='/coltan/request' element={<ColtanEditRequestPage/>}/>
+                                    <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
+                                    <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>
+                                    <Route path='/complete/wolframite/:entryId' element={<WolframiteEntryCompletePage/>}/>
+                                    <Route path='/complete/beryllium/:entryId' element={<BerylliumEntryCompletePage/>}/>
+                                    <Route path='/complete/lithium/:entryId' element={<LithiumEntryCompletePage/>}/>
 
-                                <Route path='/users' element={<UsersListPage/>}/>
+                                    <Route path='/coltan/request' element={<ColtanEditRequestPage/>}/>
 
-                                <Route path='/user/edit/:userId' element={<UserPermissionPage/>}/>
+                                    <Route path='/users' element={<UsersListPage/>}/>
 
-                                <Route path='/test' element={<EditMinesitePage/>}/>
-                                <Route path='/sales' element={<SalesListPage/>}/>
-                                <Route path='/purchases' element={<PurchasesListPage/>}/>
-                                <Route path='/profile' element={<UsersListPage/>}/>
-                                <Route path='/suppliers' element={<SuppliersListPage/>}/>
-                                <Route path='/add/supplier' element={<AddSuplierPage/>}/>
-                                <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
-                                <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
-                                <Route path='/edit/supplier/minesite/:supplierId' element={<EditMinesitePage/>}/>
-                                <Route path='/payments' element={<RoleBasedRoute element={<PaymentsListPage />} permissionKey="payments"/>}/>
-                                <Route path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
-                                <Route path='/add/payment' element={<AddPaymentPage/>}/>
-                                <Route path='/buyers' element={<BuyersListPage/>}/>
-                                <Route path='/edit/buyer/:buyerId' element={<EditBuyerPage/>}/>
-                                <Route path='/buyer/details/:buyerId' element={<BuyerDetailsPage/>}/>
-                                <Route path='/add/buyer' element={<AddBuyerPage/>}/>
-                                <Route path='/entry/storekeeper' element={<TransactionEntry/>}/>
-                                <Route path='/entry/trecability' element={<TrecabilityData/>}/>
-                                <Route path='/add/product' element={<AddProductPage/>}/>
-                                <Route path='/add/sale' element={<AddSalesPage/>}/>
-                                <Route path='/add/purchase' element={<AddPurchasePage/>}/>
-                                <Route path='/add/user' element={<AddUserPage/>}/>
-                                <Route path='/edit/user' element={<EditUserPage/>}/>
-                                <Route path='/add/supplier' element={<AddSuplierPage/>}/>
-                                <Route path='/contracts' element={<ContractsistPage/>}/>
-                                <Route path='/add/contract' element={<AddContract/>}/>
-                                <Route path='/register' element={<RegisterPage/>}/>
-                                <Route path='/login' element={<LoginPage/>}/>
-                                <Route path='/password/reset' element={<ResetPasswordPage/>}/>
-                                <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
-                                <Route path='/framer' element={<Framer/>}/>
-                                <Route path="/settings" element={<Settings/>}/>
-                                <Route path="/logs" element={<UsersActivityLogs/>}/>
+                                    <Route path='/user/edit/:userId' element={<UserPermissionPage/>}/>
 
-                                <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
-                                <Route path="/invoice" element={<InvoiceList/>}/>
-                                {/*<Route path="/invoice/temp" element={<InvoiceTemp/>}/>*/}
-                                {/* <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/> */}
+                                    <Route path='/test' element={<EditMinesitePage/>}/>
+                                    <Route path='/sales' element={<SalesListPage/>}/>
+                                    <Route path='/purchases' element={<PurchasesListPage/>}/>
+                                    <Route path='/profile' element={<UsersListPage/>}/>
+                                    <Route path='/suppliers' element={<SuppliersListPage/>}/>
+                                    <Route path='/add/supplier' element={<AddSuplierPage/>}/>
+                                    <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
+                                    <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
+                                    <Route path='/edit/supplier/minesite/:supplierId' element={<EditMinesitePage/>}/>
+                                    <Route path='/payments' element={<RoleBasedRoute element={<PaymentsListPage />} permissionKey="payments"/>}/>
+                                    <Route path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
+                                    <Route path='/add/payment' element={<AddPaymentPage/>}/>
+                                    <Route path='/buyers' element={<BuyersListPage/>}/>
+                                    <Route path='/edit/buyer/:buyerId' element={<EditBuyerPage/>}/>
+                                    <Route path='/buyer/details/:buyerId' element={<BuyerDetailsPage/>}/>
+                                    <Route path='/add/buyer' element={<AddBuyerPage/>}/>
+                                    <Route path='/entry/storekeeper' element={<TransactionEntry/>}/>
+                                    <Route path='/entry/trecability' element={<TrecabilityData/>}/>
+                                    <Route path='/add/product' element={<AddProductPage/>}/>
+                                    <Route path='/add/sale' element={<AddSalesPage/>}/>
+                                    <Route path='/add/purchase' element={<AddPurchasePage/>}/>
+                                    <Route path='/add/user' element={<AddUserPage/>}/>
+                                    <Route path='/edit/user' element={<EditUserPage/>}/>
+                                    <Route path='/add/supplier' element={<AddSuplierPage/>}/>
+                                    <Route path='/contracts' element={<ContractsistPage/>}/>
+                                    <Route path='/add/contract' element={<AddContract/>}/>
+                                    <Route path='/register' element={<RegisterPage/>}/>
+                                    <Route path='/password/reset' element={<ResetPasswordPage/>}/>
+                                    <Route path='/password/forgot' element={<ForgotPasswordPage/>}/>
+                                    <Route path='/framer' element={<Framer/>}/>
+                                    <Route path="/settings" element={<Settings/>}/>
+                                    <Route path="/logs" element={<UsersActivityLogs/>}/>
 
-                                <Route path="/edit-requests" element={<EditRequests/>}/>
-                                <Route path="/user" element={<UserPermissionPage/>}/>
-                                <Route path="/chat" element={<Chat/>}/>
-                                <Route path="/new" element={<NewUSerChart/>}/>
-                                <Route path="/structure" element={<FileStructure/>}/>
-                                <Route path="/simbo" element={<SingleImageUpload/>}/>
-                                <Route path="/texteditor" element={<EditorWrapper/>}/>
-                                <Route path="/dashboard" element={<DashboardPage/>}/>
-                                <Route path="/due-diligence-report/:supplierId" element={<PrepareDDReport/>}/>
-                                <Route path="/structure/file" element={<EditExistingFile/>}/>
-                                <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
-                                <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
-                                <Route path="/pdf-viewer" element={<PDFViewer/>}/>
-                                <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
-                                <Route path='/tags' element={<ListTags/>}/>
-                                <Route path='/add/tag' element={<AddTag/>}/>
+                                    <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
+                                    <Route path="/invoice" element={<InvoiceList/>}/>
+                                    {/*<Route path="/invoice/temp" element={<InvoiceTemp/>}/>*/}
+                                    {/* <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/> */}
+
+                                    <Route path="/edit-requests" element={<EditRequests/>}/>
+                                    <Route path="/user" element={<UserPermissionPage/>}/>
+                                    <Route path="/chat" element={<Chat/>}/>
+                                    <Route path="/new" element={<NewUSerChart/>}/>
+                                    <Route path="/structure" element={<FileStructure/>}/>
+                                    <Route path="/simbo" element={<SingleImageUpload/>}/>
+                                    <Route path="/texteditor" element={<EditorWrapper/>}/>
+                                    <Route path="/dashboard" element={<DashboardPage/>}/>
+                                    <Route path="/due-diligence-report/:supplierId" element={<PrepareDDReport/>}/>
+                                    <Route path="/structure/:url/:filePath/:fileId" element={<EditExistingFile/>}/>
+                                    <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
+                                    <Route path="/document-editor" element={<DocumentEditorComponent/>}/>
+                                    <Route path="/pdf-viewer/:documentUrl" element={<PDFViewer/>}/>
+                                    <Route path="/shipment/forward-note/:shipmentId" element={<GenerateForwardNote/>}/>
+                                    <Route path='/tags' element={<ListTags/>}/>
+                                    <Route path='/add/tag' element={<AddTag/>}/>
+                                    <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
+                                    <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
+                                </Route>
+                                {/*<Route path='*' element={<Navigate to="/dashboard" replace/>}/>*/}
                             </Route>
                         </Route>
 

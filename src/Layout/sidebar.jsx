@@ -25,8 +25,8 @@ const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
 
 
                 <div className={`flex items-center space-x-3 group bg-gradient-to-r dark:from-cyan-500 dark:to-blue-500 from-yellow-500 via-amber-500 to-amber-900  pl-10 pr-2 py-1 rounded-full text-white ${!open && 'text-black'} `}>
-                    <div className="transform ease-in-out duration-300 mr-12">
-                        MINE
+                    <div className="transform ease-in-out duration-300 mr-3">
+                        KANZAMIN
                     </div>
                 </div>
             </div>

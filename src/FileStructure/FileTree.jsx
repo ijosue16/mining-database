@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { BsFolderFill, BsFillFileEarmarkWordFill, BsFillFileEarmarkPdfFill, BsImageFill } from "react-icons/bs";
-import { FaFolderOpen, FaRegFile, FaDownload} from "react-icons/fa";
-import {HiChevronDown, HiChevronRight} from "react-icons/hi";
+import {FaFolderOpen, FaRegFile, FaDownload, FaRegEdit} from "react-icons/fa";
+import {HiChevronDown, HiChevronRight, HiOutlineDownload} from "react-icons/hi";
 import { useDownloadFileMutation } from "../states/apislice";
 import {toast} from "react-toastify";
 import {Link} from 'react-router-dom'
@@ -10,7 +10,6 @@ import {ImDownload3} from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 
 const FileTree = ({ data, getFileStructure, setFileStructure }) => {
-    const [downloadFile, {isSuccess, isLoading, isError, error}] = useDownloadFileMutation();
     const [openDirectories, setOpenDirectories] = useState([]);
     const navigate = useNavigate();
     // TODO 5: ADD EDIT BUTTON ON WORD DOCUMENTS -> DONE
@@ -39,8 +38,6 @@ const FileTree = ({ data, getFileStructure, setFileStructure }) => {
             }
         }
 
-
-
         if (openDirectories.includes(fileId)) {
             // If the directory is open, close it
             setOpenDirectories(openDirectories.filter((dir) => dir !== fileId));
@@ -50,53 +47,25 @@ const FileTree = ({ data, getFileStructure, setFileStructure }) => {
         }
     };
 
-    useEffect(() => {
-        if (isSuccess) {
-            toast.success("File Successfully downloaded");
-        } else if (isError) {
-            console.log(error)
-            // const { message } = error.data;
-            // toast.error(message);
-        }
-    }, [isSuccess, isError, error]);
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         toast.success("File Successfully downloaded");
+    //     } else if (isError) {
+    //         console.log(error)
+    //         // const { message } = error.data;
+    //         // toast.error(message);
+    //     }
+    // }, [isSuccess, isError, error]);
 
-
-    const handleDownloadFile = async ({ name, fullPath }) => {
-
-        // console.log(fullPath);
-        // const body = {filename: name, fullPath}
-        // const response = await downloadFile({body});
-        // // const response = await fetch("https://mining-company-management-system.onrender.com/data/DD%20Reports/2023/August/dd%20template.docx");
-        // const blob = await response.blob();
-        // const url = window.URL.createObjectURL(blob);
-        // const a = document.createElement('a');
-        // a.href = url;
-        // a.download = name;
-        // document.body.appendChild(a);
-        // a.click();
-        // window.URL.revokeObjectURL(url);
-        const link = "https://docs.google.com/viewerng/viewer?url=https://mining-company-management-system.onrender.com/data/DD+Reports/2023/August/dd+template.docx"
-
-        // const contentType = response.headers['content-type'];
-        // <Link to="route" target="_blank" rel="noopener noreferrer" />
-        // // Check if the response contains a DOCX file
-        // if (contentType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-        //     const url = window.URL.createObjectURL(new Blob([response.data], { type: contentType }));
-        //     window.open(url);
-        // } else {
-        //     // Handle the case where the response is not a DOCX file
-        //     console.error('Response is not a DOCX file');
-        // }
-    };
 
     const getFileIcon = (name) => {
         const ext = name.split('.').pop();
         if (ext.toLowerCase() === "png" || ext.toLowerCase() === "jpg" || ext.toLowerCase() === "jpeg") {
             return <BsImageFill color="#28aae5" size={25} style={{ marginRight: 5, marginLeft: 10}}/>
         } else if (ext.toLowerCase() === "docx" || ext.toLowerCase() === "doc") {
-            return <BsFillFileEarmarkWordFill color="#2b579a" size={25} style={{ marginRight: 5, marginLeft: 10}}/>
+            return <BsFillFileEarmarkWordFill color="#2b579a" size={25} style={{ marginRight: 5, marginLeft: 10, marginBottom: 4}}/>
         } else if (ext.toLowerCase() === "pdf") {
-            return <BsFillFileEarmarkPdfFill color="#c20a0a" size={25} style={{ marginRight: 5, marginLeft: 10}}/>
+            return <BsFillFileEarmarkPdfFill color="#c20a0a" size={25} style={{ marginRight: 5, marginLeft: 10, marginBottom: 4}}/>
         }
     }
 
@@ -110,10 +79,7 @@ const FileTree = ({ data, getFileStructure, setFileStructure }) => {
     }
 
     const handleEditFile = async (url, filePath, fileId, name) => {
-        localStorage.setItem("url", url);
-        localStorage.setItem("filePath", filePath);
-        localStorage.setItem("fileId", fileId);
-        navigate(`/structure/file`);
+        navigate(`/structure/${encodeURIComponent(url)}/${encodeURIComponent(filePath)}/${encodeURIComponent(fileId)}`);
     }
 
 
@@ -143,20 +109,23 @@ const FileTree = ({ data, getFileStructure, setFileStructure }) => {
                     )}
                     {isDirectory ? (
                         isOpen ? (
-                            <FaFolderOpen color="#ffca28" size={40} style={{ marginRight: 5 }} />
+                            <FaFolderOpen color="#ffca28" size={40} style={{ marginRight: 5,}} />
                         ) : (
-                            <FcFolder color="#ffca28" size={40} style={{ marginRight: 5, }} />
+                            <FcFolder color="#ffca28" size={40} style={{ marginRight: 5,}} />
                         )
                     ) : fileIcon
                     }
                     {node.name.replace(/_/g, ' ')}
-                    {node.type === "file" && (
+                    {node.type === "file" && node.name.split('.').pop() !== "pdf" && (
                         <Link to={node.url} target="_blank" rel="noopener noreferrer" download>
-                            <ImDownload3 color="#2b579a" style={{ marginLeft: 8 }} className="text-lg text-[#7393B3" />
+                            <HiOutlineDownload size={25} color="#2b579a" style={{ marginLeft: 8}} className="text-lg text-[#7393B3]" />
                         </Link>
                     )}
+                    {node.type === "file" && node.name.split('.').pop() === "pdf" && (
+                        <ImDownload3 onClick={() => navigate(`/pdf-viewer/${encodeURIComponent(node.url)}`)} color="#2b579a" style={{ marginLeft: 8 }} className="text-lg text-[#7393B3" />
+                    )}
                     {getDocxFile(node) && (
-                        <button onClick={() => handleEditFile(node.url, node.filePath, node.fileId, node.name.replace(/_/g, ' '))}>Edit</button>
+                        <FaRegEdit size={20} color="#2b579a" className="ml-2"  onClick={() => handleEditFile(node.url, node.filePath, node.fileId, node.name.replace(/_/g, ' '))}/>
                     )}
 
                 </span>

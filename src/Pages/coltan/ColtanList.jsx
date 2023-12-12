@@ -134,8 +134,6 @@ const ColtanListPage = () => {
 
     const handleOk = async () => {
         const finalBody = {editableFields: [], model: "coltan", recordId: "", username: userData.username};
-        setCheckboxValues(initialCheckboxValues);
-        setIsModalOpen(false);
         for (const key of Object.keys(checkboxValues)) {
             if (checkboxValues[key] === true) {
                 finalBody.editableFields.push({
@@ -145,15 +143,17 @@ const ColtanListPage = () => {
             }
         }
         finalBody.recordId = record._id;
-        const response = await createEditRequest({body: finalBody});
+        await createEditRequest({body: finalBody});
+        setIsModalOpen(false);
+        setCheckboxValues(initialCheckboxValues);
         socket.emit("new-edit-request", {username: userData.username});
         message.success("Edit Request sent successfully");
-        if (response) {
-            const {editRequest} = response.data.data;
-            if (editRequest) {
-                setRequestId(editRequest._id);
-            }
-        }
+        // if (response) {
+        //     const {editRequest} = response.data.data;
+        //     if (editRequest) {
+        //         setRequestId(editRequest._id);
+        //     }
+        // }
     }
 
     const handleCancel = () => {
@@ -391,7 +391,7 @@ const ColtanListPage = () => {
                                 </span>
                             ) : null}
 
-                            {permissions.entry?.edit &&
+                            {!permissions.entry?.edit &&
                             <span>
                                 <FiEdit
                                     className="text-lg"
@@ -512,11 +512,12 @@ const ColtanListPage = () => {
                         </Modal>
 
                         <Modal
-                            title="Basic Modal"
+                            title="Select Fields You Want To Edit"
                             open={isModalOpen}
                             onOk={handleOk}
                             onCancel={handleCancel}
                             destroyOnClose
+                            okButtonProps={{className: "bg-green-400 p-2 rounded-lg"}}
                         >
                             {fields.map((item, index) => (
                                 <div key={index}>
