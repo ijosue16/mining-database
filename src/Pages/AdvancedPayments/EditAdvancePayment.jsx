@@ -30,22 +30,20 @@ const EditAdvancePayment = () => {
         if (documentEditor.documentEditor) {
             const file = await documentEditor.documentEditor.saveAsBlob('Docx');
             const formData = new FormData();
-            formData.append('data', file);
+            formData.append('data', file, "Advanced Payment Contract.docx");
             return formData;
         }
     }
 
     const handleSubmit = async () => {
         const formData = await onSave();
-        console.log(formData);
-        // await updateAdvancePayment({body: {formData}, paymentId});
+        await updateAdvancePayment({body: {formData}, paymentId});
     }
 
 
     const onDownload = () => {
         if (documentEditor.documentEditor) {
-            documentEditor.documentEditor.save("Advanced Payment Contract", 'Docx'
-            );
+            documentEditor.documentEditor.save("Advanced Payment Contract", 'Docx');
         }
     }
 

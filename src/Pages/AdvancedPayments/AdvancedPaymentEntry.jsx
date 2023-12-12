@@ -150,7 +150,7 @@ const AdvancedPaymentEntry = () => {
             }
         }
         const file = await onSave();
-        formData.append('data', file);
+        formData.append('data', file, "New Advanced Payment.docx");
         await AddAdvancedPayment({body: formData});
         handleCancel();
         navigate(-1);
@@ -445,6 +445,9 @@ const AdvancedPaymentEntry = () => {
                                 <NewDocumentEditorComponent
                                     setDocumentEditor={setDocumentEditor}
                                 />
+                                <div>
+                                    <button className="px-4 py-1 bg-blue-300 rounded-md" type="button" onClick={onDownload}>Download</button>
+                                </div>
                             </div>
                         </div>
                     }
