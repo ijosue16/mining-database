@@ -163,7 +163,7 @@ const MixedEntryForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = { ...formval,coltanOutput:coltanLotDetails,cassiteriteOutput:cassiteriteLotDetails  };
-        // await createMixedEntry({ body });
+        await createMixedEntry({ body });
         console.log(body);
         // navigate(-1);
 

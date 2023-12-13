@@ -243,7 +243,7 @@ const ColtanPaymentsPage = () => {
     const handlePaymentSubmit = async (e) => {
         e.preventDefault();
         const body = {...payment, entryId, lotNumber, model};
-        // await addPayment({body});
+        await addPayment({body});
         console.log(body)
         handleCancel();
         handleShowForm();
@@ -352,7 +352,7 @@ const ColtanPaymentsPage = () => {
                                         <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
                                             <p type="submit" className="">Sending</p>
                                         </button>:
-                                        <button type="submit" className="flex gap-1 bg-green-300 rounded-md items-end p-2 justify-center">
+                                        <button type="submit" className="flex gap-1 bg-green-300 rounded-md items-end p-2 justify-center" onClick={handlePaymentSubmit}>
                                             <BsCheck2 className=" text-lg" />
                                             <p type="submit" className="">Confirm</p>
                                         </button>}
