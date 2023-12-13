@@ -709,7 +709,7 @@ export const apiSlice = createApi({
             providesTags: ['stock']
         }),
         getYearStockSummary: builder.query({
-            query: ({year}) => `/stock/stock-summary/${year ? year : new Date().getFullYear()}`,
+            query: ({year}) => `/stock/current-stock/${year ? year : new Date().getFullYear()}`,
             invalidatesTags: ['stock']
         }),
         generateLabReport: builder.mutation({
