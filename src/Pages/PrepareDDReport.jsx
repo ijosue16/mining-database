@@ -2,15 +2,15 @@ import React, {useEffect, useState} from 'react';
 
 import { useGenerateDDReportMutation } from "../states/apislice";
 import {useParams} from "react-router-dom";
-import RichTextEditor from "./RichTextEditor";
 import { message } from "antd";
+import DocumentEditorComponent from "./DocumentEditor";
 
 
 const PrepareDDReport = () => {
+    const { supplierId, startDate, endDate } = useParams();
     const [generateDDReport, {isSuccess, isLoading, isError, error}] = useGenerateDDReportMutation();
-    const [htmlString, setHtmlString] = useState('');
+    const [sfdt, setSfdt] = useState('');
     const [fileInfo, setFileInfo] = useState({fileId: "", filePath: ""});
-    const { supplierId } = useParams();
 
     useEffect(() => {
         if (isSuccess) {
@@ -23,15 +23,15 @@ const PrepareDDReport = () => {
 
     useEffect(() => {
         const fetchDDReport = async () => {
-            const body = {supplierId};
+            const body = {supplierId, endMonth: endDate.getMonth()};
             const response = await generateDDReport({body, supplierId});
             if (response.data) {
-                const { htmlString, fileId, filePath } = response.data
-                if (htmlString) {
-                    setHtmlString(htmlString);
+                const { sfdt, fileId, filePath } = response.data;
+                if (sfdt) {
+                    setSfdt(sfdt);
                 }
-                if (fileId || filePath) {
-                    setFileInfo(prevState => ({...prevState, fileId, filePath}));
+                if (fileId && filePath) {
+                    setFileInfo({fileId, filePath});
                 }
             }
         }
@@ -40,15 +40,14 @@ const PrepareDDReport = () => {
 
     return (
         <div>
-            <RichTextEditor
-                htmlString={htmlString}
+            <DocumentEditorComponent
+                sfdt={sfdt}
                 fileId={fileInfo.fileId}
                 filePath={fileInfo.filePath}
-                isLoading={isLoading}
+                showSave={true}
             />
         </div>
     )
-
 }
 
 export default PrepareDDReport;

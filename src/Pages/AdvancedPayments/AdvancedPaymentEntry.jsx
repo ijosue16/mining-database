@@ -1,19 +1,18 @@
-import React, {useState, useEffect,useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import { motion } from "framer-motion";
-import { DatePicker, message } from "antd";
+import {motion} from "framer-motion";
+import {DatePicker, message} from "antd";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
 import {useAddAdvancePaymentMutation, useGetAllSuppliersQuery, useSaveFileMutation} from "../../states/apislice";
-import { BsChevronDown } from "react-icons/bs";
-import { HiOutlineSearch } from "react-icons/hi";
-import { ImSpinner2 } from "react-icons/im";
-import DocumentEditorComponent from "../DocumentEditor";
+import {BsChevronDown} from "react-icons/bs";
+import {HiOutlineSearch} from "react-icons/hi";
+import {ImSpinner2} from "react-icons/im";
 import NewDocumentEditorComponent from "../NewDocumentEditorComponent";
 import { useNavigate } from "react-router-dom";
 
 const AdvancedPaymentEntry = () => {
-    let sup = [""];
+    const [sup, setSup] = useState([]);
     const [paymentInfo, setPaymentInfo] = useState({
         supplierId: '',
         companyName: '',
@@ -28,8 +27,13 @@ const AdvancedPaymentEntry = () => {
         USDRate: null,
     });
     const [AddAdvancedPayment, {isLoading, isSuccess, isError, error}] = useAddAdvancePaymentMutation();
-    const {data,isloading:isFetching,isSuccess:isDone,isError:isFail,error:fail}=useGetAllSuppliersQuery()
-    const [saveFile, {isSuccess: isDocumentSaved, isError: isSaveError, isLoading: isSaving, error: saveError}] = useSaveFileMutation();
+    const {data, isloading: isFetching, isSuccess: isDone, isError: isFail, error: fail} = useGetAllSuppliersQuery()
+    const [saveFile, {
+        isSuccess: isDocumentSaved,
+        isError: isSaveError,
+        isLoading: isSaving,
+        error: saveError
+    }] = useSaveFileMutation();
     const navigate = useNavigate();
 
     let modalRef = useRef();
@@ -41,33 +45,35 @@ const AdvancedPaymentEntry = () => {
     const [documentEditor, setDocumentEditor] = useState(null);
 
     const handleClickOutside = (event) => {
-      if (!modalRef.current || !modalRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
+        if (!modalRef.current || !modalRef.current.contains(event.target)) {
+            setDropdownOpen(false);
+        }
     };
 
     useEffect(() => {
-      document.addEventListener("click", handleClickOutside, true);
-      return () => {
-        document.removeEventListener("click", handleClickOutside, true);
-      };
+        document.addEventListener("click", handleClickOutside, true);
+        return () => {
+            document.removeEventListener("click", handleClickOutside, true);
+        };
     }, []);
 
-    if (isDone) {
-        const { data: dt } = data;
-        const { suppliers: sups } = dt;
-        sup = sups;
-        console.log(sup);
-      };
 
-      const filteredSuppliers = sup.filter((supplier) => {
+    useEffect(() => {
+        if (isSuccess) {
+            const {suppliers: sups} = data.data;
+            setSup(sups);
+        }
+    }, [data, isDone])
+
+
+    const filteredSuppliers = sup.filter((supplier) => {
         const companyName = supplier.companyName || "";
         return companyName.toLowerCase().includes(searchText.toLowerCase());
-      });
+    });
 
-      const handleSearchInputChange = (e) => {
+    const handleSearchInputChange = (e) => {
         setSearchText(e.target.value);
-      };
+    };
 
 
     const handleEntry = (e) => {
@@ -81,14 +87,18 @@ const AdvancedPaymentEntry = () => {
         setSelectedSupplierName(supplier.companyName);
         const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
         if (chosenSupplier) {
-     setPaymentInfo((prevstate)=>({...prevstate,supplierId:chosenSupplier._id,companyName:chosenSupplier.companyName}));
+            setPaymentInfo((prevstate) => ({
+                ...prevstate,
+                supplierId: chosenSupplier._id,
+                companyName: chosenSupplier.companyName
+            }));
         }
         // setchecked(false);
         // setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
         console.log(chosenSupplier.companyName);
         setDropdownOpen(false);
         setSearchText("");
-      };
+    };
 
     const handleAddPaymentDate = (e) => {
         setPaymentInfo((prevState) => ({
@@ -194,65 +204,65 @@ const AdvancedPaymentEntry = () => {
                                         onChange={handleEntry}
 
                                     /> */}
-                                                          <div ref={modalRef} className=" h-fit relative ">
-                        <div
-                          className="border p-2 w-full rounded-md flex items-center justify-between gap-6 bg-white"
-                          onClick={() => {
-                            setDropdownOpen((prev) => !prev);
-                          }}
-                        >
-                          <p className=" ">
-                            {selectedSupplierName
-                              ? selectedSupplierName
-                              : "select a supplier"}
-                          </p>
-                          <BsChevronDown
-                            className={`text-md transition ease-in-out duration-500 ${
-                              dropdownOpen ? "rotate-180" : null
-                            }`}
-                          />
-                        </div>
-                        <motion.div
-                          animate={
-                            dropdownOpen
-                              ? { opacity: 1, x: -8, y: 1, display: "block" }
-                              : { opacity: 0, x: 0, y: 0, display: "none" }
-                          }
-                          transition={{
-                            type: "spring",
-                            duration: 0.8,
-                            bounce: 0.35,
-                          }}
-                          className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl `}
-                        >
-                          <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
-                            <HiOutlineSearch className={`text-lg `} />
-                            <input
-                              type="text"
-                              name="searchTextInput"
-                              id="searchTextInput"
-                              placeholder="Search"
-                              className="w-full focus:outline-none"
-                              value={searchText}
-                              onChange={handleSearchInputChange}
-                            />
-                          </div>
-                          {isLoading?<div className="w-full flex justify-start items-center gap-1">
-                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p className=" text-slate-400">Fetching suppliers...</p>
-                          </div>:<ul className={`list-none  overflow-auto `}>
-                            {filteredSuppliers.map((supplier, index) => (
-                              <li
-                                key={index}
-                                className=" hover:bg-slate-300 rounded-md p-2"
-                                onClick={() => handleSupplierSelect(supplier)}
-                              >
-                                {supplier.companyName}
-                              </li>
-                            ))}
-                          </ul>}
-                        </motion.div>
-                      </div>
+                                    <div ref={modalRef} className=" h-fit relative ">
+                                        <div
+                                            className="border p-2 w-full rounded-md flex items-center justify-between gap-6 bg-white"
+                                            onClick={() => {
+                                                setDropdownOpen((prev) => !prev);
+                                            }}
+                                        >
+                                            <p className=" ">
+                                                {selectedSupplierName
+                                                    ? selectedSupplierName
+                                                    : "select a supplier"}
+                                            </p>
+                                            <BsChevronDown
+                                                className={`text-md transition ease-in-out duration-500 ${
+                                                    dropdownOpen ? "rotate-180" : null
+                                                }`}
+                                            />
+                                        </div>
+                                        <motion.div
+                                            animate={
+                                                dropdownOpen
+                                                    ? {opacity: 1, x: -8, y: 1, display: "block"}
+                                                    : {opacity: 0, x: 0, y: 0, display: "none"}
+                                            }
+                                            transition={{
+                                                type: "spring",
+                                                duration: 0.8,
+                                                bounce: 0.35,
+                                            }}
+                                            className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl `}
+                                        >
+                                            <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
+                                                <HiOutlineSearch className={`text-lg `}/>
+                                                <input
+                                                    type="text"
+                                                    name="searchTextInput"
+                                                    id="searchTextInput"
+                                                    placeholder="Search"
+                                                    className="w-full focus:outline-none"
+                                                    value={searchText}
+                                                    onChange={handleSearchInputChange}
+                                                />
+                                            </div>
+                                            {isLoading ? <div className="w-full flex justify-start items-center gap-1">
+                                                <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500"/>
+                                                <p className=" text-slate-400">Fetching suppliers...</p>
+                                            </div> : <ul className={`list-none  overflow-auto `}>
+                                                {filteredSuppliers.map((supplier, index) => (
+                                                    <li
+                                                        key={index}
+                                                        className=" hover:bg-slate-300 rounded-md p-2"
+                                                        onClick={() => handleSupplierSelect(supplier)}
+                                                    >
+                                                        {supplier.companyName}
+                                                    </li>
+                                                ))}
+                                            </ul>}
+                                        </motion.div>
+                                    </div>
                                 </li>
 
                                 <li className=" space-y-1">
@@ -446,7 +456,9 @@ const AdvancedPaymentEntry = () => {
                                     setDocumentEditor={setDocumentEditor}
                                 />
                                 <div>
-                                    <button className="px-4 py-1 bg-blue-300 rounded-md" type="button" onClick={onDownload}>Download</button>
+                                    <button className="px-4 py-1 bg-blue-300 rounded-md" type="button"
+                                            onClick={onDownload}>Download
+                                    </button>
                                 </div>
                             </div>
                         </div>
