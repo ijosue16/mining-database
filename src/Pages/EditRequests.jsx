@@ -6,8 +6,8 @@ import Countdown from "react-countdown";
 import {Table, message} from "antd";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import {toast} from "react-toastify";
 import { SocketContext } from "../context files/socket";
+import {toInitialCase} from "../components/helperFunctions";
 
 dayjs.extend(localizedFormat);
 
@@ -42,11 +42,6 @@ const EditRequests = () => {
         }
     }, [isUpdateSuccess, isUpdateError, updateError]);
 
-    useEffect(() => {
-        socket.on("new-edit-request", data => {
-
-        })
-    })
 
     const handleUpdate = async (body, record) => {
         setUserName(record.username);
@@ -186,6 +181,42 @@ const EditRequests = () => {
                             }}
                             dataSource={editRequests}
                             columns={columns}
+                            expandable={{
+                                expandedRowRender: (record) => {
+                                    const excludedFields = ["_id", "updatedAt", "createdAt", "registrationDate", "id", "entryId", "_v", "__v"];
+
+                                    return (
+                                        <div>
+                                            {record.editableFields.map(({fieldname, initialValue}) => {
+                                                if (!excludedFields.includes(fieldname)) {
+                                                    return (
+                                                        <div key={fieldname}>
+                                                            <span className="font-bold">{fieldname}</span>
+                                                            {!Array.isArray(initialValue) ? <span className="ml-2">{initialValue}</span> : (
+                                                                <ul className="ml-2">
+                                                                    {initialValue.map(item => {
+                                                                        Object.entries(item).map(([key, value]) => {
+                                                                            if (!excludedFields.includes(`${key}`)) {
+                                                                                return (
+                                                                                    <li key={key}>
+                                                                                        <span className="font-bold">{toInitialCase(key)}</span>
+                                                                                        <span className="ml-2">{value}</span>
+                                                                                    </li>
+                                                                                )
+                                                                            }
+                                                                        })
+                                                                    })}
+                                                                </ul>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                }
+                                            })}
+                                        </div>
+                                    )
+                                },
+                                rowExpandable: (record) => record.editableFields?.length > 0,
+                            }}
                             rowKey="_id"
                         />
                     </>

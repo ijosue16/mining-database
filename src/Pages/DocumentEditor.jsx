@@ -8,6 +8,7 @@ import { useSaveFileMutation } from "../states/apislice";
 import {message} from "antd";
 import LoadingButton from "./LoadingButton";
 
+
 DocumentEditorContainerComponent.Inject(Toolbar, Editor);
 
 // const DocumentEditor = () => {
@@ -114,6 +115,7 @@ DocumentEditorContainerComponent.Inject(Toolbar, Editor);
 const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
     let container;
     let contentChanged = false;
+    const navigate = useNavigate();
 
     useEffect(() => {
         // onCreate();
@@ -275,15 +277,16 @@ const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
         formData.append('data', file);
         formData.append('fileId', fileId);
         formData.append('filePath', filePath);
-        const response = await saveFile({body: formData});
-        if (response.data) {
-            const { fileId, filePath, url } = response.data.data;
-            if (fileId || filePath || url) {
-                localStorage.setItem('fileId', fileId);
-                localStorage.setItem('url', url);
-                localStorage.setItem('filePath', filePath);
-            }
-        }
+        await saveFile({body: formData});
+        navigate(-1);
+        // if (response.data) {
+        //     const { fileId, filePath, url } = response.data.data;
+        //     if (fileId || filePath || url) {
+        //         localStorage.setItem('fileId', fileId);
+        //         localStorage.setItem('url', url);
+        //         localStorage.setItem('filePath', filePath);
+        //     }
+        // }
     }
 
     return (
