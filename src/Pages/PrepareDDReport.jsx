@@ -23,11 +23,12 @@ const PrepareDDReport = () => {
 
     useEffect(() => {
         const fetchDDReport = async () => {
-            const body = {supplierId, endMonth: endDate.getMonth()};
+            const body = {supplierId, endMonth: new Date(endDate).getMonth()};
             const response = await generateDDReport({body, supplierId});
             if (response.data) {
                 const { sfdt, fileId, filePath } = response.data;
                 if (sfdt) {
+                    console.log(sfdt)
                     setSfdt(sfdt);
                 }
                 if (fileId && filePath) {
