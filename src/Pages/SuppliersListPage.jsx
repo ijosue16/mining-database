@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Input, Modal, Table } from "antd";
+import { Input, Modal, Table,DatePicker } from "antd";
 import { motion } from "framer-motion";
+import dayjs from "dayjs";
 import {
   PiMagnifyingGlassDuotone,
   PiDotsThreeVerticalBold,
@@ -24,11 +25,12 @@ import {
 } from "../states/apislice";
 import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SuppliersListPage = () => {
-  const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
-    const[supplierId,setSupplierId]=useState();
+  
+  const { permissions } = useSelector(state => state.persistedReducer.global);
+  const { RangePicker } = DatePicker;
   let dataz = [];
   const { data, isLoading, isError, isSuccess, error } =
     useGetAllSuppliersQuery();
@@ -61,12 +63,16 @@ const SuppliersListPage = () => {
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
   const [showActions, SetShowActions] = useState(false);
+  const [dateModal, SetDateModal] = useState(false);
   const [selectedRowInfo, SetSelectedRowInfo] = useState({
     name: "",
     license: "",
   });
   const [selectedRow, SetSelectedRow] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
+  const[supplierId,setSupplierId]=useState();
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
   let modalRef = useRef();
 
@@ -90,7 +96,19 @@ const SuppliersListPage = () => {
     dataz = spl;
   };
 
+  const handleDateChange = (dates, dateStrings) => {
 
+    if (dates && dates.length === 2) {
+      const startDate = dates[0].startOf('month');
+      const endDate = dates[1].endOf('month');
+
+      setStartDate(startDate.format('YYYY-MM-DD'));
+      setEndDate(endDate.format('YYYY-MM-DD'));
+
+      console.log('Start Date:', startDate.format('YYYY-MM-DD'));
+      console.log('End Date:', endDate.format('YYYY-MM-DD'));
+    }
+  };
 
   const handleActions = (id) => {
     if (selectedRow === id) {
@@ -196,22 +214,12 @@ const SuppliersListPage = () => {
                       <FaFileInvoiceDollar className=" text-xl" />
                       <p>Make invoice</p>
                     </li>
+
                     <li
                       className="flex gap-2 p-2 items-center hover:bg-slate-100"
                       onClick={() => {
-                        
-                        navigate(`/invoice/${record.companyName}/${record._id}`);
-                          setSupplierId(record._id)
-                        
-                      }}
-                    >
-                      <FaFileAlt className=" text-xl" />
-                      <p>Invoices history</p>
-                    </li>
-                    <li
-                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        navigate(`/due-diligence-report/${record._id}`);
+                        setSupplierId(record._id);
+                        SetDateModal(!dateModal);
                       }}
                     >
                       <FaFileAlt className=" text-xl" />
@@ -306,6 +314,71 @@ const SuppliersListPage = () => {
                 .
               </p>
             </Modal>
+
+            <Modal
+              open={dateModal}
+              onOk={() =>SetDateModal(!dateModal)}
+              onCancel={() =>{
+                setStartDate();
+                setEndDate();
+                setSupplierId();
+                    SetDateModal(!dateModal);
+              }}
+              destroyOnClose
+              footer={[
+                <span
+                  key="actions"
+                  className=" flex w-full justify-center gap-4 text-base text-white"
+                >
+                  {isDeleting ? (
+                    <button
+                      key="back"
+                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                    >
+                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                      Sending
+                    </button>
+                  ) : (
+                    <button
+                      key="back"
+                      className=" bg-green-400 p-2 rounded-lg"
+                      onClick={()=>{
+                        navigate(`/due-diligence-report/${supplierId}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`);
+                        setStartDate();
+                        setEndDate();
+                      setSupplierId();
+
+                      }}
+                    >
+                      send
+                    </button>
+                  )}
+                  <button
+                    key="submit"
+                    className=" bg-red-400 p-2 rounded-lg"
+                    type="primary"
+                    onClick={() =>{ 
+                      setStartDate();
+                      setEndDate();
+                    setSupplierId();
+                    SetDateModal(!dateModal);
+                  }}
+                  >
+                    Cancel
+                  </button>
+                </span>,
+              ]}
+            >
+              <h2 className="modal-title text-center font-bold text-lg">
+               Date footer
+              </h2>
+              <p className="text-center text-lg">
+                {`Select report months to be included in the report `}
+                .
+              </p>
+              <RangePicker picker="month" onChange={handleDateChange} />
+            </Modal>
+
             <div className=" w-full overflow-x-auto h-full min-h-[320px]">
               <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
                 <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">

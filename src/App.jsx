@@ -206,7 +206,7 @@ function App() {
                                     <Route path="/simbo" element={<SingleImageUpload/>}/>
                                     <Route path="/texteditor" element={<EditorWrapper/>}/>
                                     <Route path="/dashboard" element={<DashboardPage/>}/>
-                                    <Route path="/due-diligence-report/:supplierId" element={<PrepareDDReport/>}/>
+                                    <Route path="/due-diligence-report/:supplierId/:startDate/:endDate" element={<PrepareDDReport/>}/>
                                     <Route path="/structure/:url/:filePath/:fileId" element={<EditExistingFile/>}/>
                                     <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
                                     <Route path="/document-editor" element={<DocumentEditorComponent/>}/>

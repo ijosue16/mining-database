@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight,PiHandshakeDuotone,PiTruckDuotone } from "react-icons/pi";
+import { PiCaretLeftLight, PiWindowsLogoDuotone, PiHandbagDuotone, PiUserDuotone, PiUsersDuotone,PiUserPlusDuotone, PiEnvelopeLight, PiCubeDuotone, PiShieldDuotone, PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiSquaresFourDuotone, PiDeviceMobileCameraDuotone, PiPlusSquareDuotone, PiCubeTransparentDuotone, PiTagDuotone, PiSpeakerHifiDuotone, PiBarcodeDuotone, PiArrowsInSimpleDuotone, PiShoppingCartSimpleDuotone, PiFilesDuotone, PiFileTextDuotone, PiFloppyDiskDuotone, PiArrowsClockwiseDuotone, PiArrowBendUpLeftDuotone, PiDatabaseDuotone, PiSignInDuotone, PiChartPieDuotone, PiHouseDuotone, PiBrowserDuotone, PiFileMinusDuotone, PiGearDuotone, PiFileDuotone, PiShoppingBagDuotone, PiBellSimpleLight, PiGearLight,PiHandshakeDuotone,PiTruckDuotone,PiFolderSimpleDuotone  } from "react-icons/pi";
 import { LuBarChart2 } from "react-icons/lu"
 import { GiDiamondHard } from "react-icons/gi"
 import { PiCurrencyEthDuotone } from "react-icons/pi"
@@ -80,7 +80,7 @@ const Layout = () => {
                 
         {
             heading: "Tags", hId: 79, subHeaders: [
-                { title: "Tags list", icon: <PiShoppingCartSimpleDuotone />, id: 80,navtext:"tags",line: true },
+                { title: "Tags list", icon: <PiTagDuotone />, id: 80,navtext:"tags",line: true },
             ]
         },
 
@@ -131,7 +131,7 @@ const Layout = () => {
                     title: "Payments", icon: <PiUsersDuotone />, id: 46,navtext:"payments"
                 },
                 {
-                    title: "Advanced Payment", icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment"
+                    title: "Advanced Payment", icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment", line: true,
                 },
                 // { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
             ]
