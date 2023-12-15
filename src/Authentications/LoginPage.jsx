@@ -51,8 +51,8 @@ const LoginPage = () => {
   };
   return (
     <>
-      <div className="grid grid-cols-6 h-full">
-        <div className="col-span-6 sm:col-span-3 lg:col-span-2 h-full gap-3 flex flex-col bg-white p-3">
+      <div className="grid grid-cols-6 h-screen">
+        <div className="col-span-6 sm:col-span-3 lg:col-span-2 h-full gap-3 flex flex-col bg-white p-3 lg:pt-16">
           <h2 className=" text-xl font-bold">Sign In</h2>
           <p>Please login to your account</p>
           <form

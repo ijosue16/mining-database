@@ -41,7 +41,7 @@ import MixedEntryForm from './Pages/mixed/entry/MixedEntryForm';
 import ColtanListPage from './Pages/coltan/ColtanList';
 import ColtanEditForm from './Pages/coltan/entry/ColtanEditForm';
 import ColtanEntryCompletePage from './Pages/coltan/entry/ColtanEntryComplete';
-import ColtanPaymentsPage from './Pages/coltan/payment/ColtanPaymentsPage';
+import PaymentsPage from './Pages/coltan/payment/PaymentsPage';
 import Layout from './Layout/Layout';
 import StockPage from './Pages/shipment/StockPage';
 import ShipmentPage from './Pages/shipment/ShipmentPage';
@@ -113,7 +113,7 @@ function App() {
                             <Route path='/login' element={<LoginPage/>}/>
                             <Route element={<Layout/>}>
                                 <Route element={<RequireAuth/>}>
-                                    <Route path='/payment/:model/:entryId/:lotNumber?' element={<ColtanPaymentsPage/>}/>
+                                    <Route path='/payment/:model/:entryId/:lotNumber?' element={<PaymentsPage/>}/>
                                     <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
                                     <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                     <Route path='/shipment/add/:model' element={<StockPage/>}/>
