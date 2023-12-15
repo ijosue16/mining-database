@@ -313,161 +313,16 @@ const LithiumEditForm = () => {
                         </ul> */}
 
                           <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                          <li className=" space-y-2 flex items-end gap-3 col-span-full ">
-                    <div>
-                      <p>Trade in Company</p>
 
-                      <div ref={modalRef} className="w-fit h-fit relative ">
-                        <div
-                          className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
-                          onClick={() => {
-                            setDropdownOpen((prev) => !prev);
-                          }}
-                        >
-                          <p className=" ">
-                            {selectedSupplierName
-                              ? selectedSupplierName
-                              : "select a supplier"}
-                          </p>
-                          <BsChevronDown
-                            className={`text-md transition ease-in-out duration-500 ${
-                              dropdownOpen ? "rotate-180" : null
-                            }`}
-                          />
-                        </div>
-                        <motion.div
-                          animate={
-                            dropdownOpen
-                              ? { opacity: 1, x: -8, y: 1, display: "block" }
-                              : { opacity: 0, x: 0, y: 0, display: "none" }
-                          }
-                          transition={{
-                            type: "spring",
-                            duration: 0.8,
-                            bounce: 0.35,
-                          }}
-                          className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl z-50`}
-                        >
-                          <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
-                            <HiOutlineSearch className={`text-lg `} />
-                            <input
-                              type="text"
-                              name="searchTextInput"
-                              id="searchTextInput"
-                              placeholder="Search"
-                              className="w-full focus:outline-none"
-                              value={searchText}
-                              onChange={handleSearchInputChange}
-                            />
-                          </div>
-                          {isGetting?<div className="w-full flex justify-start items-center gap-1">
-                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p className=" text-slate-400">Fetching suppliers...</p>
-                          </div>:<ul className={`list-none  overflow-auto `}>
-                            {filteredSuppliers.map((supplier, index) => (
-                              <li
-                                key={index}
-                                className=" hover:bg-slate-300 rounded-md p-2"
-                                onClick={() => handleSupplierSelect(supplier)}
-                              >
-                                {supplier.companyName}
-                              </li>
-                            ))}
-                          </ul>}
-                        </motion.div>
-                      </div>
-                    </div>
-                    <button
-                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
-                      onClick={() => navigate("/add/supplier")}
-                    >
-                      New supplier
-                    </button>
-                  </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Company name</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="companyName"
-                                  id="companyName"
-                                  value={formval.companyName || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            {/* <li className=" space-y-1">
-                      <p className="pl-1">Email</p>
-                      <input
-                        type="email"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="email"
-                        id="email"
-                        value={formval.email || ""}
-                        onChange={handleEntry}
-                      />
-                    </li> */}
-                            <li className=" space-y-1">
-                              <p className="pl-1">TIN Number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="TINNumber"
-                                  id="TINNumber"
-                                  value={formval.TINNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Licence number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="licenseNumber"
-                                  id="licenseNumber"
-                                  value={formval.licenseNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Company representative</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="companyRepresentative"
-                                  id="companyRepresentative"
-                                  value={formval.companyRepresentative || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Representative ID number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="representativeId"
-                                  id="representativeId"
-                                  value={formval.representativeId || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Representative phone nbr</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="representativePhoneNumber"
-                                  id="representativePhoneNumber"
-                                  value={formval.representativePhoneNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
+                          <li className=" space-y-1">
+                                                   <p className="pl-1">Supplier</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="supplierName" id="supplierName" value={formval.supplierName || ''} onChange={handleEntry} />
+                                               </li>
+
+                                               <li className=" space-y-1">
+                                                   <p className="pl-1">Phone number</p>
+                                                   <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={formval.phoneNumber || ''} onChange={handleEntry} />
+                                               </li>
                             <li className=" space-y-1">
                               <p className="pl-1">Minerals Types</p>
                               <input
@@ -519,19 +374,14 @@ const LithiumEditForm = () => {
                               />
                             </li>
                             <li className=" space-y-1">
-                      <span className=" flex gap-2 items-center">
-                        <p>Beneficiary</p>
-                        {/* <span className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${checked ? ' justify-end bg-green-400' : ' justify-start bg-slate-400'}`} onClick={handleCheck}>
-                                        <span className={` w-4 h- border bg-white rounded-full `}></span>
-                                    </span> */}
-                      </span>
+                              <p className="pl-1">Weight out</p>
                               <input
                                   type="text"
                                   autoComplete="off"
                                   className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="beneficiary"
-                                  id="beneficiary"
-                                  value={formval.beneficiary || ""}
+                                  name="weightOut"
+                                  id="weightOut"
+                                  value={formval.weightOut || ""}
                                   onChange={handleEntry}
                               />
                             </li>
