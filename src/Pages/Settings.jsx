@@ -26,7 +26,7 @@ const Settings = () => {
     rmaFeeWolframite: "",
     nameOfCompany: "",
     representative: "",
-    address: { province: "", district: "", sector: "" },
+    address: { province: "", district: "", sector: "",street:"" },
     editExpiresIn: "",
     logsLifeTime: "",
   });
@@ -231,6 +231,18 @@ const Settings = () => {
                         id="sector"
                         autoComplete="off"
                         value={settings.address.sector}
+                        className="focus:outline-none p-2 border rounded-lg w-full"
+                        onChange={handleChange}
+                      />
+                    </li>
+                    <li>
+                      <p className="mb-1"> Road number Street</p>
+                      <input
+                        type="text"
+                        name="address.street"
+                        id="street"
+                        autoComplete="off"
+                        value={settings.address.street}
                         className="focus:outline-none p-2 border rounded-lg w-full"
                         onChange={handleChange}
                       />

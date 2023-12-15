@@ -102,8 +102,8 @@ const AddContract = () => {
       fileInputRefs[key].current.click();
     };
 
-    const filteredBuyers = sup.filter((supplier) => {
-      const companyName = supplier.companyName || "";
+    const filteredBuyers = sup.filter((buyer) => {
+      const companyName = buyer.companyName || "";
       return companyName.toLowerCase().includes(searchText.toLowerCase());
     });
   
@@ -111,9 +111,9 @@ const AddContract = () => {
       setSearchText(e.target.value);
     };
   // IYI
-    const handleBuyerSelect = (supplier) => {
-      setSelectedBuyerName(supplier.buyerName);
-      const chosenBuyer = sup.find((sup) => sup._id === supplier._id);
+    const handleBuyerSelect = (buyer) => {
+      setSelectedBuyerName(buyer.name);
+      const chosenBuyer = sup.find((sup) => sup._id === buyer._id);
       if (chosenBuyer) {
         setContractInfo({
           ...contractInfo,
@@ -126,13 +126,11 @@ const AddContract = () => {
         // setBeneficial(chosenBuyer.buyerName);
       }
       // setchecked(false);
-      setContractInfo((prev) => ({ ...prev, supplierId: supplier._id }));
-      console.log(supplier._id);
+      setContractInfo((prev) => ({ ...prev, buyerIdId: setShipmentDetails._id }));
+      console.log(setShipmentDetails._id);
       setDropdownOpen(false);
       setSearchText("");
     };
-  
-  
 
     const handleChange = (e) => {
         if (e.target.type === "file") {
@@ -217,7 +215,6 @@ const AddContract = () => {
                         </select>
                     </li> */}
                                            <li className=" space-y-2 flex items-end gap-3 col-span-full ">
-                    {/* <div> */}
                       
                       <div ref={modalRef} className="w-fit h-fit relative ">
                         <div
@@ -264,15 +261,15 @@ const AddContract = () => {
                           </div>
                           {isGetting?<div className="w-full flex justify-start items-center gap-1">
                           <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p className=" text-slate-400">Fetching suppliers...</p>
+                          <p className=" text-slate-400">Fetching buyers...</p>
                           </div>:<ul className={`list-none  overflow-auto `}>
-                            {filteredBuyers.map((supplier, index) => (
+                            {filteredBuyers.map((buyers, index) => (
                               <li
                                 key={index}
                                 className=" hover:bg-slate-300 rounded-md p-2"
-                                onClick={() => handleBuyerSelect(supplier)}
+                                onClick={() => handleBuyerSelect(buyers)}
                               >
-                                {supplier.name}
+                                {buyers.name}
                               </li>
                             ))}
                           </ul>}
@@ -350,90 +347,7 @@ const AddContract = () => {
                           {fileNames.contract}
                         </p>
                   </li>
-                  {/* <li className=" space-y-1">
-                    <p className="pl-1">Number of Tags</p>
-                    <input
-                      type="number"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="numberOfTags"
-                      id="numberOfTags"
-                      value={formval.numberOfTags || ""}
-                      onWheelCapture={(e) => {
-                        e.target.blur();
-                      }}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <span className=" flex gap-2 items-center">
-                      <p>Beneficiary</p>
-                      <span
-                        className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
-                          checked
-                            ? " justify-end bg-green-400"
-                            : " justify-start bg-slate-400"
-                        }`}
-                        onClick={handleCheck}
-                      >
-                        <span
-                          className={` w-4 h- border bg-white rounded-full `}
-                        ></span>
-                      </span>
-                    </span>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      disabled={checked}
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="beneficiary"
-                      id="beneficiary"
-                      value={formval.beneficiary || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
 
-                  <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                    <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                      <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">
-                        Lots
-                      </p>
-                    </span>
-                    <div className="col-span-1 space-y-3">
-                      {lotDetails.map((lot, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-2 items-center w-full"
-                        >
-                          <p className=" font-semibold">{index + 1}</p>
-                          <input
-                            animate={{}}
-                            type="number"
-                            autoComplete="off"
-                            className="focus:outline-none p-2 border rounded-md w-full"
-                            name="weightOut"
-                            value={lot.weightOut || ""}
-                            onWheelCapture={(e) => {
-                              e.target.blur();
-                            }}
-                            onChange={(e) => handleLotEntry(index, e)}
-                          />
-                          <HiMinus
-                            onClick={() => handleLRemoveLot(index)}
-                            className={`${
-                              lotDetails.length - 1 == 0 ? "hidden" : ""
-                            }`}
-                          />
-                          <HiPlus
-                            onClick={handleAddLot}
-                            className={`${
-                              lotDetails.length - 1 !== index ? "hidden" : ""
-                            }`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </li>  */}
                 </ul>
               </div>
             }
@@ -442,37 +356,7 @@ const AddContract = () => {
             Cancel={handleCancel}
             isloading={isLoading}/>}/>
         </>
-        // <div>
-        //     <div>
-        //         <p>Contract filename</p>
-        //         <input type="text" name="name" value={contractInfo.name} onChange={handleChange}/>
-        //     </div>
-        //     <div>
-        //         <p>Buyer Name</p>
-        //         <input type="text" name="buyerName" value={contractInfo.buyerName} onChange={handleChange}/>
-        //     </div>
-        //     <div>
-        //         <p>Minerals</p>
-        //         <input type="text" name="minerals" value={contractInfo.minerals} onChange={handleChange}/>
-        //     </div>
-        //     <div>
-        //         <p>Start Date</p>
-        //         <input type="date" name="contractStartDate" value={contractInfo.contractStartDate} onChange={handleChange}/>
-        //     </div>
-        //     <div>
-        //         <p>Expiry Date</p>
-        //         <input type="date" name="contractExpiryDate" value={contractInfo.contractExpiryDate} onChange={handleChange}/>
-        //     </div>
-        //     <div>
-        //         <p>Concentration</p>
-        //         <input type="text" name="grade" value={contractInfo.grade} onChange={handleChange}/>
-        //     </div>
-        //     <input type="file" name="contract"/>
-        //     <div>
-        //         <button type="button" onClick={handleSubmit}>Submit</button>
-        //         <button type="button" onClick={handleCancel}>Cancel</button>
-        //     </div>
-        // </div>
+      
     )
 }
 
