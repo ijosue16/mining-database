@@ -85,8 +85,10 @@ const ColtanListPage = () => {
             const {entries: entrz} = dt;
             if (entrz) {
                 setDataz(entrz);
-                console.log(entrz)
             }
+        } else if (isError) {
+            const { message: errorMessage } = error.data;
+            return message.error(errorMessage);
         }
     }, [isSuccess, data]);
 

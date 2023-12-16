@@ -33,7 +33,7 @@ const Layout = () => {
     }
 
     const handleLogOut=async()=>{
-        const body={userName:userData.username,_id:userData._id}
+        const body={username: userData.username, _id:userData._id}
         await userLogout({body});
         dispatch(setAuthToken(null));
         dispatch(setUserData(null));

@@ -63,11 +63,15 @@ export function openNotification  ({message, description, type}) {
 }
 
 export const AppUrls = {
-    server: "https://mining-company-management-system.onrender.com/api/v1",
+    server: "http://localhost:5001/api/v1",
 }
 
 export function handleConvertToUSD (amount, USDRate) {
     return amount / USDRate;
+}
+
+export function handleConvertToRWF (amount, USDRate) {
+    return amount * USDRate;
 }
 
 

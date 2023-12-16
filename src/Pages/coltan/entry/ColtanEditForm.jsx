@@ -334,7 +334,7 @@ const ColtanEditForm = () => {
 
 
   const handleLotEntry = (index, e) => {
-    validateWeightInEntry(index, lotDetails, e, formval.weightIn)
+    validateWeightInEntry(index, lotDetails, e, formval.weightIn);
     setlotDetails((prevLotDetails) => {
       const updatedLotDetails = prevLotDetails.map((lot, i) => {
         if (i === index) {

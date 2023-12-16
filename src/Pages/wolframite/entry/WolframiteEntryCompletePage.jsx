@@ -25,7 +25,7 @@ import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {TbReport} from "react-icons/tb";
 
 const WolframiteEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -107,10 +107,10 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     };
 
     const props = {
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
         onChange: (info) => {
-            if (info.file.status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
             if (info.file.status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully`);
                 // refetch()
