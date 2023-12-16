@@ -60,14 +60,16 @@ const Layout = () => {
                 { title: "Wolframite", icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
                 { title: "Lithium", icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
                 { title: "Beryllium", icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
-                { title: "Mixed", icon: <PiCurrencyEthDuotone />, id: 20,navtext:'mixed', line: true, },
+                { title: "Mixed", icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
+                    { title: "Cassiterite and Coltan ", id: 86,navtext:"mixed" },
+                    { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" },]},
                 // { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },
             ]
         },
         {
             heading: "Shipments", hId: 3, subHeaders: [
                 { title: "Shipments list", icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
-                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 23,navtext:"",submenuItems: [
+                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 23,submenuItems: [
                     { title: "Coltan", id: 24,navtext:"shipment/add/coltan" },
                     { title: "Cassiterite", id: 25,navtext:"shipment/add/cassiterite" },
                     { title: "Wolframite", id: 26,navtext:"shipment/add/wolframite" },
