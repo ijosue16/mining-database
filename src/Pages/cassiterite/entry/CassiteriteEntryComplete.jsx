@@ -25,7 +25,7 @@ import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/h
 import {TbReport} from "react-icons/tb";
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     // const {loginData} = useMyContext();
@@ -110,6 +110,9 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     };
 
     const props = {
+        headers: {
+            authorization: `Bearer ${token}`,
+        },
         onChange: (info) => {
             if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);

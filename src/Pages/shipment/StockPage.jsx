@@ -14,6 +14,7 @@ import {
   useAddShipmentMutation,
 } from "../../states/apislice";
 import dayjs from "dayjs";
+import {getModelAcronym} from "../../components/helperFunctions";
 
 const StockPage = () => {
   const { model } = useParams();
@@ -82,40 +83,47 @@ const StockPage = () => {
     const newTransformedData = selectedData.map((item) => ({
       entryId: item._id,
       lotNumber: item.lotNumber,
-      quantity: item.cumulativeAmount,
+      quantity: parseFloat(item.toBeExported),
     }));
 
     const newTotalWeight = selectedData.reduce(
-        (total, item) => total + item.cumulativeAmount,
+        (total, item) => total + parseFloat(item.toBeExported),
         0
     );
     setTotalWeight(newTotalWeight);
 
     const totalGrade = selectedData.reduce(
-        (total, item) => total + item.cumulativeAmount * item.mineralGrade,
+        (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
         0
     );
 
-    // const totalPrice = selectedData.reduce(
-    //   (total, item) => total + item.cumulativeAmount * item.mineralGrade,
-    //   0
-    // );
+    const totalPrice = selectedData.reduce(
+      (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
+      0
+    );
+
+    const averagePrice = newTotalWeight > 0 ? (totalPrice / newTotalWeight).toFixed(3) : "0.000";
+
     const averagegrade = newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
-
     setAvg(averagegrade);
-    setAvgPrice(newTotalWeight); //TO ADD  AVG PRICE FORMULA
+    setAvgPrice(averagePrice); //TO ADD  AVG PRICE FORMULA
     setTransformedData(newTransformedData);
     setShipmentInfo((prevState) => ({
       ...prevState,
       entries: newTransformedData,
       averageGrade: averagegrade,
-      averagePrice: "22",
+      averagePrice: averagePrice,
       netWeight: newTotalWeight,
     }));
   }, [selectedData]);
 
   const handleOpenModal = () => {
+    if (selectedData.length > 0) {
+      if (getModelAcronym(model) !== selectedData[0].mineralType && selectedData[0].mineralType !== "MIXED") {
+        setSelectedData([]);
+      }
+    }
     setOpenModal(!openModal);
     setShipmentNumber("");
   };
@@ -146,40 +154,58 @@ const StockPage = () => {
     const index = newData.findIndex((item) => key === item.index);
     if (index > -1) {
       const item = newData[index];
-      newData.splice(index, 1, {
+      const updatedItem = {
         ...item,
         ...row,
-        cumulativeAmount: parseFloat(row.cumulativeAmount),
+      };
+      if (parseFloat(updatedItem.toBeExported) !== parseFloat(item.toBeExported)) {
+        if (parseFloat(updatedItem.toBeExported) > parseFloat(updatedItem.cumulativeAmount)) {
+          return message.error("To be exported cannot be greater than amount");
+        }
+      }
+
+
+      newData.splice(index, 1, {
+        ...updatedItem
+        // cumulativeAmount: parseFloat(row.cumulativeAmount),
       });
       // setSelectedData(newData);
       const newTotalWeight = newData.reduce(
-          (total, item) => total + item.cumulativeAmount,
+          (total, item) => total + parseFloat(item.toBeExported),
           0
       );
 
-      const totalGrade = newData.reduce(
-          (total, item) => total + item.cumulativeAmount * item.mineralGrade,
+      const totalGrade = selectedData.reduce(
+          (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
           0
       );
+
+      const totalPrice = selectedData.reduce(
+          (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
+          0
+      );
+
+      const averagePrice = newTotalWeight > 0 ? (totalPrice / newTotalWeight).toFixed(3) : "0.000";
 
       const averagegrade =
           newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
 
       setTotalWeight(newTotalWeight);
       setAvg(averagegrade);
+      setAvgPrice(averagePrice);
       setEditRowKey("");
       setSelectedData(newData);
       const newTransformedData = newData.map((item) => ({
         entryId: item._id,
         lotNumber: item.lotNumber,
-        quantity: item.cumulativeAmount,
+        quantity: parseFloat(item.toBeExported),
       }));
       setTransformedData(newTransformedData);
       setShipmentInfo((prevState) => ({
         ...prevState,
         entries: newTransformedData,
         averageGrade: averagegrade,
-        averagePrice: "22",
+        averagePrice: averagePrice,
         netWeight: newTotalWeight,
       }));
     }
@@ -197,38 +223,45 @@ const StockPage = () => {
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
     },
     { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
-
-    {
-      title: "balance (KG)",
-      dataIndex: "cumulativeAmount",
-      key: "cumulativeAmount",
-      editTable: true,
-    },
     {
       title: "type",
       dataIndex: "mineralType",
       key: "mineralType",
-      editTable: true,
+      // editTable: true,
     },
     {
       title: "weight out (KG)",
       dataIndex: "weightOut",
       key: "weightOut",
-      editTable: true,
+      // editTable: true,
     },
     {
       title: "Exported (KG)",
       dataIndex: "exportedAmount",
       key: "exportedAmount",
-      editTable: true,
+      // editTable: true,
       render: (_, record) => {
         return <span>{record.exportedAmount}</span>
       }
     },
     {
+      title: "balance (KG)",
+      dataIndex: "cumulativeAmount",
+      key: "cumulativeAmount",
+    },
+    {
       title: "Grade (%)",
       dataIndex: "mineralGrade",
       key: "mineralGrade",
+    },
+    {
+      title: "To be Exported (KG)",
+      dataIndex: "toBeExported",
+      key: "toBeExported",
+      render: (_, record) => {
+        return <span>{record.toBeExported}</span>
+      },
+      editTable: true,
     },
     {
       title: "Select",
@@ -371,6 +404,7 @@ const StockPage = () => {
       ...col,
       onCell: (record) => ({
         record,
+        dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),
       }),
@@ -385,7 +419,15 @@ const StockPage = () => {
                           children,
                           ...restProps
                         }) => {
-    const input = <Input style={{ margin: 0 }} type="number" />;
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      if (name === "toBeExported") {
+        if (parseFloat(value) > parseFloat(record.cumulativeAmount)) {
+          return message.error("To be exported amount cannot be greater than balance")
+        }
+      }
+    }
+    const input = <Input style={{ margin: 0 }} name={dataIndex} onChange={handleChange} type="number" />;
     return (
         <td {...restProps}>
           {editing ? (
@@ -400,12 +442,17 @@ const StockPage = () => {
   };
 
   const handleRowToggle = (record) => {
+    if (selectedData.length > 0) {
+      if (record.mineralType !== selectedData[0].mineralType && selectedData[0].mineralType !== "MIXED") {
+        setSelectedData([]);
+      }
+    }
     if (selectedData.some((selected) => selected.index === record.index)) {
       setSelectedData((prevSelectedData) =>
           prevSelectedData.filter((selected) => selected.index !== record.index)
       );
     } else {
-      setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
+      setSelectedData((prevSelectedData) => [...prevSelectedData, {...record, toBeExported: record.cumulativeAmount}]);
     }
   };
 
@@ -496,26 +543,38 @@ const StockPage = () => {
                             }}
                             pagination={false}
                             expandable={{
-                              expandedRowRender: (record) => (
-                                  <div className=" space-y-3 w-full">
-                                    <p className=" text-lg font-bold">More Details</p>
-                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                              <span className=" space-y-2">
-                                <p className="text-md font-semibold">
-                                  Exported amount: {record.exportedAmount}
-                                </p>
-                                <p className="text-md font-semibold">
-                                  Mineral price: {record.mineralPrice}
-                                </p>
-                              </span>
-                                      <span className=" space-y-2">
-                                <p className="text-md font-semibold">
-                                  Price per unit: {record.pricePerUnit}
-                                </p>
-                              </span>
+                              expandedRowRender: (record) => {
+                                return (
+                                    <div className=" space-y-3 w-full">
+                                      <p className=" text-lg font-bold">More Details</p>
+                                      <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                                        <span className=" space-y-2">
+                                          <p className="text-md font-semibold">
+                                            Exported amount: {record.exportedAmount}
+                                          </p>
+                                          <p className="text-md font-semibold">
+                                            Mineral price: {record.mineralPrice}
+                                          </p>
+                                        </span>
+                                        <span className=" space-y-2">
+                                          <p className="text-md font-semibold">
+                                            Price per unit: {record.pricePerUnit}
+                                          </p>
+                                        </span>
+                                        {model === "coltan" && (
+                                            <span className=" space-y-2">
+                                              <p className="text-md font-semibold">
+                                                Niobium: {record.niobium}
+                                              </p>
+                                              <p className="text-md font-semibold">
+                                                Iron: {record.iron}
+                                              </p>
+                                            </span>
+                                        )}
+                                      </div>
                                     </div>
-                                  </div>
-                              ),
+                                )
+                              },
                               rowExpandable: (record) => record.supplierName !== "not expandable",
                             }}
                             rowKey="index"
@@ -528,17 +587,17 @@ const StockPage = () => {
                       <p className=" font-medium col-span-1 p-2 w-full border ">{totalWeight}</p>
                     </span>
                         <span className="flex items-center justify-between w-full md:w-1/2  rounded-sm">
-                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Avg:</p>
-                      <p className=" font-medium p-2 border sm:border-t-0 w-1/2 h-full">{avg}</p>
+                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Avg Grade:</p>
+                      <p className=" font-medium p-2 border sm:border-t-0 w-1/2 h-full"> {avg}</p>
                     </span>
                         <span className="flex items-center justify-between w-full md:w-1/2  rounded-sm">
-                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Total ($):</p>
+                      <p className=" font-semibold p-2 w-1/2 border-b text-start bg-slate-50">Avg Price($):</p>
                       <p className=" font-medium p-2 border sm:border-t-0 w-1/2 h-full">{avgPrice}</p>
                     </span>
 
                       </div>
                       <div className="w-full space-y-2">
-                        <p className=" font-semibold">Shipment number</p>
+                        <p className=" font-semibold">Internal Shipment number</p>
                         <input type="text" name="shipmentNumber" id="shipmentNumber" value={shipmentNumber} className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleShipmentNumber}/>
                       </div>
                       <button

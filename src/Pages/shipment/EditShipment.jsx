@@ -30,6 +30,12 @@ const EditShipment = ({record: shipment}) => {
     });
     const [stock, setStock] = useState([]);
     const [selectedStock, setSelectedStock] = useState(new Set());
+    const [shipmentInfo, setShipmentInfo] = useState({
+        averagePrice: null,
+        averageGrade: null,
+        netWeight: null,
+    })
+
 
     useEffect(() => {
         if (isStockSuccess) {
@@ -86,8 +92,18 @@ const EditShipment = ({record: shipment}) => {
 
     useEffect(() => {
         if (isSuccess) {
-            const {shipmentLots: shipmentComponents} = data.data;
+            const {shipmentLots: shipmentComponents, shipment} = data.data;
             setShipmentLots(shipmentComponents);
+            if (shipment) {
+                const {averagePrice, averageGrade, netWeight} = shipment;
+                if (averagePrice || averageGrade || netWeight) {
+                    setShipmentInfo({
+                        averagePrice,
+                        averageGrade,
+                        netWeight,
+                    })
+                }
+            }
         }
     }, [isSuccess, data]);
 
@@ -140,7 +156,6 @@ const EditShipment = ({record: shipment}) => {
             await updateShipment({body, shipmentId: shipment._id});
         }
     };
-
 
 
     const handleActions = (id) => {
@@ -356,9 +371,15 @@ const EditShipment = ({record: shipment}) => {
             title: 'Date',
             dataIndex: 'supplyDate',
             key: 'supplyDate',
-            render: (text) => (
-                <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-            ),
+            render: (text) => {
+                if (text) {
+                    return (
+                        <p>{dayjs(text).format("MMM DD, YYYY")}</p>
+                    )
+                } else {
+                    return null;
+                }
+            },
             width: 100
         },
         {
@@ -427,6 +448,11 @@ const EditShipment = ({record: shipment}) => {
                     actionsContainer={
                         <>
                             <Form form={form} component={false}>
+                                <div>
+                                    <p className="font-semibold p-2">Net Weight: {shipmentInfo.netWeight}</p>
+                                    <p className="font-semibold p-2">Average Grade: {shipmentInfo.averageGrade}</p>
+                                    <p className="font-semibold p-2">Average Price: {shipmentInfo.averagePrice}</p>
+                                </div>
                                 <Table
                                     loading={{
                                         indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}

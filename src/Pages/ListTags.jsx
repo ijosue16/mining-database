@@ -127,13 +127,25 @@ const ListTags = () => {
             title: "registration Date",
             dataIndex: "registrationDate",
             key: "registrationDate",
-            render: (text)  => dayjs(text).format("MMM DD, YYYY")
+            render: (text)  => {
+                if (text) {
+                    return <span>{dayjs(text).format("MMM DD, YYYY")}</span>
+                } else {
+                    return null;
+                }
+            }
         },
         {
             title: "Export Date",
             dataIndex: "exportDate",
             key: "exportDate",
-            render: (text)  => dayjs(text).format("MMM DD, YYYY")
+            render: (text)  => {
+                if (text) {
+                    return <span>{dayjs(text).format("MMM DD, YYYY")}</span>
+                } else {
+                    return null;
+                }
+            }
         }
     ]
 

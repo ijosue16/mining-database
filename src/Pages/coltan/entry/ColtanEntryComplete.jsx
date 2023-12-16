@@ -21,7 +21,7 @@ import { useMyContext } from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
-import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
+import {AppUrls, filterColumns, getBase64FromServer, toInitialCase} from "../../../components/helperFunctions";
 import {TbReport} from "react-icons/tb";
 
 // const getBase64FromServer = (fileUrl) => {
@@ -37,7 +37,7 @@ import {TbReport} from "react-icons/tb";
 
 
 const ColtanEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -131,13 +131,16 @@ const ColtanEntryCompletePage = ({entryId}) => {
   };
 
   const props = {
+    headers: {
+        authorization: `Bearer ${token}`,
+    },
     onChange: (info) => {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);
       }
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
-        // refetch()
+        refetch()
       } else if (info.file.status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
@@ -295,8 +298,13 @@ const ColtanEntryCompletePage = ({entryId}) => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
+        ASIR: {
+            title: "ASIR",
+            dataIndex: "ASIR",
+            key: "ASIR",
+        },
         mineralGrade: {
-            title: "Grade (%)",
+            title: "Grade-KZM(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             // editTable: true, // adjust edit permission based on user permissions
@@ -630,6 +638,8 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                             await updateColtanEntry({body, entryId});
                                                         }
 
+
+
                                                         if (record) {
                                                             let color = "";
                                                             // const value='non-sell agreement'
@@ -662,8 +672,34 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                                     color = "bg-green-300";
                                                                 }
                                                             }
+                                                            const excludedFields = ["shipments", "nonSellAgreement", "comment", "weightOut", "lotNumber", "cumulativeAmount", "paymentHistory", "_id", "id", "status", "createdAt", "updatedAt", "__v"];
                                                             return (
                                                                 <>
+                                                                    <div className="w-full flex flex-col bg-white rounded-md p-2">
+                                                                        <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                          <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
+                                                                            Field Name
+                                                                          </p>
+                                                                          <p className=" font-medium col-span-1 p-2 w-full border ">
+                                                                            Value
+                                                                          </p>
+                                                                        </span>
+                                                                        {Object.entries(record).map(([key, value]) => {
+                                                                            if (!excludedFields.includes(key) && !Object.keys(restrictedColumns).includes(key)) {
+                                                                                return (
+                                                                                    <span key={key} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                                                                        <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
+                                                                                            {toInitialCase(key)}
+                                                                                        </p>
+                                                                                        <p className={`font-medium col-span-1 ${value === null ? "p-5" : "p-2"} w-full border`}>
+                                                                                            {value}
+                                                                                        </p>
+                                                                                    </span>
+                                                                                )
+                                                                            }
+                                                                        })}
+                                                                    </div>
+
                                                                     <div className=" space-y-3 w-full">
                                                                         <p className=" text-lg font-bold">More Details</p>
                                                                         <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">

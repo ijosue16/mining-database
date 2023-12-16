@@ -109,7 +109,7 @@ function App() {
                 <SocketContext.Provider value={socket}>
                     <Routes>
                         <Route element={<LoginDatacontextProvider/>}>
-                            <Route exact path="/" element={<Navigate to="/dashboard"/>}/>
+                            {/*<Route exact path="/" element={<Navigate to="/dashboard"/>}/>*/}
                             <Route path='/login' element={<LoginPage/>}/>
                             <Route element={<Layout/>}>
                                 <Route element={<RequireAuth/>}>

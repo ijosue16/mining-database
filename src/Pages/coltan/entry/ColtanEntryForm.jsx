@@ -15,6 +15,7 @@ import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
+import {validateWeightInEntry} from "../../../components/helperFunctions";
 
 const ColtanEntryForm = () => {
   let sup = [""];
@@ -117,6 +118,7 @@ const ColtanEntryForm = () => {
     });
   };
   const handleAddLot = () => {
+
     setlotDetails((prevLotDetails) => [
       ...prevLotDetails,
       { lotNumber: "", weightOut: "" },
@@ -124,6 +126,7 @@ const ColtanEntryForm = () => {
     updateLotNumbers();
   };
 
+  // TODO: validate weightIn entry
   const handleLotEntry = (index, e) => {
     const values = [...lotDetails];
     values[index][e.target.name] = e.target.value;
@@ -142,7 +145,6 @@ const ColtanEntryForm = () => {
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -213,7 +215,6 @@ const ColtanEntryForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -456,9 +457,7 @@ const ColtanEntryForm = () => {
                         }`}
                         onClick={handleCheck}
                       >
-                        <span
-                          className={` w-4 h- border bg-white rounded-full `}
-                        ></span>
+                        <span className={` w-4 h- border bg-white rounded-full `}/>
                       </span>
                     </span>
                     <input

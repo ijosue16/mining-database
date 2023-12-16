@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import TestChart from "./charts/TestChart";
 import {ImSpinner2} from "react-icons/im";
 import { useGetStockSummaryQuery, useGetYearStockSummaryQuery } from "../../states/apislice";
+import companyLogo from "../../assets/companyLogo.png";
 // import Obo from "./charts/roma.project.json";
 // import * as echarts from 'echarts';
 
 
 // echarts.registerTheme('custom theme', Obo.theme);
-const DashboardPage=()=>{
+const DashboardPage = () => {
   const[pieArray,SetPieArray]=useState([]);
   const [optionPie, setOptionPie] = useState({});
   const [optionStack, setOptionStack] = useState({});
@@ -81,7 +82,7 @@ useEffect(()=>{
           optionToContent: function(opt) {
           var axisData = opt.xAxis[0].data;
           var series = opt.series;
-          var table = '<table style="width:100%;height:85%;text-align:center;"><tbody><tr  style="font-weight:20px">'
+          var table = '<table style="width:100%;height:85%;text-align:center;"><tbody><tr  style="font-weight:20">'
                       + '<td>Month:</td>'
                       + '<td>' + series[0].name + '</td>'
                       + '<td>' + series[1].name + '</td>'
@@ -305,8 +306,9 @@ useEffect(()=>{
 // console.log(optionPie)
     
 return(
-    <div className=" py-5">
+    <div className="py-5">
     <p className=" font-bold text-lg mb-2">Dashboard Page</p>
+    <img className="mb-3 w-full border rounded-[4px]" src={companyLogo} alt="Company Logo"/>
     <div className=" grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-3">
         <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white space-y-2">
             {/* <p className=" text-base font-semibold">Weekly reports</p> */}
