@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState,useRef } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
-import {DatePicker, TimePicker, Spin, message} from "antd";
+import {DatePicker, TimePicker, Spin, message,Popover} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
@@ -100,6 +100,9 @@ const WolframiteEditForm = () => {
   ]);
   const [mineTags, setmineTags] = useState([
     { weight: null, tagNumber: "", sheetNumber: "", status: "" },
+  ]);
+  const [initialMineTags, setInitialmineTags] = useState([
+    { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
     { weight: null, tagNumber: "", sheetNumber: "", status: "" },
@@ -375,6 +378,28 @@ const WolframiteEditForm = () => {
       { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     updateLotNumbers();
+  };
+
+  const handleInitialMinetagsEntry = (e) => {
+    setInitialmineTags({ ...initialMineTags, [e.target.name]: e.target.value });
+  };
+// //////
+  const generateTags = () => {
+    const { weight, sheetNumber } = initialMineTags;
+    const startingTagNumber = parseInt(initialMineTags.tagNumber, 10) || 0;
+
+    const tags = Array.from({ length:(parseInt(initialMineTags.limit, 10) || 0) }, (_, index) => {
+      const tagNumber = startingTagNumber + index;
+      return {
+        weight,
+        tagNumber: isNaN(tagNumber) ? initialMineTags.tagNumber : tagNumber.toString(),
+        sheetNumber,
+      };
+    });
+    setmineTags(tags);
+    setInitialmineTags([
+      { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
+    ]);
   };
 
   const handleMinesTagEntry = (index, e) => {
@@ -907,30 +932,86 @@ const WolframiteEditForm = () => {
                                 ))}
                               </div>
                             </li>
-                            {/* <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                                <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                                    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">Mine Tags (tickets)</p>
-                                </span>
-                                <div className="col-span-full space-y-3">
-                                    {mineTags.map((tag, index) => (
-                                        <div key={index} className="flex gap-2 items-center w-full">
-                                            <p className=" font-semibold">{(index+1)}</p>
-                                            <span className="space-y-1">
-                                            <p className="pl-1 font-medium">Tag Weight</p>
-                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full sm:max-w-[150px]" name="weightInPerMineTag" value={tag.weightInPerMineTag || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleMinesTagEntry(index, e)} />
-                                            </span>
-                                            <span className="space-y-1">
-                                            <p className="pl-1 font-medium">Tag nbr</p>
-                                            <input animate={{}} type="number" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full sm:max-w-[150px]" name="tagNumber" value={tag.tagNumber || ''} onWheelCapture={e => { e.target.blur() }} onChange={e => handleMinesTagEntry(index, e)} />
-                                             </span>
-                                            <HiMinus onClick={() => handleLRemoveMinesTag(index)} className={`${mineTags.length - 1 == 0 ? 'hidden' : ''}`} />
-                                            <HiPlus onClick={handleAddMinesTag} className={`${mineTags.length - 1 !== index ? 'hidden' : ''}`} />
-                                        </div>
-                                    ))}
-                                </div>
-
-                            </li> */}
                           </ul>
+
+                          <Popover
+                    placement="bottomLeft"
+                    className="w-fit"
+                    content={
+                      <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit w-full list-none items-center p-2 bg-white rounded-md py-4">
+                        <li>
+                          <p className="mb-1 font-semibold">Initial sheet number</p>
+                          <input
+                            type="text"
+                            name="sheetNumber"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.sheetNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
+
+                        <li>
+                          <p className="mb-1 font-semibold">Initial tag weight</p>
+                          <input
+                            type="text"
+                            name="weight"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.weight || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1 font-semibold">Initial tag number</p>
+                          <input
+                            type="text"
+                            name="tagNumber"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.tagNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1 font-semibold">Tags to be generated </p>
+                         <Popover placement="bottom" content={<>
+                         <p>Enter tags to be generated including the first one</p>
+                         </>} title="Tags to be generated limit" trigger="focus">
+                         <input
+                            type="text"
+                            name="limit"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.limit || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                         </Popover>
+                        </li>
+                        <li className=" col-span-full">
+                        <button type="button" className="p-2 bg-orange-300 rounded" onClick={generateTags}>confirm</button>
+                        </li>
+                      </ul>
+                    }
+                    title="Generate number of tags needed"
+                    trigger="click"
+                  >
+                    <button type="button" className="p-2 bg-orange-300 rounded">
+                      Select nbr of tags to enter
+                    </button>
+                  </Popover>
 
                           <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t relative p-2 shadow-lg rounded-md bg-gray-100">
                             <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">

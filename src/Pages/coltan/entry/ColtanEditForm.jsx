@@ -1,28 +1,43 @@
-import React, {Fragment, useEffect, useRef, useState} from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
-import {DatePicker, TimePicker, message, Spin, notification, Checkbox,Popover} from "antd";
+import {
+  DatePicker,
+  TimePicker,
+  message,
+  Spin,
+  notification,
+  Checkbox,
+  Popover,
+} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useUpdateColtanEntryMutation,
-  useGetOneColtanEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,
-  useGetSupplierTagsQuery,useGetAllSuppliersQuery
+  useGetOneColtanEntryQuery,
+  useGetOneEditRequestQuery,
+  useUpdateEditRequestMutation,
+  useGetSupplierTagsQuery,
+  useGetAllSuppliersQuery,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
-import {HiPlus, HiMinus, HiOutlineSearch} from "react-icons/hi";
+import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
-import {toCamelCase, openNotification, validateWeightInEntry} from "../../../components/helperFunctions";
+import {
+  toCamelCase,
+  openNotification,
+  validateWeightInEntry,
+} from "../../../components/helperFunctions";
 import Countdown from "react-countdown";
-import {BsChevronDown} from "react-icons/bs";
-import {ImSpinner2} from "react-icons/im";
+import { BsChevronDown } from "react-icons/bs";
+import { ImSpinner2 } from "react-icons/im";
 import ExistingMineTags from "../../ExistingMineTags";
 
 const ColtanEditForm = () => {
-  let sup=[""];
+  let sup = [""];
   const { entryId, requestId } = useParams();
 
   const navigate = useNavigate();
@@ -32,26 +47,28 @@ const ColtanEditForm = () => {
 
   const [supplierId, setSupplierId] = useState("");
 
-  const { data: requestData, isSuccess: isRequestSuccess } = useGetOneEditRequestQuery({ requestId },
+  const { data: requestData, isSuccess: isRequestSuccess } =
+    useGetOneEditRequestQuery(
+      { requestId },
       {
         skip: !isRequestAvailable,
         refetchOnMountOrArgChange: true,
-        refetchOnReconnect: true
+        refetchOnReconnect: true,
       }
-  );
-  const [updateEditRequest, {
-    isSuccess: isUpdateSuccess,
-    isError: isUpdateError,
-    error: updateError
-  }] = useUpdateEditRequestMutation();
-
+    );
+  const [
+    updateEditRequest,
+    { isSuccess: isUpdateSuccess, isError: isUpdateError, error: updateError },
+  ] = useUpdateEditRequestMutation();
 
   const { data, isLoading, isError, error, isSuccess } =
-      useGetOneColtanEntryQuery({ entryId },
-          {
-            refetchOnMountOrArgChange: true,
-            refetchOnReconnect: true}
-      );
+    useGetOneColtanEntryQuery(
+      { entryId },
+      {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true,
+      }
+    );
   const [
     updateColtanEntry,
     {
@@ -62,15 +79,20 @@ const ColtanEditForm = () => {
     },
   ] = useUpdateColtanEntryMutation();
 
-  const { data:supps, isLoading:isGetting, isError:isFault, error:fault, isSuccess:isGot } =
-  useGetAllSuppliersQuery();
+  const {
+    data: supps,
+    isLoading: isGetting,
+    isError: isFault,
+    error: fault,
+    isSuccess: isGot,
+  } = useGetAllSuppliersQuery();
 
-    if (isGot) {
-      const { data: dt } = supps;
-      const { suppliers: sups } = dt;
-      sup = sups;
-      console.log(sup);
-    };
+  if (isGot) {
+    const { data: dt } = supps;
+    const { suppliers: sups } = dt;
+    sup = sups;
+    console.log(sup);
+  }
 
   useEffect(() => {
     if (isDone) {
@@ -108,8 +130,9 @@ const ColtanEditForm = () => {
   const [mineTags, setmineTags] = useState([
     { weight: null, tagNumber: "", sheetNumber: "", status: "" },
   ]);
+  // ////
   const [initialMineTags, setInitialmineTags] = useState([
-    { weight: null, tagNumber: "", sheetNumber: "",limit:""},
+    { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
   ]);
   const [negociantTags, setnegociantTags] = useState([
     { weight: null, tagNumber: "", sheetNumber: "", status: "" },
@@ -143,13 +166,16 @@ const ColtanEditForm = () => {
     };
   }, []);
 
-
   useEffect(() => {
     if (isRequestSuccess) {
       const { editRequest } = requestData.data;
       if (editRequest) {
         if (new Date(editRequest.editExpiresAt) < new Date()) {
-          openNotification({message: "Request Expired", description: "This request has expired", type: "error"});
+          openNotification({
+            message: "Request Expired",
+            description: "This request has expired",
+            type: "error",
+          });
           navigate(-1);
         } else {
           setRequestInfo(editRequest);
@@ -161,12 +187,14 @@ const ColtanEditForm = () => {
 
   const decideEditable = (field) => {
     if (editableFields) {
-      const editableField = editableFields.find((item) => toCamelCase(item.fieldname) === field);
+      const editableField = editableFields.find(
+        (item) => toCamelCase(item.fieldname) === field
+      );
       if (!editableField) {
         return true;
       }
     }
-  }
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -236,8 +264,6 @@ const ColtanEditForm = () => {
     setSearchText("");
   };
 
-
-
   const handleSearch = (e) => {
     setSearch(e.target.value);
     const clickedBook = sup.find((sup) => sup._id === e.target.value);
@@ -269,8 +295,8 @@ const ColtanEditForm = () => {
       if (e.key === "ArrowUp" && selectedItem > 0) {
         setSelectedItem((prev) => prev - 1);
       } else if (
-          e.key === "ArrowDown" &&
-          selectedItem < searchData.length - 1
+        e.key === "ArrowDown" &&
+        selectedItem < searchData.length - 1
       ) {
         setSelectedItem((prev) => prev + 1);
       } else if (e.key === "Enter" && selectedItem >= 0) {
@@ -300,14 +326,14 @@ const ColtanEditForm = () => {
     }
   };
 
-  const handleAddDate = ( dateString) => {
+  const handleAddDate = (dateString) => {
     setFormval((prevState) => ({
       ...prevState,
       supplyDate: dateString,
     }));
   };
 
-  const handleAddTime = ( timeString) => {
+  const handleAddTime = (timeString) => {
     setFormval((prevState) => ({
       ...prevState,
       time: timeString,
@@ -332,9 +358,8 @@ const ColtanEditForm = () => {
     updateLotNumbers();
   };
 
-
   const handleLotEntry = (index, e) => {
-    validateWeightInEntry(index, lotDetails, e, formval.weightIn)
+    validateWeightInEntry(index, lotDetails, e, formval.weightIn);
     setlotDetails((prevLotDetails) => {
       const updatedLotDetails = prevLotDetails.map((lot, i) => {
         if (i === index) {
@@ -375,9 +400,29 @@ const ColtanEditForm = () => {
     });
     setlotDetails(updatedValues);
   };
-  const handleInitialMinetagsEntry= (e) => {
+  // /////
+  const handleInitialMinetagsEntry = (e) => {
     setInitialmineTags({ ...initialMineTags, [e.target.name]: e.target.value });
   };
+// //////
+  const generateTags = () => {
+    const { weight, sheetNumber } = initialMineTags;
+    const startingTagNumber = parseInt(initialMineTags.tagNumber, 10) || 0;
+
+    const tags = Array.from({ length:(parseInt(initialMineTags.limit, 10) || 0) }, (_, index) => {
+      const tagNumber = startingTagNumber + index;
+      return {
+        weight,
+        tagNumber: isNaN(tagNumber) ? initialMineTags.tagNumber : tagNumber.toString(),
+        sheetNumber,
+      };
+    });
+    setmineTags(tags);
+    setInitialmineTags([
+      { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
+    ]);
+  };
+
 
   const handleAddMinesTag = () => {
     setmineTags((prevLotDetails) => [
@@ -497,7 +542,9 @@ const ColtanEditForm = () => {
     if (requestId) {
       for (const key in body) {
         if (body.hasOwnProperty(key)) {
-          const editable = editableFields.find(item => toCamelCase(item.fieldname) === `${key}`);
+          const editable = editableFields.find(
+            (item) => toCamelCase(item.fieldname) === `${key}`
+          );
           if (editable) {
             newBody[`${key}`] = body[key];
           }
@@ -535,8 +582,7 @@ const ColtanEditForm = () => {
     navigate(-1);
   };
   const handleCancel = () => {
-    setFormval({
-    });
+    setFormval({});
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
     setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
     setnegociantTags([
@@ -547,602 +593,704 @@ const ColtanEditForm = () => {
     navigate(-1);
   };
 
-
   const handleUpdate = async (body, record) => {
-    await updateEditRequest({body, requestId: record._id});
-  }
+    await updateEditRequest({ body, requestId: record._id });
+  };
 
   return (
-      <>
-        {isLoading ? (
-            <FetchingPage />
-        ) : (
-            <ActionsPagesContainer
-                title={"Edit coltan entry"}
-                subTitle={"Edit/Update coltan entry"}
-                actionsContainer={
-                  <AddComponent
-                      component={
-                        <div className="grid grid-cols-1 gap-y-10 pb-10">
-
-                          <div className="flex justify-center">
-                            {editableFields?.length > 0 ? (
-                                <Countdown
-                                    date={dayjs(requestInfo?.editExpiresAt).valueOf()}
-                                    onComplete={() => {
-                                      if (requestInfo?.requestStatus === "authorized") {
-                                        handleUpdate({ requestStatus: "expired" }, requestInfo);
-                                        openNotification({message: "Request Expired", description: "This request has expired", type: "error"});
-                                        navigate(-1);
-                                      }
-                                    }}
-                                    renderer={({hours, minutes, seconds, completed}) => {
-                                      if (completed) {
-                                        return <span>Timeout</span>
-                                      } else {
-                                        return (
-                                            <span className="text-3xl">
-                                          {String(hours).padStart(2, "0")}:
-                                              {String(minutes).padStart(2, "0")}:
-                                              {String(seconds).padStart(2, "0")}
-                                        </span>
-                                        )
-                                      }
-                                    }}
-                                />
-                            ): null}
-                          </div>
-
-                          <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                          <li className=" space-y-2 flex items-end gap-3 col-span-full ">
-                    <div>
-                      <p>Trade in Company</p>
-
-                      <div ref={modalRef} className="w-fit h-fit relative ">
-                        <div
-                          className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
-                          onClick={() => {
-                            setDropdownOpen((prev) => !prev);
-                          }}
-                        >
-                          <p className=" ">
-                            {selectedSupplierName
-                              ? selectedSupplierName
-                              : "select a supplier"}
-                          </p>
-                          <BsChevronDown
-                            className={`text-md transition ease-in-out duration-500 ${
-                              dropdownOpen ? "rotate-180" : null
-                            }`}
-                          />
-                        </div>
-                        <motion.div
-                          animate={
-                            dropdownOpen
-                              ? { opacity: 1, x: -8, y: 1, display: "block" }
-                              : { opacity: 0, x: 0, y: 0, display: "none" }
+    <>
+      {isLoading ? (
+        <FetchingPage />
+      ) : (
+        <ActionsPagesContainer
+          title={"Edit coltan entry"}
+          subTitle={"Edit/Update coltan entry"}
+          actionsContainer={
+            <AddComponent
+              component={
+                <div className="grid grid-cols-1 gap-y-10 pb-10">
+                  <div className="flex justify-center">
+                    {editableFields?.length > 0 ? (
+                      <Countdown
+                        date={dayjs(requestInfo?.editExpiresAt).valueOf()}
+                        onComplete={() => {
+                          if (requestInfo?.requestStatus === "authorized") {
+                            handleUpdate(
+                              { requestStatus: "expired" },
+                              requestInfo
+                            );
+                            openNotification({
+                              message: "Request Expired",
+                              description: "This request has expired",
+                              type: "error",
+                            });
+                            navigate(-1);
                           }
-                          transition={{
-                            type: "spring",
-                            duration: 0.8,
-                            bounce: 0.35,
-                          }}
-                          className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl z-50`}
-                        >
-                          <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
-                            <HiOutlineSearch className={`text-lg `} />
-                            <input
-                              type="text"
-                              name="searchTextInput"
-                              id="searchTextInput"
-                              placeholder="Search"
-                              className="w-full focus:outline-none"
-                              value={searchText}
-                              onChange={handleSearchInputChange}
+                        }}
+                        renderer={({ hours, minutes, seconds, completed }) => {
+                          if (completed) {
+                            return <span>Timeout</span>;
+                          } else {
+                            return (
+                              <span className="text-3xl">
+                                {String(hours).padStart(2, "0")}:
+                                {String(minutes).padStart(2, "0")}:
+                                {String(seconds).padStart(2, "0")}
+                              </span>
+                            );
+                          }
+                        }}
+                      />
+                    ) : null}
+                  </div>
+
+                  <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    <li className=" space-y-2 flex items-end gap-3 col-span-full ">
+                      <div>
+                        <p>Trade in Company</p>
+
+                        <div ref={modalRef} className="w-fit h-fit relative ">
+                          <div
+                            className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
+                            onClick={() => {
+                              setDropdownOpen((prev) => !prev);
+                            }}
+                          >
+                            <p className=" ">
+                              {selectedSupplierName
+                                ? selectedSupplierName
+                                : "select a supplier"}
+                            </p>
+                            <BsChevronDown
+                              className={`text-md transition ease-in-out duration-500 ${
+                                dropdownOpen ? "rotate-180" : null
+                              }`}
                             />
                           </div>
-                          {isGetting?<div className="w-full flex justify-start items-center gap-1">
-                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p className=" text-slate-400">Fetching suppliers...</p>
-                          </div>:<ul className={`list-none  overflow-auto `}>
-                            {filteredSuppliers.map((supplier, index) => (
-                              <li
-                                key={index}
-                                className=" hover:bg-slate-300 rounded-md p-2"
-                                onClick={() => handleSupplierSelect(supplier)}
-                              >
-                                {supplier.companyName}
-                              </li>
-                            ))}
-                          </ul>}
-                        </motion.div>
+                          <motion.div
+                            animate={
+                              dropdownOpen
+                                ? { opacity: 1, x: -8, y: 1, display: "block" }
+                                : { opacity: 0, x: 0, y: 0, display: "none" }
+                            }
+                            transition={{
+                              type: "spring",
+                              duration: 0.8,
+                              bounce: 0.35,
+                            }}
+                            className={`p-2 space-y-3 bg-white w-fit rounded absolute top-12 shadow-2xl z-50`}
+                          >
+                            <div className="w-full flex items-center gap-2 px-2 py-1 rounded border">
+                              <HiOutlineSearch className={`text-lg `} />
+                              <input
+                                type="text"
+                                name="searchTextInput"
+                                id="searchTextInput"
+                                placeholder="Search"
+                                className="w-full focus:outline-none"
+                                value={searchText}
+                                onChange={handleSearchInputChange}
+                              />
+                            </div>
+                            {isGetting ? (
+                              <div className="w-full flex justify-start items-center gap-1">
+                                <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                                <p className=" text-slate-400">
+                                  Fetching suppliers...
+                                </p>
+                              </div>
+                            ) : (
+                              <ul className={`list-none  overflow-auto `}>
+                                {filteredSuppliers.map((supplier, index) => (
+                                  <li
+                                    key={index}
+                                    className=" hover:bg-slate-300 rounded-md p-2"
+                                    onClick={() =>
+                                      handleSupplierSelect(supplier)
+                                    }
+                                  >
+                                    {supplier.companyName}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </motion.div>
+                        </div>
                       </div>
-                    </div>
-                    <button
-                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
-                      onClick={() => navigate("/add/supplier")}
-                    >
-                      New supplier
-                    </button>
-                  </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Company name</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="companyName"
-                                  id="companyName"
-                                  disabled={editableFields.length > 0 ? decideEditable("companyName") : false}
-                                  value={formval.companyName || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
+                      <button
+                        className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                        onClick={() => navigate("/add/supplier")}
+                      >
+                        New supplier
+                      </button>
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Company name</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="companyName"
+                        id="companyName"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("companyName")
+                            : false
+                        }
+                        value={formval.companyName || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
 
-                            <li className=" space-y-1">
-                              <p className="pl-1">TIN Number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="TINNumber"
-                                  id="TINNumber"
-                                  disabled={editableFields.length > 0 ? decideEditable("TINNumber") : false}
-                                  value={formval.TINNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Licence number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="licenseNumber"
-                                  id="licenseNumber"
-                                  disabled={editableFields.length > 0 ? decideEditable("licenseNumber") : false}
-                                  value={formval.licenseNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Company representative</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="companyRepresentative"
-                                  id="companyRepresentative"
-                                  disabled={editableFields.length > 0 ? decideEditable("companyRepresentative") : false}
-                                  value={formval.companyRepresentative || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Representative ID number</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="representativeId"
-                                  id="representativeId"
-                                  disabled={editableFields.length > 0 ? decideEditable("representativeId") : false}
-                                  value={formval.representativeId || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Representative phone nbr</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="representativePhoneNumber"
-                                  id="representativePhoneNumber"
-                                  disabled={editableFields.length > 0 ? decideEditable("representativePhoneNumber") : false}
-                                  value={formval.representativePhoneNumber || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Minerals Types</p>
-                              <input
-                                  autoComplete="off"
-                                  disabled
-                                  name="mineralType"
-                                  id="mineralType"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  value={formval.mineralType || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Date</p>
-                              <DatePicker
-                                  value={
-                                    formval.supplyDate ? dayjs(formval.supplyDate) : null
-                                  }
-                                  onChange={handleAddDate}
-                                  id="supplyDate"
-                                  name="supplyDate"
-                                  disabled={editableFields.length > 0 ? decideEditable("supplyDate") : false}
-                                  className=" focus:outline-none p-2 border rounded-md w-full"
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Time</p>
-                              <TimePicker
-                                  value={
-                                    formval.time ? dayjs(formval.time, "HH:mm") : null
-                                  }
-                                  onChange={handleAddTime}
-                                  format={"HH:mm"}
-                                  id="date"
-                                  name="date"
-                                  disabled={editableFields.length > 0 ? decideEditable("time") : false}
-                                  className=" focus:outline-none p-2 border rounded-md w-full"
-                              />
-                            </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">TIN Number</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="TINNumber"
+                        id="TINNumber"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("TINNumber")
+                            : false
+                        }
+                        value={formval.TINNumber || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Licence number</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="licenseNumber"
+                        id="licenseNumber"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("licenseNumber")
+                            : false
+                        }
+                        value={formval.licenseNumber || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Company representative</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="companyRepresentative"
+                        id="companyRepresentative"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("companyRepresentative")
+                            : false
+                        }
+                        value={formval.companyRepresentative || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Representative ID number</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="representativeId"
+                        id="representativeId"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("representativeId")
+                            : false
+                        }
+                        value={formval.representativeId || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Representative phone nbr</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="representativePhoneNumber"
+                        id="representativePhoneNumber"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("representativePhoneNumber")
+                            : false
+                        }
+                        value={formval.representativePhoneNumber || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Minerals Types</p>
+                      <input
+                        autoComplete="off"
+                        disabled
+                        name="mineralType"
+                        id="mineralType"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        value={formval.mineralType || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Date</p>
+                      <DatePicker
+                        value={
+                          formval.supplyDate ? dayjs(formval.supplyDate) : null
+                        }
+                        onChange={handleAddDate}
+                        id="supplyDate"
+                        name="supplyDate"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("supplyDate")
+                            : false
+                        }
+                        className=" focus:outline-none p-2 border rounded-md w-full"
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Time</p>
+                      <TimePicker
+                        value={
+                          formval.time ? dayjs(formval.time, "HH:mm") : null
+                        }
+                        onChange={handleAddTime}
+                        format={"HH:mm"}
+                        id="date"
+                        name="date"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("time")
+                            : false
+                        }
+                        className=" focus:outline-none p-2 border rounded-md w-full"
+                      />
+                    </li>
 
-                            <li className=" space-y-1">
-                              <p className="pl-1">Weight in</p>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="weightIn"
-                                  id="weightIn"
-                                  disabled={editableFields.length > 0 ? decideEditable("weightIn") : false}
-                                  value={formval.weightIn || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
-                              <p className="pl-1">Number of Tags</p>
-                              <input
-                                  type="number"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="numberOfTags"
-                                  id="numberOfTags"
-                                  disabled={editableFields.length > 0 ? decideEditable("numberOfTags") : false}
-                                  value={formval.numberOfTags || ""}
-                                  onWheelCapture={(e) => {
-                                    e.target.blur();
-                                  }}
-                                  onChange={handleEntry}
-                              />
-                            </li>
-                            <li className=" space-y-1">
+                    <li className=" space-y-1">
+                      <p className="pl-1">Weight in</p>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="weightIn"
+                        id="weightIn"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("weightIn")
+                            : false
+                        }
+                        value={formval.weightIn || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
+                      <p className="pl-1">Number of Tags</p>
+                      <input
+                        type="number"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="numberOfTags"
+                        id="numberOfTags"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("numberOfTags")
+                            : false
+                        }
+                        value={formval.numberOfTags || ""}
+                        onWheelCapture={(e) => {
+                          e.target.blur();
+                        }}
+                        onChange={handleEntry}
+                      />
+                    </li>
+                    <li className=" space-y-1">
                       <span className=" flex gap-2 items-center">
                         <p>Beneficiary</p>
-
                       </span>
-                              <input
-                                  type="text"
-                                  autoComplete="off"
-                                  className="focus:outline-none p-2 border rounded-md w-full"
-                                  name="beneficiary"
-                                  id="beneficiary"
-                                  disabled={editableFields.length > 0 ? decideEditable("beneficiary") : false}
-                                  value={formval.beneficiary || ""}
-                                  onChange={handleEntry}
-                              />
-                            </li>
+                      <input
+                        type="text"
+                        autoComplete="off"
+                        className="focus:outline-none p-2 border rounded-md w-full"
+                        name="beneficiary"
+                        id="beneficiary"
+                        disabled={
+                          editableFields.length > 0
+                            ? decideEditable("beneficiary")
+                            : false
+                        }
+                        value={formval.beneficiary || ""}
+                        onChange={handleEntry}
+                      />
+                    </li>
 
-                            <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full shadow-lg rounded-md p-4 mt-4 pb-6 bg-gray-100">
+                    <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full shadow-lg rounded-md p-4 mt-4 pb-6 bg-gray-100">
                       <span className=" border  border-b-0 relative col-span-full mb-3">
                         <p className="pl-1 bg-white absolute -top-4 left-2 px-1 rounded-lg font-semibold mx-2">
                           Lots
                         </p>
                       </span>
-                              <div className="col-span-1 space-y-3">
-                                {lotDetails.map((lot, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex gap-2 items-center w-full"
-                                    >
-                                      <p className=" font-semibold">{lot.lotNumber}</p>
-                                      <input
-                                          animate={{}}
-                                          type="number"
-                                          autoComplete="off"
-                                          className="focus:outline-none p-2 border rounded-md w-full"
-                                          name="weightOut"
-                                          value={lot.weightOut || ""}
-                                          disabled={editableFields.length > 0 ? decideEditable("output") : false}
-                                          onWheelCapture={(e) => {
-                                            e.target.blur();
-                                          }}
-                                          onChange={(e) => handleLotEntry(index, e)}
-                                      />
-                                      <HiMinus
-                                          onClick={() => handleLRemoveLot(index)}
-                                          type="button"
-                                          className={`${
-                                              lotDetails.length - 1 === 0 ? "hidden" : ""
-                                          }`}
-                                      />
-                                      <HiPlus
-                                          onClick={handleAddLot}
-                                          className={`${
-                                              lotDetails.length - 1 !== index ? "hidden" : ""
-                                          }`}
-                                      />
-                                    </div>
-                                ))}
-                              </div>
-                            </li>
-                          </ul>
-                              <Popover placement="bottomLeft" className="w-fit" content={
-                                                                <ul
-                                                                className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit w-full list-none items-center p-2 bg-white rounded-md py-4"
-                                                               
-                                                            >
+                      <div className="col-span-1 space-y-3">
+                        {lotDetails.map((lot, index) => (
+                          <div
+                            key={index}
+                            className="flex gap-2 items-center w-full"
+                          >
+                            <p className=" font-semibold">{lot.lotNumber}</p>
+                            <input
+                              animate={{}}
+                              type="number"
+                              autoComplete="off"
+                              className="focus:outline-none p-2 border rounded-md w-full"
+                              name="weightOut"
+                              value={lot.weightOut || ""}
+                              disabled={
+                                editableFields.length > 0
+                                  ? decideEditable("output")
+                                  : false
+                              }
+                              onWheelCapture={(e) => {
+                                e.target.blur();
+                              }}
+                              onChange={(e) => handleLotEntry(index, e)}
+                            />
+                            <HiMinus
+                              onClick={() => handleLRemoveLot(index)}
+                              type="button"
+                              className={`${
+                                lotDetails.length - 1 === 0 ? "hidden" : ""
+                              }`}
+                            />
+                            <HiPlus
+                              onClick={handleAddLot}
+                              className={`${
+                                lotDetails.length - 1 !== index ? "hidden" : ""
+                              }`}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </li>
+                  </ul>
 
-                                                              <li>
-                                                                <p className="mb-1">Initial sheet number</p>
-                                                                <input
-                                                                    type="text"
-                                                                    name="sheetNumber"
-                                                                    autoComplete="off"
-                                                                    className="focus:outline-none p-2 border rounded-lg w-full"
-                                                                    value={ initialMineTags.sheetNumber ||""}
-                                                                    onWheelCapture={(e) => {
-                                                                      e.target.blur();
-                                                                    }}
-                                                                    onChange={handleInitialMinetagsEntry}
-                                                                />
-                                                              </li>
-                            
-                                                              <li>
-                                                                <p className="mb-1">Initial tag weight</p>
-                                                                <input
-                                                                    type="text"
-                                                                    name="weight"
-                                                                    autoComplete="off"
-                                                                    className="focus:outline-none p-2 border rounded-lg w-full"
-                                                                    value={initialMineTags.weight ||""}
-                                                                    onWheelCapture={(e) => {
-                                                                      e.target.blur();
-                                                                    }}
-                                                                    onChange={handleInitialMinetagsEntry}
-                                                                />
-                                                              </li>
-                                                              <li>
-                                                                <p className="mb-1">Initial tag number</p>
-                                                                <input
-                                                                    type="text"
-                                                                    name="tagNumber"
-                                                                    autoComplete="off"
-                                                                    className="focus:outline-none p-2 border rounded-lg w-full"
-                                                                    value={initialMineTags.tagNumber ||""}
-                                                                    onWheelCapture={(e) => {
-                                                                      e.target.blur();
-                                                                    }}
-                                                                    onChange={handleInitialMinetagsEntry}
-                                                                />
-                                                              </li>
-                                                              <li>
-                                                                <p className="mb-1">Tags to be generated </p>
-                                                                <input
-                                                                    type="text"
-                                                                    name="limit"
-                                                                    autoComplete="off"
-                                                                    className="focus:outline-none p-2 border rounded-lg w-full"
-                                                                    value={initialMineTags.limit ||""}
-                                                                    onWheelCapture={(e) => {
-                                                                      e.target.blur();
-                                                                    }}
-                                                                    onChange={handleInitialMinetagsEntry}
-                                                                />
-                                                              </li>
+                  {/* ///// */}
+                  <Popover
+                    placement="bottomLeft"
+                    className="w-fit"
+                    content={
+                      <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 gap-y-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit w-full list-none items-center p-2 bg-white rounded-md py-4">
+                        <li>
+                          <p className="mb-1 font-semibold">Initial sheet number</p>
+                          <input
+                            type="text"
+                            name="sheetNumber"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.sheetNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
 
-                                                            </ul>
-                              } title="Generate number of tags needed" trigger="click">
-                                  <button type="button" className="p-2 bg-orange-300 rounded">Select nbr of tags to enter</button>
-                              </Popover>
+                        <li>
+                          <p className="mb-1 font-semibold">Initial tag weight</p>
+                          <input
+                            type="text"
+                            name="weight"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.weight || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1 font-semibold">Initial tag number</p>
+                          <input
+                            type="text"
+                            name="tagNumber"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.tagNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1 font-semibold">Tags to be generated </p>
+                         <Popover placement="bottom" content={<>
+                         <p>Enter tags to be generated including the first one</p>
+                         </>} title="Tags to be generated limit" trigger="focus">
+                         <input
+                            type="text"
+                            name="limit"
+                            autoComplete="off"
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={initialMineTags.limit || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={handleInitialMinetagsEntry}
+                          />
+                         </Popover>
+                        </li>
+                        <li className=" col-span-full">
+                        <button type="button" className="p-2 bg-orange-300 rounded" onClick={generateTags}>confirm</button>
+                        </li>
+                      </ul>
+                    }
+                    title="Generate number of tags needed"
+                    trigger="click"
+                  >
+                    <button type="button" className="p-2 bg-orange-300 rounded">
+                      Select nbr of tags to enter
+                    </button>
+                  </Popover>
 
-                          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t p-2 shadow-lg rounded-md bg-gray-100">
-                            <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
-                              Mine Tags (tickets)
-                            </p>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 relative h-fit list-none items-center mt-4 pb-9 border-t p-2 shadow-lg rounded-md bg-gray-100">
+                    <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
+                      Mine Tags (tickets)
+                    </p>
 
-
-
-                            {mineTags.map((tag, index) => (
-                                <ul
-                                    className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4"
-                                    key={index}
-                                >
+                    {mineTags.map((tag, index) => (
+                      <ul
+                        className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4"
+                        key={index}
+                      >
                         <span className="flex items-center gap-2 col-span-full justify-end">
                           <p className=" font-semibold justify-self-start">
                             Mine Tag {index + 1}
                           </p>
                           <HiMinus
-                              onClick={() => handleLRemoveMinesTag(index)}
-                              className={`${
-                                  mineTags.length - 1 === 0 ? "hidden" : ""
-                              }`}
+                            onClick={() => handleLRemoveMinesTag(index)}
+                            className={`${
+                              mineTags.length - 1 === 0 ? "hidden" : ""
+                            }`}
                           />
                           <HiPlus
-                              onClick={handleAddMinesTag}
-                              className={`${
-                                  mineTags.length - 1 !== index ? "hidden" : ""
-                              }`}
+                            onClick={handleAddMinesTag}
+                            className={`${
+                              mineTags.length - 1 !== index ? "hidden" : ""
+                            }`}
                           />
                         </span>
 
-                                  <li>
-                                    <p className="mb-1">Sheet number</p>
-                                    <input
-                                        type="text"
-                                        name="sheetNumber"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.sheetNumber || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleMinesTagEntry(index, e)}
-                                    />
-                                  </li>
+                        <li>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                            type="text"
+                            name="sheetNumber"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("mineTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.sheetNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleMinesTagEntry(index, e)}
+                          />
+                        </li>
 
-                                  <li>
-                                    <p className="mb-1">Tag weight</p>
-                                    <input
-                                        type="text"
-                                        name="weight"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.weight || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleMinesTagEntry(index, e)}
-                                    />
-                                  </li>
-                                  <li>
-                                    <p className="mb-1">Tag number</p>
-                                    <input
-                                        type="text"
-                                        name="tagNumber"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.tagNumber || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleMinesTagEntry(index, e)}
-                                    />
-                                  </li>
-                                  <li>
-                                    <p className="mb-1">Status</p>
-                                    <select
-                                        name={`status`}
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("mineTags") : false}
-                                        className="focus:outline-none p-2 border rounded-md w-full"
-                                        defaultValue={tag.status || "defaultstatus"}
-                                        onChange={(e) => handleMinesTagEntry(index, e)}
-                                    >
-                                      <option value="defaultstatus" hidden>
-                                        {tag.status ? `${tag.status}` : "status"}
-                                      </option>
-                                      <option value="in store">In Store</option>
-                                      <option value="out of store">Out of Store</option>
-                                    </select>
-                                  </li>
-                                </ul>
-                            ))}
-                          </ul>
+                        <li>
+                          <p className="mb-1">Tag weight</p>
+                          <input
+                            type="text"
+                            name="weight"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("mineTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.weight || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleMinesTagEntry(index, e)}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1">Tag number</p>
+                          <input
+                            type="text"
+                            name="tagNumber"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("mineTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.tagNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleMinesTagEntry(index, e)}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1">Status</p>
+                          <select
+                            name={`status`}
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("mineTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-md w-full"
+                            defaultValue={tag.status || "defaultstatus"}
+                            onChange={(e) => handleMinesTagEntry(index, e)}
+                          >
+                            <option value="defaultstatus" hidden>
+                              {tag.status ? `${tag.status}` : "status"}
+                            </option>
+                            <option value="in store">In Store</option>
+                            <option value="out of store">Out of Store</option>
+                          </select>
+                        </li>
+                      </ul>
+                    ))}
+                  </ul>
 
-                          <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t relative p-2 shadow-lg rounded-md bg-gray-100">
-                            <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
-                              Negociant Tags (tickets)
-                            </p>
-                            {negociantTags.map((tag, index) => (
-                                <ul
-                                    className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4"
-                                    key={index}
-                                >
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center mt-4 pb-9 border-t relative p-2 shadow-lg rounded-md bg-gray-100">
+                    <p className=" col-span-full absolute -top-[13px] rounded-lg bg-white left-4 px-2 p-0 font-semibold">
+                      Negociant Tags (tickets)
+                    </p>
+                    {negociantTags.map((tag, index) => (
+                      <ul
+                        className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4"
+                        key={index}
+                      >
                         <span className="flex items-center gap-2 col-span-full justify-end">
                           <p className=" font-semibold justify-self-start">
                             Negociant Tag {index + 1}
                           </p>
                           <HiMinus
-                              onClick={() => handleLRemoveNegociantTags(index)}
-                              className={`${
-                                  negociantTags.length - 1 === 0 ? "hidden" : ""
-                              }`}
+                            onClick={() => handleLRemoveNegociantTags(index)}
+                            className={`${
+                              negociantTags.length - 1 === 0 ? "hidden" : ""
+                            }`}
                           />
                           <HiPlus
-                              onClick={handleAddNegociantTags}
-                              className={`${
-                                  negociantTags.length - 1 !== index ? "hidden" : ""
-                              }`}
+                            onClick={handleAddNegociantTags}
+                            className={`${
+                              negociantTags.length - 1 !== index ? "hidden" : ""
+                            }`}
                           />
                         </span>
 
-                                  <li>
-                                    <p className="mb-1">Sheet number</p>
-                                    <input
-                                        type="text"
-                                        name="sheetNumber"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.sheetNumber || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleNegociantTagsEntry(index, e)}
-                                    />
-                                  </li>
+                        <li>
+                          <p className="mb-1">Sheet number</p>
+                          <input
+                            type="text"
+                            name="sheetNumber"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("negociantTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.sheetNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          />
+                        </li>
 
-                                  <li>
-                                    <p className="mb-1">Tag weight</p>
-                                    <input
-                                        type="text"
-                                        name="weight"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.weight || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleNegociantTagsEntry(index, e)}
-                                    />
-                                  </li>
-                                  <li>
-                                    <p className="mb-1">Tag number</p>
-                                    <input
-                                        type="text"
-                                        name="tagNumber"
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
-                                        className="focus:outline-none p-2 border rounded-lg w-full"
-                                        value={tag.tagNumber || ""}
-                                        onWheelCapture={(e) => {
-                                          e.target.blur();
-                                        }}
-                                        onChange={(e) => handleNegociantTagsEntry(index, e)}
-                                    />
-                                  </li>
-                                  <li>
-                                    <p className="mb-1">Status</p>
-                                    <select
-                                        name={`status`}
-                                        autoComplete="off"
-                                        disabled={editableFields.length > 0 ? decideEditable("negociantTags") : false}
-                                        className="focus:outline-none p-2 border rounded-md w-full"
-                                        defaultValue={tag.status || "defaultstatus"}
-                                        onChange={(e) => handleNegociantTagsEntry(index, e)}
-                                    >
-                                      <option value="defaultstatus" hidden>
-                                        {tag.status ? `${tag.status}` : "status"}
-                                      </option>
-                                      <option value="inStock">In stock</option>
-                                      <option value="exported">Exported</option>
-                                    </select>
-                                  </li>
-                                </ul>
-                            ))}
-                          </ul>
-                        </div>
-                      }
-                      Add={handleSubmit}
-                      Cancel={handleCancel}
-                      isloading={isSending}
-                  />
-                }
+                        <li>
+                          <p className="mb-1">Tag weight</p>
+                          <input
+                            type="text"
+                            name="weight"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("negociantTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.weight || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1">Tag number</p>
+                          <input
+                            type="text"
+                            name="tagNumber"
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("negociantTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-lg w-full"
+                            value={tag.tagNumber || ""}
+                            onWheelCapture={(e) => {
+                              e.target.blur();
+                            }}
+                            onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          />
+                        </li>
+                        <li>
+                          <p className="mb-1">Status</p>
+                          <select
+                            name={`status`}
+                            autoComplete="off"
+                            disabled={
+                              editableFields.length > 0
+                                ? decideEditable("negociantTags")
+                                : false
+                            }
+                            className="focus:outline-none p-2 border rounded-md w-full"
+                            defaultValue={tag.status || "defaultstatus"}
+                            onChange={(e) => handleNegociantTagsEntry(index, e)}
+                          >
+                            <option value="defaultstatus" hidden>
+                              {tag.status ? `${tag.status}` : "status"}
+                            </option>
+                            <option value="inStock">In stock</option>
+                            <option value="exported">Exported</option>
+                          </select>
+                        </li>
+                      </ul>
+                    ))}
+                  </ul>
+                </div>
+              }
+              Add={handleSubmit}
+              Cancel={handleCancel}
+              isloading={isSending}
             />
-        )}
-      </>
+          }
+        />
+      )}
+    </>
   );
 };
 export default ColtanEditForm;
