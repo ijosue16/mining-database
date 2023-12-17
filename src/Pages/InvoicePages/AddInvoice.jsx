@@ -4,19 +4,29 @@ import dayjs from "dayjs";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
 import FetchingPage from "../FetchingPage";
-import {useGenerateInvoiceMutation, useGetOneSupplierQuery, useGetUnsettledLotsQuery} from "../../states/apislice";
+import {
+    useGenerateInvoiceMutation,
+    useGetOneEntryQuery,
+    useGetOneSupplierQuery,
+    useGetUnsettledLotsQuery
+} from "../../states/apislice";
 import { useParams } from "react-router-dom";
 import PdfPreview from "../../components/PdfView";
-import {getModelAcronym} from "../../components/helperFunctions";
+import {decidePricingGrade, getModelAcronym} from "../../components/helperFunctions";
 import { useNavigate } from "react-router-dom";
 
 
 const AddInvoice = () => {
-    const {supplierId} = useParams();
+    const {supplierId, entryId, model} = useParams();
     const [dataz, setDataz] = useState([]);
     const [generateInvoice, {data: response, isSuccess, isLoading, isError, error}] = useGenerateInvoiceMutation();
     const {data, isLoading: isFetching, isSuccess: isDone, isError: isProblem} = useGetOneSupplierQuery({supplierId});
     const {data: info, isLoading: isGetting, isSuccess: isComplete} = useGetUnsettledLotsQuery(supplierId);
+    const { data: entryData, isSuccess: isEntryDone, isError: isEntryProblem } = useGetOneEntryQuery({entryId, model}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true,
+    });
+    const [entryInfo, setEntryInfo] = useState({});
     const [download, setDownload] = useState(false);
     const [showmodal, setShowmodal] = useState(false);
     const [selectedData, setSelectedData] = useState([]);
@@ -46,12 +56,33 @@ const AddInvoice = () => {
                 district: "",
                 sector: ""
             },
-
         }
     );
     const [accumulator, setAccumulator] = useState(0);
     const [rmaFeeAccumulator, setRmaFeeAccumulator] = useState(0);
     const navigate = useNavigate();
+
+
+    useEffect(() => {
+        if (isEntryDone) {
+            const {entry} = entryData.data;
+            if (entry) {
+                const transformedLots = entry.output.map((lot) => {
+                    return {...lot, beneficiary: entry.beneficiary, mineralType: getModelAcronym(entry.mineralType)};
+                })
+                setDataz(transformedLots);
+                setInvoiceInfo(prevState => ({...prevState,  beneficiary: entry.beneficiary}))
+                setEntryInfo(entry);
+            }
+        }
+    }, [isEntryDone]);
+
+
+    useEffect(() => {
+        if (entryInfo.beneficiary) {
+            setInvoiceInfo(prevState => ({...prevState,  beneficiary: entryInfo.beneficiary}))
+        }
+    }, [entryInfo]);
 
 
     useEffect(() => {
@@ -63,7 +94,6 @@ const AddInvoice = () => {
 
     useEffect(() => {
         if (isDone) {
-
             const {supplier: sup} = data.data;
             setInvoiceInfo({
                 ...invoiceInfo,
@@ -78,14 +108,14 @@ const AddInvoice = () => {
         }
     }, [isDone]);
 
-    useEffect(() => {
-        if (isComplete) {
-            const {lots} = info.data;
-            setDataz(lots);
-            console.log("-------------------------------")
-            console.log(lots)
-        }
-    }, [isComplete]);
+    // useEffect(() => {
+    //     if (isComplete) {
+    //         const {lots} = info.data;
+    //         setDataz(lots);
+    //         console.log("-------------------------------")
+    //         console.log(lots)
+    //     }
+    // }, [isComplete]);
 
 
     const handleRowToggle = (record) => {
@@ -94,10 +124,8 @@ const AddInvoice = () => {
                 prevSelectedData.filter((selected) => (selected._id && selected.lotNumber && selected.weightOut) !== (record._id && record.lotNumber && record.weightOut))
             );
         } else {
-            setSelectedData((prevSelectedData) => [...prevSelectedData, record]);
-
+            setSelectedData((prevSelectedData) => [...prevSelectedData, {...record, mineralType: model, entryId,  supplyDate: entryInfo?.supplyDate}]);
         }
-
     };
 
 
@@ -122,18 +150,17 @@ const AddInvoice = () => {
             title: "Supply date",
             dataIndex: "supplyDate",
             key: "supplyDate",
-            sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
             render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
         },
         {
             title: "Mineral Type",
             dataIndex: "mineralType",
             key: "mineralType",
-            render: (text) => {
-                if (text) {
-                    return <p>{getModelAcronym(text)}</p>;
-                }
-            }
+            // render: (text) => {
+            //     if (text) {
+            //         return <p>{getModelAcronym(text)}</p>;
+            //     }
+            // }
         },
         {title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary"},
         {
@@ -146,7 +173,11 @@ const AddInvoice = () => {
             title: "mineral Grade",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
-
+            render: (_, record) => {
+                if (record.pricingGrade) {
+                    return <p>{record[decidePricingGrade(record.pricingGrade)]}</p>
+                }
+            }
         },
         {
             title: "pricePerUnit",
@@ -209,18 +240,17 @@ const AddInvoice = () => {
             title: "Supply date",
             dataIndex: "supplyDate",
             key: "supplyDate",
-            sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
             render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
         },
         {
             title: "Mineral Type",
             dataIndex: "mineralType",
             key: "mineralType",
-            render: (text) => {
-                if (text) {
-                    return <p>{getModelAcronym(text)}</p>;
-                }
-            }
+            // render: (text) => {
+            //     if (text) {
+            //         return <p>{getModelAcronym(text)}</p>;
+            //     }
+            // }
         },
         {title: "Beneficiary", dataIndex: "beneficiary", key: "beneficiary"},
         {
@@ -368,7 +398,7 @@ const AddInvoice = () => {
 
     const itemConfirm = () => {
         const transformedData = selectedData.map(item => {
-            const newItem = {};
+            const newItem = {entryId};
             for (const key in item) {
                 const newKey = keyMap[key] || key;
                 newItem[newKey] = item[key];
@@ -389,6 +419,8 @@ const AddInvoice = () => {
             const { invoiceFile, invoiceFileId } = response.data.data;
             navigate(`/pdf-viewer/${encodeURIComponent(invoiceFile)}`);
         }
+
+
         // const url = window.URL.createObjectURL(
         //     new Blob([response.data], {type: "application/pdf"})
         // );
@@ -541,7 +573,7 @@ const AddInvoice = () => {
                                                                dataSource={selectedData}
                                                                columns={columns2}
                                                                pagination={false}
-                                                               rowKey="index"
+                                                               rowKey="_id"
                                                            />
                                                            <div
                                                                className="w-full p-3 flex justify-end gap-2 align-bottom">
@@ -579,7 +611,7 @@ const AddInvoice = () => {
                                                            className=" overflow-x-auto w-full bg-white rounded-lg mt-10"
                                                            dataSource={dataz}
                                                            columns={columns}
-                                                           rowKey="index"
+                                                           rowKey="_id"
                                                        />
                                                        <button className=" bg-orange-300 p-2 rounded text-white"
                                                                onClick={itemConfirm}>Confirm

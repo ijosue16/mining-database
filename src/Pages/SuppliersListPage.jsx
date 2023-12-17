@@ -70,9 +70,9 @@ const SuppliersListPage = () => {
   });
   const [selectedRow, SetSelectedRow] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
-  const[supplierId,setSupplierId]=useState();
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const[supplierId,setSupplierId]=useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   let modalRef = useRef();
 
@@ -203,17 +203,17 @@ const SuppliersListPage = () => {
                       <BiSolidEditAlt className=" text-xl" />
                       <p>Edit</p>
                     </li>
-                    <li
-                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        {
-                          navigate(`/add/invoice/${record._id}`);
-                        }
-                      }}
-                    >
-                      <FaFileInvoiceDollar className=" text-xl" />
-                      <p>Make invoice</p>
-                    </li>
+                    {/*<li*/}
+                    {/*  className="flex gap-2 p-2 items-center hover:bg-slate-100"*/}
+                    {/*  onClick={() => {*/}
+                    {/*    {*/}
+                    {/*      navigate(`/add/invoice/${record._id}`);*/}
+                    {/*    }*/}
+                    {/*  }}*/}
+                    {/*>*/}
+                    {/*  <FaFileInvoiceDollar className=" text-xl" />*/}
+                    {/*  <p>Make invoice</p>*/}
+                    {/*</li>*/}
 
                     <li
                       className="flex gap-2 p-2 items-center hover:bg-slate-100"
@@ -319,9 +319,9 @@ const SuppliersListPage = () => {
               open={dateModal}
               onOk={() =>SetDateModal(!dateModal)}
               onCancel={() =>{
-                setStartDate();
-                setEndDate();
-                setSupplierId();
+                setStartDate("");
+                setEndDate("");
+                setSupplierId("");
                     SetDateModal(!dateModal);
               }}
               destroyOnClose
@@ -342,11 +342,11 @@ const SuppliersListPage = () => {
                     <button
                       key="back"
                       className=" bg-green-400 p-2 rounded-lg"
-                      onClick={()=>{
+                      onClick={() => {
                         navigate(`/due-diligence-report/${supplierId}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`);
-                        setStartDate();
-                        setEndDate();
-                      setSupplierId();
+                        setStartDate("");
+                        setEndDate("");
+                        setSupplierId("");
 
                       }}
                     >

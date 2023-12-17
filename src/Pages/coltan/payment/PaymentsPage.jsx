@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import moment from "moment";
 import dayjs from "dayjs";
-import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm, message} from 'antd';
+import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm, message, Radio} from 'antd';
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
@@ -19,6 +19,10 @@ import { IoAdd } from "react-icons/io5";
 import { ImSpinner2 } from "react-icons/im";
 import { IoCaretForward } from "react-icons/io5";
 import {handleConvertToUSD} from "../../../components/helperFunctions";
+import {EditFilled} from "@ant-design/icons";
+import {FaRegEdit} from "react-icons/fa";
+// import {Model} from "echarts/types/src/export/api";
+import EditPayment from "../../EditPayment";
 
 
 const PaymentsPage = () => {
@@ -36,7 +40,7 @@ const PaymentsPage = () => {
     const {data,isLoading,isSuccess,isError,error} = useGetOneColtanEntryQuery({entryId});
     const [advancedListModal,SetAdvancedListModal]=useState(false);
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
-    const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, currency: "",paymentMode:"" });
+    const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, paymentMode:"" });
     const [selectedAccordData,setSelectedAccordData]=useState({item:""});
     const [selectedRow, SetSelectedRow] = useState({ id: null, name: '', date: '' });
     const [suply, setSuply] = useState([]);
@@ -48,13 +52,16 @@ const PaymentsPage = () => {
     const [paymentHistory, setPaymentHistory] = useState([]);
     const [USDRate, setUSDRate] = useState({ USDRate: null });
     const [USDEquivalent, setUSDEquivalent] = useState(null);
+    const [lotPaymentInfo, setLotPaymentInfo] = useState({paid: "", unpaid: "", netPrice: "", mineralPrice: "", rmaFee: ""});
+    const [paymentInfo, setPaymentInfo] = useState({});
+    const [editModalOpen, setEditModalOpen] = useState(false);
+
     useEffect(() => {
-        if (isPaymentHistoryReady) {
+        if (isPaymentHistoryReady || isPaymentSuccess) {
             const { lotPaymentHistory } = paymentHistoryData.data;
             setPaymentHistory(lotPaymentHistory);
         }
-    }, [isPaymentHistoryReady]);
-
+    }, [isPaymentHistoryReady, paymentHistoryData, isPaymentSuccess]);
 
 
     useEffect(() => {
@@ -66,20 +73,36 @@ const PaymentsPage = () => {
         }
     }, [isPaymentError, isPaymentSuccess, paymentError]);
 
-    if(isSuccess){
-        const{data:dt}=data;
-        const{entry:entr}=dt;
-        const{output:pt}=entr;
-        const{paymentHistory:pHist}=pt;
-        console.log(data);
-    };
+    useEffect(() => {
+        if (isSuccess || isPaymentSuccess) {
+            const { entry } = data.data;
+            if (entry) {
+                if (entry.beneficiary) {
+                    setPayement({ ...payment, beneficiary: entry.beneficiary });
+                }
+                const selectedLot = entry.output.find((item) => parseInt(item.lotNumber) === parseInt(lotNumber));
+                if (selectedLot) {
+                    setLotPaymentInfo(prevState => (
+                        {
+                            ...prevState,
+                            paid: selectedLot.paid,
+                            unpaid: selectedLot.unpaid,
+                            netPrice: selectedLot.netPrice,
+                            mineralPrice: selectedLot.mineralPrice,
+                            rmaFee: selectedLot.rmaFeeUSD
+                        }
+                    ));
+                }
+            }
+        }
+    }, [isSuccess, data, isPaymentSuccess]);
 
     useEffect(() => {
-        if(isDone){
-            const {payments}=adv.data;
+        if(isDone || isPaymentSuccess){
+            const {payments} = adv.data;
             setDataz(payments);
-        };
-    },[isDone]);
+        }
+    },[isDone, isPaymentSuccess, adv]);
 
 
     const columns = [
@@ -142,10 +165,33 @@ const PaymentsPage = () => {
             dataIndex: 'currency',
             key: 'currency',
             editTable: true,
-
             sorter: (a, b) => a.currency.localeCompare(b.currency),
         },
+        {
+            title: 'payment mode',
+            dataIndex: 'paymentMode',
+            key: 'paymentMode',
+            editTable: true,
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            key: 'action',
+            editTable: true,
+            render: (_, record) => {
+                return (
+                    <>
+                        <FaRegEdit size={20} onClick={() => {
+                            setPaymentInfo(({...record, model}));
+                            setEditModalOpen(true);
+                        }}/>
+                    </>
+                )
+            }
+        },
     ];
+
+
     const columns2 = [
         {
           title: "Payment date",
@@ -206,7 +252,7 @@ const PaymentsPage = () => {
           sorter: (a, b) => a.remainingAmount - b.remainingAmount,
         },
       ];
-      useEffect(() => {
+    useEffect(() => {
         // Handle confirmation logic, e.g., send data to the state
         if (selectedAccordData) {
           console.log('Data sent to the state:', selectedAccordData);
@@ -214,14 +260,14 @@ const PaymentsPage = () => {
         }
       }, [selectedAccordData]);
 
-      const handleUseButtonClick = async (item) => {
+    const handleUseButtonClick = async (item) => {
         // setSelectedAccordData({item:item});
         const paymentInAdvanceId=item;
-        const body = {entryId, lotNumber, model,paymentInAdvanceId};
+        const body = {entryId, lotNumber, model, paymentInAdvanceId};
           // console.log(body);
         await addPayment({body});
         // setIsModalVisible(true);
-      };
+    };
 
     const testInfo = [{ cumulativeAmount: 70, exportedAmount: 0, lotNumber: 1, paid: 150000, rmaFee: 8750, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 70, _id: "64ccaff3669d584e8ff70bbc" }, {
         cumulativeAmount: 40, exportedAmount: 0, id: "64ca67b1492ba72b23596c5a", lotNumber: 2, paid: 120000, rmaFee: 5000, rmaFeeDecision: "pending", settled: false, status: "in progress", weightOut: 40, _id: "64ca67b1492ba72b23596c5a",
@@ -237,14 +283,13 @@ const PaymentsPage = () => {
         setPayement((prevpay) => ({ ...prevpay, paymentDate: dayjs(e).format('MMM/DD/YYYY') }));
     };
     const handleCancel = () => {
-        setPayement({beneficiary: '', paymentAmount: null, location: "", phoneNumber: "", paymentDate: "", currency: ""});
+        setPayement({beneficiary: '', paymentAmount: null, location: "", phoneNumber: "", paymentDate: "", paymentMode: ""});
     };
 
     const handlePaymentSubmit = async (e) => {
         e.preventDefault();
         const body = {...payment, entryId, lotNumber, model};
         await addPayment({body});
-        console.log(body)
         handleCancel();
         handleShowForm();
     };
@@ -296,10 +341,14 @@ const PaymentsPage = () => {
                                     pagination={false}
                                     rowKey="paymentId" />
                             </div>
-                            <div className="flex items-center gap-2 bg-slate-50 p-2 rounded-md">
-                                <p className=" font-semibold text-lg">Sum(Paid):</p>
-                                <p>{total}</p>
-                            <p>owing(to be paid)</p>
+                            <div className="flex items-center gap-4 bg-slate-50 p-2 rounded-md">
+                                <p className=" font-semibold text-lg">Paid: {lotPaymentInfo.paid} $</p>
+                                <p className=" font-semibold text-lg">Unpaid: {lotPaymentInfo.unpaid} $</p>
+                                <p className=" font-semibold text-lg">Mineral Price: {lotPaymentInfo.mineralPrice}$</p>
+                                <p className=" font-semibold text-lg">RMA Fee: {lotPaymentInfo.rmaFee} $</p>
+                                <p className=" font-semibold text-lg">Net Price: {lotPaymentInfo.netPrice} $</p>
+                                {/*<p>{total}</p>*/}
+                                {/*<p>owing(to be paid)</p>*/}
                             </div>
 
                             <div className="w-full space-y-6">
@@ -331,35 +380,41 @@ const PaymentsPage = () => {
                                         <input type="text" autoComplete="off" className="focus:outline-none p-2 border rounded-md w-full" name="phoneNumber" id="phoneNumber" value={payment.phoneNumber || ''} onChange={handlePayment} />
                                     </span>
                                    <span className=" space-y-1">
-                                        <p className="pl-1">Currency</p>
-                                        <select
-                            name="currency"
-                            autoComplete="off" 
-                            className="focus:outline-none p-2 border rounded-md w-full"
-                            defaultValue={payment.currency || ''|| "defaultcurrency"}
-                            onChange={handlePayment}
-                          >
-                            <option value="defaultcurrency" hidden>
-                              {payment.currency ? `${payment.currency}` : "select Currency"}
-                            </option>
-                            <option value="USD">USD</option>
-                            <option value="RWF">RWF</option>
-                          </select>
-                                    </span>
+                          {/*              <p className="pl-1">Currency</p>*/}
+                          {/*              <select*/}
+                          {/*  name="currency"*/}
+                          {/*  autoComplete="off" */}
+                          {/*  className="focus:outline-none p-2 border rounded-md w-full"*/}
+                          {/*  defaultValue={payment.currency || ''|| "defaultcurrency"}*/}
+                          {/*  onChange={handlePayment}*/}
+                          {/*>*/}
+                          {/*  <option value="defaultcurrency" hidden>*/}
+                          {/*    {payment.currency ? `${payment.currency}` : "select Currency"}*/}
+                          {/*  </option>*/}
+                          {/*  <option value="USD">USD</option>*/}
+                          {/*  <option value="RWF">RWF</option>*/}
+                          {/*</select>*/}
+                           </span>
                                     <span className=" space-y-1">
                                     <p className="pl-1">Payment mode</p>
-                                   <label>
-                                    <input type="radio" value="cash" name="paymentMode" onChange={handlePayment}/>
-                                    Cash
-                                    </label>
-                                   <label>
-                                    <input type="radio" value="cheque" name="paymentMode" onChange={handlePayment}/>
-                                    Cheque
-                                    </label>
-                                   <label>
-                                    <input type="radio" value="cash" name="paymentMode" onChange={handlePayment}/>
-                                    Cash
-                                    </label>
+                                         <Radio.Group name="paymentMode" id="paymentMode" onChange={handlePayment} value={payment.paymentMode}>
+                                          <Radio value={"Cash"}>Cash</Radio>
+                                          <Radio value={"Bank Transfer"}>Bank Transfer</Radio>
+                                          <Radio value={"Cheque"}>Cheque</Radio>
+                                          {/*<Radio value={4}>D</Radio>*/}
+                                        </Radio.Group>
+                                   {/*<label>*/}
+                                   {/* <input type="radio" value="cash" name="paymentMode" onChange={handlePayment}/>*/}
+                                   {/* Cash*/}
+                                   {/* </label>*/}
+                                   {/*<label>*/}
+                                   {/* <input type="radio" value="cheque" name="paymentMode" onChange={handlePayment}/>*/}
+                                   {/* Cheque*/}
+                                   {/* </label>*/}
+                                   {/*<label>*/}
+                                   {/* <input type="radio" value="cash" name="paymentMode" onChange={handlePayment}/>*/}
+                                   {/* Cash*/}
+                                   {/* </label>*/}
                                     </span>
                                     <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
                                         {isSending ?
@@ -413,61 +468,61 @@ const PaymentsPage = () => {
                                 rowKey="_id"
                             /> */}
 
- {/* <Space> */}
- <>
- <div className=""></div>
-    <Collapse
-    expandIcon={({ isActive }) => <IoCaretForward rotate={isActive ? 90 : 0} />}
-    size="small" accordion className="w-full">
-      {dataz.map((item) => (
-        <Panel header={<div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center gap-2">
-           <span className="">
-            <p className=" font-bold">Company name:</p>
-            <p className=" text-md">{item.companyName}</p>
-            </span>
+                     <>
+                         <div className=""></div>
+                        <Collapse
+                        expandIcon={({ isActive }) => <IoCaretForward rotate={isActive ? 90 : 0} />}
+                        size="small" accordion className="w-full">
+                          {dataz.map((item) => (
+                            <Panel header={<div className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center gap-2">
+                               <span className="">
+                                <p className=" font-bold">Company name:</p>
+                                <p className=" text-md">{item.companyName}</p>
+                                </span>
 
-           <span className="">
-            <p className=" font-bold">Payed amount:</p>
-            <p className=" text-md">{item.paymentAmount}</p>
-            </span>
+                               <span className="">
+                                <p className=" font-bold">Payed amount:</p>
+                                <p className=" text-md">{item.paymentAmount}</p>
+                                </span>
 
-           <span className="">
-            <p className=" font-bold">Remaining amount:</p>
-            <p className=" text-md">{item.remainingAmount}</p>
-            </span>
-           <span className="">
-            <p className=" font-bold">Payment date:</p>
-            <p className=" text-md">{dayjs(item.paymentDate).format("MMM DD, YYYY")}</p>
-            </span>
-            
+                               <span className="">
+                                <p className=" font-bold">Remaining amount:</p>
+                                <p className=" text-md">{item.remainingAmount}</p>
+                                </span>
+                               <span className="">
+                                <p className=" font-bold">Payment date:</p>
+                                <p className=" text-md">{dayjs(item.paymentDate).format("MMM DD, YYYY")}</p>
+                                </span>
 
-        </div>} 
-        key={item._id}>
-      <ul className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
-        <li className="space-y-1">
-        <p className=" font-bold">Beneficiary:</p>
-        <p>{item.beneficiary}</p>
-        </li>
-        <li className="space-y-1">
-        <p className=" font-bold">Email:</p>
-        <p>{item.email}</p>
-        </li>
-        <li className="space-y-1">
-        <p className=" font-bold">Phone number:</p>
-        <p>{item.phoneNumber}</p>
-        </li>
-        <li className="space-y-1">
-        <p className=" font-bold">National ID:</p>
-        <p>{item.nationalId}</p>
-        </li>
-      </ul>
-            <Button onClick={() => handleUseButtonClick(item._id)}>Pay</Button>
-        </Panel>
-      ))}
-    </Collapse>
-    </>
-    {/* </Space> */}
-                  </Modal>
+
+                            </div>}
+                            key={item._id}>
+                          <ul className=" grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 items-center">
+                            <li className="space-y-1">
+                            <p className=" font-bold">Beneficiary:</p>
+                            <p>{item.beneficiary}</p>
+                            </li>
+                            <li className="space-y-1">
+                            <p className=" font-bold">Email:</p>
+                            <p>{item.email}</p>
+                            </li>
+                            <li className="space-y-1">
+                            <p className=" font-bold">Phone number:</p>
+                            <p>{item.phoneNumber}</p>
+                            </li>
+                            <li className="space-y-1">
+                            <p className=" font-bold">National ID:</p>
+                            <p>{item.nationalId}</p>
+                            </li>
+                          </ul>
+                                <Button onClick={() => handleUseButtonClick(item._id)}>Pay</Button>
+                            </Panel>
+                          ))}
+                        </Collapse>
+                     </>
+                </Modal>
+                <EditPayment setEditModalOpen={setEditModalOpen} editModalOpen={editModalOpen} paymentInfo={paymentInfo}/>
+
                
                 
         </>

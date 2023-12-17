@@ -464,9 +464,9 @@ const StockPage = () => {
     ) {
       const body = {...shipmentInfo, shipmentNumber};
       await AddShipment({ body });
-      setSelectedData([]);
-      setConfirmModal(!confirmModal);
-      setShipmentNumber("");
+      // setSelectedData([]);
+      // setConfirmModal(!confirmModal);
+      // setShipmentNumber("");
     } else {
       setEmptyError("you can not send empty shipment slip");
     }

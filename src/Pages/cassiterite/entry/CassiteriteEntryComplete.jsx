@@ -21,18 +21,18 @@ import FetchingPage from "../../FetchingPage";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
-import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/helperFunctions";
+import {getBase64FromServer, filterColumns, AppUrls, decidePricingGrade} from "../../../components/helperFunctions";
 import {TbReport} from "react-icons/tb";
+import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     // const {loginData} = useMyContext();
     // const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
-    const [decision, setDecision] = useState("");
 
     const {data, isLoading, isError, isSuccess, error} =
     useGetOneCassiteriteEntryQuery({entryId}, {
@@ -110,9 +110,9 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     };
 
     const props = {
-        headers: {
-            authorization: `Bearer ${token}`,
-        },
+        // headers: {
+        //     authorization: `Bearer ${token}`,
+        // },
         onChange: (info) => {
             if (info.file.status !== 'uploading') {
                 console.log(info.file, info.fileList);
@@ -126,8 +126,13 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
         },
     };
 
+    const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
+        const formData = new FormData();
+        formData.append(lotNumber, file);
+        await updateCassiteriteEntry({entryId, body: formData});
+    };
+
     const beforeUpload = (file) => {
-        console.log("BEFORE UPLOAD");
         const isPNG = file.type === 'image/png' || file.type === 'image/jpeg';
         if (!isPNG) {
             message.error(`${file.name} is not a .png or .jpeg file`);
@@ -154,13 +159,13 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
 
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             setSuply(entr);
             setLotInfo(entr.output);
         }
-    }, [isSuccess]);
+    }, [isSuccess, data, isUpdateSuccess]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -193,7 +198,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
 
     const calculatePricePerUnit = (LME, grade, TC) => {
         if (LME && grade && TC) {
-            return (((LME * grade/100) - TC)/1000).toFixed(3);
+            return (((LME * grade/100) - TC)/1000).toFixed(5);
         }
     }
 
@@ -207,16 +212,14 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 ...item,
                 ...row,
             };
-            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
-                // if (parseFloat(updatedItem.nonSellAgreementAmount) === 0) return message.error("Non Sell Agreement Amount cannot be zero", 5);
-                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
+            if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
+                if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
+                if (Boolean(item.nonSellAgreement) === true && Boolean(updatedItem.nonSellAgreement) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                // console.log(updatedItem.nonSellAgreementAmount);
-                if (updatedItem.nonSellAgreementAmount > 0) {
+                if (updatedItem.nonSellAgreement > 0) {
                     updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
                     updatedItem.cumulativeAmount = 0;
                 } else {
@@ -229,6 +232,13 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
+
+            if (item.ASIR !== updatedItem.ASIR) {
+                if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
+                if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
+                    return message.error("ASIR cannot be empty or zero", 5);
+            }
+
             if (item.USDRate !== updatedItem.USDRate) {
                 if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
@@ -244,15 +254,15 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.treatmentCharges) === true && Boolean(updatedItem.treatmentCharges) === false)
                     return message.error("Treatment Charges cannot be empty or zero", 5);
             }
-            if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true && Boolean(parseFloat(updatedItem.mineralGrade)) === true && Boolean(parseFloat(updatedItem.treatmentCharges)) === true) {
+            if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true && updatedItem.pricingGrade && Boolean(parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])) === true && Boolean(parseFloat(updatedItem.treatmentCharges)) === true) {
                 updatedItem.pricePerUnit = calculatePricePerUnit(
                     parseFloat(updatedItem.londonMetalExchange),
-                    parseFloat(updatedItem.mineralGrade),
+                    parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]),
                     parseFloat(updatedItem.treatmentCharges)
                 ) || null;
             }
             if (Boolean(updatedItem.pricePerUnit) === true) {
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -266,10 +276,17 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
+        ASIR: {
+            title: "ASIR",
+            dataIndex: "ASIR",
+            key: "ASIR",
+            table: true,
+        },
         mineralGrade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
+            table: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         gradeImg: {
@@ -277,6 +294,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             dataIndex: "gradeImg",
             key: "gradeImg",
             width: 40,
+            table: true,
             // editTable: true,
             render: (_, record) => {
                 if (record.gradeImg) {
@@ -290,67 +308,116 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            name={record.lotNumber}
-                            action={`${AppUrls.server}/cassiterite/${entryId}`}
-                            method="PATCH"
+                            // name={record.lotNumber}
+                            // action={`${AppUrls.server}/cassiterite/${entryId}`}
+                            // method="PATCH"
                             {...props}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
-                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
+                            <Button icon={<UploadOutlined/>}/>
                         </Upload>
                     )
                 }
+            }
+        },
+        pricingGrade: {
+            title: "Pricing Grade",
+            dataIndex: "pricingGrade",
+            key: "pricingGrade",
+            table: true,
+            width: 80,
+            render: (_, record) => {
+                return (
+                    <PricingGrade
+                        value={record.pricingGrade ? record.pricingGrade : ""}
+                        lotNumber={record.lotNumber}
+                        updateEntry={updateCassiteriteEntry}
+                        entryId={entryId}
+                    />
+                )
+
             }
         },
         londonMetalExchange: {
             title: "LME ($)",
             dataIndex: "londonMetalExchange",
             key: "londonMetalExchange",
-            sorter: (a, b) => a.londonMetalExchange - b.londonMetalExchange,
+            table: true,
         },
         treatmentCharges: {
             title: "Treat. Charges ($)",
             dataIndex: "treatmentCharges",
             key: "treatmentCharges",
             width: 130,
-            sorter: (a, b) => a.treatmentCharges - b.treatmentCharges,
+            table: true,
         },
         pricePerUnit: {
             title: "price/kg ($)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
-            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            table: true,
         },
         mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
-            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
-        },
-        paid: {
-            title: "paid ($)",
-            dataIndex: "paid",
-            key: "paid",
-            sorter: (a, b) => a.paid - b.paid,
-        },
-        // unpaid: {
-        //     title: "unpaid ($)",
-        //     dataIndex: "unpaid",
-        //     key: "unpaid",
-        //     sorter: (a, b) => a.unpaid - b.unpaid,
-        // },
-        USDRate: {
-            title: "USD Rate (rwf)",
-            dataIndex: "USDRate",
-            key: "USDRate",
-            sorter: (a, b) => a.USDRate - b.USDRate,
+            table: true,
         },
         rmaFee: {
             title: "RMA Fee ($)",
             dataIndex: "rmaFeeUSD",
             key: "rmaFeeUSD",
-            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
+            table: true,
         },
+        netPrice: {
+            title: "Net Price ($)",
+            dataIndex: "netPrice",
+            key: "netPrice",
+            table: true,
+        },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            table: false,
+        },
+        unpaid: {
+            title: "unpaid ($)",
+            dataIndex: "unpaid",
+            key: "unpaid",
+            table: false,
+        },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            table: false,
+        },
+        sampleIdentification: {
+            title: "Sample Identification",
+            dataIndex: "sampleIdentification",
+            key: "sampleIdentification",
+            table: false,
+        },
+        rmaFeeDecision: {
+            title: "RMA Fee Decision",
+            dataIndex: "rmaFeeDecision",
+            key: "rmaFeeDecision",
+            table: false,
+        },
+        nonSellAgreement: {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreement",
+            key: "nonSellAgreement",
+            editTable: true,
+            table: false,
+            render: (_, record) => {
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
+                }
+            }
+        }
     }
     const columns = [
         {
@@ -384,18 +451,6 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             // sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        },
-        {
-            title: "non-sell agreement (KG)",
-            dataIndex: "nonSellAgreementAmount",
-            key: "nonSellAgreementAmount",
-            editTable: true,
-            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
-            render: (_, record) => {
-                if (record.nonSellAgreement?.weight) {
-                    return <span>{record.nonSellAgreement?.weight}</span>
-                }
-            }
         },
     ];
 
@@ -603,108 +658,16 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                                             bordered={true}
                                             expandable={{
                                                 expandedRowRender: record => {
-                                                    if (record.shipments) {
-                                                        let color = "";
-                                                        // const value='non-sell agreement'
-                                                        switch (record.status) {
-                                                            case "in stock": {
-                                                                color = "bg-green-500";
-                                                                break;
-                                                            }
-                                                            case "partially exported": {
-                                                                color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                break;
-                                                            }
-                                                            case "fully exported": {
-                                                                color = "bg-slate-600";
-                                                                break;
-                                                            }
-                                                            case "in progress": {
-                                                                color = "bg-orange-400";
-                                                                break;
-                                                            }
-                                                            case "rejected": {
-                                                                color = "bg-red-500";
-                                                                break;
-                                                            }
-                                                            case "non-sell agreement": {
-                                                                color = "bg-indigo-400";
-                                                                break;
-                                                            }
-                                                            default: {
-                                                                color = "bg-green-300";
-                                                            }
-                                                        }
-                                                        return (
-                                                            <>
-                                                                <div className=" space-y-3 w-full">
-                                                                    <p className=" text-lg font-bold">More Details</p>
-                                                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                                          <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Exported Amount: {record.exportedAmount}
-                                                                            </p>
-                                                                            <span className="flex">
-                                                                                <p className="text-md font-semibold">
-                                                                                    RMA Fee decision
-                                                                                </p>
-                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
-                                                                                    setDecision(e.target.value);
-                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
-                                                                                    const body = {output: [lot]};
-                                                                                    await updateCassiteriteEntry({body, entryId});
-                                                                                }}>
-                                                                                  <option value="pending">Pending</option>
-                                                                                  <option value="collected">Collected</option>
-                                                                                  <option value="exempted">Exempted</option>
-                                                                                </select>
-                                                                            </span>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              paid: {record.paid}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Payment status: {record.settled}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                              <p className={"text-md font-semibold"}>
-                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
-                                                                              </p>
-                                                                          </span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                    </span>
-                                                                    {record.shipments.map((shipment, index) => {
-                                                                        if (!Array.isArray(shipment)) {
-                                                                            return (
-                                                                                <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                                </span>
-                                                                            )
-                                                                        }
-                                                                    })}
-                                                                </div>
-                                                            </>
-                                                        )
-                                                    }
+                                                    return (
+                                                        <LotExpandable
+                                                            entryId={entryId}
+                                                            record={record}
+                                                            updateEntry={updateCassiteriteEntry}
+                                                            userPermissions={userPermissions}
+                                                            restrictedColumns={restrictedColumns}
+                                                            isProcessing={isSending}
+                                                        />
+                                                    )
                                                 },
                                                 rowExpandable: record => record,
                                             }}

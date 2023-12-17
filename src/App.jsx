@@ -193,7 +193,7 @@ function App() {
                                     <Route path="/settings" element={<Settings/>}/>
                                     <Route path="/logs" element={<UsersActivityLogs/>}/>
 
-                                    <Route path="/add/invoice/:supplierId" element={<AddInvoice/>}/>
+                                    <Route path="/add/invoice/:supplierId/:model/:entryId" element={<AddInvoice/>}/>
                                     <Route path="/invoice" element={<InvoiceList/>}/>
                                     {/*<Route path="/invoice/temp" element={<InvoiceTemp/>}/>*/}
                                     {/* <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/> */}

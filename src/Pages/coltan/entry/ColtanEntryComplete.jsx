@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { Button, Form, Input, message, Modal, Table, Upload } from "antd";
+import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
@@ -21,8 +21,14 @@ import { useMyContext } from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
-import {AppUrls, filterColumns, getBase64FromServer, toInitialCase} from "../../../components/helperFunctions";
+import {
+    AppUrls, decidePricingGrade,
+    filterColumns,
+    getBase64FromServer,
+    toInitialCase
+} from "../../../components/helperFunctions";
 import {TbReport} from "react-icons/tb";
+import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 
 // const getBase64FromServer = (fileUrl) => {
 //     return new Promise((resolve) => {
@@ -37,7 +43,7 @@ import {TbReport} from "react-icons/tb";
 
 
 const ColtanEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -45,7 +51,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [imageAvailable, setImageAvailable] = useState(false);
-    const [decision, setDecision] = useState("");
+    // const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error, refetch} =
         useGetOneColtanEntryQuery({entryId},
             {  
@@ -116,11 +122,9 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
-  const [file, setFile] = useState(null);
 
   const handleClose = () => {
     setPreviewVisible(false);
-    setFile(null);
   };
 
   const handlePreview = async (fileUrl) => {
@@ -131,49 +135,42 @@ const ColtanEntryCompletePage = ({entryId}) => {
   };
 
   const props = {
-    headers: {
-        authorization: `Bearer ${token}`,
-    },
+    // headers: {
+    //     authorization: `Bearer ${token}`,
+    // },
     onChange: (info) => {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
+      // if (info.file.status !== "uploading") {
+      //   console.log(info.file, info.fileList);
+      // }
+        if (info.file.status === "uploading") {
+            // Optionally, you can store the loadingMessage instance in a state
+            // or some variable if you need to reference it later.
+
+            // Example using state:
+            // const [loadingMessage, setLoadingMessage] = useState(null);
+            // setLoadingMessage(loadingMessage);
+            // Example using a variable:
+            // let loadingMessage;
+
+            // ... rest of your code
+
+            // To close the loading message when the upload is done or encounters an error:
+        }
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
-        refetch()
       } else if (info.file.status === "error") {
         message.error(`${info.file.name} file upload failed.`);
       }
     },
   };
 
-  const customRequest = async ({ file, onSuccess, onError }) => {
-    try {
+  const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
       const formData = new FormData();
-      formData.append("1", file);
-      // formData.append('customData', 'Your custom data here');
-
-      // Make a custom HTTP request to your server
-      const response = await fetch("http://localhost:3000/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        message.success(`${file.name} file uploaded successfully`);
-        onSuccess();
-      } else {
-        message.error(`${file.name} file upload failed.`);
-        onError(new Error("Upload failed"));
-      }
-    } catch (error) {
-      message.error(`${file.name} file upload failed.`);
-      onError(error);
-    }
+      formData.append(lotNumber, file);
+      await updateColtanEntry({entryId, body: formData});
   };
 
   const beforeUpload = (file) => {
-    console.log("before upload");
     const isPNG = file.type === "image/png" || file.type === "image/jpeg";
     if (!isPNG) {
       message.error(`${file.name} is not a .png or .jpeg file`);
@@ -198,13 +195,15 @@ const ColtanEntryCompletePage = ({entryId}) => {
   ///////////////////////
 
   useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             setSuply(entr);
             setLotInfo(entr.output);
         }
-    }, [isSuccess]);
+  }, [isSuccess, data, isUpdateSuccess]);
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -250,14 +249,14 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 ...item,
                 ...row,
             };
-            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
-                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+            if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
+                if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
+                if (Boolean(item.nonSellAgreement) === true && Boolean(updatedItem.nonSellAgreement) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                if (updatedItem.nonSellAgreementAmount > 0) {
+                if (updatedItem.nonSellAgreement > 0) {
                     updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
                     updatedItem.cumulativeAmount = 0;
                 } else {
@@ -270,6 +269,11 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
+            if (item.ASIR !== updatedItem.ASIR) {
+                if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
+                if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
+                    return message.error("ASIR cannot be empty or zero", 5);
+            }
             if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
                 if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
@@ -280,11 +284,11 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
                     return message.error("Tantal cannot be empty or zero", 5);
             }
-            if (Boolean(updatedItem.tantalum) === true && Boolean(updatedItem.mineralGrade) === true && parseFloat(updatedItem.mineralGrade) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
-                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
+            if (Boolean(updatedItem.tantalum) === true && updatedItem.pricingGrade && Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true && parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])).toFixed(5) || null;
             }
             if (Boolean(updatedItem.pricePerUnit) === true) {
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -302,19 +306,21 @@ const ColtanEntryCompletePage = ({entryId}) => {
             title: "ASIR",
             dataIndex: "ASIR",
             key: "ASIR",
+            table: true,
         },
         mineralGrade: {
             title: "Grade-KZM(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
+            table: true,
             // editTable: true, // adjust edit permission based on user permissions
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         tantal: {
             title: "Tantal ($)",
             dataIndex: "tantalum",
             key: "tantalum",
-            sorter: (a, b) => a.tantalum - b.tantalum,
+            table: true,
+            // sorter: (a, b) => a.tantalum - b.tantalum,
         },
         gradeImg: {
             title: "Grade Img",
@@ -322,7 +328,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
             key: "gradeImg",
             width: 100,
             // editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            table: true,
             render: (_, record) => {
                 if (record.gradeImg) {
                     return (
@@ -335,10 +341,11 @@ const ColtanEntryCompletePage = ({entryId}) => {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            name={record.lotNumber}
-                            action={`${AppUrls.server}/coltan/${entryId}`}
-                            method="PATCH"
+                            // name={record.lotNumber}
+                            // action={`${AppUrls.server}/coltan/${entryId}`}
+                            // method="PATCH"
                             {...props}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
@@ -348,14 +355,32 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
             }
         },
+        pricingGrade: {
+            title: "Pricing Grade",
+            dataIndex: "pricingGrade",
+            key: "pricingGrade",
+            table: true,
+            width: 80,
+            render: (_, record) => {
+                return (
+                    <PricingGrade
+                        value={record.pricingGrade ? record.pricingGrade : ""}
+                        lotNumber={record.lotNumber}
+                        updateEntry={updateColtanEntry}
+                        entryId={entryId}
+                    />
+                )
+
+            }
+        },
         pricePerUnit: {
             title: "price/kg ($)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
-            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            table: true,
             render: (_, record) => {
                 if (record.pricePerUnit) {
-                    return <span>{Number(record.pricePerUnit).toFixed(3)}</span>
+                    return <span>{Number(record.pricePerUnit).toFixed(5)}</span>
                 }
             }
         },
@@ -363,63 +388,96 @@ const ColtanEntryCompletePage = ({entryId}) => {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
-            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
+            table: true,
             render: (_, record) => {
                 if (record.mineralPrice) {
-                    return <span>{Number(record.mineralPrice).toFixed(3)}</span>
+                    return <span>{Number(record.mineralPrice).toFixed(5)}</span>
                 }
             }
-        },
-        paid: {
-            title: "paid ($)",
-            dataIndex: "paid",
-            key: "paid",
-            sorter: (a, b) => a.paid - b.paid,
-        },
-        USDRate: {
-            title: "USD Rate (rwf)",
-            dataIndex: "USDRate",
-            key: "USDRate",
-            sorter: (a, b) => a.USDRate - b.USDRate,
         },
         rmaFee: {
             title: "RMA Fee ($)",
             dataIndex: "rmaFeeUSD",
             key: "rmaFeeUSD",
-            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
+            table: true,
         },
+        netPrice: {
+            title: "Net Price ($)",
+            dataIndex: "netPrice",
+            key: "netPrice",
+            table: true,
+        },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            table: false,
+        },
+        unpaid: {
+            title: "unpaid ($)",
+            dataIndex: "unpaid",
+            key: "unpaid",
+            table: false,
+        },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            table: false,
+        },
+        sampleIdentification: {
+            title: "Sample Identification",
+            dataIndex: "sampleIdentification",
+            key: "sampleIdentification",
+            table: false,
+        },
+        niobium: {
+            title: "Niobium",
+            dataIndex: "niobium",
+            key: "niobium",
+            table: false,
+        },
+        iron: {
+            title: "Iron",
+            dataIndex: "iron",
+            key: "iron",
+            table: false,
+        },
+        rmaFeeDecision: {
+            title: "RMA Fee Decision",
+            dataIndex: "rmaFeeDecision",
+            key: "rmaFeeDecision",
+            table: false,
+        },
+        nonSellAgreement: {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreement",
+            key: "nonSellAgreement",
+            editTable: true,
+            table: false,
+            render: (_, record) => {
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
+                }
+            }
+        }
     }
     const columns = [
         {
             title: "#",
             dataIndex: "lotNumber",
             key: "lotNumber",
-            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
             // editTable: true,
-            sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
-            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        },
-        {
-            title: "non-sell agreement (KG)",
-            dataIndex: "nonSellAgreementAmount",
-            key: "nonSellAgreementAmount",
-            editTable: true,
-            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
-            render: (_, record) => {
-                if (record.nonSellAgreement?.weight) {
-                    return <span>{record.nonSellAgreement?.weight}</span>
-                }
-            }
         },
     ];
 
@@ -633,173 +691,19 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                 bordered={true}
                                                 expandable={{
                                                     expandedRowRender: record => {
+                                                        return (
+                                                            <LotExpandable
+                                                                entryId={entryId}
+                                                                record={record}
+                                                                updateEntry={updateColtanEntry}
+                                                                userPermissions={userPermissions}
+                                                                restrictedColumns={restrictedColumns}
+                                                                isProcessing={isSending}
+                                                            />
+                                                        )
 
-                                                        const handleChange = async (body) => {
-                                                            await updateColtanEntry({body, entryId});
-                                                        }
-
-
-
-                                                        if (record) {
-                                                            let color = "";
-                                                            // const value='non-sell agreement'
-                                                            switch (record.status) {
-                                                                case "in stock": {
-                                                                    color = "bg-green-500";
-                                                                    break;
-                                                                }
-                                                                case "partially exported": {
-                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                    break;
-                                                                }
-                                                                case "fully exported": {
-                                                                    color = "bg-slate-600";
-                                                                    break;
-                                                                }
-                                                                case "in progress": {
-                                                                    color = "bg-orange-400";
-                                                                    break;
-                                                                }
-                                                                case "rejected": {
-                                                                    color = "bg-red-500";
-                                                                    break;
-                                                                }
-                                                                case "non-sell agreement": {
-                                                                    color = "bg-indigo-400";
-                                                                    break;
-                                                                }
-                                                                default: {
-                                                                    color = "bg-green-300";
-                                                                }
-                                                            }
-                                                            const excludedFields = ["shipments", "nonSellAgreement", "comment", "weightOut", "lotNumber", "cumulativeAmount", "paymentHistory", "_id", "id", "status", "createdAt", "updatedAt", "__v"];
-                                                            return (
-                                                                <>
-                                                                    <div className="w-full flex flex-col bg-white rounded-md p-2">
-                                                                        <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                          <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
-                                                                            Field Name
-                                                                          </p>
-                                                                          <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                                            Value
-                                                                          </p>
-                                                                        </span>
-                                                                        {Object.entries(record).map(([key, value]) => {
-                                                                            if (!excludedFields.includes(key) && !Object.keys(restrictedColumns).includes(key)) {
-                                                                                return (
-                                                                                    <span key={key} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                                        <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
-                                                                                            {toInitialCase(key)}
-                                                                                        </p>
-                                                                                        <p className={`font-medium col-span-1 ${value === null ? "p-5" : "p-2"} w-full border`}>
-                                                                                            {value}
-                                                                                        </p>
-                                                                                    </span>
-                                                                                )
-                                                                            }
-                                                                        })}
-                                                                    </div>
-
-                                                                    <div className=" space-y-3 w-full">
-                                                                        <p className=" text-lg font-bold">More Details</p>
-                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                                          <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Exported Amount: {record.exportedAmount}
-                                                                            </p>
-                                                                            <span className="flex">
-                                                                                <p className="text-md font-semibold">
-                                                                                    RMA Fee decision
-                                                                                </p>
-                                                                                <select value={decision || ""} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
-                                                                                    setDecision(e.target.value);
-                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
-                                                                                    const body = {output: [lot]};
-                                                                                    await updateColtanEntry({body, entryId});
-                                                                                }}>
-                                                                                  <option value="pending">Pending</option>
-                                                                                  <option value="collected">Collected</option>
-                                                                                  <option value="exempted">Exempted</option>
-                                                                                </select>
-                                                                            </span>
-                                                                          </span>
-                                                                          <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              paid: {record.paid}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                          <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Payment status: {record.settled}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Niobium: {record.niobium}
-                                                                            </p>
-                                                                                <input value={record.niobium || ""} onChange={(e) => {
-                                                                                    // const body = {output: [{...record, niobium: e.target.value}]};
-                                                                                    // handleChange(body);
-
-                                                                                }}/>
-                                                                                {/*<input value={record.niobium}/>*/}
-                                                                            <p className="text-md font-semibold">
-                                                                              Iron: {record.iron}
-                                                                            </p>
-                                                                          </span>
-                                                                          <span className=" space-y-2">
-                                                                              <p className={"text-md font-semibold"}>
-                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
-                                                                              </p>
-                                                                          </span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                  <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
-                                                                        Shipment Number
-                                                                      </p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                                        Weight
-                                                                      </p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                                        Date
-                                                                      </p>
-                                                                    </span>
-                                                                    {record.shipments.map((shipment, index) => {
-                                                                      if (!Array.isArray(shipment)) {
-                                                                        return (
-                                                                          <span
-                                                                            key={index}
-                                                                            className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm"
-                                                                          >
-                                                                            <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
-                                                                              {shipment.shipmentNumber}
-                                                                            </p>
-                                                                            <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                                              {shipment.weight}
-                                                                            </p>
-                                                                            <p className=" font-medium col-span-1 p-2 w-full border ">
-                                                                                {dayjs(shipment.date).format("MMM DD, YYYY")}
-                                                                            </p>
-                                                                          </span>
-                                                                        );
-                                                                      }
-                                                                    })}
-
-                                                                  </div>
-                                                                </>
-                              );
-                            }
-                          },
-                          rowExpandable: (record) => record,
+                                                    },
+                                                    rowExpandable: (record) => record,
                         }}
                         components={{
                           body: {
