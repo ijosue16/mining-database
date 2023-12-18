@@ -67,6 +67,7 @@ const CassiteriteListPage = () => {
       const { data: dt } = data;
       const { entries: entrz } = dt;
       setDataz(entrz);
+      console.log(entrz)
     }
   }, [isSuccess]);
 

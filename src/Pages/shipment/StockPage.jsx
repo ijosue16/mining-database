@@ -427,7 +427,9 @@ const StockPage = () => {
         }
       }
     }
-    const input = <Input style={{ margin: 0 }} name={dataIndex} onChange={handleChange} type="number" />;
+    const input = <Input style={{ margin: 0 }} name={dataIndex} onWheelCapture={(e) => {
+      e.target.blur();
+    }} onChange={handleChange} type="number" />;
     return (
         <td {...restProps}>
           {editing ? (
