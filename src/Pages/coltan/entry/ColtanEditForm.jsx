@@ -200,7 +200,7 @@ const ColtanEditForm = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
-      console.log(data.data)
+      console.log(entr.mineTags)
       // sup = sups;
       setSupplierId(entr.supplierId);
       setFormval({
@@ -225,16 +225,15 @@ const ColtanEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      if (entr.mineTags?.length > 0 || entr.negociantTags?.length > 0) {
-        setmineTags(entr.mineTags);
+      if (entr.negociantTags?.length > 0) {
         setnegociantTags(entr.negociantTags);
-      } else {
-        setmineTags(mineTags);
-        setnegociantTags(negociantTags);
-      }
+      };
+      
+      if(entr.mineTags?.length > 0){
+        setmineTags(entr.mineTags);
+      };
     }
   }, [isSuccess]);
-  console.log('old supplier id'+supplierId)
 
   const filteredSuppliers = sup.filter((supplier) => {
     const companyName = supplier.companyName || "";
@@ -256,12 +255,13 @@ const ColtanEditForm = () => {
         TINNumber: chosenSupplier.TINNumber,
         email: chosenSupplier.email,
         supplierId: chosenSupplier._id,
+        companyRepresentative:chosenSupplier.companyRepresentative,
+        beneficiary:chosenSupplier.companyRepresentative,
       });
-      setBeneficial(chosenSupplier.companyName);
+      setBeneficial(chosenSupplier.companyRepresentative);
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log('new supplier'+supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -553,7 +553,7 @@ const ColtanEditForm = () => {
         }
       }
     }
-    // await updateColtanEntry({ entryId, body: requestId ? newBody : body });
+    await updateColtanEntry({ entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",
@@ -582,7 +582,7 @@ const ColtanEditForm = () => {
       { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
     console.log(body)
-    // navigate(-1);
+    navigate(-1);
   };
   const handleCancel = () => {
     setFormval({});
@@ -721,6 +721,7 @@ const ColtanEditForm = () => {
                         </div>
                       </div>
                       <button
+                      type="button"
                         className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
                         onClick={() => navigate("/add/supplier")}
                       >

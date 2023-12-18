@@ -164,6 +164,7 @@ const WolframiteEditForm = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
+      console.log(entr)
       setSupplierId(entr.supplierId);
       setFormval({
         ...formval,
@@ -187,13 +188,13 @@ const WolframiteEditForm = () => {
         isSupplierBeneficiary: false,
       });
       setlotDetails(entr.output);
-      if (entr.mineTags?.length > 0 && entr.negociantTags?.length > 0) {
-        setmineTags(entr.mineTags);
+      if (entr.negociantTags?.length > 0) {
         setnegociantTags(entr.negociantTags);
-      } else {
-        setmineTags(mineTags);
-        setnegociantTags(negociantTags);
-      }
+      };
+      
+      if(entr.mineTags?.length > 0){
+        setmineTags(entr.mineTags);
+      };
     }
   }, [isSuccess]);
 
@@ -226,8 +227,10 @@ const WolframiteEditForm = () => {
         TINNumber: chosenSupplier.TINNumber,
         email: chosenSupplier.email,
         supplierId: chosenSupplier._id,
+        companyRepresentative:chosenSupplier.companyRepresentative,
+        beneficiary:chosenSupplier.companyRepresentative,
       });
-      setBeneficial(chosenSupplier.companyName);
+      setBeneficial(chosenSupplier.companyRepresentative);
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
@@ -707,6 +710,7 @@ const WolframiteEditForm = () => {
                       </div>
                     </div>
                     <button
+                    type="button"
                       className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
                       onClick={() => navigate("/add/supplier")}
                     >
