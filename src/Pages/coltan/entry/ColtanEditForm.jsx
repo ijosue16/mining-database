@@ -420,7 +420,7 @@ const ColtanEditForm = () => {
         sheetNumber,
       };
     });
-    setmineTags(tags);
+    setmineTags((prev)=>([...tags,...prev]));
     setInitialmineTags([
       { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
     ]);
@@ -594,7 +594,7 @@ const ColtanEditForm = () => {
         }
       }
     }
-    await updateColtanEntry({ entryId, body: requestId ? newBody : body });
+    // await updateColtanEntry({ entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",
@@ -1064,7 +1064,7 @@ const ColtanEditForm = () => {
                         <li>
                           <p className="mb-1 font-semibold">Initial tag number</p>
                           <input
-                            type="text"
+                            type="number"
                             name="tagNumber"
                             autoComplete="off"
                             className="focus:outline-none p-2 border rounded-lg w-full"
@@ -1072,7 +1072,14 @@ const ColtanEditForm = () => {
                             onWheelCapture={(e) => {
                               e.target.blur();
                             }}
-                            onChange={handleInitialMinetagsEntry}
+                            onChange={(e)=>{
+                              if(e.target.value.toString().length >7){
+                                message.warning("tag number can't be more than seven numbers");
+                                // return;
+                              }else{
+                                handleInitialMinetagsEntry(e);
+                              }
+                            }}
                           />
                         </li>
                         <li>
@@ -1189,7 +1196,14 @@ const ColtanEditForm = () => {
                             onWheelCapture={(e) => {
                               e.target.blur();
                             }}
-                            onChange={(e) => handleMinesTagEntry(index, e)}
+                            onChange={(e) => {
+                              if(e.target.value.toString().length >7){
+                                message.warning("tag number can't be more than seven numbers");
+                                // return;
+                              }else{
+                                handleMinesTagEntry(index, e);
+                              }
+                            }}
                           />
                         </li>
                         <li>

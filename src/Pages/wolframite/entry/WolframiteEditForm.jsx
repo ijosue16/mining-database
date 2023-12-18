@@ -399,7 +399,7 @@ const WolframiteEditForm = () => {
         sheetNumber,
       };
     });
-    setmineTags(tags);
+    setmineTags((prev)=>([...tags,...prev]));
     setInitialmineTags([
       { weight: null, tagNumber: "", sheetNumber: "", limit: "" },
     ]);
@@ -1023,7 +1023,14 @@ const WolframiteEditForm = () => {
                             onWheelCapture={(e) => {
                               e.target.blur();
                             }}
-                            onChange={handleInitialMinetagsEntry}
+                            onChange={(e)=>{
+                              if(e.target.value.toString().length >7){
+                                message.warning("tag number can't be more than seven numbers");
+                                // return;
+                              }else{
+                                handleInitialMinetagsEntry(e);
+                              }
+                            }}
                           />
                         </li>
                         <li>
@@ -1129,7 +1136,14 @@ const WolframiteEditForm = () => {
                                         onWheelCapture={(e) => {
                                           e.target.blur();
                                         }}
-                                        onChange={(e) => handleMinesTagEntry(index, e)}
+                                        onChange={(e) => {
+                                          if(e.target.value.toString().length >7){
+                                            message.warning("tag number can't be more than seven numbers");
+                                            // return;
+                                          }else{
+                                            handleMinesTagEntry(index, e);
+                                          }
+                                        }}
                                     />
                                   </li>
                                   <li>

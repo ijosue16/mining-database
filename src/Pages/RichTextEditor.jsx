@@ -13,7 +13,6 @@ import { useSaveFileMutation } from "../states/apislice";
 import { message } from "antd";
 import LoadingButton from "./LoadingButton";
 import { useNavigate } from "react-router-dom";
-import * as cheerio from 'cheerio';
 import FetchingPage from './FetchingPage';
 
 
