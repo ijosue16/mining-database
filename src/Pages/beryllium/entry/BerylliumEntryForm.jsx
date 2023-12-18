@@ -100,36 +100,27 @@ const BerylliumEntryForm = () => {
     const handleAddTime = (e) => {
         setFormval((prevState) => ({ ...prevState, time: dayjs(e).format('HH:mm') }));
     };
-    // const handleAddLot = () => {
-    //     setlotDetails([...lotDetails, { lotNumber: '', weightOut: '' }]);
-    // };
 
-    // const handleLotEntry = (index, e) => {
-    //     const values = [...lotDetails];
-    //     values[index][e.target.name] = e.target.value;
-    //     values[index].lotNumber = index + 1;
-    //     setlotDetails(values);
-    // };
+    
+  function isTotalWeightGreater(weightOut, weightIn) {
+    // Convert weightIn to a number
+    const numericWeightIn = parseFloat(weightIn);
+    const numericWeightOut = parseFloat(weightOut);
 
-    // const handleLRemoveLot = (index) => {
-    //     const values = [...lotDetails];
-    //     values.splice(index, 1);
-    //     values.forEach((lot, i) => {
-    //         lot.lotNumber = i + 1;
-    //     });
-    //     setlotDetails(values);
-    // };
+    // Check if the conversion is successful and compare totalWeight with weightIn
+    if (
+      !isNaN(numericWeightIn) &&
+      !isNaN(numericWeightOut) &&
+      numericWeightOut > numericWeightIn
+    ) {
+      // message.error("Weight out can't be greater than weight in")
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-    // const handleCheck = () => {
-    //     setchecked((prev) => !prev);
-    //     console.log(checked)
-    //     if (Boolean(checked) === false) {
-    //         setFormval({ ...formval, beneficiary: beneficial, isSupplierBeneficiary: true });
-    //     }
-    //     else if (Boolean(checked) === true) {
-    //         setFormval({ ...formval, beneficiary: '', isSupplierBeneficiary: false });
-    //     }
-    // };
+  const result = isTotalWeightGreater(formval.weightOut, formval.weightIn);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -237,6 +228,7 @@ const BerylliumEntryForm = () => {
                                                                    Add={handleSubmit}
                                                                    Cancel={handleCancel}
                                                                    isloading={isSending}
+                                                                   isvalid={result}
                                    />} />
         </>
     )

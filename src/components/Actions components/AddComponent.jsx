@@ -1,7 +1,7 @@
 import { Spin } from "antd";
 import { ImSpinner2 } from "react-icons/im";
 
-const AddComponent = ({ Add, Cancel, component, isloading }) => {
+const AddComponent = ({ Add, Cancel, component, isloading,isvalid }) => {
   return (
     <form onSubmit={Add} className="flex flex-col p-3 h-fit gap-2">
       <>{component}</>
@@ -15,7 +15,7 @@ const AddComponent = ({ Add, Cancel, component, isloading }) => {
             Sending
           </button>
         ) : (
-          <button className="px-6 py-2 bg-orange-300 rounded-md" type="submit">
+          <button className={`${isvalid? 'bg-orange-100 text-slate-600':' bg-orange-300'} px-6 py-2  rounded-md`} type="submit" disabled={isvalid}>
             Submit
           </button>
         )}

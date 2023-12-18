@@ -489,6 +489,46 @@ const WolframiteEditForm = () => {
     setnegociantTags(updatedValues);
   };
 
+  function calculateTotalWeight(arr) {
+    // Ensure the input is an array
+    if (!Array.isArray(arr)) {
+      throw new Error('Input must be an array');
+    }
+  
+    // Use reduce to sum the weightOut values
+    const totalWeight = arr.reduce((sum, entry) => {
+      // Convert the weightOut value to a number before adding
+      const weight = parseFloat(entry.weightOut);
+  
+      // Check if the conversion is successful and add to the sum
+      if (!isNaN(weight)) {
+        return sum + weight;
+      } else {
+       
+        return sum;
+      }
+    }, 0);
+  
+    return totalWeight;
+  };
+
+  function isTotalWeightGreater(data, weightIn) {
+    const totalWeight = calculateTotalWeight(data);
+  
+    // Convert weightIn to a number
+    const numericWeightIn = parseFloat(weightIn);
+  
+    // Check if the conversion is successful and compare totalWeight with weightIn
+    if (!isNaN(numericWeightIn) && totalWeight > numericWeightIn) {
+      // message.error("Weight out can't be greater than weight in")
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const result = isTotalWeightGreater(lotDetails, formval.weightIn);
+
   const handleCheck = () => {
     setchecked((prev) => !prev);
     if (Boolean(checked) === false) {
@@ -1211,6 +1251,7 @@ const WolframiteEditForm = () => {
                       Add={handleSubmit}
                       Cancel={handleCancel}
                       isloading={isSending}
+                      isvalid={result}
                   />
                 }
             />

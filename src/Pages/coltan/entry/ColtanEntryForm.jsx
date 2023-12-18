@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState,useRef } from "react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker, Spin } from "antd";
+import { DatePicker, TimePicker, Spin,message } from "antd";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
@@ -156,11 +156,52 @@ const ColtanEntryForm = () => {
     }
   };
 
+  function calculateTotalWeight(arr) {
+    // Ensure the input is an array
+    if (!Array.isArray(arr)) {
+      throw new Error('Input must be an array');
+    }
+  
+    // Use reduce to sum the weightOut values
+    const totalWeight = arr.reduce((sum, entry) => {
+      // Convert the weightOut value to a number before adding
+      const weight = parseFloat(entry.weightOut);
+  
+      // Check if the conversion is successful and add to the sum
+      if (!isNaN(weight)) {
+        return sum + weight;
+      } else {
+       
+        return sum;
+      }
+    }, 0);
+  
+    return totalWeight;
+  };
+
+  function isTotalWeightGreater(data, weightIn) {
+    const totalWeight = calculateTotalWeight(data);
+  
+    // Convert weightIn to a number
+    const numericWeightIn = parseFloat(weightIn);
+  
+    // Check if the conversion is successful and compare totalWeight with weightIn
+    if (!isNaN(numericWeightIn) && totalWeight > numericWeightIn) {
+      // message.error("Weight out can't be greater than weight in")
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const result = isTotalWeightGreater(lotDetails, formval.weightIn);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createColtanEntry({ body });
-    navigate(-1);
+    console.log(body);
+    // await createColtanEntry({ body });
+    // navigate(-1);
   };
   const handleCancel = () => {
     setFormval({
@@ -519,6 +560,7 @@ const ColtanEntryForm = () => {
             Add={handleSubmit}
             Cancel={handleCancel}
             isloading={isSending}
+            isvalid={result}
           />
         }
       />

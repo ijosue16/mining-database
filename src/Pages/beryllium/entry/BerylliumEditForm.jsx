@@ -201,6 +201,26 @@ const BerylliumEditForm = () => {
     }));
   };
 
+  function isTotalWeightGreater(weightOut, weightIn) {
+    // Convert weightIn to a number
+    const numericWeightIn = parseFloat(weightIn);
+    const numericWeightOut = parseFloat(weightOut);
+
+    // Check if the conversion is successful and compare totalWeight with weightIn
+    if (
+      !isNaN(numericWeightIn) &&
+      !isNaN(numericWeightOut) &&
+      numericWeightOut > numericWeightIn
+    ) {
+      // message.error("Weight out can't be greater than weight in")
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  const result = isTotalWeightGreater(formval.weightOut, formval.weightIn);
+
   const handleCheck = () => {
     setchecked((prev) => !prev);
     if (Boolean(checked) === false) {
@@ -487,6 +507,7 @@ const BerylliumEditForm = () => {
               Add={handleSubmit}
               Cancel={handleCancel}
               isloading={isSending}
+              isvalid={result}
             />
           }
         />
