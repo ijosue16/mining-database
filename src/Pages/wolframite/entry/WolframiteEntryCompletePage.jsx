@@ -15,7 +15,7 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
-import {getBase64FromServer, filterColumns, AppUrls} from "../../../components/helperFunctions";
+import {getBase64FromServer, filterColumns, decidePricingGrade, AppUrls} from "../../../components/helperFunctions";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
@@ -23,16 +23,16 @@ import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {TbReport} from "react-icons/tb";
+import {LotExpandable} from "../../HelpersJsx";
 
 const WolframiteEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
-    const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error} =
     useGetOneWolframiteEntryQuery({entryId}, {
         refetchOnMountOrArgChange: true,
@@ -107,9 +107,6 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     };
 
     const props = {
-        headers: {
-            authorization: `Bearer ${token}`,
-        },
         onChange: (info) => {
             if (info.file.status === 'done') {
                 message.success(`${info.file.name} file uploaded successfully`);
@@ -118,6 +115,12 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                 message.error(`${info.file.name} file upload failed.`);
             }
         },
+    };
+
+    const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
+        const formData = new FormData();
+        formData.append(lotNumber, file);
+        await updateWolframiteEntry({entryId, body: formData});
     };
 
     const beforeUpload = (file) => {
@@ -146,22 +149,18 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     ////////////////
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             setSuply(entr);
             setLotInfo(entr.output);
-            console.log(entr);
-            // console.log(lotInfo);
         }
-    }, [isSuccess]);
+    }, [isSuccess, isUpdateSuccess, data]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
         await updateWolframiteEntry({body, entryId});
-
-        console.log(lotInfo);
         // navigate(-1);
     };
     const handleModelAdvance = async () => {
@@ -210,15 +209,14 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                 updatedItem.metricTonUnit = parseFloat(updatedItem.metricTonUnit);
             }
             // TODO 1: USE BOOLEAN TO INDICATE IF NON SELL OR NOT
-            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
-                // if (parseFloat(updatedItem.nonSellAgreementAmount) === 0) return message.error("Non Sell Agreement Amount cannot be zero", 5);
-                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.weightOut)) {
+            if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
+                if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
+                if (Boolean(item.nonSellAgreement) === true && Boolean(updatedItem.nonSellAgreement) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                if (updatedItem.nonSellAgreementAmount > 0) {
+                if (updatedItem.nonSellAgreement > 0) {
                     updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
                     updatedItem.cumulativeAmount = 0;
                 } else {
@@ -231,16 +229,23 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
+
+            if (item.ASIR !== updatedItem.ASIR) {
+                if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
+                if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
+                    return message.error("ASIR cannot be empty or zero", 5);
+            }
+
             if (item.USDRate !== updatedItem.USDRate) {
                 if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be empty or zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
                     return message.error("USD rate cannot be empty or zero", 5);
             }
-            if (Boolean(updatedItem.metricTonUnit) === true && Boolean(updatedItem.mineralGrade) === true) {
-                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.metricTonUnit), parseFloat(updatedItem.mineralGrade)).toFixed(3) || null;
+            if (Boolean(updatedItem.metricTonUnit) === true && updatedItem.pricingGrade && Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.metricTonUnit), parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])).toFixed(5) || null;
             }
             if (Boolean(updatedItem.pricePerUnit) === true) {
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -254,43 +259,51 @@ const WolframiteEntryCompletePage = ({entryId}) => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
+        ASIR: {
+            title: "ASIR",
+            dataIndex: "ASIR",
+            key: "ASIR",
+            table: true,
+        },
         mineralGrade: {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            table: true,
         },
         metricTonUnit: {
             title: "MTU ($)",
             dataIndex: "metricTonUnit",
             key: "metricTonUnit",
-            sorter: (a, b) => a.metricTonUnit - b.metricTonUnit,
+            table: true,
         },
         gradeImg: {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
+            width: 100,
             // editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            table: true,
             render: (_, record) => {
                 if (record.gradeImg) {
                     return (
                         <div className="flex items-center">
                             {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                            {userPermissions?.gradeImg?.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
                         </div>
                     )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            name={record.lotNumber}
-                            action={`${AppUrls.server}/wolframite/${entryId}`}
-                            method="PATCH"
+                            // name={record.lotNumber}
+                            // action={`${AppUrls.server}/coltan/${entryId}`}
+                            // method="PATCH"
                             {...props}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
-                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
+                            <Button icon={<UploadOutlined/>}/>
                         </Upload>
                     )
                 }
@@ -301,63 +314,78 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             title: "price/kg ($)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
-            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            table: true,
         },
         mineralPrice: {
             title: "Price ($)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
-            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
-        },
-        paid: {
-            title: "paid ($)",
-            dataIndex: "paid",
-            key: "paid",
-            sorter: (a, b) => a.paid - b.paid,
-        },
-        USDRate: {
-            title: "USD Rate (rwf)",
-            dataIndex: "USDRate",
-            key: "USDRate",
-            sorter: (a, b) => a.USDRate - b.USDRate,
+            table: true,
         },
         rmaFee: {
             title: "RMA Fee ($)",
             dataIndex: "rmaFeeUSD",
             key: "rmaFeeUSD",
-            sorter: (a, b) => a.rmaFeeUSD - b.rmaFeeUSD,
+            table: true,
         },
+        netPrice: {
+            title: "Net Price ($)",
+            dataIndex: "netPrice",
+            key: "netPrice",
+            table: true,
+        },
+        paid: {
+            title: "paid ($)",
+            dataIndex: "paid",
+            key: "paid",
+            table: false,
+        },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            table: false
+        },
+        sampleIdentification: {
+            title: "Sample Identification",
+            dataIndex: "sampleIdentification",
+            key: "sampleIdentification",
+            table: false,
+        },
+        rmaFeeDecision: {
+            title: "RMA Fee Decision",
+            dataIndex: "rmaFeeDecision",
+            key: "rmaFeeDecision",
+            table: false,
+        },
+        nonSellAgreement: {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreement",
+            key: "nonSellAgreement",
+            editTable: true,
+            table: false,
+            render: (_, record) => {
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
+                }
+            }
+        }
     }
     const columns = [
         {
             title: "#",
             dataIndex: "lotNumber",
             key: "lotNumber",
-            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-            sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
-            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        },
-        {
-            title: "non-sell agreement (KG)",
-            dataIndex: "nonSellAgreementAmount",
-            key: "nonSellAgreementAmount",
-            editTable: true,
-            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
-            render: (_, record) => {
-                if (record.nonSellAgreement?.weight) {
-                    return <span>{record.nonSellAgreement?.weight}</span>
-                }
-            }
         },
     ];
 
@@ -576,108 +604,16 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                                             bordered={true}
                                             expandable={{
                                                 expandedRowRender: record => {
-                                                    if (record.shipments) {
-                                                        let color = "";
-                                                        // const value='non-sell agreement'
-                                                        switch (record.status) {
-                                                            case "in stock": {
-                                                                color = "bg-green-500";
-                                                                break;
-                                                            }
-                                                            case "partially exported": {
-                                                                color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                break;
-                                                            }
-                                                            case "fully exported": {
-                                                                color = "bg-slate-600";
-                                                                break;
-                                                            }
-                                                            case "in progress": {
-                                                                color = "bg-orange-400";
-                                                                break;
-                                                            }
-                                                            case "rejected": {
-                                                                color = "bg-red-500";
-                                                                break;
-                                                            }
-                                                            case "non-sell agreement": {
-                                                                color = "bg-indigo-400";
-                                                                break;
-                                                            }
-                                                            default: {
-                                                                color = "bg-green-300";
-                                                            }
-                                                        }
-                                                        return (
-                                                            <>
-                                                                <div className=" space-y-3 w-full">
-                                                                    <p className=" text-lg font-bold">More Details</p>
-                                                                    <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                                          <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Exported Amount: {record.exportedAmount}
-                                                                            </p>
-                                                                            <span className="flex">
-                                                                                <p className="text-md font-semibold">
-                                                                                    RMA Fee decision
-                                                                                </p>
-                                                                                <select value={decision} className=" font-medium col-span-1 p-2 w-full border" onChange={async (e) => {
-                                                                                    setDecision(e.target.value);
-                                                                                    const lot = {...lotInfo[lotInfo.indexOf(record)], rmaFeeDecision: e.target.value};
-                                                                                    const body = {output: [lot]};
-                                                                                    await updateWolframiteEntry({body, entryId});
-                                                                                }}>
-                                                                                  <option value="pending">Pending</option>
-                                                                                  <option value="collected">Collected</option>
-                                                                                  <option value="exempted">Exempted</option>
-                                                                                </select>
-                                                                            </span>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              paid: {record.paid}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Payment status: {record.settled}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                        <span className=" space-y-2">
-                                                                              <p className={"text-md font-semibold"}>
-                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
-                                                                              </p>
-                                                                          </span>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                    </span>
-                                                                    {record.shipments.map((shipment, index) => {
-                                                                        if (!Array.isArray(shipment)) {
-                                                                            return (
-                                                                                <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                                </span>
-                                                                            )
-                                                                        }
-                                                                    })}
-                                                                </div>
-                                                            </>
-                                                        )
-                                                    }
+                                                    return (
+                                                        <LotExpandable
+                                                            entryId={entryId}
+                                                            record={record}
+                                                            restrictedColumns={restrictedColumns}
+                                                            userPermissions={userPermissions}
+                                                            isProcessing={isSending}
+                                                            updateEntry={updateWolframiteEntry}
+                                                        />
+                                                    )
                                                 },
                                                 rowExpandable: record => record,
                                             }}

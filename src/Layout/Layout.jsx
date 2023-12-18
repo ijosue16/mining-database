@@ -160,6 +160,19 @@ const Layout = () => {
         },
     ]
 
+    const keyMap = {
+        "main": "main",
+        "dashboard": "dashboard",
+        "entry": "entry",
+        "shipments": "shipments",
+        "tags": "tags",
+        "suppliers": "suppliers",
+        "buyers": "buyers",
+        "users": "users",
+        "contracts": "contracts",
+        "payments": "payments",
+    }
+
     // Define the roles and their associated menu item IDs and restricted item IDs
     const roleMenus = {
         admin: {

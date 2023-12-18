@@ -26,11 +26,12 @@ import {SocketContext} from "../../context files/socket";
 import {GiGiftOfKnowledge} from "react-icons/gi";
 dayjs.extend(isBetween);
 import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
+import {FaFileInvoiceDollar} from "react-icons/fa";
 
 
 const ColtanListPage = () => {
     const dummyarch=[''];
-    const {userData} = useSelector(state => state.persistedReducer.global);
+    const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
     const [dataz, setDataz] = useState([]);
     const {loginData} = useMyContext();
@@ -332,15 +333,34 @@ const ColtanListPage = () => {
                                         }
                                         className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                                     >
+
+                                        {permissions?.entry?.edit && (
+                                            <li
+                                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                onClick={() => {
+                                                    navigate(`/entry/edit/coltan/${record._id}`);
+                                                }}
+                                            >
+                                                <BiSolidEditAlt className=" text-lg"/>
+                                                <p>edit</p>
+                                            </li>
+                                        )}
+
                                         <li
-                                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
                                             onClick={() => {
-                                                navigate(`/entry/edit/coltan/${record._id}`);
+                                                if (record.supplierId) {
+                                                    navigate(`/add/invoice/${record.supplierId}/coltan/${record._id}`);
+                                                } else {
+                                                    return message.warning("You have assign supplier to this entry");
+                                                }
                                             }}
                                         >
-                                            <BiSolidEditAlt className=" text-lg"/>
-                                            <p>edit</p>
+                                            <FaFileInvoiceDollar className=" text-xl" />
+                                            <p>Make invoice</p>
                                         </li>
+
+
                                         {permissions.entry?.edit ? (
                                             <>
                                                 {/* <li

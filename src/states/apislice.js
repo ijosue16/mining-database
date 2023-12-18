@@ -13,7 +13,7 @@ export const apiSlice = createApi({
                 headers.append('authorization', `Bearer ${token}`);
             }
             return headers;
-        }
+        },
     }),
     tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', "tags", 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
@@ -201,6 +201,14 @@ export const apiSlice = createApi({
             query: ({paymentId}) => `/payments/${paymentId}`,
             providesTags: ['payments', "statistics", "advance-payment"]
         }),
+        updatePayment: builder.mutation({
+            query: ({body, paymentId, model}) => ({
+                url: `/payments/update/${model}/${paymentId}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['payments', "statistics", "advance-payment"]
+        }),
         getAllAdvancePayments: builder.query({
             query: () => `/advance-payment`,
             providesTags: ["advance-payment", "payments", "entries", "statistics"]
@@ -235,7 +243,7 @@ export const apiSlice = createApi({
             providesTags: ['entries', 'payments', 'buyers']
         }),
         getOneEntry: builder.query({
-            query: ({entryId, model}) => `/entries/${model}/${entryId}`,
+            query: ({entryId, model}) => `/stock/entry-info/${model}/${entryId}`,
             providesTags: ['entries', 'payments', 'buyers']
         }),
         createEntry: builder.mutation({
@@ -757,6 +765,7 @@ export const {
     useGetAllPaymentsQuery,
     useAddPaymentMutation,
     useGetOnePaymentQuery,
+    useUpdatePaymentMutation,
     useGetAllAdvancePaymentsQuery,
     useGetOneAdvancePaymentQuery,
     useAddAdvancePaymentMutation,

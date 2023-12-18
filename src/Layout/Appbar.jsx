@@ -71,7 +71,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     })
 
     useEffect(() => {
-        if (userSuccess) {
+        if (userSuccess || updateSuccess) {
             const { user } = userDataObj.data;
             if (user) {
                 setUser(user);
@@ -79,7 +79,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                 dispatch(setPermissions(user.permissions));
             }
         }
-    }, [userId, userSuccess, userDataObj]);
+    }, [userId, userSuccess, userDataObj, updateSuccess]);
 
     let modalRef = useRef();
     const{loginData}=useMyContext();
@@ -100,14 +100,14 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
 
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || updateSuccess) {
             const { notifications: notificationsObj } = data.data;
             if (notificationsObj.length > 0) {
                 const {notifications: notificationsArray} = notificationsObj[0];
                 setNotifications(notificationsArray.slice(0,10));
             }
         }
-    }, [isSuccess, data]);
+    }, [isSuccess, data, updateSuccess]);
 
 
     const handleClickOutside = (event) => {
@@ -155,7 +155,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
             {/* App bar */}
             <div className="  w-full fixed flex z-10 bg-white p-2 items-center justify-between h-16 px-10 border-b">
                 <div className={`logo ml-12 dark:text-white  transform ease-in-out duration-300 flex-none h-full flex items-center justify-center`} >
-                    KANZAMIN
+                    MINE
                 </div>
 
 

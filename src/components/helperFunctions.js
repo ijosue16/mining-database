@@ -1,5 +1,5 @@
-import React from "react";
-import {message, notification} from "antd";
+import React, {useState} from "react";
+import {Button, message, notification, Popover, Radio} from "antd";
 
 const specialStrings = ["TINNumber", "rmaFee", "USDRate", "rmaFeeUSD"];
 
@@ -39,14 +39,16 @@ export function filterColumns (restrictedColumns, userPermissions, columns, mode
     for (const key in restrictedColumns) {
         if (restrictedColumns.hasOwnProperty(key)) {
             if (Object.keys(userPermissions).includes(key)) {
-                if (userPermissions[key].view) {
-                    if (userPermissions[key].edit && !["gradeImg", "mineralPrice"].includes(`${key}`)) {
-                        restrictedColumns[key].editTable = !(`${key}` === "pricePerUnit" && ["coltan", "cassiterite", "wolframite"].includes(model));
+                if (restrictedColumns[key].table) {
+                    if (userPermissions[key].view) {
+                        if (userPermissions[key].edit && !["gradeImg", "mineralPrice", "pricingGrade", "netPrice"].includes(`${key}`)) {
+                            restrictedColumns[key].editTable = !(`${key}` === "pricePerUnit" && ["coltan", "cassiterite", "wolframite"].includes(model));
+                        }
+                        // if (userPermissions[key].edit && ["lithium", "beryllium"].includes(model) && `${key}` === "pricePerUnit") {
+                        //     restrictedColumns[key].editTable = true;
+                        // }
+                        columns.push(restrictedColumns[key]);
                     }
-                    // if (userPermissions[key].edit && ["lithium", "beryllium"].includes(model) && `${key}` === "pricePerUnit") {
-                    //     restrictedColumns[key].editTable = true;
-                    // }
-                    columns.push(restrictedColumns[key]);
                 }
             }
         }
@@ -66,6 +68,11 @@ export const AppUrls = {
     server: "http://localhost:5001/api/v1",
 }
 
+export function decidePricingGrade (pricingGrade) {
+    if (pricingGrade === "KZM") return "mineralGrade";
+    if (pricingGrade === "ASIR") return "ASIR";
+}
+
 export function handleConvertToUSD (amount, USDRate) {
     return amount / USDRate;
 }
@@ -73,7 +80,6 @@ export function handleConvertToUSD (amount, USDRate) {
 export function handleConvertToRWF (amount, USDRate) {
     return amount * USDRate;
 }
-
 
 export const getModelAcronym = (model) => {
     if (model.toLowerCase() === "cassiterite") return "SNO2";

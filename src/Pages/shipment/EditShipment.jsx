@@ -15,6 +15,7 @@ import {CiCirclePlus} from "react-icons/ci";
 
 const EditShipment = ({record: shipment}) => {
     const [form] = Form.useForm();
+    const mineralType = shipment.model;
     const {data, isLoading, isSuccess} = useGetOneShipmentQuery(shipment._id);
     const [updateShipment, {isLoading: isUpdatingShipment, isSuccess: isUpdateSuccess, isError, error}] = useUpdateShipmentMutation();
     const [model, setModel] = useState(null);
@@ -37,12 +38,14 @@ const EditShipment = ({record: shipment}) => {
     })
 
 
+
+    // TODO 11: CHECK HOW TO FILTER TO REMOVE DUPLICATES IN SHIPMENT STOCK LOTS
     useEffect(() => {
         if (isStockSuccess) {
-            const existingLots = shipmentLots.map(item => ({entryId: item.entryId, lotNumber: item.lotNumber}));
+            const existingLots = shipmentLots.map(item => ({entryId: item.entryId?.toString(), lotNumber: parseInt(item.lotNumber)}));
             const { detailedStock } = stockData.data;
             const filteredStock = detailedStock.map(item => {
-                if (!existingLots.includes({entryId: item._id, lotNumber: item.lotNumber})) {
+                if (!existingLots.includes({entryId: item._id?.toString(), lotNumber: parseInt(item.lotNumber)})) {
                     // return {
                     //     ...item,
                     //     entryId: item._id,
@@ -91,7 +94,7 @@ const EditShipment = ({record: shipment}) => {
     }, []);
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {shipmentLots: shipmentComponents, shipment} = data.data;
             setShipmentLots(shipmentComponents);
             if (shipment) {
@@ -105,7 +108,7 @@ const EditShipment = ({record: shipment}) => {
                 }
             }
         }
-    }, [isSuccess, data]);
+    }, [isSuccess, data, isUpdateSuccess]);
 
     const isEditing = (record) => {
         return record.index === editRowKey;
@@ -198,9 +201,9 @@ const EditShipment = ({record: shipment}) => {
             align: "center"
         },
         {
-            title: 'weight in (kg)',
-            dataIndex: 'weightIn',
-            key: 'weightIn',
+            title: 'weight Out (kg)',
+            dataIndex: 'weightOut',
+            key: 'weightOut',
             width: 15,
             align: "center"
         },
@@ -283,6 +286,31 @@ const EditShipment = ({record: shipment}) => {
         },
 
     ]
+
+    if (mineralType === "coltan") {
+        columns.splice(5, 0, {
+            title: 'Niobium',
+            dataIndex: 'niobium',
+            key: 'niobium',
+            width: 15,
+            align: "center"
+        })
+        columns.splice(6, 0, {
+            title: 'Iron',
+            dataIndex: 'iron',
+            key: 'iron',
+            width: 15,
+            align: "center"
+        })
+    } else if (mineralType === "wolframite") {
+        columns.splice(8, 0, {
+            title: "MTU",
+            dataIndex: "metricTonUnit",
+            key: "metricTonUnit",
+            align: "center",
+            width: 15,
+        })
+    }
 
     const mergedColumns = columns.map((col) => {
         if (!col.editTable) {

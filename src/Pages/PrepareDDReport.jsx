@@ -4,6 +4,7 @@ import { useGenerateDDReportMutation } from "../states/apislice";
 import {useParams} from "react-router-dom";
 import { message } from "antd";
 import DocumentEditorComponent from "./DocumentEditor";
+import FetchingPage from "./FetchingPage";
 
 
 const PrepareDDReport = () => {
@@ -23,12 +24,11 @@ const PrepareDDReport = () => {
 
     useEffect(() => {
         const fetchDDReport = async () => {
-            const body = {supplierId, endMonth: new Date(endDate).getMonth()};
+            const body = {supplierId, startMonth: startDate, endMonth: endDate};
             const response = await generateDDReport({body, supplierId});
             if (response.data) {
                 const { sfdt, fileId, filePath } = response.data;
                 if (sfdt) {
-                    console.log(sfdt)
                     setSfdt(sfdt);
                 }
                 if (fileId && filePath) {
@@ -41,12 +41,14 @@ const PrepareDDReport = () => {
 
     return (
         <div>
-            <DocumentEditorComponent
-                sfdt={sfdt}
-                fileId={fileInfo.fileId}
-                filePath={fileInfo.filePath}
-                showSave={true}
-            />
+            {!sfdt ? <FetchingPage/> : (
+                <DocumentEditorComponent
+                    sfdt={sfdt}
+                    fileId={fileInfo.fileId}
+                    filePath={fileInfo.filePath}
+                    showSave={true}
+                />
+            )}
         </div>
     )
 }
