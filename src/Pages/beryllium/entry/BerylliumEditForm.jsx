@@ -160,7 +160,7 @@ const BerylliumEditForm = () => {
       // negociantTags: negociantTags,
     };
     console.log(body);
-    // await updateBerylliumEntry({ entryId, body });
+    await updateBerylliumEntry({ entryId, body });
     // console.log(body);
     setFormval({
       weightIn: "",

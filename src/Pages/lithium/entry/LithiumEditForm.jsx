@@ -49,7 +49,8 @@ const LithiumEditForm = () => {
 
   const [formval, setFormval] = useState({
     weightIn: "",
-    companyName: "",
+    weightOut: "",
+    supplierName: "",
     licenseNumber: "",
     TINNumber: "",
     email: "",
@@ -60,6 +61,7 @@ const LithiumEditForm = () => {
     supplyDate: "",
     time: "",
     beneficiary: "",
+    phoneNumber: "",
   });
 
 
@@ -99,7 +101,8 @@ const LithiumEditForm = () => {
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
-        companyName: entr.companyName,
+        weightOut: entr.weightOut,
+        supplierName: entr.supplierName,
         licenseNumber: entr.licenseNumber,
         TINNumber: entr.TINNumber,
         email: entr.email,
@@ -112,13 +115,14 @@ const LithiumEditForm = () => {
         numberOfTags: entr.numberOfTags,
         mineralType: entr.mineralType,
         beneficiary: entr.beneficiary,
+        phoneNumber: entr.phoneNumber,
       });
     }
   }, [isSuccess]);
 
   const filteredSuppliers = sup.filter((supplier) => {
-    const companyName = supplier.companyName || "";
-    return companyName.toLowerCase().includes(searchText.toLowerCase());
+    const supplierName = supplier.supplierName || "";
+    return supplierName.toLowerCase().includes(searchText.toLowerCase());
   });
 
   const handleSearchInputChange = (e) => {
@@ -126,18 +130,18 @@ const LithiumEditForm = () => {
   };
 
   const handleSupplierSelect = (supplier) => {
-    setSelectedSupplierName(supplier.companyName);
+    setSelectedSupplierName(supplier.supplierName);
     const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
     if (chosenSupplier) {
       setFormval({
         ...formval,
-        companyName: chosenSupplier.companyName,
+        supplierName: chosenSupplier.supplierName,
         licenseNumber: chosenSupplier.licenseNumber,
         TINNumber: chosenSupplier.TINNumber,
         email: chosenSupplier.email,
         supplierId: chosenSupplier._id,
       });
-      setBeneficial(chosenSupplier.companyName);
+      setBeneficial(chosenSupplier.supplierName);
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
@@ -152,13 +156,13 @@ const LithiumEditForm = () => {
     if (clickedBook) {
       setFormval({
         ...formval,
-        companyName: clickedBook.companyName,
+        supplierName: clickedBook.supplierName,
         licenseNumber: clickedBook.licenseNumber,
         TINNumber: clickedBook.TINNumber,
         email: clickedBook.email,
         supplierId: clickedBook._id,
       });
-      setBeneficial(clickedBook.companyName);
+      setBeneficial(clickedBook.supplierName);
     }
     setchecked(false);
   };
@@ -249,7 +253,8 @@ const LithiumEditForm = () => {
     // console.log(body);
     setFormval({
       weightIn: "",
-      companyName: "",
+      weightOut: "",
+      supplierName: "",
       licenseNumber: "",
       TINNumber: "",
       email: "",
@@ -260,13 +265,15 @@ const LithiumEditForm = () => {
       supplyDate: "",
       time: "",
       beneficiary: "",
+      phoneNumber: "",
     });
     navigate(-1);
   };
   const handleCancel = () => {
     setFormval({
       weightIn: "",
-      companyName: "",
+      weightOut: "",
+      supplierName: "",
       licenseNumber: "",
       TINNumber: "",
       email: "",

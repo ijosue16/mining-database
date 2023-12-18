@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import {Spin, Table, Form, Input, Button, Modal, DatePicker, Collapse, Space, Popconfirm, message} from 'antd';
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
-import { useGetOneColtanEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
+import { useGetOneColtanEntryQuery,useGetOneCassiteriteEntryQuery,useGetOneWolframiteEntryQuery,useGetOneLithiumEntryQuery,useGetOneBerylliumEntryQuery, useGetPaymentHistoryQuery, useAddPaymentMutation, useGetAllAdvancePaymentsQuery } from "../../../states/apislice";
 // import AddComponent from "../../../components/Actions components/AddComponent";
 import { RiFileListFill, RiFileEditFill } from "react-icons/ri"
 import { PiDotsThreeVerticalBold } from "react-icons/pi"
@@ -24,6 +24,26 @@ import {handleConvertToUSD} from "../../../components/helperFunctions";
 const PaymentsPage = () => {
     const { Panel } = Collapse;
     const { entryId, model, lotNumber} = useParams();
+    const getQueryFunctionForModel = (model) => {
+        switch (model) {
+          case 'cassiterite':
+            return useGetOneCassiteriteEntryQuery;
+          case 'wolframite':
+            return useGetOneWolframiteEntryQuery;
+          case 'lithium':
+            return useGetOneLithiumEntryQuery;
+          case 'beryllium':
+            return useGetOneBerylliumEntryQuery;
+          
+          default:
+            return useGetOneColtanEntryQuery; 
+        }
+      };
+
+      const queryFunction = getQueryFunctionForModel(model);
+
+      const {data,isLoading,isSuccess,isError,error} = queryFunction({entryId});
+
     const {data: paymentHistoryData, isSuccess: isPaymentHistoryReady} = useGetPaymentHistoryQuery({entryId, model, lotNumber}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
@@ -33,7 +53,6 @@ const PaymentsPage = () => {
     const [addPayment, {isLoading:isSending,isSuccess: isPaymentSuccess, isError: isPaymentError, error: paymentError}] = useAddPaymentMutation();
     const navigate = useNavigate();
     const [form] = Form.useForm()
-    const {data,isLoading,isSuccess,isError,error} = useGetOneColtanEntryQuery({entryId});
     const [advancedListModal,SetAdvancedListModal]=useState(false);
     const [formval, setFormval] = useState({ lat: '', long: '', name: '', code: '' });
     const [payment, setPayement] = useState({ paymentDate: '', location: "", phoneNumber: "",  beneficiary: '', paymentAmount: null, currency: "",paymentMode:"" });
@@ -67,11 +86,14 @@ const PaymentsPage = () => {
     }, [isPaymentError, isPaymentSuccess, paymentError]);
 
     if(isSuccess){
-        const{data:dt}=data;
-        const{entry:entr}=dt;
-        const{output:pt}=entr;
-        const{paymentHistory:pHist}=pt;
-        console.log(data);
+        // if(model==="litium" || "berylium"){
+            const{paymentHistory}=data.data.entry
+        // }
+        // const{data:dt}=data;
+        // const{entry:entr}=dt;
+        // const{output:pt}=entr;
+        // const{paymentHistory:pHist}=pt;
+        console.log(data.data.entry);
     };
 
     useEffect(() => {
@@ -262,7 +284,7 @@ const PaymentsPage = () => {
 
     return (
         <>
-            <ActionsPagesContainer title={'Coltan Payments'}
+            <ActionsPagesContainer title={`${model} Payments`}
                 // subTitle={'Make Coltan Payments'}
                 actionsContainer={
                     // <AddComponent component={
