@@ -345,7 +345,7 @@ const ColtanListPage = () => {
                                                 <p>edit</p>
                                             </li>
                                         )}
-
+                                        {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
                                         <li
                                             className="flex gap-2 p-2 items-center hover:bg-slate-100"
                                             onClick={() => {

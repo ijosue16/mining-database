@@ -6,7 +6,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        baseUrl: "http://localhost:5001/api/v1/",
         prepareHeaders: (headers, {getState}) => {
             const token = getState().persistedReducer?.global?.token
             if (token) {
@@ -516,6 +516,19 @@ export const apiSlice = createApi({
                 },
             })
         }),
+        shipmentReportSpreadsheet: builder.mutation({
+            query: ({shipmentId}) => ({
+                url: `/shipments/report/worksheet/${shipmentId}`,
+                method: "POST",
+                responseHandler: (response) => {
+                    return response.blob();
+                }
+            })
+        }),
+        shipmentSuppliersGraph: builder.query({
+            query: ({shipmentId}) => `/shipments/graph/${shipmentId}`,
+            providesTags: ["shipments"]
+        }),
         getPaymentHistory: builder.query({
             query: ({entryId, model, lotNumber}) => `/stock/payment-history/${model}/${entryId}/${lotNumber}`,
             providesTags: ["payments", "advance-payment", "statistics"]
@@ -809,6 +822,8 @@ export const {
     useGenerateTagListMutation,
     useUpdateTagMutation,
     useShipmentReportMutation,
+    useShipmentReportSpreadsheetMutation,
+    useShipmentSuppliersGraphQuery,
     useGetPaymentHistoryQuery,
     useDetailedStockQuery,
     useGetFileStructureMutation,

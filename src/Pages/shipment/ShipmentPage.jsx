@@ -15,6 +15,7 @@ import {useNavigate} from "react-router-dom";
 import ListModalContainerHeader from "../../components/Listcomponents/ListModalContainerHeader";
 import EditShipment from "./EditShipment";
 import {HiOutlineClipboardDocumentCheck} from "react-icons/hi2";
+import {DownloadShipmentReport} from "../HelpersJsx";
 
 const ShipmentPage = () => {
     const [form] = Form.useForm();
@@ -23,10 +24,6 @@ const ShipmentPage = () => {
             refetchOnMountOrArgChange: true,
             refetchOnReconnect: true
         });
-    const [
-        createShipmentReport,
-        {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
-    ] = useShipmentReportMutation();
 
     const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
@@ -83,14 +80,6 @@ const ShipmentPage = () => {
     };
 
 
-    const handleGenerate = async (record) => {
-      const shipmentId = record._id;
-      const response = await createShipmentReport({shipmentId});
-        const url = window.URL.createObjectURL(
-            new Blob([response.data], {type: "application/pdf"})
-        );
-        window.open(url);
-    };
 
     const downloadReport = async (record) => {
         const shipmentId = record._id;
@@ -172,16 +161,25 @@ const ShipmentPage = () => {
         },
 
         {
-            title: "reports",
+            title: "Reports",
             dataIndex: "action",
             key: "action",
             render: (_, record) => {
-                return (
-                    <BsDownload
-                        className=" text-lg"
-                        onClick={() => handleGenerate(record)}
-                    />
-                );
+                if (record) {
+                    return (
+                        <DownloadShipmentReport
+                            record={record}
+                        />
+                    )
+
+                }
+
+                // return (
+                //     <BsDownload
+                //         className=" text-lg"
+                //         onClick={() => handleGenerate(record)}
+                //     />
+                // );
             },
         },
 
@@ -366,7 +364,7 @@ const ShipmentPage = () => {
                               children,
                               ...restProps
                           }) => {
-        const input = <Input style={{margin: 0}} type="text"/>;
+        const input = <Input style={{margin: 0}} type="number"/>;
         return (
             <td {...restProps}>
                 {editing ? (
@@ -421,7 +419,7 @@ const ShipmentPage = () => {
                                                                         setUpdateErrorMessage={setUpdateErrorMessage}
                                                                         setUpdateMessage={setUpdateMessage}/>,
                                         rowExpandable: (record) => record.entries?.length > 0,
-                                        expandRowByClick: true,
+                                        // expandRowByClick: true,
                                     }}
                                     components={{
                                         body: {
@@ -446,17 +444,13 @@ const ShipmentPage = () => {
                                     key="actions"
                                     className=" flex w-full justify-center gap-4 text-base text-white"
                                 >
-                  {isDeleting ? (
-                      <Spin className="bg-green-400 p-2 rounded-lg"/>
-                  ) : (
-                      <button
-                          key="back"
-                          className=" bg-green-400 p-2 rounded-lg"
-                          onClick={handleDelete}
-                      >
-                          Confirm
-                      </button>
-                  )}
+                                      <button
+                                          key="back"
+                                          className=" bg-green-400 p-2 rounded-lg"
+                                          onClick={handleDelete}
+                                      >
+                                          Confirm
+                                      </button>
                                     <button
                                         key="submit"
                                         className=" bg-red-400 p-2 rounded-lg"
@@ -466,9 +460,9 @@ const ShipmentPage = () => {
                                             SetSelectedRow({id: null, name: "", date: ""});
                                         }}
                                     >
-                    Cancel
-                  </button>
-                </span>,
+                                    Cancel
+                                  </button>
+                                </span>,
                             ]}
                         >
                             <h2 className="modal-title text-center font-bold text-xl">
