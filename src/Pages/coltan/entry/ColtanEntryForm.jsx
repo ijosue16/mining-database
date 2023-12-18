@@ -128,6 +128,7 @@ const ColtanEntryForm = () => {
 
   // TODO: validate weightIn entry
   const handleLotEntry = (index, e) => {
+    validateWeightInEntry(index, lotDetails, e, formval.weightIn);
     const values = [...lotDetails];
     values[index][e.target.name] = e.target.value;
     values[index].lotNumber = index + 1;

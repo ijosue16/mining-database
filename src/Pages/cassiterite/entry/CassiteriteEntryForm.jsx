@@ -15,6 +15,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { validateWeightInEntry } from "../../../components/helperFunctions";
 
 const CassiteriteEntryForm = () => {
   let sup = [""];
@@ -130,6 +131,7 @@ const CassiteriteEntryForm = () => {
   };
 
   const handleLotEntry = (index, e) => {
+    validateWeightInEntry(index, lotDetails, e, formval.weightIn);
     const values = [...lotDetails];
     values[index][e.target.name] = e.target.value;
     values[index].lotNumber = index + 1;
