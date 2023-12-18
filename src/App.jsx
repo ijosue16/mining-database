@@ -217,7 +217,7 @@ function App() {
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                 </Route>
-                                {/*<Route path='*' element={<Navigate to="/dashboard" replace/>}/>*/}
+                                <Route path='*' element={<Navigate to="/dashboard" replace/>}/>
                             </Route>
                         </Route>
 

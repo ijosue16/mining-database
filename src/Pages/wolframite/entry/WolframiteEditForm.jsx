@@ -476,7 +476,7 @@ const WolframiteEditForm = () => {
   };
 
   const handleLRemoveNegociantTags = (index) => {
-    const values = [...mineTags];
+    const values = [...negociantTags];
     values.splice(index, 1);
     const updatedValues = values.map((lot, i) => {
       return {

@@ -463,7 +463,7 @@ const CassiteriteEditForm = () => {
   };
 
   const handleLRemoveNegociantTags = (index) => {
-    const values = [...mineTags];
+    const values = [...negociantTags];
     values.splice(index, 1);
     const updatedValues = values.map((lot, i) => {
       return {
@@ -506,35 +506,36 @@ const CassiteriteEditForm = () => {
         }
       }
     }
-    await updateCassiteriteEntry({ entryId, body: requestId ? newBody : body });
-    setFormval({
-      weightIn: "",
-      companyName: "",
-      licenseNumber: "",
-      TINNumber: "",
-      email: "",
-      supplierId: "",
-      companyRepresentative: "",
-      representativeId: "",
-      representativePhoneNumber: "",
-      supplyDate: "",
-      time: "",
-      numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
-      beneficiary: "",
-      isSupplierBeneficiary: false,
-    });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
-    setnegociantTags([
-      { weight: null, tagNumber: "", sheetNumber: "", status: "" },
-    ]);
-    navigate(-1);
+    // await updateCassiteriteEntry({ entryId, body: requestId ? newBody : body });
+    console.log(body)
+    // setFormval({
+    //   weightIn: "",
+    //   companyName: "",
+    //   licenseNumber: "",
+    //   TINNumber: "",
+    //   email: "",
+    //   supplierId: "",
+    //   companyRepresentative: "",
+    //   representativeId: "",
+    //   representativePhoneNumber: "",
+    //   supplyDate: "",
+    //   time: "",
+    //   numberOfTags: "",
+    //   mineTags: "",
+    //   negociantTags: "",
+    //   mineralType: "",
+    //   mineralgrade: "",
+    //   mineralprice: "",
+    //   shipmentnumber: "",
+    //   beneficiary: "",
+    //   isSupplierBeneficiary: false,
+    // });
+    // setlotDetails([{ lotNumber: "", weightOut: "" }]);
+    // setmineTags([{ weight: null, tagNumber: "", sheetNumber: "", status: "" }]);
+    // setnegociantTags([
+    //   { weight: null, tagNumber: "", sheetNumber: "", status: "" },
+    // ]);
+    // navigate(-1);
   };
   const handleCancel = () => {
     setFormval({
