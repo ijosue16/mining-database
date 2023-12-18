@@ -18,7 +18,7 @@ const DashboardPage = () => {
 useEffect(()=>{
   if(isDone){
     const{currentStock}=yearData.data;
-    // console.log(yearData);
+    console.log(yearData);
     const xAxisData = Object.keys(currentStock);
     const series = Object.entries(currentStock).map(([name, data],index) => {
       let stackValue = index < 2 ? 'one' : 'two';
@@ -310,25 +310,22 @@ return(
     <p className=" font-bold text-lg mb-2">Dashboard Page</p>
     <img className="mb-3 w-full border rounded-[4px]" src={companyLogo} alt="Company Logo"/>
     <div className=" grid grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-3">
-        <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white space-y-2">
+    <div className=" col-span-full p-2 min-h-[180px] rounded-md shadow-lg bg-white space-y-2">
+           <p>TO ADD DROPDOWN</p>
+        </div>
+        <div className=" col-span-full md:col-span-4 lg:col-span-6 p-2 min-h-[180px] rounded-md shadow-lg bg-white space-y-2">
             {/* <p className=" text-base font-semibold">Weekly reports</p> */}
             <TestChart options={optionLine} />
         </div>
-        <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white flex justify-center items-center  space-y-2">
+        <div className=" col-span-full md:col-span-4 lg:col-span-6 p-2 min-h-[180px] rounded-md shadow-lg bg-white flex justify-center items-center  space-y-2">
             {/* <p className=" text-base font-semibold">Monthly reports</p> */}
            {isLoading?( <ImSpinner2 className="h-[80px] w-[80px] animate-spin text-gray-500 text-center"/>): <TestChart  showLoading={true} options={optionPie} />}
         </div>
-        <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white  space-y-2">
-            <p className=" text-base font-semibold">priodic reports</p>
-        </div>
+
         <div className=" col-span-full p-2 min-h-[180px] rounded-md shadow-lg bg-white flex justify-center items-start space-y-2">
             {/* <p className=" text-base font-semibold">Yearly reports</p> */}
             {isLoading?( <ImSpinner2 className="h-[80px] w-[80px] animate-spin text-gray-500 text-center"/>): <TestChart  showLoading={true} options={optionStack} />}
         </div>
-        <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white  space-y-2">
-            <p className=" text-base font-semibold">Weekly reports</p>
-        </div>
-        <div className=" col-span-full md:col-span-4 lg:col-span-4 p-2 min-h-[180px] rounded-md shadow-lg bg-white  space-y-2"></div>
     {/* <p>yooola</p> */}
     </div>
     </div>
