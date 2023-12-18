@@ -200,6 +200,7 @@ const ColtanEditForm = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
+      console.log(data.data)
       // sup = sups;
       setSupplierId(entr.supplierId);
       setFormval({
@@ -233,6 +234,7 @@ const ColtanEditForm = () => {
       }
     }
   }, [isSuccess]);
+  console.log('old supplier id'+supplierId)
 
   const filteredSuppliers = sup.filter((supplier) => {
     const companyName = supplier.companyName || "";
@@ -259,7 +261,7 @@ const ColtanEditForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
+    console.log('new supplier'+supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -551,7 +553,7 @@ const ColtanEditForm = () => {
         }
       }
     }
-    await updateColtanEntry({ entryId, body: requestId ? newBody : body });
+    // await updateColtanEntry({ entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",
@@ -579,7 +581,8 @@ const ColtanEditForm = () => {
     setnegociantTags([
       { weight: null, tagNumber: "", sheetNumber: "", status: "" },
     ]);
-    navigate(-1);
+    console.log(body)
+    // navigate(-1);
   };
   const handleCancel = () => {
     setFormval({});
