@@ -39,30 +39,6 @@ const EditShipment = ({record: shipment}) => {
 
 
 
-    // TODO 11: CHECK HOW TO FILTER TO REMOVE DUPLICATES IN SHIPMENT STOCK LOTS
-    useEffect(() => {
-        if (isStockSuccess) {
-            const existingLots = shipmentLots.map(item => ({entryId: item.entryId?.toString(), lotNumber: parseInt(item.lotNumber)}));
-            const { detailedStock } = stockData.data;
-            const filteredStock = detailedStock.map(item => {
-                if (!existingLots.includes({entryId: item._id?.toString(), lotNumber: parseInt(item.lotNumber)})) {
-                    // return {
-                    //     ...item,
-                    //     entryId: item._id,
-                    //     [shipmentNumber]: item.cumulativeAmount,
-                    //     exportedAmount: item.weightOut,
-                    //     balance: 0,
-                    //     companyName: item.supplierName,
-                    // }
-                    return item;
-                }
-            })
-            setStock(filteredStock);
-        }
-    }, [isStockSuccess, stockData]);
-
-
-
     let modalRef = useRef();
 
     const handleClickOutside = (event) => {
@@ -109,6 +85,28 @@ const EditShipment = ({record: shipment}) => {
             }
         }
     }, [isSuccess, data, isUpdateSuccess]);
+
+    // TODO 11: CHECK HOW TO FILTER TO REMOVE DUPLICATES IN SHIPMENT STOCK LOTS ===> DONE
+    useEffect(() => {
+        if (isStockSuccess || isUpdateSuccess) {
+            const existingLots = shipmentLots.map(item => (JSON.stringify({entryId: item.entryId, lotNumber: parseInt(item.lotNumber)})));
+            const { detailedStock } = stockData.data;
+            const filteredStock = detailedStock.filter(item => {
+                if (!existingLots.includes(JSON.stringify({entryId: item._id?.toString(), lotNumber: parseInt(item.lotNumber)}))) {
+                    return {
+                        ...item,
+                        entryId: item._id,
+                        [shipmentNumber]: item.cumulativeAmount,
+                        exportedAmount: item.weightOut,
+                        balance: 0,
+                        companyName: item.supplierName,
+                    }
+                }
+            })
+            setStock(filteredStock);
+
+        }
+    }, [isStockSuccess, stockData, isUpdateSuccess]);
 
     const isEditing = (record) => {
         return record.index === editRowKey;
@@ -336,10 +334,20 @@ const EditShipment = ({record: shipment}) => {
                               children,
                               ...restProps
                           }) => {
+        const handleChange = (e) => {
+            const { name, value } = e.target;
+            if (name === shipmentNumber) {
+                if (parseFloat(value) > parseFloat(record.balance + record[shipmentNumber])) {
+                    return message.error("Out of Range", 3);
+                }
+            }
+        }
         const input = (
             <Input
                 style={{margin: 0}}
                 type={"number"}
+                name={dataIndex}
+                onChange={handleChange}
                 onWheelCapture={(e) => {
                     e.target.blur();
                 }}
@@ -477,9 +485,9 @@ const EditShipment = ({record: shipment}) => {
                         <>
                             <Form form={form} component={false}>
                                 <div>
-                                    <p className="font-semibold p-2">Net Weight: {shipmentInfo.netWeight}</p>
-                                    <p className="font-semibold p-2">Average Grade: {shipmentInfo.averageGrade}</p>
-                                    <p className="font-semibold p-2">Average Price: {shipmentInfo.averagePrice}</p>
+                                    <p className="font-semibold p-2">Net Weight: {parseFloat(shipmentInfo.netWeight).toFixed(4)}</p>
+                                    <p className="font-semibold p-2">Average Grade: {parseFloat(shipmentInfo.averageGrade).toFixed(4)}</p>
+                                    <p className="font-semibold p-2">Average Price: {parseFloat(shipmentInfo.averagePrice).toFixed(4)}</p>
                                 </div>
                                 <Table
                                     loading={{

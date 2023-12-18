@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {Button, Checkbox, Popover, Radio} from "antd";
+import {Button, Checkbox, Popover, Radio, message} from "antd";
 import {toInitialCase} from "../components/helperFunctions";
 import dayjs from "dayjs";
 import LoadingButton from "./LoadingButton";
+import {useShipmentReportMutation, useShipmentReportSpreadsheetMutation} from "../states/apislice";
 
 
 export const PricingGrade = ({updateEntry, value, entryId, lotNumber}) => {
@@ -64,6 +65,11 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
 
     }
     const handleUpdate = async () => {
+        if (["beryllium", "lithium"].includes(record.mineralType)) {
+            const body = {...lot}
+            await updateEntry({body, entryId});
+            return;
+        }
         const body = {output: [{...lot, lotNumber: record.lotNumber}]};
         await updateEntry({body, entryId});
 
@@ -106,7 +112,7 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
             return (
                 <span className="flex">
                     <select name={key} value={value || ""}
-                            disabled={!editable}
+                            disabled={!editable || ["lithium", "beryllium"].includes(record.mineralType)}
                             className=" font-medium col-span-1 p-2 w-full border"
                             onChange={handleChange}>
                           <option value="pending">Pending</option>
@@ -208,5 +214,69 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
     );
 }
 
+export const DownloadShipmentReport = ({record}) => {
+    const [
+        createShipmentReport,
+        {isLoading: isGenerating, isSuccess: isPDFReportReady, isError: isPDFReportError, error: pdfReportError},
+    ] = useShipmentReportMutation();
+
+    const [createShipmentSpreadSheet, {isLoading: isGeneratingSpreadSheet, isSuccess: isSpreadSheetReady, isError: isSpreadSheetError, error: spreadSheetError}] = useShipmentReportSpreadsheetMutation();
+
+    const handleGenerate = async (record) => {
+        const shipmentId = record._id;
+        const response = await createShipmentReport({shipmentId});
+        if (response.data) {
+            const url = window.URL.createObjectURL(
+                new Blob([response.data], {type: "application/pdf"})
+            );
+            window.open(url);
+        }
+    };
+
+    useEffect(() => {
+        if (isSpreadSheetReady) {
+            message.success("Spreadsheet Generated Successfully");
+        } else if (isSpreadSheetError) {
+            const { message: errorMessage } = spreadSheetError.data;
+            message.error(errorMessage);
+        }
+    }, [isSpreadSheetReady, isSpreadSheetError, spreadSheetError]);
+
+    const handleGenerateSpreadSheet = async () => {
+        const shipmentId = record._id;
+        const response = await createShipmentSpreadSheet({shipmentId});
+        if (response.data) {
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${record.shipmentNumber}.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    useEffect(() => {
+        if (isPDFReportReady) {
+            message.success("PDF Report Generated Successfully");
+        } else if (isPDFReportError) {
+            const { message: errorMessage } = pdfReportError.data;
+            message.error(errorMessage);
+        }
+    }, [isPDFReportReady, isPDFReportError, pdfReportError]);
+
+    const content = (
+        <div className="flex flex gap-3 items-center">
+            <Button onClick={() => handleGenerateSpreadSheet()} disabled={["lithium", "beryllium"].includes(record.model)} className="bg-green-200">Excel</Button>
+            <Button onClick={() => handleGenerate(record)} className="bg-gray-200">PDF</Button>
+        </div>
+    )
+
+    return (
+        <Popover content={content} trigger="click">
+            <Button>Click Me</Button>
+        </Popover>
+    )
+}
 
 

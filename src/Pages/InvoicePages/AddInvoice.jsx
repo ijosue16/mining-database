@@ -68,10 +68,10 @@ const AddInvoice = () => {
             const {entry} = entryData.data;
             if (entry) {
                 const transformedLots = entry.output.map((lot) => {
-                    return {...lot, beneficiary: entry.beneficiary, mineralType: getModelAcronym(entry.mineralType)};
+                    return {...lot, beneficiary: entry.beneficiary, supplyDate: entry.supplyDate, mineralType: getModelAcronym(entry.mineralType)};
                 })
                 setDataz(transformedLots);
-                setInvoiceInfo(prevState => ({...prevState,  beneficiary: entry.beneficiary}))
+                setInvoiceInfo(prevState => ({...prevState, supplyDate: entry.supplyDate,  beneficiary: entry.beneficiary}))
                 setEntryInfo(entry);
             }
         }

@@ -22,7 +22,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [notifications, setNotifications] = useState([]);
     const [user, setUser] = useState(null);
     const [open, setOpen] = useState(false);
-    const {userData} = useSelector(state => state.persistedReducer.global);
+    const {userData, permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     const [userId, setUserId] = useState(null);
     const socket = useContext(SocketContext);
     const dispatch = useDispatch();
@@ -169,13 +169,15 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                             <IoChatbubbleEllipsesOutline className="text-xl text-gray-500" />
                             {/*<span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">4</span>*/}
                         </li>
-                       {userData.permissions.editRequests?.view? <li title="Edit Requests" className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                       {userPermissions?.editRequests?.view && (<li title="Edit Requests" className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <BiSolidCalendarEdit  onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
                             {/*<span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs"></span>*/}
-                        </li>:null}
-                       <li onClick={() => navigate('/settings')} title={"Settings"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
-                           <PiGearLight className="text-xl text-gray-500" />
-                       </li>
+                        </li>)}
+                       {userPermissions?.settings.view && (
+                           <li onClick={() => navigate('/settings')} title={"Settings"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
+                               <PiGearLight className="text-xl text-gray-500" />
+                           </li>
+                       )}
                        <li title={"Notifications"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiBellSimpleLight className="text-xl text-gray-500" onClick={showDrawer}/>
                             <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications.length}</span>

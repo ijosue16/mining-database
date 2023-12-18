@@ -145,8 +145,8 @@ const TagsList = () => {
     const handleGenerateNegociantTagList = async () => {
         const response = await generateNegociantTagsList({shipmentId});
         if (response.data) {
-            const { negociantTagsListFile: tagFile } = response.data.data;
-            setNegociantTagListFile(tagFile);
+            const { negociantTagListFile: tagFile } = response.data.data;
+            if (tagFile) setNegociantTagListFile(tagFile);
         }
     }
 
@@ -190,6 +190,7 @@ const TagsList = () => {
                                         return (
                                             <div className="w-full flex flex-col gap-3 bg-white rounded-md p-2">
                                                 <div>
+                                                    <h3 className="text-lg font-semibold">Negociant Tags</h3>
                                             <span className="grid grid-cols-4 items-center justify-between w-full md:w-1/2  rounded-sm">
                                               <p className=" font-medium col-span-1 p-2 w-full border ">#</p>
                                               <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Tag  Number</p>
@@ -213,6 +214,7 @@ const TagsList = () => {
                                                     })}
                                                 </div>
                                                 <div>
+                                                    <h3 className="text-lg font-semibold">Mine Tags</h3>
                                                 <span className="grid grid-cols-4 items-center justify-between w-full md:w-1/2  rounded-sm">
                                               <p className=" font-medium col-span-1 p-2 w-full border ">#</p>
                                               <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Tag  Number</p>

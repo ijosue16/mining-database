@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import {DatePicker, Modal, Space, Spin, Table} from "antd";
+import {DatePicker, message, Modal, Space, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
@@ -23,6 +23,7 @@ import {useSelector} from "react-redux";
 import isBetween from "dayjs/plugin/isBetween"
 import BerylliumEntryCompletePage from "../beryllium/entry/BerylliumEntryCompletePage";
 import LithiumEntryCompletePage from "./entry/LithiumEntryCompletePage";
+import {FaFileInvoiceDollar} from "react-icons/fa";
 dayjs.extend(isBetween);
 
 const LithiumListPage = () => {
@@ -234,19 +235,35 @@ const LithiumListPage = () => {
                         <BiSolidEditAlt className=" text-lg" />
                         <p>edit</p>
                       </li>
+
+                      {/* TODO 14: SHOW MENU BASED ON PERMISSIONS*/}
+                      <li
+                          className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                          onClick={() => {
+                            if (record.supplierId) {
+                              navigate(`/add/invoice/${record.supplierId}/lithium/${record._id}`);
+                            } else {
+                              return message.warning("You have assign supplier to this entry");
+                            }
+                          }}
+                      >
+                        <FaFileInvoiceDollar className=" text-xl" />
+                        <p>Make invoice</p>
+                      </li>
+
                       {userPermissions.entry?.edit? (
                         <>
-                          <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              {
-                                navigate(`/complete/lithium/${record._id}`);
-                              }
-                            }}
-                          >
-                            <RiFileEditFill className=" text-lg" />
-                            <p>complete entry</p>
-                          </li>
+                          {/*<li*/}
+                          {/*  className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                          {/*  onClick={() => {*/}
+                          {/*    {*/}
+                          {/*      navigate(`/complete/lithium/${record._id}`);*/}
+                          {/*    }*/}
+                          {/*  }}*/}
+                          {/*>*/}
+                          {/*  <RiFileEditFill className=" text-lg" />*/}
+                          {/*  <p>complete entry</p>*/}
+                          {/*</li>*/}
                           <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {

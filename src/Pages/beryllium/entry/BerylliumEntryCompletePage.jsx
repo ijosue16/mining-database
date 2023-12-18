@@ -22,11 +22,12 @@ import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/h
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
+import {LotExpandable} from "../../HelpersJsx";
 
 const BerylliumEntryCompletePage = ({entryId}) => {
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     // const {loginData} = useMyContext();
     // const {profile, permissions} = loginData;
     const [form] = Form.useForm();
@@ -104,7 +105,7 @@ const BerylliumEntryCompletePage = ({entryId}) => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             const output = [
@@ -116,7 +117,7 @@ const BerylliumEntryCompletePage = ({entryId}) => {
             setLotInfo(output);
             // console.log(lotInfo);
         }
-    }, [isSuccess]);
+    }, [isSuccess, isUpdateSuccess, data]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -144,17 +145,20 @@ const BerylliumEntryCompletePage = ({entryId}) => {
     };
     const props = {
         onChange: (info) => {
-            if (info.file.status !== "uploading") {
-                console.log(info.file, info.fileList);
-            }
             if (info.file.status === "done") {
-                return message.success(`${info.file.name} file uploaded successfully`);
-                // refetch()
+                message.success(`${info.file.name} file uploaded successfully`);
             } else if (info.file.status === "error") {
-                return message.error(`${info.file.name} file upload failed.`);
+                message.error(`${info.file.name} file upload failed.`);
             }
         },
     };
+
+    const customRequest = async ({ file, onSuccess, onError, fileName }) => {
+        const formData = new FormData();
+        formData.append(fileName, file);
+        await updateBerylliumiteEntry({entryId, body: formData});
+    };
+
     const beforeUpload = (file) => {
         const isPNG = file.type === "image/png" || file.type === "image/jpeg";
         if (!isPNG) {
@@ -206,7 +210,7 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                 }
             }
             if (Boolean(parseFloat(updatedItem.pricePerUnit)) === true) {
-                updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+                updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
@@ -223,33 +227,36 @@ const BerylliumEntryCompletePage = ({entryId}) => {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
+            table: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         gradeImg: {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
+            width: 100,
             // editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            table: true,
             render: (_, record) => {
                 if (record.gradeImg) {
                     return (
                         <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(entryId)}/>)}
+                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg?.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
+                            {userPermissions.gradeImg?.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(entryId)}/>)}
                         </div>
                     )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            name={record.lotNumber}
-                            action={`${AppUrls.server}/wolframite/${entryId}`}
-                            method="PATCH"
+                            // name={record.lotNumber}
+                            // action={`${AppUrls.server}/coltan/${entryId}`}
+                            // method="PATCH"
                             {...props}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, fileName: "berylliumGradeImg"})}
                             onRemove={() => removeFile(entryId)}
                         >
-                            {!record.gradeImg ? <Button icon={<UploadOutlined/>}/> : null}
+                            <Button icon={<UploadOutlined/>}/>
                         </Upload>
                     )
                 }
@@ -257,23 +264,50 @@ const BerylliumEntryCompletePage = ({entryId}) => {
             }
         },
         pricePerUnit: {
-            title: "price/kg ($)",
+            title: "price/kg (RWF)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
+            table: true,
             sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
         },
         mineralPrice: {
-            title: "Price ($)",
+            title: "Price (RWF)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
+            table: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
         },
         paid: {
-            title: "paid ($)",
+            title: "paid (RWF)",
             dataIndex: "paid",
             key: "paid",
+            table: false,
             sorter: (a, b) => a.paid - b.paid,
         },
+        sampleIdentification: {
+            title: "Sample Identification",
+            dataIndex: "sampleIdentification",
+            key: "sampleIdentification",
+            table: false,
+        },
+        rmaFeeDecision: {
+            title: "RMA Fee Decision",
+            dataIndex: "rmaFeeDecision",
+            key: "rmaFeeDecision",
+            table: false,
+        },
+        nonSellAgreement: {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreement",
+            key: "nonSellAgreement",
+            // editTable: true,
+            table: false,
+            render: (_, record) => {
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
+                }
+            }
+        }
     }
     const columns = [
         {
@@ -293,18 +327,6 @@ const BerylliumEntryCompletePage = ({entryId}) => {
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
             sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        },
-        {
-            title: "non-sell agreement (KG)",
-            dataIndex: "nonSellAgreementAmount",
-            key: "nonSellAgreementAmount",
-            editTable: true,
-            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
-            render: (_, record) => {
-                if (record.nonSellAgreement?.weight) {
-                    return <span>{record.nonSellAgreement?.weight}</span>
-                }
-            }
         },
     ];
 
@@ -494,92 +516,16 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                                                 columns={mergedColumns}
                                                 expandable={{
                                                     expandedRowRender: (record) => {
-                                                        if (record.shipments) {
-                                                            let color = "";
-                                                            // const value='non-sell agreement'
-                                                            switch (record.status) {
-                                                                case "in stock": {
-                                                                    color = "bg-green-500";
-                                                                    break;
-                                                                }
-                                                                case "partially exported": {
-                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                    break;
-                                                                }
-                                                                case "fully exported": {
-                                                                    color = "bg-slate-600";
-                                                                    break;
-                                                                }
-                                                                case "in progress": {
-                                                                    color = "bg-orange-400";
-                                                                    break;
-                                                                }
-                                                                case "rejected": {
-                                                                    color = "bg-red-500";
-                                                                    break;
-                                                                }
-                                                                case "non-sell agreement": {
-                                                                    color = "bg-indigo-400";
-                                                                    break;
-                                                                }
-                                                                default: {
-                                                                    color = "bg-green-300";
-                                                                }
-                                                            }
-                                                            return (
-                                                                <>
-                                                                    <div className=" space-y-3 w-full">
-                                                                        <p className=" text-lg font-bold">More Details</p>
-                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Exported Amount: {record.exportedAmount}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              paid: {record.paid}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Payment status: {record.settled}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                              <p className={"text-md font-semibold"}>
-                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
-                                                                              </p>
-                                                                          </span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                    </span>
-                                                                        {record.shipments.map((shipment, index) => {
-                                                                            if (!Array.isArray(shipment)) {
-                                                                                return (
-                                                                                    <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{dayjs(shipment.date).format("MMM DD, YYYY")}</p>
-                                                                                </span>
-                                                                                )
-                                                                            }
-                                                                        })}
-                                                                    </div>
-                                                                </>
-                                                            )
-                                                        }
+                                                        return (
+                                                            <LotExpandable
+                                                                updateEntry={updateBerylliumiteEntry}
+                                                                userPermissions={userPermissions}
+                                                                record={record}
+                                                                isProcessing={isSending}
+                                                                restrictedColumns={restrictedColumns}
+                                                                entryId={entryId}
+                                                            />
+                                                        )
                                                     },
                                                     rowExpandable: (record) => record.supplierName !== "Not Expandable",
                                                 }}

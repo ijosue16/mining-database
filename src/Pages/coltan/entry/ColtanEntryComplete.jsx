@@ -52,7 +52,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [imageAvailable, setImageAvailable] = useState(false);
     // const [decision, setDecision] = useState("");
-    const {data, isLoading, isError, isSuccess, error, refetch} =
+    const {data, isLoading, isError, isSuccess, error,} =
         useGetOneColtanEntryQuery({entryId},
             {  
                 skip:entryId===undefined,
@@ -135,27 +135,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
   };
 
   const props = {
-    // headers: {
-    //     authorization: `Bearer ${token}`,
-    // },
     onChange: (info) => {
-      // if (info.file.status !== "uploading") {
-      //   console.log(info.file, info.fileList);
-      // }
-        if (info.file.status === "uploading") {
-            // Optionally, you can store the loadingMessage instance in a state
-            // or some variable if you need to reference it later.
-
-            // Example using state:
-            // const [loadingMessage, setLoadingMessage] = useState(null);
-            // setLoadingMessage(loadingMessage);
-            // Example using a variable:
-            // let loadingMessage;
-
-            // ... rest of your code
-
-            // To close the loading message when the upload is done or encounters an error:
-        }
       if (info.file.status === "done") {
         message.success(`${info.file.name} file uploaded successfully`);
       } else if (info.file.status === "error") {

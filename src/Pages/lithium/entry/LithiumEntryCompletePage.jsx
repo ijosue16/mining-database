@@ -18,11 +18,12 @@ import {IoClose} from "react-icons/io5";
 import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
+import {LotExpandable} from "../../HelpersJsx";
 
 const LithiumEntryCompletePage = ({entryId}) => {
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
@@ -74,10 +75,10 @@ const LithiumEntryCompletePage = ({entryId}) => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            toast.success("Entry updated successfully");
+            message.success("Entry updated successfully");
         } else if (isUpdateError) {
-            const {message} = updateError.data;
-            toast.error(message);
+            const {message: errorMessage} = updateError.data;
+            message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
@@ -103,7 +104,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
     const [previewImage, setPreviewImage] = useState("");
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             const output = [
@@ -114,7 +115,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
             setSuply(entr);
             setLotInfo(output);
         }
-    }, [isSuccess]);
+    }, [isSuccess, isUpdateSuccess, data]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -142,17 +143,20 @@ const LithiumEntryCompletePage = ({entryId}) => {
     };
     const props = {
         onChange: (info) => {
-            if (info.file.status !== "uploading") {
-                console.log(info.file, info.fileList);
-            }
             if (info.file.status === "done") {
                 message.success(`${info.file.name} file uploaded successfully`);
-                // refetch()
             } else if (info.file.status === "error") {
                 message.error(`${info.file.name} file upload failed.`);
             }
         },
     };
+
+    const customRequest = async ({ file, onSuccess, onError, fileName }) => {
+        const formData = new FormData();
+        formData.append(fileName, file);
+        await updateLithiumEntry({entryId, body: formData});
+    };
+
     const beforeUpload = (file) => {
         console.log("before upload");
         const isPNG = file.type === "image/png" || file.type === "image/jpeg";
@@ -224,31 +228,33 @@ const LithiumEntryCompletePage = ({entryId}) => {
             title: "Grade (%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
-            // editTable: true, // adjust edit permission based on user permissions
+            table: true,
             sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         gradeImg: {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
+            width: 100,
             // editTable: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
+            table: true,
             render: (_, record) => {
                 if (record.gradeImg) {
                     return (
                         <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(entryId)}/>)}
+                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg?.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
+                            {userPermissions.gradeImg?.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(entryId)}/>)}
                         </div>
                     )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            name={record.lotNumber}
-                            action={`${AppUrls.server}/lithium/${entryId}`}
-                            method="PATCH"
+                            // name={record.lotNumber}
+                            // action={`${AppUrls.server}/coltan/${entryId}`}
+                            // method="PATCH"
                             {...props}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, fileName: "lithiumGradeImg"})}
                             onRemove={() => removeFile(entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
@@ -259,66 +265,67 @@ const LithiumEntryCompletePage = ({entryId}) => {
             }
         },
         pricePerUnit: {
-            title: "price/kg ($)",
+            title: "price/kg (RWF)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
+            table: true,
             sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
-            render: (_, record) => {
-                if (record.pricePerUnit) {
-                    return <span>{Number(record.pricePerUnit).toFixed(3)}</span>
-                }
-            }
         },
         mineralPrice: {
-            title: "Price ($)",
+            title: "Price (RWF)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
+            table: true,
             sorter: (a, b) => a.mineralPrice - b.mineralPrice,
-            render: (_, record) => {
-                if (record.mineralPrice) {
-                    return <span>{Number(record.mineralPrice).toFixed(3)}</span>
-                }
-            }
         },
         paid: {
-            title: "paid ($)",
+            title: "paid (RWF)",
             dataIndex: "paid",
             key: "paid",
+            table: false,
             sorter: (a, b) => a.paid - b.paid,
         },
+        sampleIdentification: {
+            title: "Sample Identification",
+            dataIndex: "sampleIdentification",
+            key: "sampleIdentification",
+            table: false,
+        },
+        rmaFeeDecision: {
+            title: "RMA Fee Decision",
+            dataIndex: "rmaFeeDecision",
+            key: "rmaFeeDecision",
+            table: false,
+        },
+        nonSellAgreement: {
+            title: "non-sell agreement (KG)",
+            dataIndex: "nonSellAgreement",
+            key: "nonSellAgreement",
+            // editTable: true,
+            table: false,
+            render: (_, record) => {
+                if (record.nonSellAgreement?.weight) {
+                    return <span>{record.nonSellAgreement?.weight}</span>
+                }
+            }
+        }
     }
     const columns = [
         {
             title: "#",
             dataIndex: "lotNumber",
             key: "lotNumber",
-            sorter: (a, b) => a.lotNumber.localeCompare(b.lotNumber),
         },
         {
             title: "weight out (KG)",
             dataIndex: "weightOut",
             key: "weightOut",
-
-            sorter: (a, b) => a.weightOut - b.weightOut,
         },
         {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
-            sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
-        },
-        {
-            title: "non-sell agreement (KG)",
-            dataIndex: "nonSellAgreementAmount",
-            key: "nonSellAgreementAmount",
-            editTable: true,
-            sorter: (a, b) => a.nonSellAgreementAmount - b.nonSellAgreementAmount,
-            render: (_, record) => {
-                if (record.nonSellAgreement?.weight) {
-                    return <span>{record.nonSellAgreement?.weight}</span>
-                }
-            }
-        },
+        }
     ];
 
     if (restrictedColumns && userPermissions && columns) {
@@ -508,93 +515,16 @@ const LithiumEntryCompletePage = ({entryId}) => {
                                                 columns={mergedColumns}
                                                 expandable={{
                                                     expandedRowRender: (record) => {
-                                                        if (record.shipments) {
-                                                            let color = "";
-                                                            // const value='non-sell agreement'
-                                                            switch (record.status) {
-                                                                case "in stock": {
-                                                                    color = "bg-green-500";
-                                                                    break;
-                                                                }
-                                                                case "partially exported": {
-                                                                    color = "bg-gradient-to-r from-slate-500 shadow-md";
-                                                                    break;
-                                                                }
-                                                                case "fully exported": {
-                                                                    color = "bg-slate-600";
-                                                                    break;
-                                                                }
-                                                                case "in progress": {
-                                                                    color = "bg-orange-400";
-                                                                    break;
-                                                                }
-                                                                case "rejected": {
-                                                                    color = "bg-red-500";
-                                                                    break;
-                                                                }
-                                                                case "non-sell agreement": {
-                                                                    color = "bg-indigo-400";
-                                                                    break;
-                                                                }
-                                                                default: {
-                                                                    color = "bg-green-300";
-                                                                }
-                                                            }
-                                                            return (
-                                                                <>
-                                                                    <div className=" space-y-3 w-full">
-                                                                        <p className=" text-lg font-bold">More Details</p>
-                                                                        <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                                                                        <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Exported Amount: {record.exportedAmount}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              paid: {record.paid}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                            <p className="text-md font-semibold">
-                                                                              Payment status: {record.settled}
-                                                                            </p>
-                                                                            <p className="text-md font-semibold">
-                                                                              Unpaid: {record.unpaid}
-                                                                            </p>
-                                                                          </span>
-                                                                            <span className=" space-y-2">
-                                                                              <p className={"text-md font-semibold"}>
-                                                                                  status: <span className={` px-3 py-1 ${color} w-fit text-white rounded`}>{record.status}</span>
-                                                                              </p>
-                                                                          </span>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                                                    <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                      <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Shipment Number</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Weight</p>
-                                                                      <p className=" font-medium col-span-1 p-2 w-full border ">Date</p>
-                                                                    </span>
-                                                                        {record.shipments.map((shipment, index) => {
-                                                                            if (!Array.isArray(shipment)) {
-                                                                                return (
-                                                                                    <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                                                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{shipment.shipmentNumber}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{shipment.weight}</p>
-                                                                                  <p className=" font-medium col-span-1 p-2 w-full border ">{dayjs(shipment.date).format("MMM DD, YYYY")}</p>
-                                                                                </span>
-                                                                                )
-                                                                            }
-                                                                        })}
-                                                                    </div>
-                                                                </>
-                                                            )
-                                                        }
+                                                        return (
+                                                            <LotExpandable
+                                                                entryId={entryId}
+                                                                restrictedColumns={restrictedColumns}
+                                                                isProcessing={isSending}
+                                                                record={record}
+                                                                userPermissions={userPermissions}
+                                                                updateEntry={updateLithiumEntry}
+                                                            />
+                                                        )
                                                     },
                                                     rowExpandable: (record) => record.supplierName !== "Not Expandable",
                                                 }}

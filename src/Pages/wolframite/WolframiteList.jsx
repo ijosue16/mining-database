@@ -25,6 +25,7 @@ import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctio
 import {FiEdit} from "react-icons/fi";
 import WolframiteEntryCompletePage from "./entry/WolframiteEntryCompletePage";
 import isBetween from "dayjs/plugin/isBetween"
+import {FaFileInvoiceDollar} from "react-icons/fa";
 dayjs.extend(isBetween);
 
 const WolframiteListPage = () => {
@@ -314,19 +315,36 @@ const WolframiteListPage = () => {
                           <BiSolidEditAlt className=" text-lg" />
                           <p>edit</p>
                         </li>
+
+
+                        {/* TODO 16: SHOW MENU BASED ON PERMISSIONS*/}
+                        <li
+                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              if (record.supplierId) {
+                                navigate(`/add/invoice/${record.supplierId}/wolframite/${record._id}`);
+                              } else {
+                                return message.warning("You have assign supplier to this entry");
+                              }
+                            }}
+                        >
+                          <FaFileInvoiceDollar className=" text-xl" />
+                          <p>Make invoice</p>
+                        </li>
+
                         {userPermissions.entry?.edit ? (
                             <>
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => {
-                                    {
-                                      navigate(`/complete/wolframite/${record._id}`);
-                                    }
-                                  }}
-                              >
-                                <RiFileEditFill className=" text-lg" />
-                                <p>complete entry</p>
-                              </li>
+                              {/*<li*/}
+                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                              {/*    onClick={() => {*/}
+                              {/*      {*/}
+                              {/*        navigate(`/complete/wolframite/${record._id}`);*/}
+                              {/*      }*/}
+                              {/*    }}*/}
+                              {/*>*/}
+                              {/*  <RiFileEditFill className=" text-lg" />*/}
+                              {/*  <p>complete entry</p>*/}
+                              {/*</li>*/}
                               <li
                                   className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                   onClick={() => {
