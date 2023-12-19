@@ -1,4 +1,3 @@
-import './Editor.css'
 import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import AddProductPage from './Pages/AddProductPage';
 import SalesListPage from './Pages/SalesListPage';
@@ -26,7 +25,6 @@ import AddBuyerPage from './Pages/AddBuyerPage';
 import PaymentsListPage from './Pages/PaymentsListPage';
 import AddPaymentPage from './Pages/AddPaymentPage';
 import EditBuyerPage from './Pages/EditBuyerPage';
-import DummyPage from './test elements/DummyPage';
 import BuyerDetailsPage from './Pages/BuyerDetails';
 import EditPaymentPage from './Pages/EditPaymentPage';
 import EditSuplierPage from './Pages/EditSupplierPage';
@@ -46,7 +44,6 @@ import Layout from './Layout/Layout';
 import StockPage from './Pages/shipment/StockPage';
 import ShipmentPage from './Pages/shipment/ShipmentPage';
 import ShipmentCompletionPage from './Pages/shipment/ShipmentCompletionPage';
-import FilesytemMangerSample from './test elements/FileExploreSample2';
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
 import ReportPage from './Pages/ReportPage';
