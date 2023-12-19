@@ -11,7 +11,7 @@ import PdfView from "../components/PdfView";
 import {getBase64FromServer} from "../components/helperFunctions";
 
 const ContractsistPage = () => {
-    const {permissions} = useSelector(state => state.persistedReducer.global);
+    const {permissions} = useSelector(state => state.persistedReducer?.global);
     const {data, isLoading, isSuccess} = useGetAllContractsQuery("",
         {
             refetchOnMountOrArgChange: true,
