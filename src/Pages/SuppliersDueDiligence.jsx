@@ -15,7 +15,7 @@ const SuppliersDueDiligence = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            const {sfdt} = data.data
+            const {sfdt} = data;
             if (sfdt) {
                 setSfdt(sfdt);
             } else {

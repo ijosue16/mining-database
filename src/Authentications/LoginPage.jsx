@@ -100,7 +100,7 @@ const LoginPage = () => {
                   />
                 )}
               </span>
-              <p className=" mt-2 hover:underline hover:text-blue-600" onClick={()=>navigate("/login/supplier")}>login as supplier</p>
+              {/* <p className=" mt-2 hover:underline hover:text-blue-600" onClick={()=>navigate("/login/supplier")}>login as supplier</p> */}
             </span>
             {/*<p*/}
             {/*  className="mb-2 hover:underline "*/}
@@ -124,6 +124,7 @@ const LoginPage = () => {
                 Login
               </button>
             )}
+              <p className=" mt-8 hover:underline hover:text-blue-600 bg-amber-200 p-2 w-fit rounded shadow-sm cursor:pointer text-md" onClick={()=>navigate("/login/supplier")}>Login as supplier</p>
             {/*<span className="flex items-center justify-center gap-2">*/}
             {/*  <p>Don’t have an account?</p>*/}
             {/*  <p*/}
