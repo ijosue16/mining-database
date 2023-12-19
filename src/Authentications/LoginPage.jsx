@@ -53,7 +53,7 @@ const LoginPage = () => {
     <>
       <div className="grid grid-cols-6 h-screen">
         <div className="col-span-6 sm:col-span-3 lg:col-span-2 h-full gap-3 flex flex-col bg-white p-3 lg:pt-16">
-          <h2 className=" text-xl font-bold"> Staff Sign In</h2>
+          <h2 className=" text-xl font-bold">Kanzamin staff sign in</h2>
           <p>Please login to your account</p>
           <form
             action=""
@@ -110,7 +110,7 @@ const LoginPage = () => {
             {/*</p>*/}
             {isLoading ? (
              <button
-             className="px-2 flex gap-1 items-center justify-center py-3 bg-amber-100 rounded-md text-gray-500"
+             className="px-2 flex gap-1 items-center justify-center py-3 bg-blue-200 rounded-md text-gray-500"
              type="submit"
            >
              <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
@@ -119,12 +119,12 @@ const LoginPage = () => {
             ) : (
                 <button
                 type="submit"
-                className="w-full px-2 py-3 bg-amber-200 rounded"
+                className="w-full px-2 py-3 bg-blue-400 rounded"
               >
                 Login
               </button>
             )}
-              <p className=" mt-8 hover:underline hover:text-blue-600 bg-amber-200 p-2 w-fit rounded shadow-sm cursor:pointer text-md" onClick={()=>navigate("/login/supplier")}>Login as supplier</p>
+              <p className=" mt-8 hover:underline bg-blue-400 p-2 w-fit rounded shadow-sm cursor-pointer text-md" onClick={()=>navigate("/login/supplier")}>Login as Kanzamin supplier</p>
             {/*<span className="flex items-center justify-center gap-2">*/}
             {/*  <p>Don’t have an account?</p>*/}
             {/*  <p*/}
