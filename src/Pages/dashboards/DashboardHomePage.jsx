@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TestChart from "./charts/TestChart";
 import {ImSpinner2} from "react-icons/im";
-import { useGetStockSummaryQuery, useGetYearStockSummaryQuery } from "../../states/apislice";
+import { useGetStockSummaryQuery, useGetYearStockSummaryQuery, useShipmentSuppliersGraphQuery } from "../../states/apislice";
 import companyLogo from "../../assets/companyLogo.png";
 // import Obo from "./charts/roma.project.json";
 // import * as echarts from 'echarts';
@@ -9,11 +9,13 @@ import companyLogo from "../../assets/companyLogo.png";
 
 // echarts.registerTheme('custom theme', Obo.theme);
 const DashboardPage = () => {
+  const shipmentId="658046954a131843477411b0"
   const[pieArray,SetPieArray]=useState([]);
   const [optionPie, setOptionPie] = useState({});
   const [optionStack, setOptionStack] = useState({});
   const{data,isLoading,isSuccess,isError,error}=useGetStockSummaryQuery();
   const{data:yearData,isLoading:isGetting,isSuccess:isDone,isError:isFail,error:fail}=useGetYearStockSummaryQuery("2023");
+  const{data:shipData,isLoading:isCalculating,isSuccess:isFetched,isError:isDown,error:down}=useShipmentSuppliersGraphQuery(shipmentId);
 
 useEffect(()=>{
   if(isDone){
@@ -125,6 +127,12 @@ useEffect(()=>{
     )
   }
 },[isDone]);
+
+useEffect(()=>{
+  if(isFetched){
+    console.log(shipData);
+  }
+},[])
 // console.log(optionStack)
 
     // OPTION FOR LINE CHART
@@ -240,6 +248,7 @@ useEffect(()=>{
     useEffect(() => {
       if (isSuccess) {
         const { stock } = data.data;
+        console.log(stock)
         SetPieArray(stock);
   
         // Update the optionPie state based on the fetched data
@@ -268,7 +277,7 @@ useEffect(()=>{
             orient: 'horizontal',
             left: 'left',
             top: '10%',
-            data: [ 'coltan', 'cassiterite' ,'wolframite', 'lithium', 'beryllium'],
+            // data: [ 'coltan', 'cassiterite' ,'wolframite', 'lithium', 'beryllium'],
           },
           series: [
             {

@@ -184,12 +184,6 @@ const LithiumListPage = () => {
       },
     },
     {
-      title: "Beneficiary",
-      dataIndex: "beneficiary",
-      key: "beneficiary",
-      sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
-    },
-    {
       title: "Mineral type",
       dataIndex: "name",
       key: "name",

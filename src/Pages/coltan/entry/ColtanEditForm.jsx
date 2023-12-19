@@ -594,7 +594,7 @@ const ColtanEditForm = () => {
         }
       }
     }
-    // await updateColtanEntry({ entryId, body: requestId ? newBody : body });
+    await updateColtanEntry({ entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",

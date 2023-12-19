@@ -95,6 +95,8 @@ import AddTag from './Pages/AddTag';
 import EditAdvancePayment from "./Pages/AdvancedPayments/EditAdvancePayment";
 import RequireAuth from "./Authentications/requireAuth";
 import React from "react";
+import NewDocumentEditorComponent from './Pages/NewDocumentEditorComponent';
+import SupplierLogin from './Pages/SupplierLogin';
 
 function App() {
 
@@ -216,6 +218,7 @@ function App() {
                                     <Route path='/add/tag' element={<AddTag/>}/>
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
+                                    <Route path="/yoo" element={<NewDocumentEditorComponent/>}/>
                                 </Route>
                                 <Route path='*' element={<Navigate to="/dashboard" replace/>}/>
                             </Route>
