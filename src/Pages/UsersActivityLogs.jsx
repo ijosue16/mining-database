@@ -81,21 +81,23 @@ const UsersActivityLogs = () => {
                 expandedRowRender: record => {
                     if (record.modifications) {
                         return (
-                            <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
-                                <span className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                  <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">Field Name</p>
-                                  <p className=" font-medium col-span-1 p-2 w-full border ">Initial Value</p>
-                                  <p className=" font-medium col-span-1 p-2 w-full border ">New Value</p>
+                            <div className="w-full flex flex-col items-start bg-white rounded-md p-2">
+                                <span className="grid grid-cols-6 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                  <p className=" font-semibold col-span-2 p-2 w-full border-b border-t text-start bg-slate-50">Field Name</p>
+                                  <p className=" font-medium col-span-2 p-2 w-full border ">Initial Value</p>
+                                  <p className=" font-medium col-span-2 p-2 w-full border ">New Value</p>
                                 </span>
                                 {record.modifications.map((modification, index) => {
                                     if (!Array.isArray(modification.initialValue)) {
-                                        return (
-                                            <span key={index} className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
-                                              <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">{modification.fieldName}</p>
-                                              <p className=" font-medium col-span-1 p-2 w-full border ">{modification.initialValue}</p>
-                                              <p className=" font-medium col-span-1 p-2 w-full border ">{modification.newValue}</p>
+                                        if (modification.initialValue || modification.newValue) {
+                                            return (
+                                                <span key={index} className="grid grid-cols-6 items-center justify-between w-full md:w-1/2  rounded-sm">
+                                              <p className=" font-semibold col-span-2 p-2 w-full border-b border-t text-start bg-slate-50">{modification.fieldName}</p>
+                                              <p className=" font-medium col-span-2 p-2 w-full border ">{modification.initialValue}</p>
+                                              <p className=" font-medium col-span-2 p-2 w-full border ">{modification.newValue}</p>
                                             </span>
-                                        )
+                                            )
+                                        }
                                     }
                                 })}
                             </div>

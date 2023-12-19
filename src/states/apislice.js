@@ -590,6 +590,9 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["suppliers", "entries", "shipments"]
         }),
+        getDueDiligence: builder.query({
+            query: () => `/suppliers/due-diligence`,
+        }),
         getAllUsers: builder.query({
             query: () => `/users`,
             providesTags: ["users"]
@@ -775,6 +778,7 @@ export const {
     useAddSupplierMutation,
     useUpdateSupplierMutation,
     useDeleteSupplierMutation,
+    useGetDueDiligenceQuery,
     useGetAllPaymentsQuery,
     useAddPaymentMutation,
     useGetOnePaymentQuery,

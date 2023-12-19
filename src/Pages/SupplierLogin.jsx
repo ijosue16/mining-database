@@ -31,19 +31,24 @@ const SupplierLogin=()=>{
   
     const handleSubmit = async (e) => {
       e.preventDefault();
-      const response = await login({ body: user });
-      if (response.data) {
-        const { token } = response.data;
-        const { user } = response.data.data;
-        dispatch(setAuthToken(token));
-        dispatch(setUserData(user));
-        dispatch(setPermissions(user.permissions));
+      if (!user.email || !user.password) {
+        return message.error("Please fill all fields");
+      } else {
+          navigate('/suppliers/due-diligence');
+      }
+      // const response = await login({ body: user });
+      // if (response.data) {
+        // const { token } = response.data;
+        // const { user } = response.data.data;
+        // dispatch(setAuthToken(token));
+        // dispatch(setUserData(user));
+        // dispatch(setPermissions(user.permissions));
         // localStorage.setItem("profile", JSON.stringify(user));
         // localStorage.setItem("role", user.role);
         // localStorage.setItem("permissions", JSON.stringify(user.permissions));
-        socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
-        navigate(from, {replace: true});
-      }
+        // socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
+        // navigate(from, {replace: true});
+      // }
     };
   
     const handleChange = (e) => {

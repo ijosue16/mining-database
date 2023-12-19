@@ -97,6 +97,7 @@ import RequireAuth from "./Authentications/requireAuth";
 import React from "react";
 import NewDocumentEditorComponent from './Pages/NewDocumentEditorComponent';
 import SupplierLogin from './Pages/SupplierLogin';
+import SuppliersDueDiligence from "./Pages/SuppliersDueDiligence";
 
 function App() {
 
@@ -167,6 +168,7 @@ function App() {
                                     <Route path='/purchases' element={<PurchasesListPage/>}/>
                                     <Route path='/profile' element={<UsersListPage/>}/>
                                     <Route path='/suppliers' element={<SuppliersListPage/>}/>
+                                    <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
                                     <Route path='/add/supplier' element={<AddSuplierPage/>}/>
                                     <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
                                     <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
