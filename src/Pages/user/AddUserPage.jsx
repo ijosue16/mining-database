@@ -131,11 +131,11 @@ const AddUserPage = () => {
 
                                            </ul>
 
-                                           <span className="">
-                            <p className="mb-1 pl-1">User image</p>
-                            <input type="file" name="userImage" id="userImage"
-                                   className=" p-2 border rounded-lg w-full h-fit md:h-52" value={""} onChange={handleAddproduct}/>
-                        </span>
+                        {/*                   <span className="">*/}
+                        {/*    <p className="mb-1 pl-1">User image</p>*/}
+                        {/*    <input type="file" name="userImage" id="userImage"*/}
+                        {/*           className=" p-2 border rounded-lg w-full h-fit md:h-52" value={""} onChange={handleAddproduct}/>*/}
+                        {/*</span>*/}
 
                                        </div>
                                    }

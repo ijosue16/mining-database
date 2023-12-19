@@ -3,12 +3,14 @@ import ViewDocumentEditor from "./ViewDocumentEditor";
 import {message} from "antd";
 import {useGetDueDiligenceQuery} from "../states/apislice";
 import FetchingPage from "./FetchingPage";
+import { useNavigate } from "react-router-dom";
 
 
 const SuppliersDueDiligence = () => {
     const {data, isSuccess} = useGetDueDiligenceQuery();
     const [documentEditor, setDocumentEditor] = useState(null);
     const [sfdt, setSfdt] = useState(null);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -16,6 +18,8 @@ const SuppliersDueDiligence = () => {
             const {sfdt} = data.data
             if (sfdt) {
                 setSfdt(sfdt);
+            } else {
+                navigate('/login/supplier');
             }
         }
     }, [isSuccess, data]);

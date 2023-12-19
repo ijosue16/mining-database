@@ -111,7 +111,7 @@ function App() {
                 <SocketContext.Provider value={socket}>
                     <Routes>
                         <Route element={<LoginDatacontextProvider/>}>
-                            {/*<Route exact path="/" element={<Navigate to="/dashboard"/>}/>*/}
+                            <Route exact path="/" element={<Navigate to="/login"/>}/>
                             <Route path='/login' element={<LoginPage/>}/>
                             <Route path="/login/supplier" element={<SupplierLogin/>}/>
                             <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
@@ -218,7 +218,7 @@ function App() {
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/yoo" element={<NewDocumentEditorComponent/>}/>
                                 </Route>
-                                <Route path='*' element={<Navigate to="/dashboard" replace/>}/>
+                                {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>
                         </Route>
 
