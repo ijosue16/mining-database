@@ -114,6 +114,8 @@ function App() {
                         <Route element={<LoginDatacontextProvider/>}>
                             {/*<Route exact path="/" element={<Navigate to="/dashboard"/>}/>*/}
                             <Route path='/login' element={<LoginPage/>}/>
+                            <Route path="/login/supplier" element={<SupplierLogin/>}/>
+                            <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
                             <Route element={<Layout/>}>
                                 <Route element={<RequireAuth/>}>
                                     <Route path='/payment/:model/:entryId/:lotNumber?' element={<PaymentsPage/>}/>
@@ -168,7 +170,6 @@ function App() {
                                     <Route path='/purchases' element={<PurchasesListPage/>}/>
                                     <Route path='/profile' element={<UsersListPage/>}/>
                                     <Route path='/suppliers' element={<SuppliersListPage/>}/>
-                                    <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
                                     <Route path='/add/supplier' element={<AddSuplierPage/>}/>
                                     <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
                                     <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
