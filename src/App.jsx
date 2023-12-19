@@ -222,7 +222,7 @@ function App() {
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/yoo" element={<NewDocumentEditorComponent/>}/>
                                 </Route>
-                                <Route path='*' element={<Navigate to="/dashboard" replace/>}/>
+                                {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>
                         </Route>
 
