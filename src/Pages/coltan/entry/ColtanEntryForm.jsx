@@ -202,7 +202,7 @@ const ColtanEntryForm = () => {
     const body = { ...formval, output: lotDetails };
     console.log(body);
     await createColtanEntry({ body });
-    // navigate(-1);
+    navigate(-1);
   };
   const handleCancel = () => {
     setFormval({

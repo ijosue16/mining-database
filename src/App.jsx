@@ -82,7 +82,6 @@ import TagsList from "./Pages/shipment/TagsList";
 import ShipmentEdit from './Pages/shipment/ShipmentEdit';
 import NewUSerChart from './Pages/Chat/NewUserChat';
 import BerylliumEditForm from './Pages/beryllium/entry/BerylliumEditForm';
-import EditorWrapper from './texteditor/LexicalEditor';
 import DashboardPage from './Pages/dashboards/DashboardHomePage';
 import PrepareDDReport from "./Pages/PrepareDDReport";
 import EditExistingFile from "./Pages/EditExistingFile";
@@ -126,9 +125,6 @@ function App() {
                                     <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                     <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
-                                    <Route path='/dummy' element={<DummyPage/>}/>
-                                    <Route path='/dummy2' element={<FetchingPage/>}/>
-                                    <Route path='/dummy3' element={<FilesytemMangerSample/>}/>
                                     <Route path='/report/:supplierId' element={<ReportPage/>}/>
 
                                     <Route path='/coltan' element={<ColtanListPage/>}/>
@@ -209,7 +205,6 @@ function App() {
                                     <Route path="/new" element={<NewUSerChart/>}/>
                                     <Route path="/structure" element={<FileStructure/>}/>
                                     <Route path="/simbo" element={<SingleImageUpload/>}/>
-                                    <Route path="/texteditor" element={<EditorWrapper/>}/>
                                     <Route path="/dashboard" element={<DashboardPage/>}/>
                                     <Route path="/due-diligence-report/:supplierId/:startDate/:endDate" element={<PrepareDDReport/>}/>
                                     <Route path="/structure/:url/:filePath/:fileId" element={<EditExistingFile/>}/>

@@ -1,18 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
-import RichTextEditor from "./RichTextEditor";
 import { useGetExistingFileForEditQuery, useConvertToSFDTMutation } from "../states/apislice";
 import {message} from "antd";
 import {useNavigate, useParams} from "react-router-dom";
-import ReactHtmlParser from "html-react-parser";
-import {
-    HtmlEditor,
-    Image,
-    Inject,
-    Link,
-    RichTextEditorComponent,
-    Table,
-    Toolbar
-} from "@syncfusion/ej2-react-richtexteditor";
 import DocumentEditorComponent from "./DocumentEditor";
 import FetchingPage from "./FetchingPage";
 

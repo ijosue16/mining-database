@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import dayjs from "dayjs";
-import { Modal, Spin, Table } from "antd";
+import { Modal, Spin, Table, message } from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
@@ -16,7 +16,6 @@ import { BsCardList } from "react-icons/bs";
 import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
-import { toast } from "react-toastify";
 import { toInitialCase } from "../../components/helperFunctions";
 
 const UsersListPage = () => {
@@ -53,10 +52,10 @@ const UsersListPage = () => {
 
   useEffect(() => {
     if (isdone) {
-      toast.success("User deleted successfully");
+      message.success("User deleted successfully");
     } else if (isproblem) {
-      const { message } = problem.data;
-      toast.error(message);
+      const { message: errorMessage } = problem.data;
+      message.error(errorMessage);
     }
   }, [isdone, isproblem, problem]);
 
@@ -316,12 +315,9 @@ const UsersListPage = () => {
                 Confirm Delete
               </h2>
               <p className=" text-lg">
-                Are you sure you want to delete transaction with:
+                Are you sure you want to User with 
               </p>
-              <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
-              <li className=" text-lg">{`Supply date: ${dayjs(
-                selectedRowInfo.date
-              ).format("MMM/DD/YYYY")}`}</li>
+              <li className=" text-lg">{`Name: ${selectedRowInfo.name}`}</li>
             </Modal>
             <div className=" w-full overflow-x-auto h-full min-h-[320px]">
               <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
