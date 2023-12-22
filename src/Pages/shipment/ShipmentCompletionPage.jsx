@@ -109,7 +109,6 @@ const ShipmentCompletionPage = () => {
     if (isDone) {
       const { data: dt } = info;
       const { shipment: ships } = dt;
-      console.log(ships);
       setShipmentDetails({
         shipmentGrade: ships.shipmentGrade,
         shipmentPrice: ships.shipmentPrice,
@@ -134,7 +133,6 @@ const ShipmentCompletionPage = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { buyers: buyrz } = dt;
-      console.log(buyrz);
       setBuyerz(buyrz);
     }
   }, [isSuccess]);
@@ -219,11 +217,9 @@ const ShipmentCompletionPage = () => {
     }
     // setchecked(false);
     setShipmentDetails((prev) => ({ ...prev, buyerId: buyer._id }));
-    console.log(buyer._id);
     setDropdownOpen(false);
     setSearchText("");
   };
-console.log(selectedBuyerName)
   const handleAddSamplingDate = (e) => {
     setShipmentDetails((prevState) => ({
       ...prevState,
@@ -260,9 +256,7 @@ console.log(selectedBuyerName)
     formData.append("certificateOfOrigin", fileData.certificateOfOrigin);
     formData.append("rmbIcglrCertificate", fileData.rmbIcglrCertificate);
     for (const pair of formData) {
-      console.log(`Key: ${pair[0]}, Value: ${pair[1]}`);
     }
-    console.log(formData.entries());
     for (const key in shipmentDetails) {
       if (shipmentDetails.hasOwnProperty(key)) {
         const value = shipmentDetails[key];
@@ -275,9 +269,6 @@ console.log(selectedBuyerName)
     for (const [key, value] of formData.entries()) {
       formDataObject[key] = value;
     }
-    // console.log("Form Data:", formDataObject);
-    // console.log("yeweee", body);
-    // console.log("_____________________________");
     navigate(-1);
   };
   const handleCancel = () => {

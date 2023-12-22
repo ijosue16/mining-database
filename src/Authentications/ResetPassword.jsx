@@ -7,8 +7,6 @@ const ResetPasswordPage=()=>{
     const [user, setUser] = useState({password: "",confirmPassword:"" })
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(user)
-
     };
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value })

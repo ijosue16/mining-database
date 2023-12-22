@@ -95,7 +95,6 @@ const AdvancedPaymentEntry = () => {
         }
         // setchecked(false);
         // setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-        console.log(chosenSupplier.companyName);
         setDropdownOpen(false);
         setSearchText("");
     };

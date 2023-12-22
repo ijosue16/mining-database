@@ -154,7 +154,7 @@ const AddTag = () => {
                         </div>
                     </div>
                     <button
-                        className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                        className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                         onClick={() => navigate("/add/supplier")}
                     >
                         New supplier

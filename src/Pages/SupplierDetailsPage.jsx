@@ -26,7 +26,6 @@ const SupplierDetailsPage = () => {
         e.preventDefault();
         const body = { ...formval };
         // await updateBuyer({ body, buyerId });
-        console.log(formval);
         setFormval({ lat: '', long: '', name: '', code: '' });
         // navigate(-1);
     }
@@ -43,7 +42,6 @@ const SupplierDetailsPage = () => {
 
         }
 
-    console.log(suply);
     return (
         <div>
             <ActionsPagesContainer title={'Supplier Details'}

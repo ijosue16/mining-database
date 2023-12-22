@@ -50,18 +50,15 @@ const PaymentsListPage=()=>{
     if(isSuccess){
         const{data:dt}=data;
         const{payments:paymentz}=dt;
-        console.log(data);
         dataz=paymentz
     };
 
     const handleActions = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id)
-        console.log('Deleted ID:', id);
     };
 
     const handleDelete = async() => {
-        // console.log(selectedRow);
         const buyerId= selectedRow;
         await deleteBuyer({buyerId});
         setShowmodal(!showmodal);

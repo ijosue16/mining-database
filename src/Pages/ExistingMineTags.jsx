@@ -107,7 +107,6 @@ const ExistingMineTags = ({setmineTags, mineTags, supplierId}) => {
                         setmineTags([...newSet]);
                         // setSelectedTags(new Set());
                         // setDropdownOpen(false);
-                        console.log(newSet)
                     }}>Submit</button>
                     <button type="button" className="px-3 py-1 bg-blue-200 rounded-md" onClick={() => {
                         // setSelectedTags(new Set());

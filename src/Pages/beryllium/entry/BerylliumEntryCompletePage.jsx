@@ -115,7 +115,6 @@ const BerylliumEntryCompletePage = ({entryId}) => {
             ]
             setSuply(entr);
             setLotInfo(output);
-            // console.log(lotInfo);
         }
     }, [isSuccess, isUpdateSuccess, data]);
 

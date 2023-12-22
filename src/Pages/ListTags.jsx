@@ -19,7 +19,6 @@ const ListTags = () => {
     useEffect(() => {
         if (isSuccess) {
             const { tags } = data.data;
-            console.log(tags)
             setTags(tags);
         }
     }, [isSuccess, data]);

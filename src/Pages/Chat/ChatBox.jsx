@@ -59,7 +59,6 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
                 const {messages} = data.data.data;
                 setMessages(messages);
             } catch (error) {
-                console.log(error);
             }
         };
 
@@ -100,7 +99,6 @@ const ChatBox = ({chat, currentUser, setSendMessage, receivedMessage, setCurrent
 
 // Receive Message from parent component
 //     useEffect(() => {
-//         console.log("Message Arrived: ", receivedMessage)
 //         if (receivedMessage !== null && receivedMessage.chatId === chat._id) {
 //             setMessages([...messages, receivedMessage]);
 //         }

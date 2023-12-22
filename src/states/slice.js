@@ -6,12 +6,7 @@ const initialState = {
     token: null,
     permissions: null
 }
-const userList = [
-    {fullName: "josue iradukunda", role: "admin"},
-    {fullName: "Jane Smith", role: "storekeeper"},
-    {fullName: "Alex Johnson", role: "tracessability"},
-    // Add more users with their respective roles
-];
+
 export const globalSlice = createSlice({
     name: "auth",
     initialState,
@@ -26,7 +21,7 @@ export const globalSlice = createSlice({
             state.token = action.payload
         },
         setUserData: (state, action) => {
-            state.userData = action.payload
+            state.userData = action.payload 
             state.role = state.userData?.role
         },
         setPermissions: (state, action) => {

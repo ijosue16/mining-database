@@ -3,7 +3,7 @@ import { Modal } from "antd";
 import { PiPlus,PiCaretLeftLight } from "react-icons/pi"
 import { useNavigate } from "react-router-dom";
 
-const ListPopupContainerHeader = ({ title, subTitle, navtext,navLinktext }) => {
+const ListPopupContainerHeader = ({ title, subTitle, navtext }) => {
     const navigate = useNavigate();
     const[showmodal,setShowmodal]=useState(false);
 

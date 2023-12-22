@@ -9,7 +9,6 @@ const AddProductPage = () => {
         setFormval({ ...formval, [e.target.name]: e.target.value })
     }
     const handleProductSubmit=()=>{
-        console.log(formval);
     }
     const handleCancel=()=>{
         setFormval({ productName: '',category:'',subCategory:'',brand:'',unit:'',sku:'',minimumQty:'',quantity:'',tax:'',discountType:'',price:'',status:'' })

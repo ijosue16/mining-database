@@ -51,7 +51,6 @@ const SuppliersListPage = () => {
     };
     const handleSupplierinvoice=(supplierId)=>{
       const dt = useSupplierData(supplierId);
-      console.log(dt);
     };
 
    
@@ -92,7 +91,6 @@ const SuppliersListPage = () => {
   if (isSuccess) {
     const { data: dt } = data;
     const { suppliers: spl } = dt;
-    console.log(spl);
     dataz = spl;
   };
 
@@ -105,25 +103,20 @@ const SuppliersListPage = () => {
       setStartDate(startDate.format('YYYY-MM-DD'));
       setEndDate(endDate.format('YYYY-MM-DD'));
 
-      console.log('Start Date:', startDate.format('YYYY-MM-DD'));
-      console.log('End Date:', endDate.format('YYYY-MM-DD'));
     }
   };
 
   const handleActions = (id) => {
     if (selectedRow === id) {
-      console.log("uri muduki sha");
       SetShowActions(false);
       SetSelectedRow("");
     } else {
       SetSelectedRow(id);
       SetShowActions(true);
-      console.log("Clicked ID:", id);
     }
   };
   
   const handleDelete = async () => {
-    // console.log(selectedRow);
     const supplierId = selectedRow;
     await deleteSupplier({ supplierId });
     setShowmodal(!showmodal);

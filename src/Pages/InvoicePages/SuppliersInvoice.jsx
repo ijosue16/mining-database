@@ -25,9 +25,7 @@ const SuppliersInvoice =()=>{
     if (isSuccess) {
             const {invoices}=data.data;
             dataz=invoices;
-            console.log(dataz);
         } else if (isError) {
-            console.log(error.data.message);
         };
         let modalRef = useRef();
 
@@ -45,13 +43,11 @@ const SuppliersInvoice =()=>{
         }, []);
           const handleActions = (id) => {
             if (selectedRow === id) {
-              console.log("uri muduki sha");
               SetShowActions(false);
               SetSelectedRow("");
             } else {
               SetSelectedRow(id);
               SetShowActions(true);
-              console.log("Clicked ID:", id);
             }
           };
 

@@ -8,7 +8,6 @@ const AddPurchasePage=()=>{
         setFormval({ ...formval, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value })
     }
     const handleProductSubmit=()=>{
-        console.log(formval);
     }
     const handleCancel=()=>{
         setFormval({ customer: '',date:'',suppliers:'',productname:'',orderTax:'',discount:'',shipping:'',status:'',description:'' })

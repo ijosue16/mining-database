@@ -69,17 +69,14 @@ const BuyersListPage = () => {
 
   const handleActions = (id) => {
     if (selectedRow === id) {
-      console.log("uri muduki sha");
       SetShowActions(false);
       SetSelectedRow("");
     } else {
       SetSelectedRow(id);
       SetShowActions(true);
-      console.log("Clicked ID:", id);
     }
   };
   const handleDelete = async () => {
-    // console.log(selectedRow);
     const buyerId = selectedRow;
     await deleteBuyer({ buyerId });
     setShowmodal(!showmodal);

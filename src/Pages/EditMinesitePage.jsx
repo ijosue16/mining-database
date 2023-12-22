@@ -19,7 +19,6 @@ const EditMinesitePage = () => {
         e.preventDefault();
         const body = { ...formval };
         // await updateBuyer({ body, buyerId });²²
-        console.log(formval);
         setFormval({ lat: '', long: '', name: '', code: '' });
         // navigate(-1);
     }
@@ -36,7 +35,6 @@ const EditMinesitePage = () => {
 
         }
     }, [isSuccess]);
-    //   console.log(suply);
     return (
         <div>
             <ActionsPagesContainer title={'Edit Suplier Minesite'}

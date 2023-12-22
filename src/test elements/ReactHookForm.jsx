@@ -17,7 +17,6 @@ const form =useForm({
 const {register,control,handleSubmit,formState}=form;
 const {errors}=formState;
 const onSubmit=(data)=>{
-    console.log(data)
 }
 rendercount++;
     return (

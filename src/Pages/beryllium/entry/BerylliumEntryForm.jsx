@@ -5,9 +5,6 @@ import { DatePicker, TimePicker, Spin,message } from 'antd';
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import { useGetAllSuppliersQuery, useCreateBerylliumEntryMutation } from "../../../states/apislice";
-import { FiSearch } from "react-icons/fi";
-import { GrClose } from "react-icons/gr";
-import { HiPlus, HiMinus } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 
@@ -33,8 +30,6 @@ const BerylliumEntryForm = () => {
         const { data: dt } = data;
         const { suppliers: sups } = dt;
         sup = sups;
-        console.log(sup);
-
     }
 
 
@@ -69,7 +64,6 @@ const BerylliumEntryForm = () => {
     //         }
     //         else if (e.key === "Enter" && selectedItem >= 0) {
     //             setBeneficial(searchData[selectedItem].supplier);
-    //             console.log(searchData[selectedItem].supplier);
     //             setSearch(searchData[selectedItem].supplier);
     //             setSelectedItem(-1)
     //             setSearchData([]);
@@ -126,13 +120,11 @@ const BerylliumEntryForm = () => {
         e.preventDefault();
         const body = { ...formval, output: lotDetails };
         await createBerylliumEntry({ body });
-        console.log(body);
         navigate(-1);
     };
     const handleCancel = () => {
         setFormval({ weightIn: "", weightOut: '', supplierName: "", licenseNumber: "", TINNumber: '', email: '', supplierId: '', companyRepresentative: "", representativeId: "", phoneNumber: "", supplyDate: "", time: "", numberOfTags: '', mineTags: '', negociantTags: '', mineralType: 'beryllium', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '', isSupplierBeneficiary: false });
         setlotDetails([{ lotNumber: "", weightOut: "" },])
-        console.log(checked)
     };
 
     return (

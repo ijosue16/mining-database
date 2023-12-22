@@ -13,7 +13,7 @@ const ListContainerHeader = ({ title, subTitle, navtext,navLinktext,isAlowed }) 
                     <h6 className="text-[14px] ">{subTitle}</h6>
 
                 </div>
-               { isAlowed?<div className="py-[10px] px-6 rounded bg-amber-500 flex items-center gap-3" onClick={() => navigate(`/${navLinktext}`)} >
+               { isAlowed?<div className="py-[10px] px-[20px] rounded shadow-md shadow-[#A6A6A6] bg-custom_blue-500  hover:bg-custom_blue-600 flex items-center gap-3" onClick={() => navigate(`/${navLinktext}`)} >
                     <PiPlus className="text-white text-2xl" />
                     <button type="button" className=" bg-transparent text-white text-center" >{navtext}</button>
                 </div>:null}

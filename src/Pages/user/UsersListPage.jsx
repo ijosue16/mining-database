@@ -40,7 +40,6 @@ const UsersListPage = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
-  console.log(loginData);
 
   let modalRef = useRef();
 
@@ -69,19 +68,16 @@ const UsersListPage = () => {
   if (isSuccess) {
     const { data: dt } = data;
     const { users:userz } = dt;
-    console.log(userz);
     dataz = userz;
   }
 
   const handleActions = (id) => {
     if (selectedRow === id) {
-      console.log("uri muduki sha");
       SetShowActions(false);
       SetSelectedRow("");
     } else {
       SetSelectedRow(id);
       SetShowActions(true);
-      console.log("Clicked ID:", id);
     }
   };
 

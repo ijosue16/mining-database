@@ -158,7 +158,6 @@ const LithiumEntryCompletePage = ({entryId}) => {
     };
 
     const beforeUpload = (file) => {
-        console.log("before upload");
         const isPNG = file.type === "image/png" || file.type === "image/jpeg";
         if (!isPNG) {
             message.error(`${file.name} is not a .png or .jpeg file`);

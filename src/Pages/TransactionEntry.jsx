@@ -55,7 +55,6 @@ const TransactionEntry = () => {
         }
         else if(e.key=== "Enter" && selectedItem >= 0){
             setBeneficial(searchData[selectedItem].companyName);
-            console.log(searchData[selectedItem].companyName);
             setSearch(searchData[selectedItem].companyName);
             setSelectedItem(-1)
             setSearchData([]);
@@ -75,9 +74,7 @@ const TransactionEntry = () => {
     //         const { data: dt } = data;
     //         const { suppliers: sups } = dt;
     //         sup = sups;
-    //         console.log(sup);
     //         if (search === '' || search !== '') {
-    //             console.log(searchData)
     //             const newfilteredData=sup.filter((rcp)=>{
     //                return rcp.companyName.toLowerCase().includes(search.toLowerCase())
     //             });
@@ -94,7 +91,6 @@ const TransactionEntry = () => {
         const { data: dt } = data;
         const { suppliers: sups } = dt;
         sup = sups;
-        console.log(sup);
        
     }
 
@@ -121,7 +117,6 @@ const TransactionEntry = () => {
 
     const handleCheck = () => {
         setchecked((prev)=>!prev);
-        console.log(checked)
         if (Boolean(checked) === false ) {
             setFormval({ ...formval, beneficiary: beneficial,isSupplierBeneficiary:true });
         }
@@ -134,13 +129,10 @@ const TransactionEntry = () => {
         e.preventDefault();
         const body={...formval};
         createEntry({body,model});
-        console.log(formval);
-        console.log(model);
         // navigate(-1);
     };
     const handleCancel = () => {
         setFormval({ grossQuantity: "", netQuantity: "", companyName: "", licenseNumber: "", TINNumber: '', email: '',supplierId:'', companyRepresentative: "", representativeId: "", representativePhoneNumber: "", date: "",time:"", numberOfTags: null, mineTags: '', negociantTags: '', mineralType: '', mineralgrade: '', mineralprice: '', shipmentnumber: '', beneficiary: '',isSupplierBeneficiary:false })
-        console.log(checked)
     };
     // useEffect(()=>{
 
@@ -149,7 +141,6 @@ const TransactionEntry = () => {
     //     const { data: dt } = data;
     //     const { suppliers: sups } = dt;
     //     sup = sups;
-    //     console.log(sup);
     // }
     return (
         <>

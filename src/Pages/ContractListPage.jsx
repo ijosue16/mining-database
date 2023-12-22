@@ -95,7 +95,7 @@ const ContractsistPage = () => {
                     return (
                         <div className="flex gap-1">
                             <Button onClick={() => handlePreview(record.filePath)} icon={<HiMiniViewfinderCircle size={20}/>}/>
-                            <Button onClick={() => console.log("download clicked")} icon={<RiFolderDownloadFill size={20}/>}/>
+                            <Button  icon={<RiFolderDownloadFill size={20}/>}/>
                         </div>
                     )
                 } else {

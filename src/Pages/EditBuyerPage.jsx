@@ -21,7 +21,6 @@ const EditBuyerPage = () => {
         e.preventDefault();
         const body={...formval};
         await updateBuyer({body,buyerId});
-        console.log(formval);
         setFormval({ name:'',email:'',country:'',address:'',destination:''});
         navigate(-1);
     }
@@ -35,7 +34,6 @@ const EditBuyerPage = () => {
             const {data:info}=dt
             const{buyer:byr}=info
             setFormval({ name:byr.name,email:byr.email,country:byr.country,address:byr.address,destination:byr.destination})
-            console.log(byr);
         }
       }, [isdone]);
     

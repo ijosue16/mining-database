@@ -24,11 +24,9 @@ const TrecabilityData = () => {
     };
     const handleExtraForm = (e) => {
         setFormval((prevState) => ({ ...prevState, mineralType: e.target.value }));
-        console.log(formval.mineralType)
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formval);
     };
     const handleCancel = (e) => {
         setFormval({ grossQty: "", netQty: "", companyName: "", licenseNumber: "", companyRepresentative: "", representativeId: "", representativePhoneNbr: "", date: "", mineTagsNbr: "", mineralType: "" })

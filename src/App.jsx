@@ -94,6 +94,7 @@ import React from "react";
 import NewDocumentEditorComponent from './Pages/NewDocumentEditorComponent';
 import SupplierLogin from './Pages/SupplierLogin';
 import SuppliersDueDiligence from "./Pages/SuppliersDueDiligence";
+import StyleTestPage from './test elements/DummyPage';
 
 function App() {
 
@@ -213,7 +214,7 @@ function App() {
                                     <Route path='/add/tag' element={<AddTag/>}/>
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
-                                    <Route path="/yoo" element={<NewDocumentEditorComponent/>}/>
+                                    <Route path="/yoo" element={<StyleTestPage/>}/>
                                 </Route>
                                 {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>

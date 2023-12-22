@@ -491,7 +491,7 @@ const StockPage = () => {
                     rowKey="index"
                 />
                 <div
-                    className=" w-full p-2 bg-orange-500 rounded-md flex justify-center"
+                    className=" w-full py-[10px] px-[20px] bg-custom_blue-500 rounded-md flex justify-center"
                     onClick={handleOpenModal}
                 >
                   <BsClipboard2MinusFill className=" text-white text-lg" />
@@ -512,9 +512,9 @@ const StockPage = () => {
                     >
 
                 <button
-                    key="submit"
-                    className=" bg-red-400 p-2 rounded-lg"
-                    type="primary"
+                    key="cancel"
+                    className=" py-[10px] px-[20px] shadow-md shadow-[#A6A6A6] bg-punch-500 hover:bg-punch-700 text-white rounded-md"
+                    type="button"
                     onClick={handleOpenModal}
                 >
                   Cancel
@@ -522,7 +522,7 @@ const StockPage = () => {
               </span>,
                   ]}
               >
-                <div className=" bg-slate-100 p-2">
+                <div className=" bg-slate-100 px-2">
                   <h2 className="modal-title text-center font-bold text-xl">
                     Shipment details
                   </h2>
@@ -603,7 +603,7 @@ const StockPage = () => {
                         <input type="text" name="shipmentNumber" id="shipmentNumber" value={shipmentNumber} className="focus:outline-none p-2 border rounded-[4px] w-full md:w-1/2" placeholder="Add shipment number" onChange={handleShipmentNumber}/>
                       </div>
                       <button
-                          className=" bg-orange-500 text-white py-2 px-4 rounded-md"
+                          className="py-[10px] px-[20px] rounded shadow-md shadow-[#A6A6A6] bg-custom_blue-500 text-white text-md hover:bg-custom_blue-600"
                           onClick={() => {
                             handleConfirmModal();
                           }}

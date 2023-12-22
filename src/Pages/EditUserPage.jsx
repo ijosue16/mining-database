@@ -12,7 +12,6 @@ const EditUserPage = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(formval);
     }
     const handleCancel = (e) => {
         setFormval({ fullName: '', userName: '', email: '', role: "", password: '', confirmPassword: '' })

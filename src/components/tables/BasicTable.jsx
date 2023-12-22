@@ -33,11 +33,9 @@ const BasicTable = () => {
     const handleDelete = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id)
-        console.log('Deleted ID:', id);
       };
 
     const[dataz,SetDataz]=useState(transformDataToObjects(mData));
-    // console.log(dataz);
     const columns = [
         {
             title: 'Id',

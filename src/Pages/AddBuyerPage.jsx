@@ -19,7 +19,6 @@ const AddBuyerPage = () => {
         e.preventDefault();
         const body={...formval};
         await createNewBuyer({...formval,body});
-        console.log(formval);
         setFormval({ name:'',email:'',country:'',address:'',destination:''});
         navigate(-1);
     }

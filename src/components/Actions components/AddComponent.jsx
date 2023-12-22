@@ -1,26 +1,25 @@
-import { Spin } from "antd";
 import { ImSpinner2 } from "react-icons/im";
 
 const AddComponent = ({ Add, Cancel, component, isloading,isvalid }) => {
   return (
     <form onSubmit={Add} className="flex flex-col p-3 h-fit gap-2">
       <>{component}</>
-      <div className=" self-end flex gap-2 flex-col sm:flex-row w-full justify-start sm:gap-2 items-start action-buttons">
+      <div className=" self-end flex gap-2 flex-col sm:flex-row w-full justify-start md:items-center sm:gap-4 items-start action-buttons">
         {isloading ? (
           <button
-            className="px-2 flex gap-1 items-center justify-start py-2 bg-orange-200 rounded-md text-gray-500"
-            type="submit"
+            className="flex gap-2 items-center justify-start py-[10px] px-[20px] shadow-md shadow-[#A6A6A6] bg-custom_blue-200 rounded-md text-custom_blue-700 cursor-not-allowed"
+            type="button"
           >
-            <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+            <ImSpinner2 className="h-[19px] w-[19px] animate-spin text-custom_blue-700" />
             Sending
           </button>
         ) : (
-          <button className={`${isvalid? 'bg-orange-100 text-slate-600':' bg-orange-300'} px-6 py-2  rounded-md`} type="submit" disabled={isvalid}>
+          <button className={`${isvalid? 'bg-custom_blue-200 text-custom_blue-700 cursor-not-allowed':' bg-custom_blue-500 hover:bg-custom_blue-600 text-white'} py-[10px] px-[20px] shadow-md shadow-[#A6A6A6] rounded-md`} type="submit" disabled={isvalid}>
             Submit
           </button>
         )}
         <button
-          className="px-6 py-2 bg-blue-100 rounded-md"
+          className=" py-[10px] px-[20px] shadow-md shadow-[#A6A6A6] bg-punch-500 hover:bg-punch-700 text-white rounded-md"
           onClick={Cancel}
           type="button"
         >

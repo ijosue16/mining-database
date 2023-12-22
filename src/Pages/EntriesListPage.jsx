@@ -25,16 +25,13 @@ const EntriesListPage = () => {
     if (isSuccess) {
         const { data: dt } = data;
         const { entries: entrz } = dt;
-        console.log(entrz);
         dataz = entrz;
     };
     const handleActions = (id) => {
         SetShowActions(!showActions);
         SetSelectedRow(id)
-        console.log('Deleted ID:', id);
     };
     const handleDelete = async () => {
-        // console.log(selectedRow);
         const entryId= selectedRow;
         await useDeleteEntryMutation({entryId});
         setShowmodal(!showmodal);
@@ -108,7 +105,6 @@ const EntriesListPage = () => {
                                             <p>edit</p>
                                         </li>
                                         <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={() => {
-                                            console.log('Action 4 :', record._id);
                                             SetShowActions(!showActions)
                                         }}>
                                             <PiClipboardDuotone className=" text-xl" />

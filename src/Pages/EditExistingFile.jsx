@@ -33,7 +33,6 @@ const EditExistingFile = () => {
             const response = await convertToSFDT({body: {url: decodeURIComponent(url)}});
             if (response.data) {
                 // const { sfdt } = response.data.data;
-                // console.log(response.data.sfdt);
                 setSfdt(response.data.sfdt);
                 // const { sfdt: sfdt2 } = sfdt;
                 // setSfdt(sfdt2);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { PiWindowsLogoDuotone, PiCaretRightLight,PiSignInDuotone} from "react-icons/pi";
+import { PiCaretRightLight,PiSignInDuotone} from "react-icons/pi";
 
 const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
     const [openSubmenu, setOpenSubmenu] = useState(false);
@@ -45,7 +45,7 @@ const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
                                     // const navtext = title.toLowerCase().replace(/\s/g, '');
                                     return (
                                         <Fragment key={index}>
-                                            {!submenu && (<li key={id} className={`flex flex-row items-center p-2 pl-6 space-x-3  hover:text-amber-500 hover:bg-amber-50 h-full w-full text-black transform ease-in-out duration-300  ${line && ' border-b mb-2'} ${active === navtext && ' bg-amber-100 text-amber-500 rounded'}`}
+                                            {!submenu && (<li key={id} className={`no-select flex flex-row items-center p-2 pl-6 space-x-3  hover:text-amber-500 hover:bg-amber-50 h-full w-full text-black transform ease-in-out duration-300  ${line && ' border-b mb-2'} ${active === navtext && ' bg-amber-100 text-amber-500 rounded'}`}
                                                 onClick={() => { navigate(`/${navtext}`); setActive(navtext) }}
                                             >
                                                 <span className="w-4 h-4 ">{icon}</span>

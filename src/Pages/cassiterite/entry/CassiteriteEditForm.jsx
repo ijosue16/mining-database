@@ -9,8 +9,6 @@ import {
   useUpdateCassiteriteEntryMutation,
   useGetOneCassiteriteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
 } from "../../../states/apislice";
-import { FiSearch } from "react-icons/fi";
-import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import {BsChevronDown} from "react-icons/bs";
 import {ImSpinner2} from "react-icons/im";
@@ -63,7 +61,6 @@ const CassiteriteEditForm = () => {
         const { data: dt } = supps;
         const { suppliers: sups } = dt;
         sup = sups;
-        console.log(sup);
       };
 
   const [formval, setFormval] = useState({
@@ -160,7 +157,6 @@ const CassiteriteEditForm = () => {
       const { entry: entr } = dt;
       setSupplierId(entr.supplierId);
       // sup = sups;
-      console.log(entr);
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
@@ -220,7 +216,6 @@ const CassiteriteEditForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -262,7 +257,6 @@ const CassiteriteEditForm = () => {
         setSelectedItem((prev) => prev + 1);
       } else if (e.key === "Enter" && selectedItem >= 0) {
         setBeneficial(searchData[selectedItem].companyName);
-        console.log(searchData[selectedItem].companyName);
         setSearch(searchData[selectedItem].companyName);
         setSelectedItem(-1);
         setSearchData([]);
@@ -281,7 +275,6 @@ const CassiteriteEditForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    console.log([e.target.name] + " " + e.target.value);
     if (e.target.name === "mineralType") {
       setModel(e.target.value);
     }
@@ -517,7 +510,6 @@ const CassiteriteEditForm = () => {
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -549,7 +541,6 @@ const CassiteriteEditForm = () => {
       }
     }
     await updateCassiteriteEntry({ entryId, body: requestId ? newBody : body });
-    console.log(body)
     setFormval({
       weightIn: "",
       companyName: "",
@@ -739,7 +730,7 @@ const CassiteriteEditForm = () => {
                     </div>
                     <button
                     type="button"
-                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                      className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                       onClick={() => navigate("/add/supplier")}
                     >
                       New supplier

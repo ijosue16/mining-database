@@ -120,7 +120,6 @@ const AddSuplierPage = () => {
     const handleProductSubmit = async (e) => {
         e.preventDefault();
         const body = { ...formval, mineSites: mineSitesDetails, typeOfMinerals: formval.typeOfMinerals.split(' ') };
-        console.log(body)
         await createNewSupplier({ ...formval, body });
         setFormval({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '', cell: '' }, typeOfMining: '', equipmentList: [], surfaceArea: null, categoryOfMine: '', numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
         setmineSitesDetails([{ coordinates: { lat: '', long: '', }, name: '', code: '' },]);

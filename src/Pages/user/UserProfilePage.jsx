@@ -12,7 +12,6 @@ const UserProfilePage=()=>{
     }
     const handleSubmit=(e)=>{
         e.preventDefault();
-        console.log(userData);
         setUserData({firstName:"",lastName:"",email:"",phone:"",userName:"",password:""});
     }
     const handleCancel=()=>{

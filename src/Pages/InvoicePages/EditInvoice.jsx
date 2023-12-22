@@ -112,8 +112,6 @@ const EditInvoice = ({invoiceId, supplierId}) => {
         if (isComplete) {
             const {lots} = info.data;
             setDataz(lots);
-            console.log("-------------------------------")
-            console.log(lots)
         }
     }, [isComplete]);
 
@@ -156,8 +154,6 @@ const EditInvoice = ({invoiceId, supplierId}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = invoiceInfo;
-        console.log(body);
-        // console.log(body);
         // const response = await generateInvoice({body});
         // if (response.data) {
         //     const { invoiceFile, invoiceFileId } = response.data.data;

@@ -47,7 +47,6 @@ const InvoiceTemp=()=>{
         // Open the PDF in a new window or tab
         pdfDoc.open();
     } else {
-        console.error("Items are undefined or not an array.");
       }
       }
       

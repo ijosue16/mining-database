@@ -216,7 +216,6 @@ const Layout = () => {
         });
 
     // Output the filtered menu
-    // console.log(filteredMenu);
 
 
     return (

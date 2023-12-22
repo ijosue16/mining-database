@@ -14,7 +14,6 @@ const RegisterPage = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         dispatch(setName(user));
-        console.log(user)
         if (user !== null) {
             navigate(`/products`)
         }

@@ -116,8 +116,8 @@ var PDFiumModule = (() => {
             }
             setWindowTitle = title => document.title = title
         } else {}
-        var out = Module["print"] || console.log.bind(console);
-        var err = Module["printErr"] || console.warn.bind(console);
+        var out = Module["print"];
+        var err = Module["printErr"];
         Object.assign(Module, moduleOverrides);
         moduleOverrides = null;
         if (Module["arguments"]) arguments_ = Module["arguments"];

@@ -4,7 +4,7 @@ import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import {useNavigate} from "react-router-dom";
 import {motion} from "framer-motion";
 import dayjs from "dayjs";
-import {Modal, Table, message} from "antd";
+import {Modal, Table} from "antd";
 import {ImSpinner2} from "react-icons/im";
 import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
 import {BiSolidFilePdf} from "react-icons/bi";
@@ -71,13 +71,11 @@ const AdvancedPaymentsList = () => {
 
     const handleActions = (id) => {
         if (selectedRow === id) {
-            console.log("uri muduki sha");
             SetShowActions(false);
             SetSelectedRow("");
         } else {
             SetSelectedRow(id);
             SetShowActions(true);
-            console.log("Clicked ID:", id);
         }
     };
 
@@ -107,7 +105,6 @@ const AdvancedPaymentsList = () => {
             const file = await documentEditor.documentEditor.saveAsBlob('Docx');
             const formData = new FormData();
             formData.append('data', file);
-            console.log(file);
         }
     }
 
@@ -115,7 +112,6 @@ const AdvancedPaymentsList = () => {
     if (isSuccess) {
         const {payments} = data.data;
         dataz = payments;
-        console.log(payments);
     }
 
     const columns = [

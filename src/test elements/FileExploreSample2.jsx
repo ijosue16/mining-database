@@ -9,10 +9,8 @@ const EditRequestForm = () => {
   const {data,isLoading,isSuccess,isError,error}= useGetOneEditRequestQuery({requestId});
   useEffect(() => {
     if (isSuccess) {
-      // console.log(data); // Check the received data in the console
       const { data: dt } = data;
       setEditRequest(dt);
-      console.log(dt);
     }
   }, [isSuccess]);
   
@@ -22,7 +20,6 @@ const EditRequestForm = () => {
     return <div>Loading...</div>;
   }
   
-  console.log(editRequest);
 
   const { editableFields } = editRequest;
 
@@ -31,7 +28,6 @@ const EditRequestForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission here, for example, you might want to send the edited data back to the server.
-    console.log("Form submitted:", formData);
   };
 
   useEffect(() => {

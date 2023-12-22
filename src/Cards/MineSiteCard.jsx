@@ -1,8 +1,7 @@
 import React from "react";
 import { MdLocationOn} from "react-icons/md";
-import { RiEditLine } from "react-icons/ri";
 
-const MineSiteCard=({onclick,name,code,lat,long})=>{
+const MineSiteCard=({name,code,lat,long})=>{
 
     return(
         <div className="p-2 flex flex-col gap-3 rounded-lg shadow-xl bg-gray-100">
@@ -24,10 +23,6 @@ const MineSiteCard=({onclick,name,code,lat,long})=>{
                 <p>{long}</p>
             </li>
         </ul>
-        {/* <span className="flex gap-2 self-end items-center py-1 px-3 rounded-lg hover:bg-pink-100" onClick={onclick}>
-            <p>edit</p>
-            <RiEditLine />
-        </span> */}
     </div>
     )
 }

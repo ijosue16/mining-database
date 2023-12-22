@@ -13,9 +13,6 @@ export default function LoginDatacontextProvider() {
   const profile =JSON.parse(localStorage.getItem('profile'));
   const role = localStorage.getItem('role');
   const permissions=JSON.parse(localStorage.getItem('permissions'))
-  // console.log(role)
-  // console.log(profile)
-  // console.log(profile.permissions)
   const userInfo={profile,permissions};
   const [loginData, setLoginData] = useState(userInfo);
  

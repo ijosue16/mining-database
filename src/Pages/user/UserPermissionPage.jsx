@@ -17,7 +17,6 @@ const UserPermissionPage = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   // const store = useSelector((state) => {
-  //   console.log(state.global);
   // });
   const [isEdit, setIsEdit] = useState(false);
   const [userData, setUserData] = useState({ name: "", role: "" });
@@ -104,13 +103,11 @@ const UserPermissionPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log(permissions);
     const body = { permissions, userData };
     await updateUser({ body, userId });
     // localStorage.setItem('permissions',JSON.stringify(permissions));
     // setIsEdit(false);
     navigate(-1);
-    // console.log(permissions);
   };
   const handleCancel = () => {
     setUserData({});

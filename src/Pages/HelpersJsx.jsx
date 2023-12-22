@@ -266,7 +266,7 @@ export const DownloadShipmentReport = ({record}) => {
     }, [isPDFReportReady, isPDFReportError, pdfReportError]);
 
     const content = (
-        <div className="flex flex gap-3 items-center">
+        <div className=" flex gap-3 items-center">
             <Button onClick={() => handleGenerateSpreadSheet()} disabled={["lithium", "beryllium"].includes(record.model)} className="bg-green-200">Excel</Button>
             <Button onClick={() => handleGenerate(record)} className="bg-gray-200">PDF</Button>
         </div>

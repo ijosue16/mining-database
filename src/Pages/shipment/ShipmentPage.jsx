@@ -16,8 +16,11 @@ import ListModalContainerHeader from "../../components/Listcomponents/ListModalC
 import EditShipment from "./EditShipment";
 import {HiOutlineClipboardDocumentCheck} from "react-icons/hi2";
 import {DownloadShipmentReport} from "../HelpersJsx";
+import { useSelector } from "react-redux";
+
 
 const ShipmentPage = () => {
+    const {userData} = useSelector(state => state.persistedReducer?.global);
     const [form] = Form.useForm();
     const {data, isLoading, isSuccess, isError, error} =
         useGetAllShipmentsQuery("", {
@@ -26,6 +29,7 @@ const ShipmentPage = () => {
         });
 
     const navigate = useNavigate();
+    const {permissions} = userData;
     const [searchText, SetSearchText] = useState("");
     const [dataz, SetDataz] = useState([]);
     const [mineralModal, SetMineralModal] = useState(false);
@@ -71,7 +75,6 @@ const ShipmentPage = () => {
             const {data: dt} = data;
             const {shipments: ships} = dt;
             SetDataz(ships);
-            console.log(ships)
         }
     }, [isSuccess]);
 
@@ -85,7 +88,6 @@ const ShipmentPage = () => {
     const downloadReport = async (record) => {
         const shipmentId = record._id;
         await createShipmentReport({shipmentId});
-        console.log(shipmentId);
     };
 
     const handleDelete = async () => {
@@ -306,7 +308,6 @@ const ShipmentPage = () => {
     ];
 
     const handleSelect = (e) => {
-        console.log(e.target.value);
         navigate(`/shipment/add/${e.target.value}`);
     };
 
@@ -336,9 +337,6 @@ const ShipmentPage = () => {
             SetDataz(newData);
             setEditRowKey("");
             const info = {...item, ...row, netWeight: parseFloat(row.netWeight),}
-            console.log("Shipment Info After Update:", {
-                info
-            });
         }
     };
 
@@ -384,6 +382,7 @@ const ShipmentPage = () => {
             <ListModalContainerHeader
                 title={"Shipment list"}
                 subTitle={"Manage your shipments"}
+                isAlowed={permissions.shipments?.create}
                 open={() => SetMineralModal(!mineralModal)}
                 navtext={"New shipment"}
                 table={

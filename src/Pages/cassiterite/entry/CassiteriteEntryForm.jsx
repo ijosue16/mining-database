@@ -88,7 +88,6 @@ const CassiteriteEntryForm = () => {
     const { data: dt } = data;
     const { suppliers: sups } = dt;
     sup = sups;
-    console.log(sup);
   }
 
   const handleEntry = (e) => {
@@ -149,7 +148,6 @@ const CassiteriteEntryForm = () => {
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -206,7 +204,6 @@ const CassiteriteEntryForm = () => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
     await createCassiteriteEntry({ body });
-    console.log(body);
     navigate(-1);
   };
   const handleCancel = () => {
@@ -233,7 +230,6 @@ const CassiteriteEntryForm = () => {
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
-    console.log(checked);
   };
 
   const filteredSuppliers = sup.filter((supplier) => {
@@ -263,7 +259,6 @@ const CassiteriteEntryForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -349,7 +344,7 @@ const CassiteriteEntryForm = () => {
                       </div>
                     </div>
                     <button
-                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                      className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                       onClick={() => navigate("/add/supplier")}
                     >
                       New supplier

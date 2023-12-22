@@ -59,7 +59,6 @@ const YourFormComponent = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Form data:", formData);
     };
 
     return (

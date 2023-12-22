@@ -83,7 +83,6 @@ const ColtanEntryForm = () => {
     const { data: dt } = data;
     const { suppliers: sups } = dt;
     sup = sups;
-    console.log(sup);
   }
 
   const handleEntry = (e) => {
@@ -200,7 +199,6 @@ const ColtanEntryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    console.log(body);
     await createColtanEntry({ body });
     navigate(-1);
   };
@@ -336,7 +334,7 @@ const ColtanEntryForm = () => {
                       </div>
                     </div>
                     <button
-                      className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                      className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                       onClick={() => navigate("/add/supplier")}
                     >
                       New supplier

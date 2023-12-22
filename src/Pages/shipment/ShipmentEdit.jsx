@@ -53,7 +53,6 @@ const ShipmentEdit = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { detailedStock: dtStk } = dt;
-      console.log(dtStk);
       initialData = dtStk;
     };
     useEffect(() => {
@@ -62,7 +61,6 @@ const ShipmentEdit = () => {
       const { shipment} = info.data;
     //   const { detailedStock: dtStk } = dt;
     initialEntryInfo=shipment;
-      console.log(info);
         setSelectedData(entries);
     };
     },[isDone]);
@@ -78,7 +76,6 @@ const ShipmentEdit = () => {
   
     const handleBillOpen = () => {
       setOpenBill(!openBill);
-      console.log("koko corona!!!");
     };
   
     useMemo(() => {
@@ -107,7 +104,6 @@ const ShipmentEdit = () => {
         newTotalWeight > 0 ? (totalGrade / newTotalWeight).toFixed(3) : "0.000";
   
       setAvg(averagegrade);
-      console.log(avg);
       setAvgPrice(newTotalWeight); //TO ADD  AVG PRICE FORMULA
       setTransformedData(newTransformedData);
       setShipmentInfo((prevState) => ({
@@ -188,7 +184,6 @@ const ShipmentEdit = () => {
         }));
       }
   
-      console.log(newData);
     };
      const handleshipmentNumber=(e)=>{
        setShipmentNumber(e.target.value);
@@ -395,7 +390,6 @@ const ShipmentEdit = () => {
         const body = {...shipmentInfo, shipmentNumber};
         await AddShipment({ body });
         setSelectedData([]);
-        console.log("Shipment Info After Update:", { body });
         setConfirmModal(!confirmModal);
       } else {
         setEmptyError("you can not send empty shipment slip");

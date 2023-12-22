@@ -61,7 +61,6 @@ const AddContract = () => {
         if (isGettingBuyersSuccess) {
             const { buyers: buyrz } = data.data;
           sup=buyrz;
-            console.log(sup);
         }
     // }, [isGettingBuyersSuccess]);
 
@@ -127,7 +126,6 @@ const AddContract = () => {
       }
       // setchecked(false);
       setContractInfo((prev) => ({ ...prev, buyerIdId: setShipmentDetails._id }));
-      console.log(setShipmentDetails._id);
       setDropdownOpen(false);
       setSearchText("");
     };
@@ -160,7 +158,6 @@ const AddContract = () => {
         }
         // ADD CONTRACT THROUGH FORMDATA AND ALSO OTHER INFO USING CONTRACT INFO STATE OBJECT (SPREAD OPERATOR)
         await addContract({body: formData});
-        console.log(formData);
 
         handleCancel();
     }

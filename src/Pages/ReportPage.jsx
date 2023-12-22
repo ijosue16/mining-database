@@ -38,7 +38,6 @@ const [filteredMineSites, setFilteredMineSites] = useState([]);
   const { data: dt } = data;
   const { suppliers: sups } = dt;
   sup = sups;
-  console.log(sup);
 }  
 // 
  let modalRef = useRef();
@@ -83,8 +82,6 @@ const handleSupplierSelect = (supplier) => {
     sites=chosenSupplier.mineSites;
   }
   setReportInfo((prev) => ({ ...prev, supplierId: supplier._id }));
-  console.log(supplier._id);
-  console.log(sites);
   setDropdownOpen(false);
   setSearchText("");
 };
@@ -140,7 +137,6 @@ const handleCheckboxChange = (event) => {
 
 
 useEffect(() => {
-  console.log('Selected Reasons:\n', selectedReasons);
 }, [selectedReasons]);
 
 
@@ -270,7 +266,6 @@ const AddInterviewedRepresentative=()=>{
   updateRoleList(personsInterviewedAndRole);
   const body={...minesiteInfo,...interviewedRepresentative,...reportInfo};
   await GenerateReport({body,supplierId});
-  console.log(body);
  };
 
   return (

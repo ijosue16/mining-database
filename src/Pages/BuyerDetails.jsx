@@ -9,7 +9,6 @@ import FetchingPage from "./FetchingPage";
     if(isSuccess){
         const{data:dt}=data;
         const{buyer:byr}=dt;
-        console.log(byr)
         info=byr;
     }
 return(

@@ -40,7 +40,6 @@ const EditPayment = ({editModalOpen, setEditModalOpen, paymentInfo}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...payment};
-        // console.log(paymentInfo.model);
         await updatePayment({body, paymentId: payment.paymentId, model: paymentInfo.model});
         setEditModalOpen(false);
     }

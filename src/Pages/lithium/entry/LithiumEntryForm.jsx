@@ -84,7 +84,6 @@ const LithiumEntryForm = () => {
   //         }
   //         else if (e.key === "Enter" && selectedItem >= 0) {
   //             setBeneficial(searchData[selectedItem].supplier);
-  //             console.log(searchData[selectedItem].supplier);
   //             setSearch(searchData[selectedItem].supplier);
   //             setSelectedItem(-1)
   //             setSearchData([]);
@@ -166,7 +165,6 @@ const LithiumEntryForm = () => {
       mineralType: "lithium",
       beneficiary: "",
     });
-    console.log(checked);
   };
 
   return (

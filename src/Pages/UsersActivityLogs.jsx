@@ -24,7 +24,6 @@ const UsersActivityLogs = () => {
     }, [isSuccess, data]);
 
     const handleChange = (pagination, filters, sorter) => {
-        console.log(pagination, filters, sorter);
     }
 
 

@@ -43,7 +43,6 @@ const LithiumEditForm = () => {
       const { data: dt } = supps;
       const { suppliers: sups } = dt;
       sup = sups;
-      console.log(sup);
     };
 
 
@@ -96,8 +95,6 @@ const LithiumEditForm = () => {
     if (isSuccess) {
       const { data: dt } = data;
       const { entry: entr } = dt;
-      // sup = sups;
-      console.log(entr);
       setFormval({
         ...formval,
         weightIn: entr.weightIn,
@@ -145,7 +142,6 @@ const LithiumEditForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -187,7 +183,6 @@ const LithiumEditForm = () => {
 //         setSelectedItem((prev) => prev + 1);
 //       } else if (e.key === "Enter" && selectedItem >= 0) {
 //         setBeneficial(searchData[selectedItem].companyName);
-//         console.log(searchData[selectedItem].companyName);
 //         setSearch(searchData[selectedItem].companyName);
 //         setSelectedItem(-1);
 //         setSearchData([]);
@@ -206,7 +201,6 @@ const LithiumEditForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    console.log([e.target.name] + " " + e.target.value);
     if (e.target.name === "mineralType") {
       setModel(e.target.value);
     }
@@ -248,7 +242,6 @@ const LithiumEditForm = () => {
 
   const handleCheck = () => {
     setchecked((prev) => !prev);
-    console.log(checked);
     if (Boolean(checked) === false) {
       setFormval({
         ...formval,
@@ -268,9 +261,7 @@ const LithiumEditForm = () => {
       // mineTags: mineTags,
       // negociantTags: negociantTags,
     };
-    console.log(body);
     await updateLithiumEntry({ entryId, body });
-    // console.log(body);
     setFormval({
       weightIn: "",
       weightOut: "",
@@ -397,7 +388,7 @@ const LithiumEditForm = () => {
                         </div>
                       </div>
                       <button
-                        className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                        className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                         onClick={() => navigate("/add/supplier")}
                       >
                         New supplier

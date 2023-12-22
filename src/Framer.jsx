@@ -7,7 +7,6 @@ const Framer=()=>{
 
     const [open,setOpen]=useState(false);
     const onChange = (date) => {
-        console.log(dayjs(date).format('MMM/DD/YYYY') );
       };
     return(
         <>

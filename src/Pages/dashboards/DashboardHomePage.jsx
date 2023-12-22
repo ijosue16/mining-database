@@ -3,11 +3,6 @@ import TestChart from "./charts/TestChart";
 import {ImSpinner2} from "react-icons/im";
 import { useGetStockSummaryQuery, useGetYearStockSummaryQuery, useShipmentSuppliersGraphQuery } from "../../states/apislice";
 import companyLogo from "../../assets/companyLogo.png";
-// import Obo from "./charts/roma.project.json";
-// import * as echarts from 'echarts';
-
-
-// echarts.registerTheme('custom theme', Obo.theme);
 const DashboardPage = () => {
   // const shipmentId="658046954a131843477411b0"
   const[pieArray,SetPieArray]=useState([]);
@@ -20,7 +15,6 @@ const DashboardPage = () => {
 useEffect(()=>{
   if(isDone){
     const{currentStock}=yearData.data;
-    console.log(yearData);
     const xAxisData = Object.keys(currentStock);
     const series = Object.entries(currentStock).map(([name, data],index) => {
       let stackValue = index < 2 ? 'one' : 'two';
@@ -131,10 +125,8 @@ useEffect(()=>{
 
 // useEffect(()=>{
 //   if(isFetched){
-//     console.log(shipData);
 //   }
 // },[])
-// console.log(optionStack)
 
     // OPTION FOR LINE CHART
 
@@ -249,7 +241,6 @@ useEffect(()=>{
     useEffect(() => {
       if (isSuccess) {
         const { stock } = data.data;
-        console.log(stock)
         SetPieArray(stock);
   
         // Update the optionPie state based on the fetched data
@@ -312,8 +303,6 @@ useEffect(()=>{
       maskColor: 'rgba(194, 88, 86, 0.3)',
       zlevel: 0
     };
-  
-// console.log(optionPie)
     
 return(
     <div className="py-5">

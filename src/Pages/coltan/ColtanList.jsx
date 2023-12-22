@@ -34,7 +34,6 @@ const ColtanListPage = () => {
     const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
     const [dataz, setDataz] = useState([]);
-    const {loginData} = useMyContext();
     const {permissions} = userData;
     // const {profile, permissions} = loginData;
     const [createEditRequest, {

@@ -13,8 +13,7 @@ const ListTestContainer = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
     const opennav = () => {
-        setOpen(!open),
-            console.log(open)
+        setOpen(!open)
     }
     useEffect(() => {
         setActive(pathname.substring(1));

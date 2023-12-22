@@ -87,7 +87,6 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     if(loginData) {
         const{profile: info,permissions}=loginData;
         profile = info;
-        // console.log(profile._id)
     }
     const showDrawer = () => {
         setOpen(true);
@@ -121,17 +120,14 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         // if (updateSuccess) {
         //     const newNotification = notifications.find(item => item._id  === notificationId);
         //     if (newNotification) {
-        //         console.log("found")
         //         setNotifications(prevState => ([...prevState, {...newNotification, read: true}]));
         //     }
         //     const updateNotifications = notifications.map(notification => {
         //         if (notification._id === notificationId) {
-        //             console.log({...notification, read: true})
         //             return {...notification, read: true};
         //
         //         }
         //     })
-        //     console.log(updateNotifications);
         //
         // }
     }

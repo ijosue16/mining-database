@@ -25,7 +25,6 @@ const EditSuplierPage = () => {
             const { address: adr } = sup;
             setFormval({ companyName: sup.companyName, TINNumber: sup.TINNumber, licenseNumber: sup.licenseNumber, email: sup.email, nationalId: sup.nationalId, typeOfMinerals: sup.typeOfMinerals.join(' '), phoneNumber: sup.phoneNumber, address: { province: adr.province, district: adr.district, sector: adr.sector }, numberOfDiggers: sup.numberOfDiggers, numberOfWashers: sup.numberOfWashers, numberOfTransporters: sup.numberOfTransporters,companyRepresentative:sup.companyRepresentative });
             SetMineSites(sup.mineSites)
-            console.log(sup);
         }
 
     }, [isSuccess]);
@@ -70,7 +69,6 @@ const EditSuplierPage = () => {
             }
         } else {
             setFormval((prevFormval) => ({ ...prevFormval, [e.target.name]: e.target.value }));
-            console.log(e.target.value)
         }
     };
     // const updateLotNumbers = () => {

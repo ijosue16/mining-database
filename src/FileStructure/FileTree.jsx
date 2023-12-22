@@ -51,7 +51,6 @@ const FileTree = ({ data, getFileStructure, setFileStructure }) => {
     //     if (isSuccess) {
     //         toast.success("File Successfully downloaded");
     //     } else if (isError) {
-    //         console.log(error)
     //         // const { message } = error.data;
     //         // toast.error(message);
     //     }

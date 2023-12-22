@@ -2,16 +2,14 @@ import React, { Fragment, useEffect, useState,useRef  } from "react";
 import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker, Spin } from "antd";
+import { DatePicker, TimePicker } from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useGetOneBerylliumEntryQuery,
   useUpdateBerylliumEntryMutation,useGetAllSuppliersQuery
 } from "../../../states/apislice";
-import { FiSearch } from "react-icons/fi";
-import { GrClose } from "react-icons/gr";
-import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
+import { HiOutlineSearch } from "react-icons/hi";
 import {BsChevronDown} from "react-icons/bs";
 import {ImSpinner2} from "react-icons/im";
 import { useNavigate, useParams } from "react-router-dom";
@@ -43,7 +41,6 @@ const BerylliumEditForm = () => {
       const { data: dt } = supps;
       const { suppliers: sups } = dt;
       sup = sups;
-      console.log(sup);
     };
 
 
@@ -100,7 +97,6 @@ const BerylliumEditForm = () => {
       const { data: dt } = data;
       const { entry: entr } = dt;
       // sup = sups;
-      console.log(entr);
       setFormval({
         weightIn: entr.weightIn,
         weightOut: entr.weightOut,
@@ -149,7 +145,6 @@ const BerylliumEditForm = () => {
     }
     setchecked(false);
     setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    console.log(supplier._id);
     setDropdownOpen(false);
     setSearchText("");
   };
@@ -181,7 +176,6 @@ const BerylliumEditForm = () => {
       ...prevState,
       [e.target.name]: e.target.value,
     }));
-    console.log([e.target.name] + " " + e.target.value);
     if (e.target.name === "mineralType") {
       setModel(e.target.value);
     }
@@ -242,9 +236,7 @@ const BerylliumEditForm = () => {
       // mineTags: mineTags,
       // negociantTags: negociantTags,
     };
-    console.log(body);
     await updateBerylliumEntry({ entryId, body });
-    // console.log(body);
     setFormval({
       weightIn: "",
       companyName: "",
@@ -376,7 +368,7 @@ const BerylliumEditForm = () => {
                         </div>
                       </div>
                       <button
-                        className="bg-orange-300 text-gray-800 px-3 py-2 rounded-md"
+                        className=" bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[10px] px-[20px] rounded-md"
                         onClick={() => navigate("/add/supplier")}
                       >
                         New supplier

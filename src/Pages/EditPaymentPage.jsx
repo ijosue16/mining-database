@@ -20,7 +20,6 @@ useEffect(()=>{
         const{data:dt}=data;
         const{payment:paymnt}=dt;
         setFormval({companyName:paymnt.companyName,beneficiary:paymnt.beneficiary,nationalId:paymnt.nationalId,licenseNumber:paymnt.licenseNumber,phoneNumber:paymnt.phoneNumber,TINNumber:paymnt.TINNumber,email:paymnt.email,location:paymnt.location,paymentAmount:paymnt.paymentAmount,currency:paymnt.currency})
-        console.log(paymnt);
     };
 },[isSuccess])
    
@@ -31,7 +30,6 @@ useEffect(()=>{
         e.preventDefault();
         const body={...formval};
         await createPayment({...formval,body});
-        console.log(formval);
         navigate(-1);
     }
     const handleCancel=()=>{

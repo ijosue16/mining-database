@@ -157,7 +157,6 @@ const PaymentsPage = () => {
   useEffect(() => {
     if (isSuccess || isPaymentSuccess) {
       const { entry } = data.data;
-      console.log(entry)
       if (entry) {
         if (entry.beneficiary) {
           setPayement({ ...payment, beneficiary: entry.beneficiary });
@@ -353,7 +352,6 @@ const PaymentsPage = () => {
   useEffect(() => {
     // Handle confirmation logic, e.g., send data to the state
     if (selectedAccordData) {
-      console.log("Data sent to the state:", selectedAccordData);
       // Perform any other logic here
     }
   }, [selectedAccordData]);
@@ -362,7 +360,6 @@ const PaymentsPage = () => {
     // setSelectedAccordData({item:item});
     const paymentInAdvanceId = item;
     const body = { entryId, lotNumber, model, paymentInAdvanceId };
-    // console.log(body);
     await addPayment({ body });
     // setIsModalVisible(true);
   };
@@ -433,9 +430,6 @@ const PaymentsPage = () => {
   };
 
   useEffect(() => {
-    console.log("---------------------------------");
-    console.log(USDRate);
-    console.log(USDEquivalent);
   }, [USDEquivalent, USDRate]);
 
   return (

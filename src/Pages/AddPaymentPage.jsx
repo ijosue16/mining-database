@@ -19,7 +19,6 @@ const AddPaymentPage = () => {
         e.preventDefault();
         const body={...formval};
         await createPayment({...formval,body});
-        console.log(formval);
         navigate(-1);
     }
     const handleCancel=()=>{

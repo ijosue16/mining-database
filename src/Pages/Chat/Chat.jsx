@@ -56,7 +56,6 @@ const Chat = () => {
     // useEffect(() => {
     //     if (currentUserTyping) {
     //         socket.emit('current-typing', currentUserTyping);
-    //         console.log('command emitted successfully');
     //     }
     // }, [currentUserTyping]);
 
