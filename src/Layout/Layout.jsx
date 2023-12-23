@@ -62,7 +62,8 @@ const Layout = () => {
                 { title: "Beryllium", icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
                 { title: "Mixed", icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
                     { title: "Cassiterite and Coltan ", id: 86,navtext:"mixed" },
-                    { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" },]},
+                    // { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" }
+                ]},
                 // { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },
             ]
         },
