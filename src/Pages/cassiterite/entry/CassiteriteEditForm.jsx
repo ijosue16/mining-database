@@ -1032,14 +1032,14 @@ const CassiteriteEditForm = () => {
                          </Popover>
                         </li>
                         <li className=" col-span-full">
-                        <button type="button" className="p-2 bg-orange-300 rounded" onClick={generateTags}>confirm</button>
+                        <button type="button" className="p-2 bg-green-500 shadow-md text-white rounded" onClick={generateTags}>confirm</button>
                         </li>
                       </ul>
                     }
                     title="Generate number of tags needed"
                     trigger="click"
                   >
-                    <button type="button" className="p-2 bg-orange-300 rounded">
+                    <button type="button" className="bg-custom_blue-500 hover:bg-custom_blue-600 py-[10px] px-[20px] text-white shadow-[#A6A6A6] duration-300 transition-all rounded-md">
                       Select nbr of tags to enter
                     </button>
                   </Popover>
