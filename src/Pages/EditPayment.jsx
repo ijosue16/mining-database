@@ -90,17 +90,17 @@ const EditPayment = ({editModalOpen, setEditModalOpen, paymentInfo}) => {
                       <Radio value={"Cheque"}>Cheque</Radio>
                     </Radio.Group>
                 </span>
-                <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
+                <span className=" grid grid-cols-1 sm:grid-cols-2 gap-4 col-span-full justify-self-start">
                     {isLoading ?
-                        <button type="button" className="flex gap-1 bg-green-200 rounded-md items-end p-2 justify-center">
-                            <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                        <button type="button" className="bg-green-200 flex items-center gap-2 py-[7.5px] px-[20px] text-green-600  rounded cursor-not-allowed">
+                            <ImSpinner2 className="h-[18px] w-[18px] animate-spin text-green-600" />
                             <p className="">Sending</p>
                         </button>:
-                        <button onClick={handleSubmit} type="button" className="flex gap-1 bg-green-300 rounded-md items-end p-2 justify-center">
+                        <button onClick={handleSubmit} type="button" className="flex gap-2 items-center justify-center bg-green-500 py-[7.5px] px-[20px] text-slate-50 hover:bg-green-600 rounded">
                             <BsCheck2 className=" text-lg" />
                             <p className="">Confirm</p>
                         </button>}
-                    <button onClick={handleCancel} type="button" className="flex gap-1 bg-orange-300 text-gray-800 items-center rounded-md  justify-center p-2">
+                    <button onClick={handleCancel} type="button" className="flex gap-2 justify-center items-center border border-shark-800 hover:border-punch-700 hover:text-punch-700 hover:bg-punch-100 text-shark-800 py-[7.5px] px-[20px] rounded transition-all duration-300">
                         <MdClose className=" text-lg" />
                         <p className="">Cancel</p>
                     </button>

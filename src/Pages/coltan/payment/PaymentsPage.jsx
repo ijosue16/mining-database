@@ -462,7 +462,7 @@ const PaymentsPage = () => {
 
                   <button
                     type="button"
-                    className=" bg-orange-300 p-2 shadow-md w-fit rounded-md"
+                    className=" py-[8px] px-[20px] rounded shadow-md shadow-[#A6A6A6] text-white bg-custom_blue-500  hover:bg-custom_blue-600 flex items-center gap-3"
                     onClick={() => SetAdvancedListModal(!advancedListModal)}
                   >
                     Advanced payments
@@ -620,33 +620,33 @@ const PaymentsPage = () => {
                       {/* Cash*/}
                       {/* </label>*/}
                     </span>
-                    <span className=" grid grid-cols-1 sm:grid-cols-2 gap-2 col-span-full justify-self-start">
+                    <span className=" grid grid-cols-1 sm:grid-cols-2 gap-4 col-span-full justify-self-start">
                       {isSending ? (
-                        <button
-                          type="submit"
-                          className="flex gap-1 bg-green-200 rounded-md items-end p-2 justify-center"
-                        >
-                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p type="submit" className="">
-                            Sending
-                          </p>
-                        </button>
-                      ) : (
-                        <button
-                          type="submit"
-                          className="flex gap-1 bg-green-300 rounded-md items-end p-2 justify-center"
-                          onClick={handlePaymentSubmit}
-                        >
-                          <BsCheck2 className=" text-lg" />
-                          <p type="submit" className="">
-                            Confirm
-                          </p>
-                        </button>
-                      )}
+                       <button
+                       type="submit"
+                       className="bg-green-200 flex items-center gap-2 py-[7.5px] px-[20px] text-green-600  rounded cursor-not-allowed"
+                     >
+                       <ImSpinner2 className="h-[18px] w-[18px] animate-spin text-green-600 " />
+                       <p type="submit" className="">
+                         Sending
+                       </p>
+                     </button>
+                   ) : (
+                     <button
+                       type="submit"
+                       className="flex gap-2 items-center justify-center bg-green-500 py-[7.5px] px-[20px] text-slate-50 hover:bg-green-600 rounded"
+                       onClick={handlePaymentSubmit}
+                     >
+                       <BsCheck2 className=" text-lg" />
+                       <p type="submit" className="">
+                         Confirm
+                       </p>
+                     </button>
+                   )}
 
                       <button
                         type="button"
-                        className="flex gap-1 bg-orange-300 text-gray-800 items-center rounded-md  justify-center p-2"
+                        className="flex gap-2 justify-center items-center border border-shark-800 hover:border-punch-700 hover:text-punch-700 hover:bg-punch-100 text-shark-800 py-[7.5px] px-[20px] rounded transition-all duration-300 "
                         onClick={handleCancel}
                       >
                         <MdClose className=" text-lg" />
