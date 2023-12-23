@@ -215,6 +215,7 @@ function App() {
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/yoo" element={<StyleTestPage/>}/>
+                                    <Route path="/*" element={<StyleTestPage/>}/>
                                 </Route>
                                 {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>

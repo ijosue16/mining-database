@@ -23,6 +23,7 @@ import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {LotExpandable} from "../../HelpersJsx";
+import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
 
 const BerylliumEntryCompletePage = ({entryId}) => {
     // const {entryId} = useParams();
@@ -543,34 +544,7 @@ const BerylliumEntryCompletePage = ({entryId}) => {
                                         onCancel={() => setShowPayModel(!showPayModel)}
                                         destroyOnClose
                                         footer={[
-                                            <span
-                                                key="actions"
-                                                className=" flex w-full justify-center gap-4 text-base text-white"
-                                            >
-                      {isSending ?
-                          <button
-                              key="back"
-                              className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                          >
-                              <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500"/>
-                              Sending
-                          </button> : <button
-                              key="back"
-                              className=" bg-green-400 p-2 rounded-lg"
-                              onClick={() => handleModelAdvance()}
-                          >
-                              Confirm
-                          </button>}
-
-                                                <button
-                                                    key="submit"
-                                                    className=" bg-red-400 p-2 rounded-lg"
-                                                    type="primary"
-                                                    onClick={() => setShowPayModel(!showPayModel)}
-                                                >
-                        Cancel
-                      </button>
-                    </span>,
+                     <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)} handleConfirm={handleModelAdvance}/>
                                         ]}
                                     >
                                         <h2 className="modal-title text-center font-bold text-xl">

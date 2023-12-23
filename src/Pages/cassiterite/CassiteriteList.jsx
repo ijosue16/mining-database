@@ -26,6 +26,7 @@ import {FiEdit} from "react-icons/fi";
 import CassiteriteEntryComplete from "./entry/CassiteriteEntryComplete";
 import isBetween from "dayjs/plugin/isBetween"
 import {FaFileInvoiceDollar} from "react-icons/fa";
+import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 dayjs.extend(isBetween);
 
 
@@ -275,7 +276,12 @@ const CassiteriteListPage = () => {
         if (record.output) {
           let sum = 0;
           record.output.forEach((item) => {
-            sum += item.cumulativeAmount;
+            if(item.cumulativeAmount){
+              sum += parseFloat(item.cumulativeAmount);
+            } else{
+              sum += parseFloat(item.weightOut);
+            }
+           
           });
           return <p>{sum}</p>;
         }
@@ -427,39 +433,10 @@ const CassiteriteListPage = () => {
                     }}
                     destroyOnClose
                     footer={[
-                      <span
-                          key="actions"
-                          className=" flex w-full justify-center gap-4 text-base text-white"
-                      >
-                  {isDeleting ? (
-                      <button
-                          key="back"
-                          className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                      >
-                        <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                        Deleting
-                      </button>
-                  ) : (
-                      <button
-                          key="back"
-                          className=" bg-green-400 p-2 rounded-lg"
-                          onClick={handleDelete}
-                      >
-                        Delete
-                      </button>
-                  )}
-                        <button
-                            key="submit"
-                            className=" bg-red-400 p-2 rounded-lg"
-                            type="primary"
-                            onClick={() => {
-                              setShowmodal(!showmodal);
-                              SetSelectedRow("");
-                            }}
-                        >
-                    Cancel
-                  </button>
-                </span>,
+                 <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"} dsText={"Deleting"} handleCancel={() => {
+                  setShowmodal(!showmodal);
+                  SetSelectedRow("");
+              }} handleDelete={handleDelete}/>
                     ]}
                 >
                   <h2 className="modal-title text-center font-bold text-xl">
