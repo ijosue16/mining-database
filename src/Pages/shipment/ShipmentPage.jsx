@@ -75,6 +75,7 @@ const ShipmentPage = () => {
             const {data: dt} = data;
             const {shipments: ships} = dt;
             SetDataz(ships);
+            console.log(ships)
         }
     }, [isSuccess]);
 

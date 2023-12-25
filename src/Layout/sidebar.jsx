@@ -68,15 +68,15 @@ const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
                                                         setChoseNav(id)
                                                     }}>
                                                         <span className="w-4 h-4 ">{icon}</span>
-                                                        <p className="">{title}</p>
-                                                        {submenu && <PiCaretRightLight className={`text-xs duration-500 ${openSubmenu && id === choseNav && 'rotate-90'}`} />}
+                                                        <p className="no-select">{title}</p>
+                                                        {submenu && <PiCaretRightLight className={`text-xs duration-500 no-select ${openSubmenu && id === choseNav && 'rotate-90'}`} />}
                                                     </div>
                                                     {submenu && id === choseNav && (
                                                         <ul className={` pl-12 space-y-4 list-disc pb-2 ${openSubmenu ? 'block' : 'hidden'}`}>
                                                             {submenuItems.map(({ id, title,navtext }) => {
                                                                 // const navtext = title.toLowerCase().replace(/\s/g, '')
                                                                 return (
-                                                                    <li key={id} className="hover:text-custom_blue-500"
+                                                                    <li key={id} className="hover:text-custom_blue-500 no-select"
                                                                         onClick={() => { navigate(`/${navtext}`) }}
                                                                     >
                                                                         {title}
@@ -102,7 +102,7 @@ const Sidebar = ({ filteredMenu, opennav, open,logOut }) => {
                                                 onClick={logOut}
                                             >
                                                 <span className="w-4 h-4 "><PiSignInDuotone /></span>
-                                                <p className="">Logout</p>
+                                                <p className="no-select">Logout</p>
                                                 {/* {submenu && <PiCaretRightLight className={`text-xs duration-500 ${openSubmenu && 'rotate-90'}`} onClick={() => {
                                                     setOpenSubmenu(!openSubmenu);
                                                     setChoseNav(id)
