@@ -75,6 +75,7 @@ const BerylliumListPage = () => {
       const { data: dt } = data;
       const { entries: entrz } = dt;
       setDataz(entrz);
+      console.log(entrz)
     }
   }, [isSuccess]);
 
@@ -163,11 +164,11 @@ const BerylliumListPage = () => {
       title: "Supplier",
       dataIndex: "supplierName",
       key: "supplierName",
-      sorter: (a, b) => a.supplier.localeCompare(b.supplier),
+      sorter: (a, b) => a.companyName.localeCompare(b.companyName),
       filteredValue: [searchText],
       onFilter: (value, record) => {
         return (
-          String(record.supplier)
+          String(record.companyName)
             .toLowerCase()
             .includes(value.toLowerCase()) ||
           String(record.beneficiary)
@@ -184,10 +185,10 @@ const BerylliumListPage = () => {
       },
     },
     {
-      title: "Phone number",
-      dataIndex: "phoneNumber",
-      key: "phoneNumber",
-      sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),
+      title: "Mineral type",
+      dataIndex: "mineralType",
+      key: "mineralType",
+      sorter: (a, b) => a.mineralType.localeCompare(b.mineralType),
     },
     {
       title: "Weight in",

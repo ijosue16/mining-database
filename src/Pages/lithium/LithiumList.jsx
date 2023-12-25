@@ -76,6 +76,7 @@ const LithiumListPage = () => {
       const { data: dt } = data;
       const { entries: entrz } = dt;
       setDataz(entrz);
+      console.log(entrz)
     }
   }, [isSuccess]);
 
@@ -162,13 +163,13 @@ const LithiumListPage = () => {
     },
     {
       title: "Supplier",
-      dataIndex: "supplierName",
-      key: "supplierName",
-      sorter: (a, b) => a.supplierName.localeCompare(b.supplierName),
+      dataIndex: "companyName",
+      key: "companyName",
+      sorter: (a, b) => a.companyName.localeCompare(b.companyName),
       filteredValue: [searchText],
       onFilter: (value, record) => {
         return (
-          String(record.supplierName)
+          String(record.companyName)
             .toLowerCase()
             .includes(value.toLowerCase()) ||
           String(record.beneficiary)
@@ -186,9 +187,9 @@ const LithiumListPage = () => {
     },
     {
       title: "Mineral type",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      dataIndex: "mineralType",
+      key: "mineralType",
+      sorter: (a, b) => a.mineralType.localeCompare(b.mineralType),
     },
     {
       title: "Weight in",
@@ -408,7 +409,7 @@ const LithiumListPage = () => {
                 columns={columns}
                 expandable={{
                   expandedRowRender: (record) => <LithiumEntryCompletePage entryId={record._id}/>,
-                  rowExpandable: (record) => record.supplierName !== "Not Expandable",
+                  rowExpandable: (record) => record.companyName !== "Not Expandable",
                 }}
                 rowKey="_id"
               />

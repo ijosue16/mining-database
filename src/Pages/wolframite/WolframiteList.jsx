@@ -85,7 +85,6 @@ const WolframiteListPage = () => {
       const { data: dt } = data;
       const { entries: entrz } = dt;
       setDataz(entrz);
-      console.log(data)
     }
   }, [isSuccess]);
 
