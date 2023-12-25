@@ -1,13 +1,14 @@
 import React, {useState, useRef, useEffect, useContext} from "react";
 import dayjs from "dayjs";
-import {Checkbox, DatePicker, message, Modal, Space, Spin, Table} from "antd";
+import {Checkbox, DatePicker, message, Modal, Space, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
-  useGetAllWolframiteEntriesQuery,
-  useDeleteWolframiteEntryMutation, useCreateEditRequestMutation,
+  useGetAllEntriesQuery,
+    useDeleteEntryMutation,
+  useCreateEditRequestMutation,
 } from "../../states/apislice";
 import {
   PiMagnifyingGlassDuotone,
@@ -43,14 +44,14 @@ const WolframiteListPage = () => {
   const { loginData } = useMyContext();
   // const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
-      useGetAllWolframiteEntriesQuery("", {
+      useGetAllEntriesQuery({model: "wolframite"}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
       });
   const [
-    deleteWolframite,
+    deleteEntry,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
-  ] = useDeleteWolframiteEntryMutation();
+  ] = useDeleteEntryMutation();
 
 
   const navigate = useNavigate();
@@ -103,7 +104,7 @@ const WolframiteListPage = () => {
 
   const handleDelete = async () => {
     const entryId = selectedRow;
-    await deleteWolframite({ entryId });
+    await deleteEntry({ entryId, model: "wolframite" });
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
@@ -146,14 +147,18 @@ const WolframiteListPage = () => {
       }
     }
     finalBody.recordId = record._id;
-    const response = await createEditRequest({body: finalBody});
-    socket.emit("new-edit-request", {username: userData.username});
-    if (response) {
-      const {editRequest} = response.data.data;
-      if (editRequest) {
-        setRequestId(editRequest._id);
-      }
+    if (!finalBody.editableFields.length) {
+      setIsModalOpen(false);
+      return;
     }
+    await createEditRequest({body: finalBody});
+    socket.emit("new-edit-request", {username: userData.username});
+    // if (response) {
+    //   const {editRequest} = response.data.data;
+    //   if (editRequest) {
+    //     setRequestId(editRequest._id);
+    //   }
+    // }
   }
 
   const handleCancel = () => {
@@ -453,11 +458,12 @@ const WolframiteListPage = () => {
                 </Modal>
 
                 <Modal
-                    title="Basic Modal"
+                    title="Select Fields You want To Edit"
                     open={isModalOpen}
                     onOk={handleOk}
                     onCancel={handleCancel}
                     destroyOnClose
+                    okButtonProps={{className: "bg-green-400 p-2 rounded-lg"}}
                 >
                   {fields.map((item, index) => (
                       <div key={index}>

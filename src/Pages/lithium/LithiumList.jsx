@@ -1,47 +1,58 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import {DatePicker, message, Modal, Space, Spin, Table} from "antd";
-import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
+import isBetween from "dayjs/plugin/isBetween"
+import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
+import {motion} from "framer-motion";
+import {useNavigate} from "react-router-dom";
+import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
-  useGetAllLithiumEntriesQuery,
-  useDeleteLithiumEntryMutation,
+  useGetAllEntriesQuery,
+  useDeleteEntryMutation,
+  useCreateEditRequestMutation,
 } from "../../states/apislice";
-import {
-  PiMagnifyingGlassDuotone,
-  PiDotsThreeVerticalBold,
-} from "react-icons/pi";
-import { BiSolidFilePdf, BiSolidEditAlt } from "react-icons/bi";
-import { ImSpinner2 } from "react-icons/im";
-import { BsCardList } from "react-icons/bs";
-import { MdDelete } from "react-icons/md";
-import { RiFileEditFill } from "react-icons/ri";
-import { HiOutlinePrinter } from "react-icons/hi";
+import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
+import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
+import {ImSpinner2} from "react-icons/im";
+import {BsCardList} from "react-icons/bs";
+import {MdDelete} from "react-icons/md";
+import {RiFileEditFill} from "react-icons/ri";
+import {HiOutlinePrinter} from "react-icons/hi";
+import {FiEdit} from "react-icons/fi";
+import { IoTrashBinOutline } from "react-icons/io5";
 import {useSelector} from "react-redux";
-import isBetween from "dayjs/plugin/isBetween"
-import BerylliumEntryCompletePage from "../beryllium/entry/BerylliumEntryCompletePage";
-import LithiumEntryCompletePage from "./entry/LithiumEntryCompletePage";
+import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
+import {SocketContext} from "../../context files/socket";
+dayjs.extend(isBetween);
 import {FaFileInvoiceDollar} from "react-icons/fa";
+import LithiumEntryCompletePage from "./entry/LithiumEntryCompletePage";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 dayjs.extend(isBetween);
 
-const LithiumListPage = () => {
-  // const { loginData } = useMyContext();
-  // const{profile,permissions}=loginData;
-  const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
-  const { data, isLoading, isSuccess, isError, error } =
-  useGetAllLithiumEntriesQuery("", {
-    refetchOnMountOrArgChange: true,
-    refetchOnReconnect: true
-  });
 
+const LithiumListPage = () => {
+  const dummyarch=[''];
+  const {userData} = useSelector(state => state.persistedReducer?.global);
+  const socket = useContext(SocketContext);
   const [dataz, setDataz] = useState([]);
+  const {loginData} = useMyContext();
+  const {permissions} = userData;
+  // const {profile, permissions} = loginData;
+  const [createEditRequest, {
+    isLoading: isCreateRequestLoading,
+    isSuccess: isCreateRequestSuccess,
+    isError: isCreateRequestError,
+    error: createRequestError
+  }] = useCreateEditRequestMutation();
+  const {data, isLoading, isSuccess, isError, error} =
+      useGetAllEntriesQuery({model: "lithium"}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+      });
   const [
-    deleteLithium,
-    { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
-  ] = useDeleteLithiumEntryMutation();
+    deleteEntry,
+    {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
+  ] = useDeleteEntryMutation();
 
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
@@ -53,10 +64,9 @@ const LithiumListPage = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
+  const [record, setRecord] = useState(null);
 
   let modalRef = useRef();
-
-  const { RangePicker } = DatePicker;
 
   const handleClickOutside = (event) => {
     if (!modalRef.current || !modalRef.current.contains(event.target)) {
@@ -73,12 +83,16 @@ const LithiumListPage = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      const { data: dt } = data;
-      const { entries: entrz } = dt;
-      setDataz(entrz);
-      console.log(entrz)
+      const {data: dt} = data;
+      const {entries: entrz} = dt;
+      if (entrz) {
+        setDataz(entrz);
+      }
+    } else if (isError) {
+      const { message: errorMessage } = error.data;
+      return message.error(errorMessage);
     }
-  }, [isSuccess]);
+  }, [isSuccess, data]);
 
   const handleActions = (id) => {
     if (selectedRow === id) {
@@ -92,10 +106,68 @@ const LithiumListPage = () => {
 
   const handleDelete = async () => {
     const entryId = selectedRow;
-    await deleteLithium({ entryId });
+    await deleteEntry({entryId, model: "lithium"});
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
+
+
+
+  const initialCheckboxValues = fields.reduce((acc, field) => {
+    acc[toCamelCase(field)] = false;
+    return acc;
+  }, {});
+
+  const [checkboxValues, setCheckboxValues] = useState(initialCheckboxValues);
+
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  }
+
+  useEffect(() => {
+    if (isCreateRequestSuccess) {
+      return message.success("Edit Request was created successfully");
+    } else if (isCreateRequestError) {
+      const {message: errorMessage} = createRequestError.data;
+      return message.error(errorMessage);
+    }
+  }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
+
+  const handleOk = async () => {
+    const finalBody = {editableFields: [], model: "lithium", recordId: "", username: userData.username};
+    for (const key of Object.keys(checkboxValues)) {
+      if (checkboxValues[key] === true) {
+        finalBody.editableFields.push({
+          fieldname: toInitialCase(key),
+          initialValue: record[key]
+        })
+      }
+    }
+    finalBody.recordId = record._id;
+    if (!finalBody.editableFields.length) {
+      setIsModalOpen(false);
+      return;
+    }
+    await createEditRequest({body: finalBody});
+    setIsModalOpen(false);
+    setCheckboxValues(initialCheckboxValues);
+    socket.emit("new-edit-request", {username: userData.username});
+    // message.success("Edit Request sent successfully");
+    // if (response) {
+    //     const {editRequest} = response.data.data;
+    //     if (editRequest) {
+    //         setRequestId(editRequest._id);
+    //     }
+    // }
+  }
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+    setCheckboxValues(initialCheckboxValues);
+  }
+  const {RangePicker} = DatePicker;
 
   const columns = [
     {
@@ -162,28 +234,34 @@ const LithiumListPage = () => {
       ),
     },
     {
-      title: "Supplier",
+      title: "Company name",
       dataIndex: "companyName",
       key: "companyName",
       sorter: (a, b) => a.companyName.localeCompare(b.companyName),
       filteredValue: [searchText],
       onFilter: (value, record) => {
         return (
-          String(record.companyName)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.beneficiary)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.name)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
-          String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
-            .toLowerCase()
-            .includes(value.toLowerCase())
+            String(record.companyName)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.beneficiary)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.mineralType)
+                .toLowerCase()
+                .includes(value.toLowerCase()) ||
+            String(record.weightIn).toLowerCase().includes(value.toLowerCase()) ||
+            String(dayjs(record.supplyDate).format("MMM DD, YYYY"))
+                .toLowerCase()
+                .includes(value.toLowerCase())
         );
       },
+    },
+    {
+      title: "Beneficiary",
+      dataIndex: "beneficiary",
+      key: "beneficiary",
+      sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
     },
     {
       title: "Mineral type",
@@ -197,227 +275,322 @@ const LithiumListPage = () => {
       key: "weightIn",
       sorter: (a, b) => a.weightIn - b.weightIn,
     },
+    {
+      title: "Balance",
+      dataIndex: "cumulativeAmount",
+      key: "cumulativeAmount",
+      sorter: (a, b) => a.cumulativeAmount - b.cumulativeAmount,
+      render: (_, record) => {
+        if (record.output) {
+          let sum = 0;
+          record.output.forEach((item) => {
+            sum += item.cumulativeAmount;
+          });
+          return <p>{sum}</p>;
+        }
+      }
+    },
 
     {
-      title: "Action",
+      title: (
+          <div className=" grid grid-cols-1 gap-1 lg:grid-cols-2 items-center">
+            <p>Action</p>
+            <IoTrashBinOutline className=" text-lg" onClick={()=>{
+              if(dataz!==dummyarch){
+                setDataz(dummyarch);
+              }
+            }}/>
+          </div>
+      ),
       dataIndex: "action",
       key: "action",
       render: (_, record) => {
         return (
-          <>
-            <div className="flex items-center gap-4">
-              <span>
-                <span className="relative">
-                  <PiDotsThreeVerticalBold
-                    className="text-lg"
-                    onClick={() => handleActions(record._id)}
-                  />
-                  {selectedRow === record._id ? (
-                    <motion.ul
-                      ref={modalRef}
-                      animate={
-                        showActions
-                          ? { opacity: 1, x: -10, y: 1, display: "block" }
-                          : { opacity: 0, x: 0, y: 0, display: "none" }
-                      }
-                      className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                    >
-                      <li
-                        className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                        onClick={() => {
-                          navigate(`/entry/edit/lithium/${record._id}`);
-                        }}
-                      >
-                        <BiSolidEditAlt className=" text-lg" />
-                        <p>edit</p>
-                      </li>
+            <>
+              <div className="flex items-center gap-4">
+                          <span>
+                            <span className="relative">
+                              <PiDotsThreeVerticalBold
+                                  className="text-lg"
+                                  onClick={() => handleActions(record._id)}
+                              />
+                              {selectedRow === record._id ? (
+                                  <motion.ul
+                                      ref={modalRef}
+                                      animate={
+                                        showActions
+                                            ? {opacity: 1, x: -10, y: 1, display: "block"}
+                                            : {opacity: 0, x: 0, y: 0, display: "none"}
+                                      }
+                                      className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+                                  >
 
-                      {/* TODO 14: SHOW MENU BASED ON PERMISSIONS*/}
-                      <li
-                          className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                          onClick={() => {
-                            if (record.supplierId) {
-                              navigate(`/add/invoice/${record.supplierId}/lithium/${record._id}`);
-                            } else {
-                              return message.warning("You have assign supplier to this entry");
-                            }
-                          }}
-                      >
-                        <FaFileInvoiceDollar className=" text-xl" />
-                        <p>Make invoice</p>
-                      </li>
+                                    {permissions?.entry?.edit && (
+                                        <li
+                                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                            onClick={() => {
+                                              navigate(`/entry/edit/lithium/${record._id}`);
+                                            }}
+                                        >
+                                          <BiSolidEditAlt className=" text-lg"/>
+                                          <p>edit</p>
+                                        </li>
+                                    )}
+                                    {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
+                                    <li
+                                        className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                        onClick={() => {
+                                          if (record.supplierId) {
+                                            navigate(`/add/invoice/${record.supplierId}/lithium/${record._id}`);
+                                          } else {
+                                            return message.warning("You have assign supplier to this entry");
+                                          }
+                                        }}
+                                    >
+                                      <FaFileInvoiceDollar className=" text-xl" />
+                                      <p>Make invoice</p>
+                                    </li>
 
-                      {userPermissions.entry?.edit? (
-                        <>
-                          {/*<li*/}
-                          {/*  className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                          {/*  onClick={() => {*/}
-                          {/*    {*/}
-                          {/*      navigate(`/complete/lithium/${record._id}`);*/}
-                          {/*    }*/}
-                          {/*  }}*/}
-                          {/*>*/}
-                          {/*  <RiFileEditFill className=" text-lg" />*/}
-                          {/*  <p>complete entry</p>*/}
-                          {/*</li>*/}
-                          <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              SetSelectedRow(record._id);
-                              SetSelectedRowInfo({
-                                ...selectedRowInfo,
-                                name: record.companyName,
-                                date: record.supplyDate,
-                              });
-                              setShowmodal(!showmodal);
-                            }}
-                          >
-                            <MdDelete className=" text-lg" />
-                            <p>delete</p>
-                          </li>
-                        </>
-                      ) : null}
-                    </motion.ul>
-                  ) : null}
-                </span>
-              </span>
 
-              {userPermissions.entry?.delete ? (
+                                    {permissions.entry?.edit ? (
+                                        <>
+                                          {/* <li
+                                                    className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        {
+                                                            navigate(`/complete/coltan/${record._id}`);
+                                                        }
+                                                    }}
+                                                >
+                                                    <RiFileEditFill className=" text-lg"/>
+                                                    <p>complete entry</p>
+                                                </li> */}
+                                          {permissions.entry?.delete ? (<li
+                                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                              onClick={() => {
+                                                SetSelectedRow(record._id);
+                                                SetSelectedRowInfo({
+                                                  ...selectedRowInfo,
+                                                  name: record.companyName,
+                                                  date: record.supplyDate,
+                                                });
+                                                setShowmodal(!showmodal);
+                                              }}
+                                          >
+                                            <MdDelete className=" text-lg"/>
+                                            <p>delete</p>
+                                          </li>) : null}
+                                        </>
+                                    ) : null}
+                                  </motion.ul>
+                              ) : null}
+                            </span>
+                          </span>
+
+                {permissions.entry?.delete ? (
+                    <span>
+                                  <MdDelete
+                                      className="text-lg"
+                                      onClick={() => {
+                                        SetSelectedRow(record._id);
+                                        SetSelectedRowInfo({
+                                          ...selectedRowInfo,
+                                          name: record.companyName,
+                                          date: record.supplyDate,
+                                        });
+                                        setShowmodal(!showmodal);
+                                      }}
+                                  />
+                                </span>
+                ) : null}
+
+                {!permissions.entry?.edit &&
                 <span>
-                  <MdDelete
-                    className="text-lg"
-                    onClick={() => {
-                      SetSelectedRow(record._id);
-                      SetSelectedRowInfo({
-                        ...selectedRowInfo,
-                        name: record.companyName,
-                        date: record.supplyDate,
-                      });
-                      setShowmodal(!showmodal);
-                    }}
-                  />
-                </span>
-              ) : null}
-            </div>
-          </>
+                                <FiEdit
+                                    className="text-lg"
+                                    onClick={() => {
+                                      setRecord(record);
+                                      showModal();
+                                    }}
+                                />
+                            </span>
+                }
+
+                {/*{permissions.entry.edit ? (*/}
+
+                {/*) : null}*/}
+              </div>
+            </>
         );
       },
     },
   ];
+  // const [field, setField] = useState()
+
+
+  const handleCheckboxChange = (itemName) => {
+    setCheckboxValues({
+      ...checkboxValues,
+      [itemName]: !checkboxValues[itemName], // Toggle the checkbox value
+    });
+  };
+
+
+  function toCamelCaseArray(strings) {
+    // Check if the input is an array and has at least one element
+    if (!Array.isArray(strings) || strings.length === 0) {
+      return [];
+    }
+
+    // Helper function to convert a single string to camel case
+    function toCamelCase(str) {
+      return str.split(' ').map((word, index) => {
+        if (index === 0) {
+          return word.toLowerCase();
+        } else {
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+      }).join('');
+    }
+
+    // Map the array to camel case strings
+    return strings.map(toCamelCase);
+  }
+
 
   return (
-    <>
-      <ListContainer
-        title={"Lithium entries list"}
-        subTitle={"Manage your lithium  entries"}
-        navLinktext={"entry/add/lithium"}
-        navtext={"Add new Entry"}
-        isAllowed={userPermissions.entry?.create}
-        table={
-          <>
-            <Modal
-              open={showmodal}
-              onOk={() => handleDelete()}
-              onCancel={() => {
-                setShowmodal(!showmodal);
-                SetSelectedRow("");
-              }}
-              destroyOnClose
-              footer={[
-                // <span
-                //   key="actions"
-                //   className=" flex w-full justify-center gap-4 text-base text-white"
-                // >
-                //   {isDeleting ? (
-                //     <button
-                //       key="back"
-                //       className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                //     >
-                //       <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                //       Deleting
-                //     </button>
-                //   ) : (
-                //     <button
-                //       key="back"
-                //       className=" bg-green-400 p-2 rounded-lg"
-                //       onClick={handleDelete}
-                //     >
-                //       Delete
-                //     </button>
-                //   )}
-                //   <button
-                //     key="submit"
-                //     className=" bg-red-400 p-2 rounded-lg"
-                //     type="primary"
-                //     onClick={() => {
-                //       setShowmodal(!showmodal);
-                //       SetSelectedRow("");
-                //     }}
-                //   >
+      <>
+        <ListContainer
+            title={"Lithium entries list"}
+            subTitle={"Manage your lithium  entries"}
+            navLinktext={"entry/add/lithium"}
+            navtext={"Add new Entry"}
+            isAllowed={permissions.entry?.create}
+            table={
+              <>
+                <Modal
+                    open={showmodal}
+                    onOk={() => handleDelete()}
+                    onCancel={() => {
+                      setShowmodal(!showmodal);
+                      SetSelectedRow("");
+                    }}
+                    destroyOnClose
+                    footer={[
+                      //<span
+                        //  key="actions"
+                        //  className=" flex w-full justify-center gap-4 text-base text-white"
+                      // >
+                //  {isDeleting ? (
+                  //    <button
+                    //      key="back"
+                    //      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                  //    >
+                  //      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500"/>
+                  //      Deleting
+                  //     </button>
+                //  ) : (
+                  //    <button
+                    //      key="back"
+                    //      className=" bg-green-400 p-2 rounded-lg"
+                    //      onClick={handleDelete}
+                  //    >
+                  //      Delete
+                  //     </button>
+                //  )}
+                      //  <button
+                        //    key="submit"
+                        //    className=" bg-red-400 p-2 rounded-lg"
+                        //    type="primary"
+                        //    onClick={() => {
+                        //      setShowmodal(!showmodal);
+                        //      SetSelectedRow("");
+                        //    }}
+                      //   >
                 //     Cancel
                 //   </button>
-                // </span>,
-                 <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"} dsText={"Deleting"} handleCancel={() => {
+                //</span>,
+                    <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"} dsText={"Deleting"} handleCancel={() => {
                   setShowmodal(!showmodal);
                   SetSelectedRow("");
-                }} handleDelete={handleDelete}/>
-              ]}
-            >
-              <h2 className="modal-title text-center font-bold text-xl">
-                Confirm Delete
-              </h2>
-              <p className=" text-lg">
-                Are you sure you want to delete transaction with:
-              </p>
-              <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
-              <li className=" text-lg">{`Supply date: ${dayjs(
-                selectedRowInfo.date
-              ).format("MMM/DD/YYYY")}`}</li>
-            </Modal>
-            <div className=" w-full overflow-x-auto h-full min-h-[320px]">
-              <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
+                }} handleDelete={handleDelete}/>]}
+                >
+                  <h2 className="modal-title text-center font-bold text-xl">
+                    Confirm Delete
+                  </h2>
+                  <p className=" text-lg">
+                    Are you sure you want to delete transaction with:
+                  </p>
+                  <p className=" text-lg">{`company name: ${selectedRowInfo.name}`}</p>
+                  <p className=" text-lg">{`Supply date: ${dayjs(
+                      selectedRowInfo.date
+                  ).format("MMM/DD/YYYY")}`}</p>
+                </Modal>
+
+                <Modal
+                    title="Select Fields You Want To Edit"
+                    open={isModalOpen}
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                    destroyOnClose
+                    okButtonProps={{className: "bg-green-400 p-2 rounded-lg"}}
+                >
+                  {fields.map((item, index) => (
+                      <div key={index}>
+                        <Checkbox
+                            checked={checkboxValues[toCamelCase(item)]}
+                            onChange={() => handleCheckboxChange(toCamelCase(item))}
+                        >
+                          {item}
+                        </Checkbox>
+                      </div>
+                  ))}
+                </Modal>
+
+                <div className=" w-full overflow-x-auto h-full min-h-[320px]">
+                  <div className="w-full flex flex-col  sm:flex-row justify-between items-center mb-4 gap-3">
                 <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
-                  <PiMagnifyingGlassDuotone className="h-4 w-4" />
+                  <PiMagnifyingGlassDuotone className="h-4 w-4"/>
                   <input
-                    type="text"
-                    className=" w-full focus:outline-none"
-                    name="tableFilter"
-                    id="tableFilter"
-                    placeholder="Search..."
-                    onChange={(e) => SetSearchText(e.target.value)}
+                      type="text"
+                      className=" w-full focus:outline-none"
+                      name="tableFilter"
+                      id="tableFilter"
+                      placeholder="Search..."
+                      onChange={(e) => SetSearchText(e.target.value)}
                   />
                 </span>
 
-                <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
-                  <BiSolidFilePdf className=" text-2xl" />
-                  <BsCardList className=" text-2xl" />
-                  <HiOutlinePrinter className=" text-2xl" />
+                    <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
+                  <BiSolidFilePdf className=" text-2xl"/>
+                  <BsCardList className=" text-2xl"/>
+                  <HiOutlinePrinter className=" text-2xl"/>
                 </span>
-              </div>
-              <Table
-                className=" w-full"
-                loading={{
-                  indicator: (
-                    <ImSpinner2
-                      style={{ width: "60px", height: "60px" }}
-                      className="animate-spin text-gray-500"
-                    />
-                  ),
-                  spinning: isLoading,
-                }}
-                dataSource={dataz}
-                columns={columns}
-                expandable={{
-                  expandedRowRender: (record) => <LithiumEntryCompletePage entryId={record._id}/>,
-                  rowExpandable: (record) => record.companyName !== "Not Expandable",
-                }}
-                rowKey="_id"
-              />
-            </div>
-          </>
-        }
-      />
-    </>
+                  </div>
+                  <Table
+                      className=" w-full overflow-x-auto"
+                      loading={{
+                        indicator: (
+                            <ImSpinner2
+                                style={{width: "60px", height: "60px"}}
+                                className="animate-spin text-gray-500"
+                            />
+                        ),
+                        spinning: isLoading,
+                      }}
+                      dataSource={dataz}
+                      columns={columns}
+                      expandable={{
+                        expandedRowRender: record1 => <LithiumEntryCompletePage entryId={record1._id}/>,
+                        rowExpandable: record1 => record1.output?.length > 0,
+                      }}
+                      rowKey="_id"
+                  />
+                </div>
+              </>
+            }
+        />
+      </>
   );
 };
 export default LithiumListPage;

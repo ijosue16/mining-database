@@ -26,9 +26,11 @@ const Settings = () => {
     rmaFeeWolframite: "",
     nameOfCompany: "",
     representative: "",
-    address: { province: "", district: "", sector: "",street:"" },
+    address: { province: "", district: "", sector: "", street: "" },
     editExpiresIn: "",
     logsLifeTime: "",
+    rmaFeeLithium: "",
+    rmaFeeBeryllium: "",
   });
 
   useEffect(() => {
@@ -48,11 +50,14 @@ const Settings = () => {
         rmaFeeWolframite: existingSettings.rmaFeeWolframite,
         rmaFeeCassiterite: existingSettings.rmaFeeCassiterite,
         rmaFeeColtan: existingSettings.rmaFeeColtan,
+        rmaFeeLithium: existingSettings.rmaFeeLithium,
+        rmaFeeBeryllium: existingSettings.rmaFeeBeryllium,
         nameOfCompany: existingSettings.nameOfCompany,
         address: {
           province: existingSettings.address.province,
           district: existingSettings.address.district,
           sector: existingSettings.address.sector,
+          street: existingSettings.address.street,
         },
         representative: existingSettings.representative,
         editExpiresIn: existingSettings.editExpiresIn,
@@ -95,9 +100,11 @@ const Settings = () => {
       rmaFeeColtan: "",
       rmaFeeCassiterite: "",
       representative: "",
-      address: { province: "", district: "", sector: "" },
+      address: { province: "", district: "", sector: "", street: "" },
       editExpiresIn: "",
       logsLifeTime: "",
+      rmaFeeBeryllium: "",
+      rmaFeeLithium: "",
     });
   };
 
@@ -114,7 +121,7 @@ const Settings = () => {
       ) : (
         <ActionsPagesContainer
           title={"General Settings"}
-          subTitle={"Modify to prefered settings"}
+          subTitle={"Modify to preferred settings"}
           actionsContainer={
             <AddComponent
               component={
@@ -150,21 +157,6 @@ const Settings = () => {
                       <p className="mb-1">Wolframite RMA Fee</p>
                       <input
                         type="number"
-                        name="rmaFeeCassiterite"
-                        value={settings.rmaFeeCassiterite}
-                        className="focus:outline-none p-2 border rounded-lg w-full"
-                        onWheelCapture={(e) => {
-                          e.target.blur();
-                        }}
-                        onChange={handleChange}
-                      />
-                    </li>
-                    {/* ******* */}
-                    <li>
-                      <p className="mb-1">Wolframite RMA Fee</p>
-
-                      <input
-                        type="number"
                         name="rmaFeeWolframite"
                         value={settings.rmaFeeWolframite || ""}
                         className="focus:outline-none p-2 border rounded-lg w-full"
@@ -175,6 +167,33 @@ const Settings = () => {
                       />
                     </li>
                     {/* ******* */}
+                    <li>
+                      <p className="mb-1">Lithium RMA Fee</p>
+
+                      <input
+                          type="number"
+                          name="rmaFeeLithium"
+                          value={settings.rmaFeeLithium || ""}
+                          className="focus:outline-none p-2 border rounded-lg w-full"
+                          onWheelCapture={(e) => {
+                            e.target.blur();
+                          }}
+                          onChange={handleChangeSettings}
+                      />
+                    </li>
+                    <li>
+                    <p className="mb-1">Beryllium RMA Fee</p>
+                    <input
+                        type="number"
+                        name="rmaFeeBeryllium"
+                        value={settings.rmaFeeBeryllium || ""}
+                        className="focus:outline-none p-2 border rounded-lg w-full"
+                        onWheelCapture={(e) => {
+                          e.target.blur();
+                        }}
+                        onChange={handleChangeSettings}
+                    />
+                  </li>
                     <li>
                       <p className="mb-1">Name of Processor</p>
                       <input
@@ -206,7 +225,7 @@ const Settings = () => {
                         name="address.province"
                         id="province"
                         autoComplete="off"
-                        value={settings.address.province}
+                        value={settings.address.province || ""}
                         className="focus:outline-none p-2 border rounded-lg w-full"
                         onChange={handleChange}
                       />
@@ -218,7 +237,7 @@ const Settings = () => {
                         name="address.district"
                         id="district"
                         autoComplete="off"
-                        value={settings.address.district}
+                        value={settings.address.district || ""}
                         className="focus:outline-none p-2 border rounded-lg w-full"
                         onChange={handleChange}
                       />
@@ -230,7 +249,7 @@ const Settings = () => {
                         name="address.sector"
                         id="sector"
                         autoComplete="off"
-                        value={settings.address.sector}
+                        value={settings.address.sector || ""}
                         className="focus:outline-none p-2 border rounded-lg w-full"
                         onChange={handleChange}
                       />
@@ -242,7 +261,7 @@ const Settings = () => {
                         name="address.street"
                         id="street"
                         autoComplete="off"
-                        value={settings.address.street}
+                        value={settings.address.street || ""}
                         className="focus:outline-none p-2 border rounded-lg w-full"
                         onChange={handleChange}
                       />

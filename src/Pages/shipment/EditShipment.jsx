@@ -38,7 +38,6 @@ const EditShipment = ({record: shipment}) => {
     })
 
 
-
     let modalRef = useRef();
 
     const handleClickOutside = (event) => {
@@ -420,8 +419,8 @@ const EditShipment = ({record: shipment}) => {
         },
         {
             title: 'Company Name',
-            dataIndex: 'supplierName',
-            key: 'supplierName'
+            dataIndex: 'companyName',
+            key: 'companyName'
         },
         {
             title: 'Beneficiary',

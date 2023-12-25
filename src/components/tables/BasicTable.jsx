@@ -108,22 +108,22 @@ const BasicTable = () => {
                     <PiDotsThreeVerticalBold onClick={() => handleDelete(record.id)}/>
                   {selectedRow === record.id &&(  
                   <motion.ul animate={showActions?{opacity:1,x:-10,display:"block"}:{opacity:0,x:0,display:"none",}} className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}>
-                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{console.log('Action 1 :',record.id,record.customer);
+                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{
                 SetShowActions(!showActions)}}>
                     <PiClipboardDuotone/>
                     <p>shedule</p>
                    </li>
-                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{console.log('Action 2 :',record.id);
+                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{
                 SetShowActions(!showActions)}}>
                     <PiClipboardDuotone/>
                     <p>shedule</p>
                    </li>
-                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{console.log('Action 3 :',record.id);
+                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{
                 SetShowActions(!showActions)}}>
                     <PiClipboardDuotone/>
                     <p>shedule</p>
                    </li>
-                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{console.log('Action 4 :',record.id);
+                   <li className="flex gap-2 p-2 items-center hover:bg-slate-100" onClick={()=>{
                 SetShowActions(!showActions)}}>
                     <PiClipboardDuotone/>
                     <p>shedule</p>

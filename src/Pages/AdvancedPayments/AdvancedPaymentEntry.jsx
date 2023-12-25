@@ -388,10 +388,8 @@ const AdvancedPaymentEntry = () => {
                                         onWheelCapture={(e) => {
                                             e.target.blur();
                                         }}
-
                                     />
                                 </li>
-
                                 <li className=" space-y-1">
                                     <p className="pl-1">Currency</p>
                                     <select

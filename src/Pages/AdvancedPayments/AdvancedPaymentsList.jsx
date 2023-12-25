@@ -431,6 +431,31 @@ const AdvancedPaymentsList = () => {
                                 }}
                                 dataSource={dataz}
                                 columns={columns}
+                                rowClassName={record => record.consumed && "bg-green-100"}
+                                expandable={{
+                                    expandedRowRender: record => {
+                                        return (
+                                            <div>
+                                                <p className="text-lg font-semibold">Payment details</p>
+                                                <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-stretch">
+                                                    {record.consumptionDetails && record.consumptionDetails.map((item, index) => (
+                                                        <ul className="space-y-1" key={index}>
+                                                            <li className="items-baseline">
+                                                                <p className=" text-slate-800 text-[16px]">Payment date</p>
+                                                                <p className="font-semibold text-[16px]">{`${dayjs(record.date).format("MMM DD, YYYY")}`}</p>
+                                                            </li>
+                                                            <li className="items-baseline">
+                                                                <p className=" text-slate-800 text-[16px]">Comment</p>
+                                                                <p className="font-semibold text-[16px]">{`${item.comment}`}</p>
+                                                            </li>
+                                                        </ul>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )
+                                    },
+                                    rowExpandable: record => record.consumptionDetails?.length > 0,
+                                }}
                                 rowKey="_id"
                             />
                         </div>

@@ -131,10 +131,26 @@ const ShipmentPage = () => {
                 a.netWeight - b.netWeight,
         },
         {
-            title: "Avg.Grade",
+            title: "Avg. Grade",
             dataIndex: "averageGrade",
             key: "averageGrade",
             sorter: (a, b) => a.averageGrade - b.averageGrade,
+            render: (_, record) => {
+                return (
+                    <span>{record.averageGrade}</span>
+                )
+            }
+        },
+        {
+            title: "Avg. Price",
+            dataIndex: "averagePrice",
+            key: "averagePrice",
+            sorter: (a, b) => a.averagePrice - b.averagePrice,
+            render: (_, record) => {
+                return (
+                    <span>{record.averagePrice}</span>
+                )
+            }
         },
         // {
         //     title: "status",

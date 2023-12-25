@@ -33,7 +33,7 @@ const StockPage = () => {
     averageGrade: "",
     averagePrice: "",
     netWeight: "",
-    model: model,
+    model: ""
   });
   const [totalWeight, setTotalWeight] = useState(null);
   const [avg, setAvg] = useState(null);
@@ -93,7 +93,7 @@ const StockPage = () => {
     setTotalWeight(newTotalWeight);
 
     const totalGrade = selectedData.reduce(
-        (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
+        (total, item) => total + (parseFloat(item.toBeExported) * item.mineralGrade ? item.mineralGrade : 0),
         0
     );
 
@@ -176,7 +176,7 @@ const StockPage = () => {
       );
 
       const totalGrade = selectedData.reduce(
-          (total, item) => total + (parseFloat(item.toBeExported) * item.mineralPrice ? item.mineralPrice : 0),
+          (total, item) => total + (parseFloat(item.toBeExported) * item.mineralGrade ? item.mineralGrade : 0),
           0
       );
 
@@ -222,7 +222,7 @@ const StockPage = () => {
       sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
     },
-    { title: "Supplier name", dataIndex: "supplierName", key: "supplierName" },
+    { title: "Company name", dataIndex: "companyName", key: "companyName" },
     {
       title: "type",
       dataIndex: "mineralType",
@@ -325,7 +325,7 @@ const StockPage = () => {
       render: (text) => <p>{dayjs(text).format("MMM DD,YYYY")}</p>,
       align: "center",
     },
-    { title: "supplier name", dataIndex: "supplierName", key: "supplierName", align: "center" },
+    { title: "Company name", dataIndex: "companyName", key: "companyName" },
     {
       title: "type",
       dataIndex: "mineralType",
@@ -464,7 +464,8 @@ const StockPage = () => {
         shipmentInfo.netWeight !== null &&
         shipmentInfo.entries.length > 0
     ) {
-      const body = {...shipmentInfo, shipmentNumber};
+
+      const body = {...shipmentInfo, model, shipmentNumber};
       await AddShipment({ body });
       setSelectedData([]);
       setConfirmModal(!confirmModal);

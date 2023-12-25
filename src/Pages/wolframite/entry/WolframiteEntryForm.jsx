@@ -5,8 +5,8 @@ import { DatePicker, TimePicker, Spin } from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
+  useCreateEntryMutation,
   useGetAllSuppliersQuery,
-  useCreateWolframiteEntryMutation,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
@@ -23,14 +23,14 @@ const WolframiteEntryForm = () => {
   const { data, isLoading, isError, error, isSuccess } =
     useGetAllSuppliersQuery();
   const [
-    createWolframiteEntry,
+    updateEntry,
     {
       isLoading: isSending,
       isError: isFail,
       error: failError,
       isSuccess: isDone,
     },
-  ] = useCreateWolframiteEntryMutation();
+  ] = useCreateEntryMutation();
   const [formval, setFormval] = useState({
     weightIn: "",
     companyName: "",
@@ -203,7 +203,7 @@ const WolframiteEntryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createWolframiteEntry({ body });
+    await updateEntry({ body, model: "wolframite" });
     navigate(-1);
   };
   const handleCancel = () => {

@@ -1,50 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
-import dayjs from "dayjs";
-import { motion } from "framer-motion";
+import React, {useEffect, useRef, useState} from "react";
+import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {UploadOutlined} from "@ant-design/icons";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
-import { BiSolidEditAlt } from "react-icons/bi";
-import { PiDotsThreeVerticalBold } from "react-icons/pi";
-import { ImSpinner2 } from "react-icons/im";
-import { FaImage, FaSave } from "react-icons/fa";
-import { toast } from "react-toastify";
-import { MdOutlineClose, MdPayments } from "react-icons/md";
-import {
-  useDeleteGradeImgMutation,
-  useGetOneColtanEntryQuery,
-  useUpdateColtanEntryMutation,
-} from "../../../states/apislice";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMyContext } from "../../../context files/LoginDatacontextProvider";
+import {BiSolidEditAlt} from "react-icons/bi";
+import {PiDotsThreeVerticalBold} from "react-icons/pi";
+import {ImSpinner2} from "react-icons/im";
+import {FaImage, FaSave} from "react-icons/fa";
+import {MdOutlineClose, MdPayments} from "react-icons/md";
+import {useDeleteGradeImgMutation, useGetEntryQuery, useUpdateEntryMutation,} from "../../../states/apislice";
+import {useNavigate} from "react-router-dom";
+import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
-import {
-    AppUrls, decidePricingGrade,
-    filterColumns,
-    getBase64FromServer,
-    toInitialCase
-} from "../../../components/helperFunctions";
+import {decidePricingGrade, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
 
-// const getBase64FromServer = (fileUrl) => {
-//     return new Promise((resolve) => {
-//         const img = new Image();
-//         img.src = fileUrl;
-//         img.onload = () => {
-//             resolve(fileUrl);
-//         };
-//     });
-// };
-
-
 
 const ColtanEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
+    const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     const {loginData} = useMyContext();
@@ -54,154 +32,150 @@ const ColtanEntryCompletePage = ({entryId}) => {
     const [imageAvailable, setImageAvailable] = useState(false);
     // const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error,} =
-        useGetOneColtanEntryQuery({entryId},
-            {  
-                skip:entryId===undefined,
+        useGetEntryQuery({entryId, model: "coltan"},
+            {
+                skip: entryId === undefined,
                 refetchOnMountOrArgChange: true,
                 refetchOnReconnect: true
             }
         );
-    const [updateColtanEntry, {
+    const [updateEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
-    }] = useUpdateColtanEntryMutation();
+    }] = useUpdateEntryMutation();
 
 
-  const [
-    deleteGradeImg,
-    {
-      isSuccess: isImageDeleteSuccess,
-      isError: isImageDeleteError,
-      error: imageDeleteError,
-    },
-  ] = useDeleteGradeImgMutation();
+    const [
+        deleteGradeImg,
+        {
+            isSuccess: isImageDeleteSuccess,
+            isError: isImageDeleteError,
+            error: imageDeleteError,
+        },
+    ] = useDeleteGradeImgMutation();
 
-  let modalRef = useRef();
+    let modalRef = useRef();
 
-  const handleClickOutside = (event) => {
-    if (!modalRef.current || !modalRef.current.contains(event.target)) {
-      setShow(false);
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside, true);
-    return () => {
-      document.removeEventListener("click", handleClickOutside, true);
+    const handleClickOutside = (event) => {
+        if (!modalRef.current || !modalRef.current.contains(event.target)) {
+            setShow(false);
+        }
     };
-  }, []);
 
-  useEffect(() => {
-    if (isUpdateSuccess) {
-      return message.success("Entry updated successfully");
-    } else if (isUpdateError) {
-      const { message: errorMessage } = updateError.data;
-      return message.error(errorMessage);
-    }
-  }, [isUpdateError, isUpdateSuccess, updateError]);
-  const [formval, setFormval] = useState({
-    lat: "",
-    long: "",
-    name: "",
-    code: "",
-  });
-  const [selectedRow, SetSelectedRow] = useState({
-    id: null,
-    name: "",
-    date: "",
-  });
-  const [suply, setSuply] = useState([]);
-  const [lotInfo, setLotInfo] = useState(null);
-  const [editingRow, setEditingRow] = useState(null);
-  const [editRowKey, setEditRowKey] = useState("");
-  const [show, setShow] = useState(false);
-  const [showPayModel, setShowPayModel] = useState(false);
+    useEffect(() => {
+        document.addEventListener("click", handleClickOutside, true);
+        return () => {
+            document.removeEventListener("click", handleClickOutside, true);
+        };
+    }, []);
 
-  ///////////////////////
+    useEffect(() => {
+        if (isUpdateSuccess) {
+            return message.success("Entry updated successfully");
+        } else if (isUpdateError) {
+            const {message: errorMessage} = updateError.data;
+            return message.error(errorMessage);
+        }
+    }, [isUpdateError, isUpdateSuccess, updateError]);
+    const [formval, setFormval] = useState({
+        lat: "",
+        long: "",
+        name: "",
+        code: "",
+    });
+    const [selectedRow, SetSelectedRow] = useState({
+        id: null,
+        name: "",
+        date: "",
+    });
+    const [suply, setSuply] = useState([]);
+    const [lotInfo, setLotInfo] = useState(null);
+    const [editingRow, setEditingRow] = useState(null);
+    const [editRowKey, setEditRowKey] = useState("");
+    const [show, setShow] = useState(false);
+    const [showPayModel, setShowPayModel] = useState(false);
 
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewImage, setPreviewImage] = useState("");
 
-  const handleClose = () => {
-    setPreviewVisible(false);
-  };
+    const [previewVisible, setPreviewVisible] = useState(false);
+    const [previewImage, setPreviewImage] = useState("");
 
-  const handlePreview = async (fileUrl) => {
-    // const fileUrl = 'https://mining-company-management-system.onrender.com/data/coltan/DSC_0494.jpg';
-    const previewedUrl = await getBase64FromServer(fileUrl);
-    setPreviewImage(previewedUrl);
-    setPreviewVisible(true);
-  };
+    const handleClose = () => {
+        setPreviewVisible(false);
+    };
 
-  const props = {
-    onChange: (info) => {
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
+    const handlePreview = async (fileUrl) => {
+        // const fileUrl = 'https://mining-company-management-system.onrender.com/data/coltan/DSC_0494.jpg';
+        const previewedUrl = await getBase64FromServer(fileUrl);
+        setPreviewImage(previewedUrl);
+        setPreviewVisible(true);
+    };
 
-  const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
-      const formData = new FormData();
-      formData.append(lotNumber, file);
-      await updateColtanEntry({entryId, body: formData});
-  };
+    const props = {
+        onChange: (info) => {
+            if (info.file.status === "done") {
+                message.success(`${info.file.name} file uploaded successfully`);
+            } else if (info.file.status === "error") {
+                message.error(`${info.file.name} file upload failed.`);
+            }
+        },
+    };
 
-  const beforeUpload = (file) => {
-    const isPNG = file.type === "image/png" || file.type === "image/jpeg";
-    if (!isPNG) {
-      message.error(`${file.name} is not a .png or .jpeg file`);
-    }
-    return isPNG || Upload.LIST_IGNORE;
-  };
+    const customRequest = async ({file, onSuccess, onError, lotNumber}) => {
+        const formData = new FormData();
+        formData.append(lotNumber, file);
+        await updateEntry({entryId, body: formData, model: "coltan"});
+    };
 
-  const removeFile = async (lotNumber, entryId) => {
-    const body = { lotNumber };
-    await deleteGradeImg({ body, entryId, model: "coltan" });
-  };
+    const beforeUpload = (file) => {
+        const isPNG = file.type === "image/png" || file.type === "image/jpeg";
+        if (!isPNG) {
+            message.error(`${file.name} is not a .png or .jpeg file`);
+        }
+        return isPNG || Upload.LIST_IGNORE;
+    };
 
-  useEffect(() => {
-    if (isImageDeleteSuccess) {
-      message.success("File successfully deleted");
-    } else if (isImageDeleteError) {
-      const { message: deleteError } = imageDeleteError.data;
-      message.error(deleteError);
-    }
-  }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
+    const removeFile = async (lotNumber, entryId) => {
+        const body = {lotNumber};
+        await deleteGradeImg({body, entryId, model: "coltan"});
+    };
 
-  ///////////////////////
+    useEffect(() => {
+        if (isImageDeleteSuccess) {
+            message.success("File successfully deleted");
+        } else if (isImageDeleteError) {
+            const {message: deleteError} = imageDeleteError.data;
+            message.error(deleteError);
+        }
+    }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
 
-  useEffect(() => {
+
+    useEffect(() => {
         if (isSuccess || isUpdateSuccess) {
             const {data: info} = data;
             const {entry: entr} = info;
             setSuply(entr);
             setLotInfo(entr.output);
         }
-  }, [isSuccess, data, isUpdateSuccess]);
+    }, [isSuccess, data, isUpdateSuccess]);
 
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const body = {...suply, output: lotInfo};
+        await updateEntry({body, entryId, model: "coltan"});
+    };
+    const handleModelAdvance = async () => {
+        const body = {...suply, output: lotInfo};
+        await updateEntry({body, entryId, model: "coltan"});
+        navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
+    };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const body = { ...suply, output: lotInfo };
-    await updateColtanEntry({ body, entryId });
-    // navigate(-1);
-  };
-  const handleModelAdvance = async () => {
-    const body = { ...suply, output: lotInfo };
-    await updateColtanEntry({ body, entryId });
-    navigate(`/payment/coltan/${suply._id}/${selectedLotNumber}`);
-  };
-
-  const handleCancel = () => {
-    setFormval({ lat: "", long: "", name: "", code: "" });
-    navigate(-1);
-  };
+    const handleCancel = () => {
+        setFormval({lat: "", long: "", name: "", code: ""});
+        navigate(-1);
+    };
 
     const isEditing = (record) => {
         return record._id === editRowKey;
@@ -274,8 +248,8 @@ const ColtanEntryCompletePage = ({entryId}) => {
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
-            const body = { output: [updatedItem]};
-            await updateColtanEntry({body, entryId});
+            const body = {output: [updatedItem]};
+            await updateEntry({body, entryId, model: "coltan"});
         }
     };
     const handleActions = (id) => {
@@ -298,8 +272,8 @@ const ColtanEntryCompletePage = ({entryId}) => {
         },
         tantal: {
             title: "Tantal ($)",
-            dataIndex: "tantalum",
-            key: "tantalum",
+            dataIndex: "tantal",
+            key: "tantal",
             table: true,
             // sorter: (a, b) => a.tantalum - b.tantalum,
         },
@@ -311,22 +285,28 @@ const ColtanEntryCompletePage = ({entryId}) => {
             // editTable: true,
             table: true,
             render: (_, record) => {
-                if (record.gradeImg) {
+                if (record.gradeImg?.filePath !== null) {
                     return (
-                        <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        <div>
+                            <div className="flex items-center">
+                                <Button onClick={() => handlePreview(record.gradeImg.filePath)}
+                                        icon={<FaImage title="Preview" className="text-lg"/>}/>
+                                {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg"
+                                                                            onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                            </div>
                         </div>
                     )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            // name={record.lotNumber}
-                            // action={`${AppUrls.server}/coltan/${entryId}`}
-                            // method="PATCH"
                             {...props}
-                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({
+                                file,
+                                onSuccess,
+                                onError,
+                                lotNumber: record.lotNumber
+                            })}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
@@ -347,8 +327,9 @@ const ColtanEntryCompletePage = ({entryId}) => {
                     <PricingGrade
                         value={record.pricingGrade ? record.pricingGrade : ""}
                         lotNumber={record.lotNumber}
-                        updateEntry={updateColtanEntry}
+                        updateEntry={updateEntry}
                         entryId={entryId}
+                        model={"coltan"}
                     />
                 )
 
@@ -376,12 +357,6 @@ const ColtanEntryCompletePage = ({entryId}) => {
                 }
             }
         },
-        rmaFee: {
-            title: "RMA Fee ($)",
-            dataIndex: "rmaFeeUSD",
-            key: "rmaFeeUSD",
-            table: true,
-        },
         netPrice: {
             title: "Net Price ($)",
             dataIndex: "netPrice",
@@ -400,10 +375,22 @@ const ColtanEntryCompletePage = ({entryId}) => {
             key: "unpaid",
             table: false,
         },
+        rmaFeeRWF: {
+            title: "RMA Fee (RWF)",
+            dataIndex: "rmaFeeRWF",
+            key: "rmaFeeRWF",
+            table: false,
+        },
         USDRate: {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
             key: "USDRate",
+            table: false,
+        },
+        rmaFeeUSD: {
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
             table: false,
         },
         sampleIdentification: {
@@ -462,110 +449,105 @@ const ColtanEntryCompletePage = ({entryId}) => {
         },
     ];
 
-  if (restrictedColumns && userPermissions && columns) {
-    filterColumns(restrictedColumns, userPermissions, columns, "coltan");
-    columns.push({
-      title: "Action",
-      dataIndex: "action",
-      key: "action",
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return (
-          <>
-            <div className="flex items-center gap-2">
-              {editable ? null : (
-                <>
+    if (restrictedColumns && userPermissions && columns) {
+        filterColumns(restrictedColumns, userPermissions, columns, "coltan");
+        columns.push({
+            title: "Action",
+            dataIndex: "action",
+            key: "action",
+            render: (_, record) => {
+                const editable = isEditing(record);
+                return (
+                    <>
+                        <div className="flex items-center gap-2">
+                            {editable ? null : (
+                                <>
                   <span className="relative">
                     <PiDotsThreeVerticalBold
-                      className=" text-xl"
-                      onClick={() => handleActions(record._id)}
+                        className=" text-xl"
+                        onClick={() => handleActions(record._id)}
                     />
-                    {selectedRow === record._id && (
-                      <motion.ul
-                        ref={modalRef}
-                        animate={
-                          show
-                            ? { opacity: 1, x: -10, display: "block" }
-                            : { opacity: 0, x: 0, display: "none" }
-                        }
-                        className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                      >
-                        <li
-                          className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                          onClick={() => edit(record)}
-                        >
-                          <BiSolidEditAlt className=" text-lg" />
-                          <p>edit</p>
-                        </li>
-
-                          { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */ }
-
-                          {userPermissions.entry?.create ? (
+                      {selectedRow === record._id && (
+                          <motion.ul
+                              ref={modalRef}
+                              animate={
+                                  show
+                                      ? {opacity: 1, x: -10, display: "block"}
+                                      : {opacity: 0, x: 0, display: "none"}
+                              }
+                              className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+                          >
                               <li
                                   className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}
+                                  onClick={() => edit(record)}
                               >
-                                  <TbReport className=" text-lg" />
-                                  <p>Lab Report</p>
+                                  <BiSolidEditAlt className=" text-lg"/>
+                                  <p>edit</p>
                               </li>
-                          ) : null}
 
-                        {userPermissions.payments?.create ? (
-                          <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              setSelectedLotNumber(record.lotNumber);
-                              setShowPayModel(true);
-                            }}
-                          >
-                            <MdPayments className=" text-lg" />
-                            <p>Pay</p>
-                          </li>
-                        ) : null}
-                      </motion.ul>
-                    )}
+                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
+
+                              {userPermissions.entry?.create ? (
+                                  <li
+                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                      onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}
+                                  >
+                                      <TbReport className=" text-lg"/>
+                                      <p>Lab Report</p>
+                                  </li>
+                              ) : null}
+
+                              {userPermissions.payments?.create ? (
+                                  <li
+                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                      onClick={() => {
+                                          setSelectedLotNumber(record.lotNumber);
+                                          setShowPayModel(true);
+                                      }}
+                                  >
+                                      <MdPayments className=" text-lg"/>
+                                      <p>Pay</p>
+                                  </li>
+                              ) : null}
+                          </motion.ul>
+                      )}
                   </span>
-                </>
-              )}
+                                </>
+                            )}
 
-              {editable ? (
-                <div className="flex items-center gap-3">
-                  <FaSave
-                    className=" text-xl"
-                    onClick={() => save(record._id)}
-                  />
-                  <MdOutlineClose
-                    className=" text-xl"
-                    onClick={() => setEditRowKey("")}
-                  />
-                </div>
-              ) : null}
-            </div>
-          </>
-        );
-      },
-    });
-    // for (const key in restrictedColumns) {
-    //     if (restrictedColumns.hasOwnProperty(key)) {
-    //         columns.splice(4 + Object.keys(restrictedColumns).indexOf(key), 0, restrictedColumns[key]);
-    //     }
-    // }
-  }
-
-  const mergedColumns = columns.map((col) => {
-    if (!col.editTable) {
-      return col;
+                            {editable ? (
+                                <div className="flex items-center gap-3">
+                                    <FaSave
+                                        className=" text-xl"
+                                        onClick={() => save(record._id)}
+                                    />
+                                    <MdOutlineClose
+                                        className=" text-xl"
+                                        onClick={() => setEditRowKey("")}
+                                    />
+                                </div>
+                            ) : null}
+                        </div>
+                    </>
+                );
+            },
+        });
     }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
+
+    const mergedColumns = columns.map((col) => {
+        if (!col.editTable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record) => ({
+                record,
+                dataIndex: col.dataIndex,
+                title: col.title,
+                editing: isEditing(record),
+            }),
+        };
+    });
 
     const EditableCell = ({
                               editing,
@@ -676,65 +658,69 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                             <LotExpandable
                                                                 entryId={entryId}
                                                                 record={record}
-                                                                updateEntry={updateColtanEntry}
+                                                                updateEntry={updateEntry}
                                                                 userPermissions={userPermissions}
                                                                 restrictedColumns={restrictedColumns}
                                                                 isProcessing={isSending}
+                                                                model={"coltan"}
                                                             />
                                                         )
 
                                                     },
                                                     rowExpandable: (record) => record,
-                        }}
-                        components={{
-                          body: {
-                            cell: EditableCell,
-                          },
-                        }}
-                        rowKey="_id"
-                      />
-                    </Form>
-                  </div>
-                  <Modal
-                    open={showPayModel}
-                    onOk={""}
-                    onCancel={() => setShowPayModel(!showPayModel)}
-                    destroyOnClose
-                    footer={[
-                       <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)} handleConfirm={handleModelAdvance}/>
-                    ]}
-                  >
-                    <h2 className="modal-title text-center font-bold text-xl">
-                      Proceed Payment
-                    </h2>
-                    <p className="text-center text-lg">
-                      {`Please verify all the information before proceeding`}.
-                    </p>
-                  </Modal>
+                                                }}
+                                                components={{
+                                                    body: {
+                                                        cell: EditableCell,
+                                                    },
+                                                }}
+                                                rowKey="_id"
+                                            />
+                                        </Form>
+                                    </div>
+                                    <Modal
+                                        open={showPayModel}
+                                        onOk={""}
+                                        onCancel={() => setShowPayModel(!showPayModel)}
+                                        destroyOnClose
+                                        footer={[
+                                            <ConfirmFooter
+                                                key={"actions"
+                                                } isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)}
+                                                handleConfirm={handleModelAdvance}/>
+                                        ]}
+                                    >
+                                        <h2 className="modal-title text-center font-bold text-xl">
+                                            Proceed Payment
+                                        </h2>
+                                        <p className="text-center text-lg">
+                                            {`Please verify all the information before proceeding`}.
+                                        </p>
+                                    </Modal>
 
-                  <Modal
-                    width={"70%"}
-                    open={previewVisible}
-                    title="Image Preview"
-                    footer={null}
-                    onCancel={handleClose}
-                  >
-                    <img
-                      alt="example"
-                      style={{ width: "100%", height: "100%" }}
-                      src={previewImage}
-                    />
-                  </Modal>
-                </>
-              }
-              Add={handleSubmit}
-              Cancel={handleCancel}
-              isloading={isSending}
-            />
-          }
-        />
-      )}
-    </>
-  );
-};
+                                    <Modal
+                                        width={"70%"}
+                                        open={previewVisible}
+                                        title="Image Preview"
+                                        footer={null}
+                                        onCancel={handleClose}
+                                    >
+                                        <img
+                                            alt="example"
+                                            style={{width: "100%", height: "100%"}}
+                                            src={previewImage}
+                                        />
+                                    </Modal>
+                                </>
+                            }
+                            Add={handleSubmit}
+                            Cancel={handleCancel}
+                            isloading={isSending}
+                        />
+                    }
+                />
+            )}
+        </>
+    );
+}
 export default ColtanEntryCompletePage;

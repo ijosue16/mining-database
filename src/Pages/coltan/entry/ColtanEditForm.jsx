@@ -15,8 +15,8 @@ import {
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
-  useUpdateColtanEntryMutation,
-  useGetOneColtanEntryQuery,
+  useUpdateEntryMutation,
+    useGetEntryQuery,
   useGetOneEditRequestQuery,
   useUpdateEditRequestMutation,
   useGetSupplierTagsQuery,
@@ -63,22 +63,22 @@ const ColtanEditForm = () => {
   ] = useUpdateEditRequestMutation();
 
   const { data, isLoading, isError, error, isSuccess } =
-    useGetOneColtanEntryQuery(
-      { entryId },
+    useGetEntryQuery(
+      { entryId, model: "coltan" },
       {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true,
       }
     );
   const [
-    updateColtanEntry,
+    updateEntry,
     {
       isLoading: isSending,
       isError: isFail,
       error: failError,
       isSuccess: isDone,
     },
-  ] = useUpdateColtanEntryMutation();
+  ] = useUpdateEntryMutation();
 
   const {
     data: supps,
@@ -589,7 +589,7 @@ const ColtanEditForm = () => {
         }
       }
     }
-    await updateColtanEntry({ entryId, body: requestId ? newBody : body });
+    await updateEntry({ model: "coltan", entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",

@@ -13,9 +13,9 @@ const CurrencyConverter = () => {
             return message.error("Please rate or amount field is empty");
         }
         if (toCurrency === "RWF") {
-            setConvertedAmount(handleConvertToRWF(conversionInfo.rate, conversionInfo.amount).toFixed(5));
+            setConvertedAmount(handleConvertToRWF(conversionInfo.amount, conversionInfo.rate).toFixed(5));
         } else {
-            setConvertedAmount(handleConvertToUSD(conversionInfo.rate, conversionInfo.amount).toFixed(5));
+            setConvertedAmount(handleConvertToUSD(conversionInfo.amount, conversionInfo.rate).toFixed(5));
         }
     }
 
