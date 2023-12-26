@@ -31,7 +31,7 @@ import ConfirmFooter from "../components/modalsfooters/ConfirmFooter";
 
 const SuppliersListPage = () => {
   
-  const { permissions } = useSelector(state => state.persistedReducer.global);
+  const { permissions } = useSelector(state => state.persistedReducer?.global);
   const { RangePicker } = DatePicker;
   let dataz = [];
   const { data, isLoading, isError, isSuccess, error } =
@@ -178,26 +178,30 @@ const SuppliersListPage = () => {
                     }
                     className={` border bg-white z-20 shadow-md rounded absolute -left-[170px] w-[170px] space-y-2`}
                   >
-                    <li
-                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        navigate(`/supplier/details/${record._id}`);
-                      }}
-                    >
-                      <BiSolidDetail className=" text-xl" />
-                      <p>details</p>
-                    </li>
-                    <li
-                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        {
-                          navigate(`/edit/supplier/${record._id}`);
-                        }
-                      }}
-                    >
-                      <BiSolidEditAlt className=" text-xl" />
-                      <p>Edit</p>
-                    </li>
+                    {permissions?.suppliers?.view && (
+                        <li
+                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              navigate(`/supplier/details/${record._id}`);
+                            }}
+                        >
+                          <BiSolidDetail className=" text-xl" />
+                          <p>details</p>
+                        </li>
+                    )}
+                    {permissions?.suppliers?.edit && (
+                        <li
+                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              {
+                                navigate(`/edit/supplier/${record._id}`);
+                              }
+                            }}
+                        >
+                          <BiSolidEditAlt className=" text-xl" />
+                          <p>Edit</p>
+                        </li>
+                    )}
                     {/*<li*/}
                     {/*  className="flex gap-2 p-2 items-center hover:bg-slate-100"*/}
                     {/*  onClick={() => {*/}
@@ -210,25 +214,29 @@ const SuppliersListPage = () => {
                     {/*  <p>Make invoice</p>*/}
                     {/*</li>*/}
 
-                    <li
-                      className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                      onClick={() => {
-                        setSupplierId(record._id);
-                        SetDateModal(!dateModal);
-                      }}
-                    >
-                      <FaFileAlt className=" text-xl" />
-                      <p>Make report</p>
-                    </li>
-                    <li
-                        className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                        onClick={() => {
-                          navigate(`/supplier/invoices/${record._id}`);
-                        }}
-                    >
-                      <FaFileAlt className=" text-xl" />
-                      <p>Invoice List</p>
-                    </li>
+                    {permissions.dueDiligence?.create && (
+                        <li
+                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              setSupplierId(record._id);
+                              SetDateModal(!dateModal);
+                            }}
+                        >
+                          <FaFileAlt className=" text-xl" />
+                          <p>Make report</p>
+                        </li>
+                    )}
+                    {permissions.invoices?.view && (
+                        <li
+                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              navigate(`/supplier/invoices/${record._id}`);
+                            }}
+                        >
+                          <FaFileAlt className=" text-xl" />
+                          <p>Invoice List</p>
+                        </li>
+                    )}
                   </motion.ul>
                 )}
               </span>
@@ -260,7 +268,7 @@ const SuppliersListPage = () => {
         subTitle={"Manage your Suppliers"}
         navLinktext={"add/supplier"}
         navtext={"Add supplier"}
-        isAllowed={permissions.suppliers.create}
+        isAllowed={permissions.suppliers?.create}
         table={
           <>
             <Modal

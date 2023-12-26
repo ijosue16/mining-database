@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
-  useGetAllCassiteriteEntriesQuery,
-  useDeleteCassiteriteEntryMutation, useCreateEditRequestMutation,
+  useGetAllEntriesQuery,
+    useDeleteEntryMutation,
+  useCreateEditRequestMutation,
 } from "../../states/apislice";
 import {
   PiMagnifyingGlassDuotone,
@@ -43,14 +44,14 @@ const CassiteriteListPage = () => {
     error: createRequestError
   }] = useCreateEditRequestMutation();
   const { data, isLoading, isSuccess, isError, error } =
-      useGetAllCassiteriteEntriesQuery("", {
+      useGetAllEntriesQuery({model: "cassiterite"}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
       });
   const [
-    deleteCassiterite,
+    deleteEntry,
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem },
-  ] = useDeleteCassiteriteEntryMutation();
+  ] = useDeleteEntryMutation();
 
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
@@ -104,7 +105,7 @@ const CassiteriteListPage = () => {
 
   const handleDelete = async () => {
     const entryId = selectedRow;
-    await deleteCassiterite({ entryId });
+    await deleteEntry({ model: "cassiterite", entryId });
     SetSelectedRow("");
     setShowmodal(!showmodal);
   };
@@ -145,14 +146,18 @@ const CassiteriteListPage = () => {
       }
     }
     finalBody.recordId = record._id;
-    const response = await createEditRequest({body: finalBody});
-    socket.emit("new-edit-request", {username: userData.username});
-    if (response) {
-      const { editRequest } = response.data.data;
-      if (editRequest) {
-        setRequestId(editRequest._id);
-      }
+    if (!finalBody.editableFields.length) {
+      setIsModalOpen(false);
+      return;
     }
+    await createEditRequest({body: finalBody});
+    socket.emit("new-edit-request", {username: userData.username});
+    // if (response) {
+    //   const { editRequest } = response.data.data;
+    //   if (editRequest) {
+    //     setRequestId(editRequest._id);
+    //   }
+    // }
   }
 
   const handleCancel = () => {
@@ -312,61 +317,65 @@ const CassiteriteListPage = () => {
                           }
                           className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                       >
-                        <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              navigate(`/entry/edit/cassiterite/${record._id}`);
-                            }}
-                        >
-                          <BiSolidEditAlt className=" text-lg" />
-                          <p>edit</p>
-                        </li>
+                        {permissions?.entry?.edit && (
+                            <li
+                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                onClick={() => {
+                                  navigate(`/entry/edit/cassiterite/${record._id}`);
+                                }}
+                            >
+                              <BiSolidEditAlt className=" text-lg" />
+                              <p>edit</p>
+                            </li>
+                        )}
 
                         {/* TODO 15: SHOW MENU BASED ON PERMISSIONS*/}
-                        <li
-                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              if (record.supplierId) {
-                                navigate(`/add/invoice/${record.supplierId}/cassiterite/${record._id}`);
-                              } else {
-                                return message.warning("You have assign supplier to this entry");
-                              }
-                            }}
-                        >
-                          <FaFileInvoiceDollar className=" text-xl" />
-                          <p>Make invoice</p>
-                        </li>
+                        {permissions?.invoices?.create && (
+                            <li
+                                className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                onClick={() => {
+                                  if (record.supplierId) {
+                                    navigate(`/add/invoice/${record.supplierId}/cassiterite/${record._id}`);
+                                  } else {
+                                    return message.warning("You have assign supplier to this entry");
+                                  }
+                                }}
+                            >
+                              <FaFileInvoiceDollar className=" text-xl" />
+                              <p>Make invoice</p>
+                            </li>
+                        )}
 
-                        {permissions.entry?.edit ? (
-                            <>
-                              {/*<li*/}
-                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                              {/*    onClick={() => {*/}
-                              {/*      {*/}
-                              {/*        navigate(`/complete/cassiterite/${record._id}`);*/}
-                              {/*      }*/}
-                              {/*    }}*/}
-                              {/*>*/}
-                              {/*  <RiFileEditFill className=" text-lg" />*/}
-                              {/*  <p>complete entry</p>*/}
-                              {/*</li>*/}
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => {
-                                    SetSelectedRow(record._id);
-                                    SetSelectedRowInfo({
-                                      ...selectedRowInfo,
-                                      name: record.companyName,
-                                      date: record.supplyDate,
-                                    });
-                                    setShowmodal(!showmodal);
-                                  }}
-                              >
-                                <MdDelete className=" text-lg" />
-                                <p>delete</p>
-                              </li>
-                            </>
-                        ) : null}
+                        {/*{permissions.entry?.delete ? (*/}
+                        {/*    <>*/}
+                        {/*      /!*<li*!/*/}
+                        {/*      /!*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*!/*/}
+                        {/*      /!*    onClick={() => {*!/*/}
+                        {/*      /!*      {*!/*/}
+                        {/*      /!*        navigate(`/complete/cassiterite/${record._id}`);*!/*/}
+                        {/*      /!*      }*!/*/}
+                        {/*      /!*    }}*!/*/}
+                        {/*      /!*>*!/*/}
+                        {/*      /!*  <RiFileEditFill className=" text-lg" />*!/*/}
+                        {/*      /!*  <p>complete entry</p>*!/*/}
+                        {/*      /!*</li>*!/*/}
+                        {/*      <li*/}
+                        {/*          className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                        {/*          onClick={() => {*/}
+                        {/*            SetSelectedRow(record._id);*/}
+                        {/*            SetSelectedRowInfo({*/}
+                        {/*              ...selectedRowInfo,*/}
+                        {/*              name: record.companyName,*/}
+                        {/*              date: record.supplyDate,*/}
+                        {/*            });*/}
+                        {/*            setShowmodal(!showmodal);*/}
+                        {/*          }}*/}
+                        {/*      >*/}
+                        {/*        <MdDelete className=" text-lg" />*/}
+                        {/*        <p>delete</p>*/}
+                        {/*      </li>*/}
+                        {/*    </>*/}
+                        {/*) : null}*/}
                       </motion.ul>
                   ) : null}
                 </span>
@@ -452,11 +461,14 @@ const CassiteriteListPage = () => {
                 </Modal>
 
                 <Modal
-                    title="Basic Modal"
+                    title="Select Fields You Want To Edit"
                     open={isModalOpen}
                     onOk={handleOk}
                     onCancel={handleCancel}
                     destroyOnClose
+                    okButtonProps={{className: "bg-green-400 p-2 rounded-lg"}}
+                    // cancelButtonProps={{className: "py-[5px] px-[20px] shadow-md shadow-[#A6A6A6] bg-punch-500 hover:bg-punch-700 text-white rounded-md", type: "default"}}
+                    // okButtonProps={{className: "bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[7px] px-[15px] rounded-md"}}
                 >
                   {fields.map((item, index) => (
                       <div key={index}>

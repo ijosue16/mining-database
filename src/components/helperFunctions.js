@@ -1,10 +1,14 @@
 import React, {useState} from "react";
 import {Button, message, notification, Popover, Radio} from "antd";
 
-const specialStrings = ["TINNumber", "rmaFee", "USDRate", "rmaFeeUSD"];
+const specialStrings = ["TINNumber", "rmaFee", "USDRate", "rmaFeeUSD", "rmaFeeRWF"];
 
 export function toCamelCase(str) {
-    if (specialStrings.includes(str)) return str;
+    if (str === "TIN Number") return "TINNumber";
+    if (str === "RMA Fee") return "rmaFee";
+    if (str === "USD Rate") return "USDRate";
+    if (str === "RMA Fee USD") return "rmaFeeUSD";
+    if (str === "RMA Fee RWF") return "rmaFeeRWF";
     return str.split(' ').map((word, index) => {
         if (index === 0) {
             return word.toLowerCase();
@@ -17,7 +21,12 @@ export function toCamelCase(str) {
 
 
 export function toInitialCase(camelCaseString) {
-    if (specialStrings.includes(camelCaseString)) return camelCaseString;
+    if (camelCaseString === "TINNumber") return "TIN Number";
+    if (camelCaseString === "rmaFee") return "RMA Fee";
+    if (camelCaseString === "USDRate") return "USD Rate";
+    if (camelCaseString === "rmaFeeUSD") return "RMA Fee USD";
+    if (camelCaseString === "rmaFeeRWF") return "RMA Fee RWF";
+    // if (specialStrings.includes(camelCaseString)) return camelCaseString;
     return camelCaseString
         .replace(/([a-z])([A-Z])/g, '$1 $2')
         .replace(/^./, function(str) {
@@ -74,7 +83,7 @@ export function decidePricingGrade (pricingGrade) {
 }
 
 export function handleConvertToUSD (amount, USDRate) {
-    return amount / USDRate;
+    return parseFloat(amount) / parseFloat(USDRate);
 }
 
 export function handleConvertToRWF (amount, USDRate) {
@@ -107,4 +116,4 @@ export const validateWeightInEntry = (index, lotDetails, e, weightIn) => {
     }
 }
 
-export const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TINNumber"];
+export const fields = ["Weight In", "beneficiary", "number of tags", "mine tags", "negociant tags", "company name", "license number", "time", "supply date", "representative Id", "TIN Number"];

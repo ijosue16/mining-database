@@ -5,8 +5,8 @@ import { DatePicker, TimePicker, Spin } from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
+  useCreateEntryMutation,
   useGetAllSuppliersQuery,
-  useCreateCassiteriteEntryMutation,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
@@ -23,14 +23,14 @@ const CassiteriteEntryForm = () => {
   const { data, isLoading, isError, error, isSuccess } =
     useGetAllSuppliersQuery();
   const [
-    createCassiteriteEntry,
+    createEntry,
     {
       isLoading: isSending,
       isError: isFail,
       error: failError,
       isSuccess: isDone,
     },
-  ] = useCreateCassiteriteEntryMutation();
+  ] = useCreateEntryMutation();
   const [formval, setFormval] = useState({
     weightIn: "",
     companyName: "",
@@ -47,9 +47,6 @@ const CassiteriteEntryForm = () => {
     mineTags: "",
     negociantTags: "",
     mineralType: "cassiterite",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
     beneficiary: "",
     isSupplierBeneficiary: false,
   });
@@ -203,7 +200,7 @@ const CassiteriteEntryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createCassiteriteEntry({ body });
+    await createEntry({ body, model: "cassiterite" });
     navigate(-1);
   };
   const handleCancel = () => {
@@ -223,9 +220,6 @@ const CassiteriteEntryForm = () => {
       mineTags: "",
       negociantTags: "",
       mineralType: "cassiterite",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
       isSupplierBeneficiary: false,
     });

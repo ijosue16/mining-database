@@ -239,16 +239,16 @@ export const apiSlice = createApi({
             invalidatesTags: ["advance-payment"]
         }),
         getAllEntries: builder.query({
-            query: () => `/entries`,
+            query: ({model}) => `/entry/${model}`,
             providesTags: ['entries', 'payments', 'buyers']
         }),
-        getOneEntry: builder.query({
-            query: ({entryId, model}) => `/stock/entry-info/${model}/${entryId}`,
+        getEntry: builder.query({
+            query: ({model, entryId}) => `/entry/${model}/${entryId}`,
             providesTags: ['entries', 'payments', 'buyers']
         }),
         createEntry: builder.mutation({
             query: ({body, model}) => ({
-                url: `/entries/${model}`,
+                url: `/entry/${model}`,
                 method: 'POST',
                 body
             }),
@@ -256,7 +256,7 @@ export const apiSlice = createApi({
         }),
         updateEntry: builder.mutation({
             query: ({body, model, entryId}) => ({
-                url: `/entries/${model}/${entryId}`,
+                url: `/entry/${model}/${entryId}`,
                 method: 'PATCH',
                 body
             }),
@@ -264,10 +264,14 @@ export const apiSlice = createApi({
         }),
         deleteEntry: builder.mutation({
             query: ({model, entryId}) => ({
-                url: `/entries/${model}/${entryId}`,
+                url: `/entry/${model}/${entryId}`,
                 method: 'DELETE',
             }),
             invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
+        }),
+        getOneEntry: builder.query({
+            query: ({entryId, model}) => `/stock/entry-info/${model}/${entryId}`,
+            providesTags: ['entries', 'payments', 'buyers']
         }),
         createColtanEntry: builder.mutation({
             query: ({body}) => ({
@@ -650,7 +654,7 @@ export const apiSlice = createApi({
             providesTags: ['payments', 'entries', 'suppliers']
         }),
         getAllEditRequests: builder.query({
-            query: () => `/edit-request`,
+            query: ({query}) => `/edit-request${query? `?${query}` : ''}`,
             providesTags: ['editRequest', 'notifications']
         }),
         createEditRequest: builder.mutation({
@@ -675,7 +679,7 @@ export const apiSlice = createApi({
         }),
         deleteGradeImg: builder.mutation({
             query: ({body, entryId, model}) => ({
-                url: `/coltan/delete-grade-img/${model}/${entryId}`,
+                url: `/entry/delete-grade-image/${model}/${entryId}`,
                 method: "DELETE",
                 body
             }),
@@ -787,10 +791,13 @@ export const {
     useGetOneAdvancePaymentQuery,
     useAddAdvancePaymentMutation,
     useUpdateAdvancePaymentMutation,
+    /////   NEW ENDPOINTS
     useGetAllEntriesQuery,
+    useGetEntryQuery,
+    useCreateEntryMutation,
     useGetOneEntryQuery,
     useUpdateEntryMutation,
-    useCreateEntryMutation,
+    ////    NEW ENDPOINTS
     useDeleteEntryMutation,
     useCreateColtanEntryMutation,
     useGetAllColtanEntriesQuery,

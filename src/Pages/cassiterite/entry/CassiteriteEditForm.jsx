@@ -6,8 +6,9 @@ import { DatePicker, TimePicker, Spin,Popover } from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
-  useUpdateCassiteriteEntryMutation,
-  useGetOneCassiteriteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
+  useUpdateEntryMutation,
+    useGetEntryQuery,
+  useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
 } from "../../../states/apislice";
 import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import {BsChevronDown} from "react-icons/bs";
@@ -19,7 +20,7 @@ import Countdown from "react-countdown";
 import ExistingMineTags from "../../ExistingMineTags";
 
 const CassiteriteEditForm = () => {
-  let sup = [""];
+  const [sup, setSup] = useState([]);
   const { entryId, requestId } = useParams();
   const navigate = useNavigate();
   const [isRequestAvailable, setIsRequestAvailable] = useState(() => {
@@ -40,28 +41,30 @@ const CassiteriteEditForm = () => {
     error: updateError
   }] = useUpdateEditRequestMutation();
   const { data, isLoading, isError, error, isSuccess } =
-      useGetOneCassiteriteEntryQuery({ entryId }, {
+      useGetEntryQuery({ entryId, model: "cassiterite" }, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
       });
   const [
-    updateCassiteriteEntry,
+    updateEntry,
     {
       isLoading: isSending,
       isError: isFail,
       error: failError,
       isSuccess: isDone,
     },
-  ] = useUpdateCassiteriteEntryMutation();
+  ] = useUpdateEntryMutation();
 
   const { data:supps, isLoading:isGetting, isError:isFault, error:fault, isSuccess:isGot } =
   useGetAllSuppliersQuery();
 
-      if (isGot) {
-        const { data: dt } = supps;
-        const { suppliers: sups } = dt;
-        sup = sups;
-      };
+  useEffect(() => {
+    if (isGot) {
+      const { data: dt } = supps;
+      const { suppliers: sups } = dt;
+      setSup(sups);
+    }
+  }, [isGot, supps]);
 
   const [formval, setFormval] = useState({
     weightIn: "",
@@ -79,9 +82,6 @@ const CassiteriteEditForm = () => {
     mineTags: "",
     negociantTags: "",
     mineralType: "",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
     beneficiary: "",
     isSupplierBeneficiary: false,
   });
@@ -540,7 +540,7 @@ const CassiteriteEditForm = () => {
         }
       }
     }
-    await updateCassiteriteEntry({ entryId, body: requestId ? newBody : body });
+    await updateEntry({ model: "cassiterite", entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",

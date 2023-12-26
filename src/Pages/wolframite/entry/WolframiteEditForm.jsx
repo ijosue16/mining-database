@@ -6,8 +6,9 @@ import {DatePicker, TimePicker, Spin, message,Popover} from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
-  useUpdateWolframiteEntryMutation,
-  useGetOneWolframiteEntryQuery, useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
+  useUpdateEntryMutation,
+    useGetEntryQuery,
+  useGetOneEditRequestQuery, useUpdateEditRequestMutation,useGetAllSuppliersQuery
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
@@ -46,19 +47,19 @@ const WolframiteEditForm = () => {
   }] = useUpdateEditRequestMutation();
 
   const { data, isLoading, isError, error, isSuccess } =
-      useGetOneWolframiteEntryQuery({ entryId }, {
+      useGetEntryQuery({ entryId, model: "wolframite" }, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
       });
   const [
-    updateWolframiteEntry,
+    updateEntry,
     {
       isLoading: isSending,
       isError: isFail,
       error: failError,
       isSuccess: isDone,
     },
-  ] = useUpdateWolframiteEntryMutation();
+  ] = useUpdateEntryMutation();
 
   const { data:supps, isLoading:isGetting, isError:isFault, error:fault, isSuccess:isGot } =
   useGetAllSuppliersQuery();
@@ -557,7 +558,7 @@ const WolframiteEditForm = () => {
         }
       }
     }
-    await updateWolframiteEntry({ entryId, body: requestId ? newBody : body });
+    await updateEntry({ model: "wolframite", entryId, body: requestId ? newBody : body });
     setFormval({
       weightIn: "",
       companyName: "",

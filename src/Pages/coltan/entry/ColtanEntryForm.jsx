@@ -8,7 +8,7 @@ import ActionsPagesContainer from "../../../components/Actions components/Action
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useGetAllSuppliersQuery,
-  useCreateColtanEntryMutation,
+    useCreateEntryMutation,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
@@ -30,7 +30,7 @@ const ColtanEntryForm = () => {
       error: failError,
       isSuccess: isDone,
     },
-  ] = useCreateColtanEntryMutation();
+  ] = useCreateEntryMutation();
   const [formval, setFormval] = useState({
     weightIn: "",
     companyName: "",
@@ -199,7 +199,7 @@ const ColtanEntryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createColtanEntry({ body });
+    await createColtanEntry({ body, model: "coltan" });
     navigate(-1);
   };
   const handleCancel = () => {

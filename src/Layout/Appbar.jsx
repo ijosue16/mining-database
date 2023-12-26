@@ -5,7 +5,7 @@ import { FiChevronsLeft, } from "react-icons/fi"
 import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 import {Drawer, Space, Button, Badge, notification} from "antd";
-import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useGetOneUserQuery } from "../states/apislice";
+import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useGetOneUserQuery, useGetAllEditRequestsQuery } from "../states/apislice";
 import { useSelector, useDispatch } from "react-redux";
 import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
@@ -26,6 +26,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [userId, setUserId] = useState(null);
     const socket = useContext(SocketContext);
     const dispatch = useDispatch();
+    const [pendingEditRequests, setPendingEditRequests] = useState([]);
 
     const openNotification = ({message, description, type}) => {
         notification.open({
@@ -69,6 +70,18 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     })
+
+    const { data: editRequests, isLoading: editRequestsLoading, isSuccess: editRequestsSuccess } = useGetAllEditRequestsQuery({query: "requestStatus=pending"}, {
+        refetchOnMountOrArgChange: true,
+        refetchOnReconnect: true
+    })
+
+    useEffect(() => {
+        if (editRequestsSuccess || updateSuccess) {
+            const { editRequests: editRequestsArray } = editRequests.data;
+            setPendingEditRequests(editRequestsArray);
+        }
+    }, [editRequestsSuccess, editRequests, updateSuccess]);
 
     useEffect(() => {
         if (userSuccess || updateSuccess) {
@@ -167,7 +180,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                         </li>
                        {userPermissions?.editRequests?.view && (<li title="Edit Requests" className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <BiSolidCalendarEdit  onClick={() => navigateToLink("/edit-requests")} className="text-xl text-gray-500" />
-                            {/*<span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs"></span>*/}
+                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{pendingEditRequests?.length}</span>
                         </li>)}
                        {userPermissions?.settings.view && (
                            <li onClick={() => navigate('/settings')} title={"Settings"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
@@ -176,7 +189,12 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                        )}
                        <li title={"Notifications"} className=" relative p-2 w-[36px] h-[36px] bg-slate-100 flex items-center justify-center rounded-lg">
                             <PiBellSimpleLight className="text-xl text-gray-500" onClick={showDrawer}/>
-                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications.length}</span>
+                            <span className="absolute w-[20px] h-[20px] rounded-full bg-slate-800 -top-1 -right-1 border-2 border-white text-white flex items-center justify-center text-xs">{notifications?.reduce((acc, item) => {
+                                if (!item.read) {
+                                    return acc + 1;
+                                }
+                                return acc;
+                            }, 0)}</span>
                         </li>
 
 

@@ -6,7 +6,7 @@ import LoadingButton from "./LoadingButton";
 import {useShipmentReportMutation, useShipmentReportSpreadsheetMutation} from "../states/apislice";
 
 
-export const PricingGrade = ({updateEntry, value, entryId, lotNumber}) => {
+export const PricingGrade = ({updateEntry, value, entryId, lotNumber, model}) => {
     const [pricingGrade, setPricingGrade] = useState(null);
     useEffect(() => {
         if (value) setPricingGrade(value)
@@ -14,7 +14,7 @@ export const PricingGrade = ({updateEntry, value, entryId, lotNumber}) => {
     const updatePricingGrade = async (value) => {
         setPricingGrade(value);
         const body = {output: [{lotNumber, pricingGrade: value}]};
-        await updateEntry({body, entryId});
+        await updateEntry({body, entryId, model});
     }
     const content = (
         <div className="flex flex-col">
@@ -25,17 +25,17 @@ export const PricingGrade = ({updateEntry, value, entryId, lotNumber}) => {
         </div>
     )
     return (
-        <Popover content={content} title="Title" trigger="click">
+        <Popover content={content} title="Pricing Grade" trigger="click">
             <Button>Click me</Button>
         </Popover>
     )
 
 }
 
-export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, userPermissions, isProcessing}) => {
+export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, userPermissions, isProcessing, model}) => {
     const [nonSellAgreement, setNonSellAgreement] = useState(record.nonSellAgreement?.weight > 0);
 
-    const excludedFields = ["shipments", "comment", "tantalum", "weightOut", "lotNumber", "cumulativeAmount", "paymentHistory", "_id", "id", "createdAt", "updatedAt", "__v"];
+    const excludedFields = ["shipments", "comment", "tantal", "weightOut", "lotNumber", "cumulativeAmount", "paymentHistory", "_id", "id", "createdAt", "updatedAt", "__v"];
     const numberFields = ["USDRate", "niobium", "iron"];
     const [lot, setLot] = useState({});
 
@@ -65,13 +65,13 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
 
     }
     const handleUpdate = async () => {
-        if (["beryllium", "lithium"].includes(record.mineralType)) {
-            const body = {...lot}
-            await updateEntry({body, entryId});
-            return;
-        }
+        // if (["beryllium", "lithium"].includes(record.mineralType)) {
+        //     const body = {...lot}
+        //     await updateEntry({body, entryId, model});
+        //     return;
+        // }
         const body = {output: [{...lot, lotNumber: record.lotNumber}]};
-        await updateEntry({body, entryId});
+        await updateEntry({body, entryId, model});
 
     }
 
@@ -112,7 +112,7 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
             return (
                 <span className="flex">
                     <select name={key} value={value || ""}
-                            disabled={!editable || ["lithium", "beryllium"].includes(record.mineralType)}
+                            disabled={!editable || ["lithium", "beryllium"].includes(model)}
                             className=" font-medium col-span-1 p-2 w-full border"
                             onChange={handleChange}>
                           <option value="pending">Pending</option>
@@ -175,7 +175,8 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
                 <LoadingButton name={"Submit"} onClickFunction={handleUpdate} isProcessing={isProcessing} />
             </div>
 
-            <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
+            {userPermissions.shipmentHistory?.view && (
+                <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
                 <span
                     className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
                   <p className=" font-semibold col-span-1 p-2 w-full border-b border-t text-start bg-slate-50">
@@ -188,13 +189,13 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
                     Date
                   </p>
                 </span>
-                {record.shipments?.map((shipment, index) => {
-                    if (!Array.isArray(shipment)) {
-                        return (
-                            <span
-                                key={index}
-                                className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm"
-                            >
+                    {record.shipmentHistory?.map((shipment, index) => {
+                        if (!Array.isArray(shipment)) {
+                            return (
+                                <span
+                                    key={index}
+                                    className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm"
+                                >
                                 <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
                                   {shipment.shipmentNumber}
                                 </p>
@@ -205,11 +206,12 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
                                     {dayjs(shipment.date).format("MMM DD, YYYY")}
                                 </p>
                             </span>
-                        );
-                    }
-                })}
+                            );
+                        }
+                    })}
 
-            </div>
+                </div>
+            )}
         </>
     );
 }

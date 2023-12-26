@@ -8,9 +8,9 @@ import {ImSpinner2} from "react-icons/im";
 import {FaImage, FaSave} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {
+    useUpdateEntryMutation,
+    useGetEntryQuery,
     useDeleteGradeImgMutation,
-    useGetOneWolframiteEntryQuery,
-    useUpdateWolframiteEntryMutation
 } from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
@@ -23,7 +23,7 @@ import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {TbReport} from "react-icons/tb";
-import {LotExpandable} from "../../HelpersJsx";
+import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
 
 const WolframiteEntryCompletePage = ({entryId}) => {
@@ -35,16 +35,16 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneWolframiteEntryQuery({entryId}, {
+    useGetEntryQuery({entryId, model: "wolframite"}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     });
-    const [updateWolframiteEntry, {
+    const [updateEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
-    }] = useUpdateWolframiteEntryMutation();
+    }] = useUpdateEntryMutation();
     const [deleteGradeImg, {
         isSuccess: isImageDeleteSuccess,
         isError: isImageDeleteError,
@@ -121,7 +121,7 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
         const formData = new FormData();
         formData.append(lotNumber, file);
-        await updateWolframiteEntry({entryId, body: formData});
+        await updateEntry({entryId, body: formData, model: "wolframite"});
     };
 
     const beforeUpload = (file) => {
@@ -161,12 +161,12 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
-        await updateWolframiteEntry({body, entryId});
+        await updateEntry({body, entryId, model: "wolframite"});
         // navigate(-1);
     };
     const handleModelAdvance = async () => {
         const body = {...suply, output: lotInfo};
-        await updateWolframiteEntry({body, entryId});
+        await updateEntry({body, entryId, model: "wolframite"});
         navigate(`/payment/wolframite/${suply._id}/${selectedLotNumber}`);
     };
 
@@ -252,7 +252,7 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             setLotInfo(newData);
             setEditRowKey("");
             const body = { output: [updatedItem]};
-            await updateWolframiteEntry({body, entryId});
+            await updateEntry({body, entryId, model: "wolframite"});
         }
     };
     const handleActions = (id) => {
@@ -282,15 +282,19 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             title: "Grade Img",
             dataIndex: "gradeImg",
             key: "gradeImg",
-            width: 100,
-            // editTable: true,
+            width: 40,
             table: true,
+            // editTable: true,
             render: (_, record) => {
-                if (record.gradeImg) {
+                if (record.gradeImg?.filePath !== null) {
                     return (
-                        <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions?.gradeImg?.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        <div>
+                            <div className="flex items-center">
+                                <Button onClick={() => handlePreview(record.gradeImg.filePath)}
+                                        icon={<FaImage title="Preview" className="text-lg"/>}/>
+                                {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg"
+                                                                            onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                            </div>
                         </div>
                     )
                 } else {
@@ -301,13 +305,36 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                             // action={`${AppUrls.server}/coltan/${entryId}`}
                             // method="PATCH"
                             {...props}
-                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({
+                                file,
+                                onSuccess,
+                                onError,
+                                lotNumber: record.lotNumber
+                            })}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
                         </Upload>
                     )
                 }
+            }
+        },
+        pricingGrade: {
+            title: "Pricing Grade",
+            dataIndex: "pricingGrade",
+            key: "pricingGrade",
+            table: true,
+            width: 80,
+            render: (_, record) => {
+                return (
+                    <PricingGrade
+                        value={record.pricingGrade ? record.pricingGrade : ""}
+                        lotNumber={record.lotNumber}
+                        updateEntry={updateEntry}
+                        entryId={entryId}
+                        model={"wolframite"}
+                    />
+                )
 
             }
         },
@@ -323,12 +350,6 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             key: "mineralPrice",
             table: true,
         },
-        rmaFee: {
-            title: "RMA Fee ($)",
-            dataIndex: "rmaFeeUSD",
-            key: "rmaFeeUSD",
-            table: true,
-        },
         netPrice: {
             title: "Net Price ($)",
             dataIndex: "netPrice",
@@ -341,11 +362,23 @@ const WolframiteEntryCompletePage = ({entryId}) => {
             key: "paid",
             table: false,
         },
+        rmaFeeRWF: {
+            title: "RMA Fee (RWF)",
+            dataIndex: "rmaFeeRWF",
+            key: "rmaFeeRWF",
+            table: false,
+        },
         USDRate: {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
             key: "USDRate",
             table: false
+        },
+        rmaFeeUSD: {
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
+            table: false,
         },
         sampleIdentification: {
             title: "Sample Identification",
@@ -612,7 +645,8 @@ const WolframiteEntryCompletePage = ({entryId}) => {
                                                             restrictedColumns={restrictedColumns}
                                                             userPermissions={userPermissions}
                                                             isProcessing={isSending}
-                                                            updateEntry={updateWolframiteEntry}
+                                                            updateEntry={updateEntry}
+                                                            model={"wolframite"}
                                                         />
                                                     )
                                                 },

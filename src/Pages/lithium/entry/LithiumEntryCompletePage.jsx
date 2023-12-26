@@ -1,44 +1,51 @@
 import React, {useEffect, useRef, useState} from "react";
-import dayjs from "dayjs";
 import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
+import {UploadOutlined} from "@ant-design/icons";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {ImSpinner2} from "react-icons/im";
 import {FaImage, FaSave} from "react-icons/fa";
-import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
-import { useGetOneLithiumEntryQuery, useUpdateLithiumEntryMutation, useDeleteGradeImgMutation} from "../../../states/apislice";
-import {useNavigate, useParams} from "react-router-dom";
+import {useDeleteGradeImgMutation, useGetEntryQuery, useUpdateEntryMutation,} from "../../../states/apislice";
+import {useNavigate} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
-import {IoClose} from "react-icons/io5";
-import {AppUrls, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
-import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
-import {LotExpandable} from "../../HelpersJsx";
+import {IoClose} from "react-icons/io5";
+import {decidePricingGrade, filterColumns, getBase64FromServer} from "../../../components/helperFunctions";
+import {TbReport} from "react-icons/tb";
+import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
 
+
 const LithiumEntryCompletePage = ({entryId}) => {
+    const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     const {loginData} = useMyContext();
     const {profile, permissions} = loginData;
     const [form] = Form.useForm();
-    const {data, isLoading, isError, isSuccess, error} =
-        useGetOneLithiumEntryQuery({entryId}, {
-            refetchOnMountOrArgChange: true,
-            refetchOnReconnect: true
-        });
-    const [updateLithiumEntry, {
+    const [selectedLotNumber, setSelectedLotNumber] = useState(null);
+    const [imageAvailable, setImageAvailable] = useState(false);
+    // const [decision, setDecision] = useState("");
+    const {data, isLoading, isError, isSuccess, error,} =
+        useGetEntryQuery({entryId, model: "lithium"},
+            {
+                skip: entryId === undefined,
+                refetchOnMountOrArgChange: true,
+                refetchOnReconnect: true
+            }
+        );
+    const [updateEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
-    }] = useUpdateLithiumEntryMutation();
+    }] = useUpdateEntryMutation();
+
 
     const [
         deleteGradeImg,
@@ -48,16 +55,6 @@ const LithiumEntryCompletePage = ({entryId}) => {
             error: imageDeleteError,
         },
     ] = useDeleteGradeImgMutation();
-
-
-    useEffect(() => {
-        if (isImageDeleteSuccess) {
-            return message.success("File successfully deleted");
-        } else if (isImageDeleteError) {
-            const { message: deleteError } = imageDeleteError.data;
-            return message.error(deleteError);
-        }
-    }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
 
     let modalRef = useRef();
 
@@ -76,10 +73,10 @@ const LithiumEntryCompletePage = ({entryId}) => {
 
     useEffect(() => {
         if (isUpdateSuccess) {
-            message.success("Entry updated successfully");
+            return message.success("Entry updated successfully");
         } else if (isUpdateError) {
             const {message: errorMessage} = updateError.data;
-            message.error(errorMessage);
+            return message.error(errorMessage);
         }
     }, [isUpdateError, isUpdateSuccess, updateError]);
     const [formval, setFormval] = useState({
@@ -104,44 +101,16 @@ const LithiumEntryCompletePage = ({entryId}) => {
     const [previewVisible, setPreviewVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState("");
 
-    useEffect(() => {
-        if (isSuccess || isUpdateSuccess) {
-            const {data: info} = data;
-            const {entry: entr} = info;
-            const output = [
-                {
-                    ...entr
-                }
-            ]
-            setSuply(entr);
-            setLotInfo(output);
-        }
-    }, [isSuccess, isUpdateSuccess, data]);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const body = {...suply, output: lotInfo};
-        await updateLithiumEntry({body, entryId});
-
-        // navigate(-1);
-    };
-    const handleModelAdvance = async () => {
-        const body = {...suply, ...lotInfo[0]};
-        await updateLithiumEntry({body, entryId});
-        navigate(`/payment/lithium/${suply._id}`);
-    };
-
-    const handleCancel = () => {
-        setFormval({lat: "", long: "", name: "", code: ""});
-        navigate(-1);
+    const handleClose = () => {
+        setPreviewVisible(false);
     };
 
     const handlePreview = async (fileUrl) => {
-        // const fileUrl = 'https://mining-company-management-system.onrender.com/data/coltan/DSC_0494.jpg';
         const previewedUrl = await getBase64FromServer(fileUrl);
         setPreviewImage(previewedUrl);
         setPreviewVisible(true);
     };
+
     const props = {
         onChange: (info) => {
             if (info.file.status === "done") {
@@ -152,10 +121,10 @@ const LithiumEntryCompletePage = ({entryId}) => {
         },
     };
 
-    const customRequest = async ({ file, onSuccess, onError, fileName }) => {
+    const customRequest = async ({file, onSuccess, onError, lotNumber}) => {
         const formData = new FormData();
-        formData.append(fileName, file);
-        await updateLithiumEntry({entryId, body: formData});
+        formData.append(lotNumber, file);
+        await updateEntry({entryId, body: formData, model: "lithium"});
     };
 
     const beforeUpload = (file) => {
@@ -166,15 +135,52 @@ const LithiumEntryCompletePage = ({entryId}) => {
         return isPNG || Upload.LIST_IGNORE;
     };
 
-    const removeFile = async (entryId) => {
-        const body = {};
-        await deleteGradeImg({ body, entryId, model: "lithium" });
+    const removeFile = async (lotNumber, entryId) => {
+        const body = {lotNumber};
+        await deleteGradeImg({body, entryId, model: "lithium"});
+    };
+
+    useEffect(() => {
+        if (isImageDeleteSuccess) {
+            message.success("File successfully deleted");
+        } else if (isImageDeleteError) {
+            const {message: deleteError} = imageDeleteError.data;
+            message.error(deleteError);
+        }
+    }, [isImageDeleteSuccess, isImageDeleteError, imageDeleteError]);
+
+    ///////////////////////
+
+    useEffect(() => {
+        if (isSuccess || isUpdateSuccess) {
+            const {data: info} = data;
+            const {entry: entr} = info;
+            setSuply(entr);
+            setLotInfo(entr.output);
+        }
+    }, [isSuccess, data, isUpdateSuccess]);
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const body = {...suply, output: lotInfo};
+        await updateEntry({body, entryId, model: "lithium"});
+        // navigate(-1);
+    };
+    const handleModelAdvance = async () => {
+        const body = {...suply, output: lotInfo};
+        await updateEntry({body, entryId, model: "lithium"});
+        navigate(`/payment/lithium/${suply._id}/${selectedLotNumber}`);
+    };
+
+    const handleCancel = () => {
+        setFormval({lat: "", long: "", name: "", code: ""});
+        navigate(-1);
     };
 
     const isEditing = (record) => {
         return record._id === editRowKey;
     };
-
     const edit = (record) => {
         form.setFieldsValue({
             weightOut: record.weightOut,
@@ -184,6 +190,11 @@ const LithiumEntryCompletePage = ({entryId}) => {
         setEditRowKey(record._id);
         setShow(false);
     };
+    const calculatePricePerUnit = (tantal, grade) => {
+        if (tantal && grade) {
+            return (tantal * grade);
+        }
+    }
     const save = async (key) => {
         const row = await form.validateFields();
         const newData = [...lotInfo];
@@ -194,15 +205,14 @@ const LithiumEntryCompletePage = ({entryId}) => {
                 ...item,
                 ...row,
             };
-            // TODO 2: HOW TO CALCULATE MINERAL PRICE FOR LITHIUM -> DONE
-            if (item.nonSellAgreementAmount !== updatedItem.nonSellAgreementAmount) {
-                if (parseFloat(updatedItem.nonSellAgreementAmount) > parseFloat(updatedItem.cumulativeAmount)) {
+            if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
+                if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
                 }
-                if (Boolean(item.nonSellAgreementAmount) === true && Boolean(updatedItem.nonSellAgreementAmount) === false) {
+                if (Boolean(item.nonSellAgreement) === true && Boolean(updatedItem.nonSellAgreement) === false) {
                     return message.error("Non Sell Agreement Amount cannot be empty", 5);
                 }
-                if (updatedItem.nonSellAgreementAmount > 0) {
+                if (updatedItem.nonSellAgreement > 0) {
                     updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
                     updatedItem.cumulativeAmount = 0;
                 } else {
@@ -210,13 +220,37 @@ const LithiumEntryCompletePage = ({entryId}) => {
                     updatedItem.cumulativeAmount = updatedItem.weightOut;
                 }
             }
-            if (Boolean(parseFloat(updatedItem.pricePerUnit)) === true) {
-                updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(3) || null;
+            if (item.mineralGrade !== updatedItem.mineralGrade) {
+                if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
+                if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+                    return message.error("Mineral Grade cannot be empty or zero", 5);
+            }
+            if (item.ASIR !== updatedItem.ASIR) {
+                if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
+                if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
+                    return message.error("ASIR cannot be empty or zero", 5);
+            }
+            if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+                if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
+                if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+                    return message.error("USD rate cannot be empty or zero", 5);
+            }
+            if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+                if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be zero", 5);
+                if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
+                    return message.error("Tantal cannot be empty or zero", 5);
+            }
+            if (Boolean(updatedItem.tantalum) === true && updatedItem.pricingGrade && Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true && parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
+                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])).toFixed(5) || null;
+            }
+            if (Boolean(updatedItem.pricePerUnit) === true) {
+                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
-            await updateLithiumEntry({ body: updatedItem, entryId: updatedItem._id });
+            const body = {output: [updatedItem]};
+            await updateEntry({body, entryId, model: "lithium"});
         }
     };
     const handleActions = (id) => {
@@ -224,12 +258,17 @@ const LithiumEntryCompletePage = ({entryId}) => {
         SetSelectedRow(id);
     };
     const restrictedColumns = {
+        ASIR: {
+            title: "ASIR",
+            dataIndex: "ASIR",
+            key: "ASIR",
+            table: true,
+        },
         mineralGrade: {
-            title: "Grade (%)",
+            title: "Grade-KZM(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             table: true,
-            sorter: (a, b) => a.mineralgrade - b.mineralgrade,
         },
         gradeImg: {
             title: "Grade Img",
@@ -239,23 +278,29 @@ const LithiumEntryCompletePage = ({entryId}) => {
             // editTable: true,
             table: true,
             render: (_, record) => {
-                if (record.gradeImg) {
+                if (record.gradeImg?.filePath !== null) {
                     return (
-                        <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg?.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg?.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(entryId)}/>)}
+                        <div>
+                            <div className="flex items-center">
+                                <Button onClick={() => handlePreview(record.gradeImg.filePath)}
+                                        icon={<FaImage title="Preview" className="text-lg"/>}/>
+                                {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg"
+                                                                            onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                            </div>
                         </div>
                     )
                 } else {
                     return (
                         <Upload
                             beforeUpload={beforeUpload}
-                            // name={record.lotNumber}
-                            // action={`${AppUrls.server}/coltan/${entryId}`}
-                            // method="PATCH"
                             {...props}
-                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, fileName: "lithiumGradeImg"})}
-                            onRemove={() => removeFile(entryId)}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({
+                                file,
+                                onSuccess,
+                                onError,
+                                lotNumber: record.lotNumber
+                            })}
+                            onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
                         </Upload>
@@ -264,26 +309,82 @@ const LithiumEntryCompletePage = ({entryId}) => {
 
             }
         },
+        pricingGrade: {
+            title: "Pricing Grade",
+            dataIndex: "pricingGrade",
+            key: "pricingGrade",
+            table: true,
+            width: 80,
+            render: (_, record) => {
+                return (
+                    <PricingGrade
+                        value={record.pricingGrade ? record.pricingGrade : ""}
+                        lotNumber={record.lotNumber}
+                        updateEntry={updateEntry}
+                        entryId={entryId}
+                        model={"lithium"}
+                    />
+                )
+
+            }
+        },
         pricePerUnit: {
             title: "price/kg (RWF)",
             dataIndex: "pricePerUnit",
             key: "pricePerUnit",
             table: true,
-            sorter: (a, b) => a.pricePerUnit - b.pricePerUnit,
+            render: (_, record) => {
+                if (record.pricePerUnit) {
+                    return <span>{Number(record.pricePerUnit).toFixed(5)}</span>
+                }
+            }
         },
         mineralPrice: {
             title: "Price (RWF)",
             dataIndex: "mineralPrice",
             key: "mineralPrice",
             table: true,
-            sorter: (a, b) => a.mineralPrice - b.mineralPrice,
+            render: (_, record) => {
+                if (record.mineralPrice) {
+                    return <span>{Number(record.mineralPrice).toFixed(5)}</span>
+                }
+            }
+        },
+        netPrice: {
+            title: "Net Price (RWF)",
+            dataIndex: "netPrice",
+            key: "netPrice",
+            table: true,
         },
         paid: {
             title: "paid (RWF)",
             dataIndex: "paid",
             key: "paid",
             table: false,
-            sorter: (a, b) => a.paid - b.paid,
+        },
+        unpaid: {
+            title: "unpaid ($)",
+            dataIndex: "unpaid",
+            key: "unpaid",
+            table: false,
+        },
+        rmaFeeRWF: {
+            title: "RMA Fee (RWF)",
+            dataIndex: "rmaFeeRWF",
+            key: "rmaFeeRWF",
+            table: false,
+        },
+        USDRate: {
+            title: "USD Rate (rwf)",
+            dataIndex: "USDRate",
+            key: "USDRate",
+            table: false,
+        },
+        rmaFeeUSD: {
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
+            table: false,
         },
         sampleIdentification: {
             title: "Sample Identification",
@@ -301,7 +402,6 @@ const LithiumEntryCompletePage = ({entryId}) => {
             title: "non-sell agreement (KG)",
             dataIndex: "nonSellAgreement",
             key: "nonSellAgreement",
-            // editTable: true,
             table: false,
             render: (_, record) => {
                 if (record.nonSellAgreement?.weight) {
@@ -325,7 +425,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
             title: "balance (KG)",
             dataIndex: "cumulativeAmount",
             key: "cumulativeAmount",
-        }
+        },
     ];
 
     if (restrictedColumns && userPermissions && columns) {
@@ -363,10 +463,24 @@ const LithiumEntryCompletePage = ({entryId}) => {
                                   <BiSolidEditAlt className=" text-lg"/>
                                   <p>edit</p>
                               </li>
+
+                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
+
+                              {userPermissions.entry?.create ? (
+                                  <li
+                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                      onClick={() => navigate(`/lab-report/lithium/${entryId}/${record.lotNumber}`)}
+                                  >
+                                      <TbReport className=" text-lg"/>
+                                      <p>Lab Report</p>
+                                  </li>
+                              ) : null}
+
                               {userPermissions.payments?.create ? (
                                   <li
                                       className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                       onClick={() => {
+                                          setSelectedLotNumber(record.lotNumber);
                                           setShowPayModel(true);
                                       }}
                                   >
@@ -399,11 +513,6 @@ const LithiumEntryCompletePage = ({entryId}) => {
         });
     }
 
-    const handleClose = () => {
-        setPreviewVisible(false);
-        // setFile(null);
-    };
-
     const mergedColumns = columns.map((col) => {
         if (!col.editTable) {
             return col;
@@ -431,6 +540,9 @@ const LithiumEntryCompletePage = ({entryId}) => {
             <Input
                 style={{margin: 0}}
                 type={"number"}
+                onWheelCapture={(e) => {
+                    e.target.blur();
+                }}
             />
         );
         return (
@@ -448,60 +560,59 @@ const LithiumEntryCompletePage = ({entryId}) => {
     return (
         <>
             {isLoading ? (
-                <FetchingPage />
+                <FetchingPage/>
             ) : (
                 <ActionsPagesContainer
-                    title={"Lithium Details"}
-                    subTitle={"View Lithium detailes"}
+                    title={"LOT DETAILS"}
                     actionsContainer={
                         <AddComponent
                             component={
                                 <>
-                                    {isLoading ? (
-                                        <div className="flex h-32 w-full items-center justify-center bg-white">
-                                            <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col gap-6 w-full">
-                                            {/*<div*/}
-                                            {/*    className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
-                                            {/*    <p className=" font-semibold text-lg">Entry details</p>*/}
-                                            {/*</div>*/}
+                                    {/*{isLoading ? (*/}
+                                    {/*    <div className="flex h-32 w-full items-center justify-center bg-white">*/}
+                                    {/*        <ImSpinner2 className=" h-10 w-10 animate-spin text-gray-400"/>*/}
+                                    {/*    </div>*/}
+                                    {/*) : (*/}
+                                    {/*    <div className="flex flex-col gap-6 w-full">*/}
+                                    {/*        <div*/}
+                                    {/*            className="w-full  grid grid-cols-2 p-2 border-b items-center justify-between rounded-md">*/}
+                                    {/*            <p className=" font-semibold text-lg">Entry details</p>*/}
+                                    {/*        </div>*/}
 
-                                            {/*<ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
-                                            {/*    <li>*/}
-                                            {/*        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
-                                            {/*            Entry details*/}
-                                            {/*        </p>*/}
-                                            {/*        <p>Weight in: {suply?.weightIn}</p>*/}
-                                            {/*        <p>Mineral type: {suply?.name}</p>*/}
-                                            {/*         <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> */}
-                                            {/*        <p>Number of tags: {suply?.numberOfTags}</p>*/}
-                                            {/*        <p>Beneficiary: {suply?.beneficiary}</p>*/}
-                                            {/*    </li>*/}
-                                            {/*    <li>*/}
-                                            {/*        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
-                                            {/*            Company info*/}
-                                            {/*        </p>*/}
-                                            {/*        <p>Name: {suply?.companyName}</p>*/}
-                                            {/*        <p>Email: {suply.email}</p>*/}
-                                            {/*        <p>TIN Number: {suply.TINNumber}</p>*/}
-                                            {/*        <p className=" shrink">*/}
-                                            {/*            License Number: {suply.licenseNumber}*/}
-                                            {/*        </p>*/}
-                                            {/*    </li>*/}
-                                            {/*    <li>*/}
-                                            {/*        <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
-                                            {/*            Representative info*/}
-                                            {/*        </p>*/}
-                                            {/*        <p>Phone number: {suply.representativePhoneNumber}</p>*/}
-                                            {/*        <p>ID: {suply.representativeId}</p>*/}
-                                            {/*        /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
-                                            {/*    </li>*/}
+                                    {/*        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 w-full pb-6">*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Entry details*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Weight in: {suply?.weightIn}</p>*/}
+                                    {/*                <p>Mineral type: {suply?.mineralType}</p>*/}
+                                    {/*                /!* <p>Supply date: {dayjs(suply?.supplyDate).format("MMM DD, YYYY")}</p> *!/*/}
+                                    {/*                <p>Number of tags: {suply?.numberOfTags}</p>*/}
+                                    {/*                <p>Beneficiary: {suply?.beneficiary}</p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Company info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Name: {suply?.companyName}</p>*/}
+                                    {/*                <p>Email: {suply.email}</p>*/}
+                                    {/*                <p>TIN Number: {suply.TINNumber}</p>*/}
+                                    {/*                <p className=" shrink">*/}
+                                    {/*                    License Number: {suply.licenseNumber}*/}
+                                    {/*                </p>*/}
+                                    {/*            </li>*/}
+                                    {/*            <li>*/}
+                                    {/*                <p className=" text-md text-indigo-500 pb-[1px] font-semibold">*/}
+                                    {/*                    Representative info*/}
+                                    {/*                </p>*/}
+                                    {/*                <p>Phone number: {suply.representativePhoneNumber}</p>*/}
+                                    {/*                <p>ID: {suply.representativeId}</p>*/}
+                                    {/*                /!*<p>Nbr of Transporters:{suply.numberOfTransporters}</p>*!/*/}
+                                    {/*            </li>*/}
 
-                                            {/*</ul>*/}
-                                        </div>
-                                    )}
+                                    {/*        </ul>*/}
+                                    {/*    </div>*/}
+                                    {/*)}*/}
                                     <div className="w-full">
                                         <Form form={form} component={false}>
                                             <Table
@@ -513,20 +624,28 @@ const LithiumEntryCompletePage = ({entryId}) => {
                                                 }}
                                                 dataSource={lotInfo}
                                                 columns={mergedColumns}
+                                                rowClassName={(record) => {
+                                                    if (record.status === "non-sell agreement") {
+                                                        return "bg-red-200";
+                                                    }
+                                                }}
+                                                bordered={true}
                                                 expandable={{
-                                                    expandedRowRender: (record) => {
+                                                    expandedRowRender: record => {
                                                         return (
                                                             <LotExpandable
                                                                 entryId={entryId}
+                                                                record={record}
+                                                                updateEntry={updateEntry}
+                                                                userPermissions={userPermissions}
                                                                 restrictedColumns={restrictedColumns}
                                                                 isProcessing={isSending}
-                                                                record={record}
-                                                                userPermissions={userPermissions}
-                                                                updateEntry={updateLithiumEntry}
+                                                                model={"lithium"}
                                                             />
                                                         )
+
                                                     },
-                                                    rowExpandable: (record) => record.supplierName !== "Not Expandable",
+                                                    rowExpandable: (record) => record,
                                                 }}
                                                 components={{
                                                     body: {
@@ -543,6 +662,37 @@ const LithiumEntryCompletePage = ({entryId}) => {
                                         onCancel={() => setShowPayModel(!showPayModel)}
                                         destroyOnClose
                                         footer={[
+                                            <span
+                                                key="actions"
+                                                className=" flex w-full justify-center gap-4 text-base text-white"
+                                            >
+                        {isSending ? (
+                            <button
+                                key="back"
+                                className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
+                            >
+                                <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500"/>
+                                Sending
+                            </button>
+                        ) : (
+                            <button
+                                key="back"
+                                className=" bg-green-400 p-2 rounded-lg"
+                                onClick={() => handleModelAdvance()}
+                            >
+                                Confirm
+                            </button>
+                        )}
+
+                                                <button
+                                                    key="submit"
+                                                    className=" bg-red-400 p-2 rounded-lg"
+                                                    type="primary"
+                                                    onClick={() => setShowPayModel(!showPayModel)}
+                                                >
+                          Cancel
+                        </button>
+                      </span>,
                      <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)} handleConfirm={handleModelAdvance}/>
                                         ]}
                                     >
@@ -563,7 +713,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
                                     >
                                         <img
                                             alt="example"
-                                            style={{ width: "100%", height: "100%" }}
+                                            style={{width: "100%", height: "100%"}}
                                             src={previewImage}
                                         />
                                     </Modal>
@@ -574,7 +724,8 @@ const LithiumEntryCompletePage = ({entryId}) => {
                             isloading={isSending}
                         />
                     }
-                />)}
+                />
+            )}
         </>
     );
 };

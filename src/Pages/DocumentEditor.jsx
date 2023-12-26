@@ -181,7 +181,6 @@ const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
         let formData = new FormData();
         formData.append('fileName', 'sample.docx');
         formData.append('data', documentBlob);
-        console.log(documentBlob);
 
         // Replace 'your-backend-endpoint' with the actual endpoint of your backend server
         // var req = new XMLHttpRequest();
@@ -258,7 +257,6 @@ const DocumentEditorComponent = ({sfdt, fileId, filePath, showSave=true}) => {
                 // Open SFDT text in document editor
                 // console.log(sfdtContent)
                 const { sfdt } = sfdtContent;
-                console.log(sfdt)
                 // const { sfdt: sfdt2 } = sfdt;
                 if (container.documentEditor) {
                     container.documentEditor.open(sfdt);

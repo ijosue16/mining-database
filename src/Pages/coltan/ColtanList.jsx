@@ -7,9 +7,9 @@ import {useNavigate} from "react-router-dom";
 import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
+    useGetAllEntriesQuery,
+    useDeleteEntryMutation,
     useCreateEditRequestMutation,
-    useDeleteColtanEntryMutation,
-    useGetAllColtanEntriesQuery,
 } from "../../states/apislice";
 import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
 import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
@@ -35,6 +35,7 @@ const ColtanListPage = () => {
     const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
     const [dataz, setDataz] = useState([]);
+    const [numOfDocs, setNumOfDocs] = useState(null);
     const {permissions} = userData;
     // const {profile, permissions} = loginData;
     const [createEditRequest, {
@@ -44,14 +45,14 @@ const ColtanListPage = () => {
         error: createRequestError
     }] = useCreateEditRequestMutation();
     const {data, isLoading, isSuccess, isError, error} =
-        useGetAllColtanEntriesQuery("", {
+        useGetAllEntriesQuery({model: "coltan"}, {
             refetchOnMountOrArgChange: true,
             refetchOnReconnect: true
         });
     const [
-        deleteColtan,
+        deleteEntry,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
-    ] = useDeleteColtanEntryMutation();
+    ] = useDeleteEntryMutation();
 
     const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
@@ -83,9 +84,12 @@ const ColtanListPage = () => {
     useEffect(() => {
         if (isSuccess) {
             const {data: dt} = data;
-            const {entries: entrz} = dt;
+            const {entries: entrz, numberOfDocuments} = dt;
             if (entrz) {
                 setDataz(entrz);
+            }
+            if (numberOfDocuments) {
+                setNumOfDocs(numberOfDocuments);
             }
         } else if (isError) {
             const { message: errorMessage } = error.data;
@@ -105,7 +109,7 @@ const ColtanListPage = () => {
 
     const handleDelete = async () => {
         const entryId = selectedRow;
-        await deleteColtan({entryId});
+        await deleteEntry({entryId, model: "coltan"});
         SetSelectedRow("");
         setShowmodal(!showmodal);
     };
@@ -121,7 +125,6 @@ const ColtanListPage = () => {
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [requestId, setRequestId] = useState(null);
     const showModal = () => {
         setIsModalOpen(true);
     }
@@ -146,6 +149,10 @@ const ColtanListPage = () => {
             }
         }
         finalBody.recordId = record._id;
+        if (!finalBody.editableFields.length) {
+            setIsModalOpen(false);
+            return;
+        }
         await createEditRequest({body: finalBody});
         setIsModalOpen(false);
         setCheckboxValues(initialCheckboxValues);
@@ -351,19 +358,21 @@ const ColtanListPage = () => {
                                             </li>
                                         )}
                                         {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
-                                        <li
-                                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                                            onClick={() => {
-                                                if (record.supplierId) {
-                                                    navigate(`/add/invoice/${record.supplierId}/coltan/${record._id}`);
-                                                } else {
-                                                    return message.warning("You have assign supplier to this entry");
-                                                }
-                                            }}
-                                        >
-                                            <FaFileInvoiceDollar className=" text-xl" />
-                                            <p>Make invoice</p>
-                                        </li>
+                                        {permissions?.invoices?.create && (
+                                            <li
+                                                className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                                onClick={() => {
+                                                    if (record.supplierId) {
+                                                        navigate(`/add/invoice/${record.supplierId}/coltan/${record._id}`);
+                                                    } else {
+                                                        return message.warning("You have assign supplier to this entry");
+                                                    }
+                                                }}
+                                            >
+                                                <FaFileInvoiceDollar className=" text-xl" />
+                                                <p>Make invoice</p>
+                                            </li>
+                                        )}
 
 
                                         {permissions.entry?.edit ? (
@@ -471,6 +480,12 @@ const ColtanListPage = () => {
         return strings.map(toCamelCase);
     }
 
+    const handlePagination = (page, pageSize) => {
+        // const offset = pagination.current * pagination.pageSize - pagination.pageSize;
+        // const limit = pagination.pageSize;
+        // const params = {};
+    }
+
 
     return (
         <>
@@ -563,6 +578,7 @@ const ColtanListPage = () => {
                                 }}
                                 dataSource={dataz}
                                 columns={columns}
+                                pagination={{pageSize: 100, size: "small", total: numOfDocs}}
                                 expandable={{
                                     expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>,
                                     rowExpandable: record1 => record1.output?.length > 0,

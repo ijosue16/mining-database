@@ -11,9 +11,9 @@ import {FaImage, FaSave} from "react-icons/fa";
 import {toast} from "react-toastify";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {
+    useGetEntryQuery,
     useDeleteGradeImgMutation,
-    useGetOneCassiteriteEntryQuery,
-    useUpdateCassiteriteEntryMutation
+    useUpdateEntryMutation
 } from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
 import {useMyContext} from "../../../context files/LoginDatacontextProvider";
@@ -27,7 +27,7 @@ import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
-    const { permissions: userPermissions, token } = useSelector(state => state.persistedReducer?.global);
+    const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
     // const {loginData} = useMyContext();
@@ -36,16 +36,16 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
 
     const {data, isLoading, isError, isSuccess, error} =
-    useGetOneCassiteriteEntryQuery({entryId}, {
+    useGetEntryQuery({entryId, model: "cassiterite"}, {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     });
-    const [updateCassiteriteEntry, {
+    const [updateEntry, {
         isSuccess: isUpdateSuccess,
         isLoading: isSending,
         isError: isUpdateError,
         error: updateError
-    }] = useUpdateCassiteriteEntryMutation();
+    }] = useUpdateEntryMutation();
 
     const [deleteGradeImg, {
         isSuccess: isImageDeleteSuccess,
@@ -129,7 +129,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     const customRequest = async ({ file, onSuccess, onError, lotNumber }) => {
         const formData = new FormData();
         formData.append(lotNumber, file);
-        await updateCassiteriteEntry({entryId, body: formData});
+        await updateEntry({entryId, model: "cassiterite", body: formData});
     };
 
     const beforeUpload = (file) => {
@@ -170,11 +170,11 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const body = {...suply, output: lotInfo};
-        await updateCassiteriteEntry({body, entryId});
+        await updateEntry({model: "cassiterite", body, entryId});
     };
     const handleModelAdvance = async () => {
         const body = {...suply, output: lotInfo};
-        await updateCassiteriteEntry({body, entryId});
+        await updateEntry({model: "cassiterite", body, entryId});
         navigate(`/payment/cassiterite/${suply._id}/${selectedLotNumber}`);
     };
 
@@ -268,7 +268,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             setLotInfo(newData);
             setEditRowKey("");
             const body = { output: [updatedItem]};
-            await updateCassiteriteEntry({body, entryId});
+            await updateEntry({model: "cassiterite", body, entryId});
         }
     };
     const handleActions = (id) => {
@@ -283,7 +283,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             table: true,
         },
         mineralGrade: {
-            title: "Grade (%)",
+            title: "Grade-KZM(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             table: true,
@@ -297,11 +297,15 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             table: true,
             // editTable: true,
             render: (_, record) => {
-                if (record.gradeImg) {
+                if (record.gradeImg?.filePath !== null) {
                     return (
-                        <div className="flex items-center">
-                            {record.gradeImg && (<Button onClick={() => handlePreview(record.gradeImg.filePath)} icon={<FaImage title="Preview" className="text-lg"/>}/>)}
-                            {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg" onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                        <div>
+                            <div className="flex items-center">
+                                <Button onClick={() => handlePreview(record.gradeImg.filePath)}
+                                        icon={<FaImage title="Preview" className="text-lg"/>}/>
+                                {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg"
+                                                                            onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                            </div>
                         </div>
                     )
                 } else {
@@ -309,10 +313,15 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                         <Upload
                             beforeUpload={beforeUpload}
                             // name={record.lotNumber}
-                            // action={`${AppUrls.server}/cassiterite/${entryId}`}
+                            // action={`${AppUrls.server}/coltan/${entryId}`}
                             // method="PATCH"
                             {...props}
-                            customRequest={async ({file, onSuccess, onError}) => customRequest({file, onSuccess, onError, lotNumber: record.lotNumber})}
+                            customRequest={async ({file, onSuccess, onError}) => customRequest({
+                                file,
+                                onSuccess,
+                                onError,
+                                lotNumber: record.lotNumber
+                            })}
                             onRemove={() => removeFile(record.lotNumber, entryId)}
                         >
                             <Button icon={<UploadOutlined/>}/>
@@ -332,8 +341,9 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                     <PricingGrade
                         value={record.pricingGrade ? record.pricingGrade : ""}
                         lotNumber={record.lotNumber}
-                        updateEntry={updateCassiteriteEntry}
+                        updateEntry={updateEntry}
                         entryId={entryId}
+                        model={"cassiterite"}
                     />
                 )
 
@@ -364,12 +374,6 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             key: "mineralPrice",
             table: true,
         },
-        rmaFee: {
-            title: "RMA Fee ($)",
-            dataIndex: "rmaFeeUSD",
-            key: "rmaFeeUSD",
-            table: true,
-        },
         netPrice: {
             title: "Net Price ($)",
             dataIndex: "netPrice",
@@ -388,10 +392,22 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             key: "unpaid",
             table: false,
         },
+        rmaFeeRWF: {
+            title: "RMA Fee (RWF)",
+            dataIndex: "rmaFeeRWF",
+            key: "rmaFeeRWF",
+            table: false,
+        },
         USDRate: {
             title: "USD Rate (rwf)",
             dataIndex: "USDRate",
             key: "USDRate",
+            table: false,
+        },
+        rmaFeeUSD: {
+            title: "RMA Fee ($)",
+            dataIndex: "rmaFeeUSD",
+            key: "rmaFeeUSD",
             table: false,
         },
         sampleIdentification: {
@@ -662,10 +678,11 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
                                                         <LotExpandable
                                                             entryId={entryId}
                                                             record={record}
-                                                            updateEntry={updateCassiteriteEntry}
+                                                            updateEntry={updateEntry}
                                                             userPermissions={userPermissions}
                                                             restrictedColumns={restrictedColumns}
                                                             isProcessing={isSending}
+                                                            model={"cassiterite"}
                                                         />
                                                     )
                                                 },

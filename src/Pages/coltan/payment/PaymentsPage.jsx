@@ -19,11 +19,7 @@ import {
 import { toast } from "react-toastify";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import {
-  useGetOneColtanEntryQuery,
-  useGetOneCassiteriteEntryQuery,
-  useGetOneWolframiteEntryQuery,
-  useGetOneLithiumEntryQuery,
-  useGetOneBerylliumEntryQuery,
+  useGetEntryQuery,
   useGetPaymentHistoryQuery,
   useAddPaymentMutation,
   useGetAllAdvancePaymentsQuery,
@@ -45,29 +41,15 @@ import { EditFilled } from "@ant-design/icons";
 import { FaRegEdit } from "react-icons/fa";
 // import {Model} from "echarts/types/src/export/api";
 import EditPayment from "../../EditPayment";
+import CurrencyConverter from "../../CurrencyConverter";
 
 const PaymentsPage = () => {
   const { Panel } = Collapse;
   const { entryId, model, lotNumber } = useParams();
-  const getQueryFunctionForModel = (model) => {
-    switch (model) {
-      case "cassiterite":
-        return useGetOneCassiteriteEntryQuery;
-      case "wolframite":
-        return useGetOneWolframiteEntryQuery;
-      case "lithium":
-        return useGetOneLithiumEntryQuery;
-      case "beryllium":
-        return useGetOneBerylliumEntryQuery;
 
-      default:
-        return useGetOneColtanEntryQuery;
-    }
-  };
 
-  const queryFunction = getQueryFunctionForModel(model);
-
-  const { data, isLoading, isSuccess, isError, error } = queryFunction({
+  const { data, isLoading, isSuccess, isError, error } = useGetEntryQuery({
+    model,
     entryId,
   });
 
@@ -161,32 +143,58 @@ const PaymentsPage = () => {
         if (entry.beneficiary) {
           setPayement({ ...payment, beneficiary: entry.beneficiary });
         }
-        if (model === "lithium" || "beryllium") {
-            setLotPaymentInfo((prevState) => ({
-                ...prevState,
-                paid: entry.paid,
-                unpaid: entry.unpaid,
-                netPrice: entry.netPrice,
-                mineralPrice: entry.mineralPrice,
-                rmaFee: entry.rmaFeeUSD,
-              }));
 
-         
-        } else {
-            const selectedLot = entry.output.find(
-                (item) => parseInt(item.lotNumber) === parseInt(lotNumber)
-              );
-              if (selectedLot) {
-                setLotPaymentInfo((prevState) => ({
-                  ...prevState,
-                  paid: selectedLot.paid,
-                  unpaid: selectedLot.unpaid,
-                  netPrice: selectedLot.netPrice,
-                  mineralPrice: selectedLot.mineralPrice,
-                  rmaFee: selectedLot.rmaFeeUSD,
-                }));
-              }
+        const selectedLot = entry.output.find(
+            (item) => parseInt(item.lotNumber) === parseInt(lotNumber)
+        );
+
+        if (selectedLot) {
+          setLotPaymentInfo((prevState) => ({
+            ...prevState,
+            paid: selectedLot.paid,
+            unpaid: selectedLot.unpaid,
+            netPrice: selectedLot.netPrice,
+            mineralPrice: selectedLot.mineralPrice,
+            rmaFee: selectedLot.rmaFeeUSD,
+          }));
         }
+
+        // if (['cassiterite', "wolframite", "coltan"].includes(model)) {
+        //   if (selectedLot) {
+        //     setLotPaymentInfo((prevState) => ({
+        //       ...prevState,
+        //       paid: selectedLot.paid,
+        //       unpaid: selectedLot.unpaid,
+        //       netPrice: selectedLot.netPrice,
+        //       mineralPrice: selectedLot.mineralPrice,
+        //       rmaFee: selectedLot.rmaFeeUSD,
+        //     }));
+        //   }
+        // } else {
+        //   setLotPaymentInfo((prevState) => ({
+        //             ...prevState,
+        //             paid: entry.paid,
+        //             unpaid: entry.unpaid,
+        //             netPrice: entry.netPrice,
+        //             mineralPrice: entry.mineralPrice,
+        //             rmaFee: entry.rmaFeeUSD,
+        //           }));
+        // }
+
+
+
+        // if (model === "lithium" || "beryllium") {
+        //     setLotPaymentInfo((prevState) => ({
+        //         ...prevState,
+        //         paid: entry.paid,
+        //         unpaid: entry.unpaid,
+        //         netPrice: entry.netPrice,
+        //         mineralPrice: entry.mineralPrice,
+        //         rmaFee: entry.rmaFeeUSD,
+        //       }));
+        //
+        //
+        // }
       }
     }
   }, [isSuccess, data, isPaymentSuccess]);
@@ -511,6 +519,8 @@ const PaymentsPage = () => {
                   <IoAdd className=" text-xl" />
                   <p className="">Add payment</p>
                 </button>
+
+                <CurrencyConverter/>
 
                 {showForm ? (
                   <form

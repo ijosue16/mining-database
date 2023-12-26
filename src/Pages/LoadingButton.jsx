@@ -15,7 +15,7 @@ const LoadingButton = ({name, isProcessing, onClickFunction}) => {
                     Sending
                 </button>
             ) : (
-                <button className="px-6 py-1 bg-orange-300 rounded-md" onClick={onClickFunction} type="button">
+                <button className="bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[7px] px-[15px] rounded-md" onClick={onClickFunction} type="button">
                     {name}
                 </button>
             )}
