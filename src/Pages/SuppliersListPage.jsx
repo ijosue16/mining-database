@@ -27,6 +27,7 @@ import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DeleteFooter from "../components/modalsfooters/DeleteFooter";
+import ConfirmFooter from "../components/modalsfooters/ConfirmFooter";
 
 const SuppliersListPage = () => {
   
@@ -291,47 +292,18 @@ const SuppliersListPage = () => {
               }}
               destroyOnClose
               footer={[
-                <span
-                  key="actions"
-                  className=" flex w-full justify-center gap-4 text-base text-white"
-                >
-                  {isDeleting ? (
-                    <button
-                      key="back"
-                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                    >
-                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                      Sending
-                    </button>
-                  ) : (
-                    <button
-                      key="back"
-                      className=" bg-green-400 p-2 rounded-lg"
-                      onClick={() => {
-                        navigate(`/due-diligence-report/${supplierId}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`);
-                        setStartDate("");
-                        setEndDate("");
-                        setSupplierId("");
+                <ConfirmFooter key={"date_actions"} isSending={isDeleting} defText={"Confirm"} dsText={"Sending"} handleCancel={() =>{ 
+                  setStartDate();
+                  setEndDate();
+                setSupplierId();
+                SetDateModal(!dateModal);
+              }} handleConfirm={() => {
+                navigate(`/due-diligence-report/${supplierId}/${encodeURIComponent(startDate)}/${encodeURIComponent(endDate)}`);
+                setStartDate("");
+                setEndDate("");
+                setSupplierId("");
 
-                      }}
-                    >
-                      send
-                    </button>
-                  )}
-                  <button
-                    key="submit"
-                    className=" bg-red-400 p-2 rounded-lg"
-                    type="primary"
-                    onClick={() =>{ 
-                      setStartDate();
-                      setEndDate();
-                    setSupplierId();
-                    SetDateModal(!dateModal);
-                  }}
-                  >
-                    Cancel
-                  </button>
-                </span>,
+              }}/>
               ]}
             >
               <h2 className="modal-title text-center font-bold text-lg">

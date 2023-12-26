@@ -144,7 +144,7 @@ const EntriesListPage = () => {
                             onOk={() => handleDelete(selectedRow)}
                             onCancel={() => setShowmodal(!showmodal)}
                             destroyOnClose
-                            footer={[
+                            
                                 <span key="actions" className=" flex w-full justify-center gap-4 text-base text-white">
                                     <button key="back" className=" bg-green-400 p-2 rounded-lg" onClick={handleDelete}>
                                         Confirm

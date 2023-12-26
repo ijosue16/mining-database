@@ -17,6 +17,7 @@ import EditShipment from "./EditShipment";
 import {HiOutlineClipboardDocumentCheck} from "react-icons/hi2";
 import {DownloadShipmentReport} from "../HelpersJsx";
 import { useSelector } from "react-redux";
+import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 
 
 const ShipmentPage = () => {
@@ -441,29 +442,13 @@ const ShipmentPage = () => {
                             }}
                             destroyOnClose
                             footer={[
-                                <span
-                                    key="actions"
-                                    className=" flex w-full justify-center gap-4 text-base text-white"
-                                >
-                                      <button
-                                          key="back"
-                                          className=" bg-green-400 p-2 rounded-lg"
-                                          onClick={handleDelete}
-                                      >
-                                          Confirm
-                                      </button>
-                                    <button
-                                        key="submit"
-                                        className=" bg-red-400 p-2 rounded-lg"
-                                        type="primary"
-                                        onClick={() => {
-                                            setShowmodal(!showmodal);
-                                            SetSelectedRow({id: null, name: "", date: ""});
-                                        }}
-                                    >
-                                    Cancel
-                                  </button>
-                                </span>,
+                                <DeleteFooter key={"actions"} isDeleting={isDeleting}
+                                defText={"Delete"} 
+                                dsText={"Deleting"}
+                                 handleCancel={() => {
+                                 setShowmodal(!showmodal);
+                                 SetSelectedRow("");
+                               }} handleDelete={handleDelete}/>
                             ]}
                         >
                             <h2 className="modal-title text-center font-bold text-xl">
