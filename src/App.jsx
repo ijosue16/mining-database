@@ -97,6 +97,7 @@ import SuppliersDueDiligence from "./Pages/SuppliersDueDiligence";
 import StyleTestPage from './test elements/DummyPage';
 import UnauthorizedPage from './Pages/UnauthorizedPage';
 import ParentComponent from './test elements/ParentComponentTest';
+import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm';
 
 function App() {
 
@@ -136,6 +137,7 @@ function App() {
 
                                     {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
                                     <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
+                                    <Route path='/entry/add/coltan/test' element={<ColtanEntryDynamicForm/>}/>
                                     <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
                                     <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
                                     <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>

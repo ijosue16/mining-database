@@ -17,7 +17,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import {validateWeightInEntry} from "../../../components/helperFunctions";
 
-const ColtanEntryForm = () => {
+const ColtanEntryDynamicForm = () => {
   let sup = [""];
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
@@ -32,25 +32,26 @@ const ColtanEntryForm = () => {
     },
   ] = useCreateEntryMutation();
   const [formval, setFormval] = useState({
-    weightIn: "",
     companyName: "",
-    licenseNumber: "",
-    TINNumber: "",
     email: "",
-    supplierId: "",
+    TINNumber: "",
+    licenseNumber: "",
     companyRepresentative: "",
     representativeId: "",
     representativePhoneNumber: "",
+    mineralType: "coltan",
     supplyDate: "",
     time: "",
+    weightIn: "",
     numberOfTags: "",
-    mineTags: "",
-    negociantTags: "",
-    mineralType: "coltan",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
     beneficiary: "",
+    mineTags: "",
+    supplierId: "",
+  //   negociantTags: "",
+  //   mineralgrade: "",
+  //   mineralprice: "",
+  //   shipmentnumber: "",
+  //   beneficiary: "",
     isSupplierBeneficiary: false,
   });
   const [lotDetails, setlotDetails] = useState([
@@ -199,30 +200,32 @@ const ColtanEntryForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createColtanEntry({ body, model: "coltan" });
-    navigate(-1);
+    console.log(body)
+    // await createColtanEntry({ body, model: "coltan" });
+    // navigate(-1);
   };
   const handleCancel = () => {
     setFormval({
-      weightIn: "",
       companyName: "",
-      licenseNumber: "",
-      TINNumber: "",
       email: "",
-      supplierId: "",
+      TINNumber: "",
+      licenseNumber: "",
       companyRepresentative: "",
       representativeId: "",
       representativePhoneNumber: "",
+      mineralType: "coltan",
       supplyDate: "",
       time: "",
+      weightIn: "",
       numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "coltan",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
+      mineTags: "",
+      supplierId: "",
+    //   negociantTags: "",
+    //   mineralgrade: "",
+    //   mineralprice: "",
+    //   shipmentnumber: "",
+    //   beneficiary: "",
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
@@ -259,11 +262,108 @@ const ColtanEntryForm = () => {
     setSearchText("");
   };
 
+  const renderInputByType = (key) => {
+    switch (key) {
+      case 'beneficiary':
+        return (
+
+             <li className=" space-y-1" key='beneficiary'>
+                            <span className=" flex gap-2 items-center">
+                      <p>Beneficiary</p>
+                      <span
+                        className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
+                          checked
+                            ? " justify-end bg-green-400"
+                            : " justify-start bg-slate-400"
+                        }`}
+                        onClick={handleCheck}
+                      >
+                        <span className={` w-4 h- border bg-white rounded-full `}/>
+                      </span>
+                    </span>
+                    <input
+                      type="text"
+                      autoComplete="off"
+                      disabled={checked}
+                      className="focus:outline-none p-2 border rounded-md w-full"
+                      name="beneficiary"
+                      id="beneficiary"
+                      value={formval.beneficiary || ""}
+                      onChange={handleEntry}
+                    />      
+            </li>
+        );
+      case 'time':
+        return (
+            <li className=" space-y-1" key='time'>
+                { <p className="pl-1">Time</p>}
+        <TimePicker
+          onChange={handleAddTime}
+          format={"HH:mm"}
+          id="time"
+          name="time"
+          className=" focus:outline-none p-2 border rounded-md w-full"
+        />
+        </li>
+        );
+      case 'supplyDate':
+        return (
+            <li className=" space-y-1" key='supplyDate'>
+                { <p className="pl-1">supplyDate</p>}
+        <DatePicker
+          onChange={handleAddDate}
+          id="supplyDate"
+          name="supplyDate"
+          className=" focus:outline-none p-2 border rounded-md w-full"
+        />
+        </li>
+     
+        );
+        case 'mineralType':
+            return(
+                <li className=" space-y-1" key='mineralType'>
+                { <p className="pl-1">mineralType</p>}    
+                <input
+                type="text"
+                autoComplete="off"
+                className="focus:outline-none p-2 border rounded-md w-full"
+                name='mineralType'
+                value={formval.mineralType || ""}
+                disabled
+                onChange={handleEntry}
+              />   
+              </li>
+            );
+            case 'mineTags':
+            case 'supplierId':
+            case 'isSupplierBeneficiary':
+                return(
+                    null
+                )
+      default:
+        return (
+            <li className=" space-y-1" key={key}>
+            { <p className="pl-1">{key}</p>}    
+          <input
+            type="text"
+            autoComplete="off"
+            className="focus:outline-none p-2 border rounded-md w-full"
+            name={key}
+            value={formval[key] || ""}
+            onChange={handleEntry}
+          />
+          </li>
+        );
+    }
+  };
+
+
+
   return (
     <>
       <ActionsPagesContainer
-        title={"Register coltan entry"}
-        subTitle={"Add new coltan entry"}
+        title={"Register coltan entry test"}
+        subTitle={"Add new coltan entry test"}
         actionsContainer={ 
           <AddComponent
             component={
@@ -347,6 +447,13 @@ const ColtanEntryForm = () => {
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {/* CONTAINER WITH THE INITIAL DATA FORM */}
+                  {Object.keys(formval).map((key) =>(
+                 renderInputByType(key)
+                  ))
+
+                  }
+
+{/* 
                   <li className=" space-y-1">
                     <p className="pl-1">Company name</p>
                     <input
@@ -457,8 +564,8 @@ const ColtanEntryForm = () => {
                     <TimePicker
                       onChange={handleAddTime}
                       format={"HH:mm"}
-                      id="date"
-                      name="date"
+                      id="time"
+                      name="time"
                       className=" focus:outline-none p-2 border rounded-md w-full"
                     />
                   </li>
@@ -514,7 +621,7 @@ const ColtanEntryForm = () => {
                       value={formval.beneficiary || ""}
                       onChange={handleEntry}
                     />
-                  </li>
+                  </li> */}
 
                   <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                     {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
@@ -571,4 +678,4 @@ const ColtanEntryForm = () => {
     </>
   );
 };
-export default ColtanEntryForm;
+export default ColtanEntryDynamicForm;
