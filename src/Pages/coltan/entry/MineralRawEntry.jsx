@@ -1,8 +1,8 @@
-import React, { Fragment, useEffect, useState, useRef, useReducer } from "react";
-import { formReducer,INITIAL_STATE,ACTION } from "./mineralRawEntryReducer";
+import React, { useEffect, useState, useRef, useReducer } from "react";
+import { formReducer, INITIAL_STATE, ACTION } from "./mineralRawEntryReducer";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker, Spin, message } from "antd";
+import { DatePicker, TimePicker } from "antd";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
@@ -11,8 +11,6 @@ import {
   useGetAllSuppliersQuery,
   useCreateEntryMutation,
 } from "../../../states/apislice";
-import { FiSearch } from "react-icons/fi";
-import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { useNavigate, useParams } from "react-router-dom";
@@ -23,7 +21,7 @@ import {
 } from "../../../components/helperFunctions";
 
 const MineralRawEntry = () => {
-  const {model}=useParams();
+  const { model } = useParams();
   let sup = [""];
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
@@ -38,14 +36,13 @@ const MineralRawEntry = () => {
     },
   ] = useCreateEntryMutation();
 
-  const [admin, setAdmin] = useState({ role: "admin" });
-  const [state, dispatch] =useReducer(formReducer, INITIAL_STATE)
+  const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {
     if (!modalRef.current || !modalRef.current.contains(event.target)) {
-      dispatch({type:ACTION.DROP_DOWN_OUT})
+      dispatch({ type: ACTION.DROP_DOWN_OUT });
     }
   };
 
@@ -58,7 +55,7 @@ const MineralRawEntry = () => {
 
   useEffect(() => {
     // Update state when the route parameter changes
-    dispatch({type:ACTION.SET_MODEL, payload:model});
+    dispatch({ type: ACTION.SET_MODEL, payload: model });
   }, [model]);
 
   if (isSuccess) {
@@ -68,35 +65,73 @@ const MineralRawEntry = () => {
   }
 
   const handleEntry = (e) => {
- dispatch({type:ACTION.HANDLE_ENTRY, payload: { name: e.target.name, value: e.target.value },})
+    dispatch({
+      type: ACTION.HANDLE_ENTRY,
+      payload: { name: e.target.name, value: e.target.value },
+    });
   };
 
   const handleAddDate = (e) => {
-    dispatch({type:ACTION.ADD_DATE ,payload:e});
+    dispatch({ type: ACTION.ADD_DATE, payload: e });
   };
 
   const handleAddTime = (e) => {
-    dispatch({type:ACTION.ADD_TIME ,payload:e});
+    dispatch({ type: ACTION.ADD_TIME, payload: e });
   };
 
   const handleAddLot = () => {
-   dispatch({type:ACTION.ADD_LOT })
+    dispatch({ type: ACTION.ADD_LOT });
   };
 
   // TODO: validate weightIn entry
   const handleLotEntry = (index, e) => {
     validateWeightInEntry(index, state.lotDetails, e, state.formval.weightIn);
-    dispatch({type:ACTION.HANDLE_LOT_ENTRY ,payload:{name:e.target.name,value:e.target.value,index:index}})
+    dispatch({
+      type: ACTION.HANDLE_LOT_ENTRY,
+      payload: { name: e.target.name, value: e.target.value, index: index },
+    });
   };
 
   const handleLRemoveLot = (index) => {
-dispatch({type:ACTION.REMOVE_LOT ,payload:index})
+    dispatch({ type: ACTION.REMOVE_LOT, payload: index });
   };
 
   const handleCheck = () => {
-    dispatch({type:ACTION.HANDLE_CHECK })
-};
-  
+    dispatch({ type: ACTION.HANDLE_CHECK });
+  };
+
+  const result = isTotalWeightGreater(state.lotDetails, state.formval.weightIn);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const body = { ...state.formval, output: state.lotDetails };
+    // console.log(body);
+    console.log({ body, model });
+    // await createColtanEntry({ body, model });
+    dispatch({ type: ACTION.RETURN_TO_INITIAL });
+    // navigate(-1);
+  };
+  const handleCancel = () => {
+    dispatch({ type: ACTION.RETURN_TO_INITIAL });
+  };
+
+  const filteredSuppliers = sup.filter((supplier) => {
+    const companyName = supplier.companyName || "";
+    return companyName.toLowerCase().includes(state.searchText.toLowerCase());
+  });
+
+  const handleSearchInputChange = (e) => {
+    dispatch({ type: ACTION.SEARCH_TEXT, payload: e.target.value });
+  };
+
+  const handleSupplierSelect = (supplier) => {
+    const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
+    dispatch({
+      type: ACTION.HANDLE_SUPPLIER_SELECT,
+      payload: { chosenSupplier, supplier },
+    });
+  };
+
   const renderInputByType = (key) => {
     switch (key) {
       case "beneficiary":
@@ -106,7 +141,7 @@ dispatch({type:ACTION.REMOVE_LOT ,payload:index})
               <p>{FormatTolabelCase("beneficiary")}</p>
               <span
                 className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
-                    state.checked
+                  state.checked
                     ? " justify-end bg-green-400"
                     : " justify-start bg-slate-400"
                 }`}
@@ -132,7 +167,9 @@ dispatch({type:ACTION.REMOVE_LOT ,payload:index})
           <li className=" space-y-1" key="time">
             {<p className="pl-1">{FormatTolabelCase("time")}</p>}
             <TimePicker
-              value={state.formval.time ? dayjs(state.formval.time, "HH:mm") : null}
+              value={
+                state.formval.time ? dayjs(state.formval.time, "HH:mm") : null
+              }
               onChange={handleAddTime}
               format={"HH:mm"}
               id="time"
@@ -146,7 +183,11 @@ dispatch({type:ACTION.REMOVE_LOT ,payload:index})
           <li className=" space-y-1" key="supplyDate">
             {<p className="pl-1">{FormatTolabelCase("supplyDate")}</p>}
             <DatePicker
-              value={state.formval.supplyDate ? dayjs(state.formval.supplyDate) : null}
+              value={
+                state.formval.supplyDate
+                  ? dayjs(state.formval.supplyDate)
+                  : null
+              }
               onChange={handleAddDate}
               id="supplyDate"
               name="supplyDate"
@@ -190,37 +231,6 @@ dispatch({type:ACTION.REMOVE_LOT ,payload:index})
     }
   };
 
-  const result = isTotalWeightGreater(state.lotDetails, state.formval.weightIn);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const body = { ...state.formval, output: state.lotDetails };
-    // console.log(body);
-    console.log({ body, model })
-    // await createColtanEntry({ body, model });
-    dispatch({type:ACTION.RETURN_TO_INITIAL });
-    // navigate(-1);
-    
-  };
-  const handleCancel = () => {
-    dispatch({type:ACTION.RETURN_TO_INITIAL });
-  };
-
-  const filteredSuppliers = sup.filter((supplier) => {
-    const companyName = supplier.companyName || "";
-    return companyName.toLowerCase().includes(state.searchText.toLowerCase());
-  });
-
-  const handleSearchInputChange = (e) => {
-    dispatch({type:ACTION.SEARCH_TEXT ,payload:e.target.value});
-
-  };
-
-  const handleSupplierSelect = (supplier) => {
-    const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
-dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}})
-  };
-
   return (
     <>
       <ActionsPagesContainer
@@ -241,7 +251,7 @@ dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}}
                         <div
                           className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
                           onClick={() => {
-                           dispatch({type:ACTION.DROP_DOWN })
+                            dispatch({ type: ACTION.DROP_DOWN });
                           }}
                         >
                           <p className=" ">
@@ -314,7 +324,9 @@ dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}}
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {/* CONTAINER WITH THE INITIAL DATA FORM */}
-                  {Object.keys(state.formval).map((key) => renderInputByType(key))}
+                  {Object.keys(state.formval).map((key) =>
+                    renderInputByType(key)
+                  )}
 
                   <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                     {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
@@ -351,7 +363,9 @@ dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}}
                           <HiPlus
                             onClick={handleAddLot}
                             className={`${
-                              state.lotDetails.length - 1 !== index ? "hidden" : ""
+                              state.lotDetails.length - 1 !== index
+                                ? "hidden"
+                                : ""
                             }`}
                           />
                         </div>
