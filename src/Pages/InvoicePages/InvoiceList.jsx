@@ -1,6 +1,5 @@
 import React, {useEffect,useState,useRef} from "react";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import { Table,Modal } from "antd";
 import { useGetSuppliersInvoiceQuery, useGetAllInvoicesQuery } from "../../states/apislice";
 import dayjs from "dayjs";
@@ -22,8 +21,6 @@ const InvoiceList = () => {
         refetchOnReconnect: true,
     });
     // const { data, isLoading, isSuccess, isError, error } = useGetAllInvoicesQuery();
-    const { loginData } = useMyContext();
-    const{profile,permissions}=loginData;
     const [showActions, SetShowActions] = useState(false);
     const [selectedRow, SetSelectedRow] = useState(null);
     const [showmodal, setShowmodal] = useState(false);

@@ -4,7 +4,6 @@ import isBetween from "dayjs/plugin/isBetween"
 import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
 import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
-import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
     useGetAllEntriesQuery,
@@ -517,7 +516,7 @@ const ColtanListPage = () => {
                                 Confirm Delete
                             </h2>
                             <p className=" text-lg">
-                                Are you sure you want to delete transaction with:
+                                Are you sure you want to delete entry with:
                             </p>
                             <p className=" text-lg">{`company name: ${selectedRowInfo.name}`}</p>
                             <p className=" text-lg">{`Supply date: ${dayjs(

@@ -3,17 +3,19 @@ import {useGetAllEditRequestsQuery, useUpdateEditRequestMutation} from "../state
 import ListContainer from "../components/Listcomponents/ListContainer";
 import {ImSpinner2} from "react-icons/im";
 import Countdown from "react-countdown";
-import {Table, message} from "antd";
+import {message, Table} from "antd";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
-import { SocketContext } from "../context files/socket";
+import {SocketContext} from "../context files/socket";
 import {toInitialCase} from "../components/helperFunctions";
+import {useSelector} from "react-redux";
 
 dayjs.extend(localizedFormat);
 
 
 const EditRequests = () => {
     const socket = useContext(SocketContext);
+    const { permissions } = useSelector(state => state.persistedReducer?.global);
     const {data, isSuccess, isLoading} = useGetAllEditRequestsQuery("", {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
@@ -116,6 +118,7 @@ const EditRequests = () => {
             title: "Status",
             dataIndex: "requestStatus",
             key: "requestStatus",
+            align: "center",
             sorter: (a, b) => a.username.localeCompare(b.username),
             render: (_, record) => {
                 let item;
@@ -139,20 +142,24 @@ const EditRequests = () => {
             render: (_, record) => {
                 return (
                     <span className="flex gap-1">
-                        <button
-                            disabled={record.requestStatus !== "pending"}
-                            className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
-                            onClick={() => handleUpdate({decision: true}, record)}
-                        >
-                            Authorize
-                        </button>
-                        <button
-                            disabled={record.requestStatus !== "pending"}
-                            className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"
-                            onClick={() => handleUpdate({decision: false}, record)}
-                        >
-                            Reject
-                        </button>
+                        {permissions.editRequests.authorize && (
+                            <button
+                                disabled={record.requestStatus !== "pending"}
+                                className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
+                                onClick={() => handleUpdate({decision: true}, record)}
+                            >
+                                Authorize
+                            </button>
+                        )}
+                        {permissions.editRequests.reject && (
+                            <button
+                                disabled={record.requestStatus !== "pending"}
+                                className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"
+                                onClick={() => handleUpdate({decision: false}, record)}
+                            >
+                                Reject
+                            </button>
+                        )}
                     </span>
                 )
             }

@@ -35,6 +35,7 @@ const EditShipment = ({record: shipment}) => {
         averagePrice: null,
         averageGrade: null,
         netWeight: null,
+        averageNiobium: null,
     })
 
 
@@ -73,12 +74,13 @@ const EditShipment = ({record: shipment}) => {
             const {shipmentLots: shipmentComponents, shipment} = data.data;
             setShipmentLots(shipmentComponents);
             if (shipment) {
-                const {averagePrice, averageGrade, netWeight} = shipment;
+                const {averagePrice, averageGrade, netWeight, averageNiobium} = shipment;
                 if (averagePrice || averageGrade || netWeight) {
                     setShipmentInfo({
                         averagePrice,
                         averageGrade,
                         netWeight,
+                        averageNiobium
                     })
                 }
             }
@@ -484,9 +486,10 @@ const EditShipment = ({record: shipment}) => {
                         <>
                             <Form form={form} component={false}>
                                 <div>
-                                    <p className="font-semibold p-2">Net Weight: {parseFloat(shipmentInfo.netWeight).toFixed(4)}</p>
+                                    <p className="font-semibold p-2">Total Weight: {parseFloat(shipmentInfo.netWeight).toFixed(4)}</p>
                                     <p className="font-semibold p-2">Average Grade: {parseFloat(shipmentInfo.averageGrade).toFixed(4)}</p>
                                     <p className="font-semibold p-2">Average Price: {parseFloat(shipmentInfo.averagePrice).toFixed(4)}</p>
+                                    <p className="font-semibold p-2">Average Niobium: {parseFloat(shipmentInfo.averageNiobium).toFixed(4)}</p>
                                 </div>
                                 <Table
                                     loading={{

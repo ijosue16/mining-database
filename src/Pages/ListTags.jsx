@@ -152,8 +152,7 @@ const ListTags = () => {
         <>
             <ListContainer
                 title={"List of Tags"}
-                // isAllowed={userPermissions.tags?.create}
-                isAllowed={true}
+                isAllowed={userPermissions.tags?.create}
                 navLinktext={"add/tag"}
                 navtext={"Add New Tag"}
                 table={

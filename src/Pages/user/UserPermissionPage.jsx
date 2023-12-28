@@ -19,7 +19,7 @@ const UserPermissionPage = () => {
   // const store = useSelector((state) => {
   // });
   const [isEdit, setIsEdit] = useState(false);
-  const [userData, setUserData] = useState({ name: "", role: "" });
+  const [userData, setUserData] = useState({ name: "", role: "", active: null });
   const [permissions, setPermissions] = useState({});
 
   const { data, isLoading, isSuccess, isError, error } = useGetOneUserQuery(
@@ -53,44 +53,11 @@ const UserPermissionPage = () => {
     if (isSuccess) {
       const { user } = data.data;
       const { permissions } = data.data.user;
-      setUserData(user);
+      setUserData(prevState => ({...prevState, name: user.name, role: user.role, active: user.active}));
       setPermissions(permissions);
     }
   }, [isSuccess, data]);
-  // const initialPermissions = {
-  //   entry: {
-  //     view: true,
-  //     create: true,
-  //     edit: true,
-  //     delete: false,
-  //   },
-  //   suppliers: {
-  //     view: true,
-  //     create: true,
-  //     edit: true,
-  //     delete: false,
-  //   },
-  //   buyers: {
-  //     view: false,
-  //     create: false,
-  //     edit: false,
-  //     delete: true,
-  //   },
-  //   payments: {
-  //     view: false,
-  //     create: false,
-  //     edit: false,
-  //     delete: false,
-  //   },
-  //   shipments: {
-  //     view: false,
-  //     create: false,
-  //     edit: false,
-  //     delete: false,
-  //   },
-  // };
 
-  // const [permissions, setPermissions] = useState(initialPermissions);
   const handlePermissionChange = (category, action) => {
     setPermissions((prevPermissions) => {
       const updatedPermissions = { ...prevPermissions };
@@ -103,10 +70,9 @@ const UserPermissionPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = { permissions, userData };
+    const body = { permissions, ...userData };
     await updateUser({ body, userId });
-    // localStorage.setItem('permissions',JSON.stringify(permissions));
-    // setIsEdit(false);
+    setIsEdit(false);
     navigate(-1);
   };
   const handleCancel = () => {
@@ -174,7 +140,7 @@ const UserPermissionPage = () => {
                             className="focus:outline-none p-2 border rounded-md w-fit"
                             onChange={handleChange}
                           >
-                            <option value="CEO">CEO</option>
+                            <option value="ceo">CEO</option>
                             <option value="managingDirector">
                               Managing director office
                             </option>
@@ -187,6 +153,7 @@ const UserPermissionPage = () => {
                             <option value="traceabilityOfficer">
                               Traceability office
                             </option>
+                            <option value="laboratoryOfficer">Laboratory Officer</option>
                             <option value="storekeeper">Storekeeper</option>
                           </select>
                           <label

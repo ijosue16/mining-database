@@ -2,7 +2,6 @@ import React, {useState, useRef, useEffect, useMemo, useContext} from "react";
 import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
 import { FiChevronsLeft, } from "react-icons/fi"
-import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useNavigate } from "react-router-dom";
 import {Drawer, Space, Button, Badge, notification} from "antd";
 import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useGetOneUserQuery, useGetAllEditRequestsQuery } from "../states/apislice";
@@ -95,12 +94,6 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     }, [userId, userSuccess, userDataObj, updateSuccess]);
 
     let modalRef = useRef();
-    const{loginData}=useMyContext();
-    let profile;
-    if(loginData) {
-        const{profile: info,permissions}=loginData;
-        profile = info;
-    }
     const showDrawer = () => {
         setOpen(true);
     };

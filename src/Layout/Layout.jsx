@@ -14,12 +14,23 @@ import {GoFileDirectory} from "react-icons/go";
 
 const Layout = () => {
     const { userData } = useSelector(state => state.persistedReducer.global);
+    const { permissions } = userData;
     const dispatch =useDispatch();
     const [open, setOpen] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [userSubmenuMobile, setUserSubmenuMobile] = useState(false);
     const navigate = useNavigate();
     const[userLogout,{isLoading,isSuccess,isError,error}]=useLogoutMutation();
+
+    const decideShowMenu = (permissionKey) => {
+        if (permissions && permissions[permissionKey]) {
+            Object.keys(permissions[permissionKey]).forEach(key => {
+                if (permissions[permissionKey][key]) {
+                    return true;
+                }
+            })
+        }
+    }
 
     const opennav = () => {
         setOpen(!open)
@@ -43,34 +54,35 @@ const Layout = () => {
     const menu = [
         {
             heading: "Main", hId: 1, subHeaders: [
-                { title: "Dashboard", icon: <PiSquaresFourDuotone />, id: 10,navtext:'dashboard' },
+                { title: "Dashboard", show: permissions.dashboard?.view, icon: <PiSquaresFourDuotone />, id: 10,navtext:'dashboard' },
                 {
                     title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
                     submenuItems: [
                         { title: "Chat", id: 12,navtext:'chat' },
-                        { title: "Calender", id: 13 },
-                        { title: "Email", id: 14 }], line: true
+                        // { title: "Calender", id: 13 },
+                        // { title: "Email", id: 14 }
+                    ], line: true
                 }
             ]
         },
         {
-            heading: "Entry", hId:2 , subHeaders: [
-                { title: "Coltan", icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
-                { title: "Cassiterite", icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
-                { title: "Wolframite", icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
-                { title: "Lithium", icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
-                { title: "Beryllium", icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
-                { title: "Mixed", icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
-                    { title: "Cassiterite and Coltan ", id: 86,navtext:"mixed" },
+            heading: "Entry", show: permissions?.entry.view,  hId:2 , subHeaders: [
+                { title: "Coltan", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
+                { title: "Cassiterite", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
+                { title: "Wolframite", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
+                { title: "Lithium", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
+                { title: "Beryllium", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
+                { title: "Mixed", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
+                    { title: "Cassiterite and Coltan ", show: permissions?.entry.view, id: 86,navtext:"mixed" },
                     // { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" }
                 ]},
                 // { title: "Special", icon: <PiArrowsInSimpleDuotone />, line: true, id: 21,navtext:'special' },
             ]
         },
         {
-            heading: "Shipments", hId: 3, subHeaders: [
-                { title: "Shipments list", icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
-                { title: "Add", icon: <PiFileTextDuotone />, submenu: true, id: 23,submenuItems: [
+            heading: "Shipments", show: permissions.shipments?.view, hId: 3, subHeaders: [
+                { title: "Shipments list", show: permissions.shipments?.view, icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
+                { title: "Add", show: permissions.shipments?.create && permissions.shipments?.view, icon: <PiFileTextDuotone />, submenu: true, id: 23,submenuItems: [
                     { title: "Coltan", id: 24,navtext:"shipment/add/coltan" },
                     { title: "Cassiterite", id: 25,navtext:"shipment/add/cassiterite" },
                     { title: "Wolframite", id: 26,navtext:"shipment/add/wolframite" },
@@ -82,24 +94,25 @@ const Layout = () => {
         },
                 
         {
-            heading: "Tags", hId: 79, subHeaders: [
-                { title: "Tags list", icon: <PiTagDuotone />, id: 80,navtext:"tags",line: true },
+            heading: "Tags", show: permissions.tags?.view, hId: 79, subHeaders: [
+                { title: "List Tags", show: permissions.tags?.view, icon: <PiTagDuotone />, id: 80,navtext:"tags",line: true },
+                { title: "Add", show: permissions.tags?.create && permissions.tags?.view, icon: <PiTagDuotone />, id: 80,navtext:"add/tag",line: true },
             ]
         },
 
         {
-            heading: "Suppliers", hId: 4, subHeaders: [
-                { title: "Suppliers List", icon: <PiTruckDuotone />, id: 32,navtext:"suppliers" },
-                { title: "Add", icon: <PiUserPlusDuotone />, id: 33,navtext:"add/supplier", line: true, },
+            heading: "Suppliers", show: permissions.suppliers?.view, hId: 4, subHeaders: [
+                { title: "Suppliers List", show: permissions.suppliers?.view, icon: <PiTruckDuotone />, id: 32,navtext:"suppliers" },
+                { title: "Add", show: permissions.suppliers?.create && permissions.suppliers?.view, icon: <PiUserPlusDuotone />, id: 33,navtext:"add/supplier", line: true, },
                 // { title: "Purchase Order", icon: <PiFileMinusDuotone />, id: 27,navtext:"" },
                 // { title: "Purchase Return", icon: <PiArrowsClockwiseDuotone />, line: true, id: 28,navtext:"" },
             ]
         },
 
         {
-            heading: "Buyers", hId: 81, subHeaders: [
-                { title: "Buyers", icon: <PiHandshakeDuotone />, id: 82,navtext:"buyers"},
-                { title: "Add", icon: <PiUserPlusDuotone />, id: 83,navtext:"add/buyer",line: true },
+            heading: "Buyers", show: permissions.buyers?.view, hId: 81, subHeaders: [
+                { title: "Buyers", show: permissions.buyers?.view, icon: <PiHandshakeDuotone />, id: 82,navtext:"buyers"},
+                { title: "Add", show: permissions.buyers?.create && permissions.buyers?.view, icon: <PiUserPlusDuotone />, id: 83,navtext:"add/buyer",line: true },
             ]
     },
         // {
@@ -112,16 +125,16 @@ const Layout = () => {
         //         }]
         // },
         {
-            heading: "Users", hId: 6, subHeaders: [
+            heading: "Users", hId: 6, show: permissions.users?.view, subHeaders: [
                 // { title: "Customers", icon: <PiUserDuotone />, id: 36 },
                 // { title: "Suppliers", icon: <PiUsersDuotone />, id: 37 },
-                { title: "Users", icon: <PiUserDuotone />, id: 38, navtext:'users' },
-                { title: "Add", icon: <PiUserPlusDuotone />, id: 39,navtext:"add/user", line: true, },
+                { title: "Users", show: permissions.users?.view, icon: <PiUserDuotone />, id: 38, navtext:'users' },
+                { title: "Add", show: permissions.users?.create && permissions.users?.view, icon: <PiUserPlusDuotone />, id: 39,navtext:"add/user", line: true, },
             ]
         },
         {
-            heading: "Contracts", hId: 7, subHeaders: [
-                { title: "Contracts list", icon: <PiFileTextDuotone />, id: 40,navtext:"contracts", line: true, },
+            heading: "Contracts", show: permissions.contracts?.view, hId: 7, subHeaders: [
+                { title: "Contracts list", show: permissions.contracts?.view, icon: <PiFileTextDuotone />, id: 40,navtext:"contracts", line: true, },
                 // { title: "Purchase Report", icon: <PiChartPieDuotone />, id: 41 },
                 // { title: "Inventory Report", icon: <PiBrowserDuotone />, id: 42 },
                 // { title: "Supplier Report", icon: <PiDatabaseDuotone />, id: 44 },
@@ -129,25 +142,25 @@ const Layout = () => {
             ]
         },
         {
-            heading: "Finance", hId: 8, subHeaders: [
+            heading: "Finance", show: permissions.payments?.view, hId: 8, subHeaders: [
                 {
-                    title: "Payments", icon: <PiUsersDuotone />, id: 46,navtext:"payments"
+                    title: "Payments", show: permissions.payments?.view, icon: <PiUsersDuotone />, id: 46,navtext:"payments"
                 },
                 {
-                    title: "Advanced Payment", icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment", line: true,
+                    title: "Advanced Payment", show: permissions.payments?.view, icon: <PiUsersDuotone />, id: 57,navtext:"advanced-payment", line: true,
                 },
                 // { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
             ]
         },
         {
-            heading: "File Directory", hId: 84, subHeaders: [
-                { title: "Directory", icon: <GoFileDirectory />, id: 85,navtext:"structure",line: true },
+            heading: "File Directory", show: permissions.fileDirectory?.view, hId: 84, subHeaders: [
+                { title: "Directory", show: permissions.fileDirectory?.view, icon: <GoFileDirectory />, id: 85,navtext:"structure",line: true },
             ]
         },
         {
-            heading: "Settings", hId: 9, subHeaders: [
+            heading: "Settings", show: permissions.settings?.view, hId: 9, subHeaders: [
                 {
-                    title: "Settings", icon: <PiGearDuotone />, submenu: true, id: 49, submenuItems: [
+                    title: "Settings", show: permissions.settings?.view, icon: <PiGearDuotone />, submenu: true, id: 49, submenuItems: [
                         { title: "General Settings", id: 50,navtext:"settings" },
                         // { title: "Email Settings", id: 51 },
                         // { title: "Payment Settings", id: 52 },
