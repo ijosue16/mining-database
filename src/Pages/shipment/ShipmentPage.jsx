@@ -458,7 +458,8 @@ const ShipmentPage = () => {
                             }}
                             destroyOnClose
                             footer={[
-                                <DeleteFooter key={"actions"} isDeleting={isDeleting}
+                                <DeleteFooter key={"actions"}
+                                //  isDeleting={isDeleting}
                                 defText={"Delete"} 
                                 dsText={"Deleting"}
                                  handleCancel={() => {

@@ -137,13 +137,13 @@ function App() {
                                     <Route path='/mixed' element={<MixedEntryForm/>}/>
 
                                     {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
-                                    <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
+                                    {/* <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
                                     <Route path='/entry/add/coltan/test' element={<ColtanEntryDynamicForm/>}/>
                                     <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
                                     <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
                                     <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
-                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
-                                    <Route path='/entry/add/:model' element={<BerylliumEntryForm/>}/>
+                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/> */}
+                                    <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
 
 
                                     <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>

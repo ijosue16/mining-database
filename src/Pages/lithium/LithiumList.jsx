@@ -463,7 +463,7 @@ const LithiumListPage = () => {
         <ListContainer
             title={"Lithium entries list"}
             subTitle={"Manage your lithium  entries"}
-            navLinktext={"entry/add/lithium"}
+            navLinktext={`entry/add/${"lithium"}`}
             navtext={"Add new Entry"}
             isAllowed={permissions.entry?.create}
             table={

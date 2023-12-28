@@ -15,7 +15,7 @@ export const INITIAL_STATE = {
     companyRepresentative: "",
     representativeId: "",
     representativePhoneNumber: "",
-    mineralType: "coltan",
+    mineralType: "",
     supplyDate: "",
     time: "",
     weightIn: "",
@@ -46,10 +46,19 @@ export const ACTION={
   DROP_DOWN_OUT:"DROP_DOWN_OUT",
   SEARCH_TEXT:"SEARCH_TEXT",
   RETURN_TO_INITIAL:"RETURN_TO_INITIAL",
+  SET_MODEL:"SET_MODEL",
 }
 
 export const formReducer = (state, action) => {
   switch (action.type) {
+    case "SET_MODEL":
+      return {
+        ...state,
+        formval: {
+          ...state.formval,
+          mineralType:action.payload,
+        },
+      };
     case "HANDLE_ENTRY":
       return {
         ...state,

@@ -425,7 +425,7 @@ const WolframiteListPage = () => {
         <ListContainer
             title={"Wolframite entries list"}
             subTitle={"Manage your wolframite  entries"}
-            navLinktext={"entry/add/wolframite"}
+            navLinktext={`entry/add/${"wolframite"}`}
             navtext={"Add new Entry"}
             isAllowed={userPermissions.entry?.create}
             table={

@@ -428,7 +428,7 @@ const CassiteriteListPage = () => {
         <ListContainer
             title={"Cassiterite entries list"}
             subTitle={"Manage your cassiterite  entries"}
-            navLinktext={"entry/add/cassiterite"}
+            navLinktext={`entry/add/${"cassiterite"}`}
             navtext={"Add new Entry"}
             isAllowed={permissions.entry?.create}
             table={

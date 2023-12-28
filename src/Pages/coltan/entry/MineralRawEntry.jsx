@@ -15,7 +15,7 @@ import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   FormatTolabelCase,
   isTotalWeightGreater,
@@ -23,6 +23,7 @@ import {
 } from "../../../components/helperFunctions";
 
 const MineralRawEntry = () => {
+  const {model}=useParams();
   let sup = [""];
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
@@ -54,6 +55,11 @@ const MineralRawEntry = () => {
       document.removeEventListener("click", handleClickOutside, true);
     };
   }, []);
+
+  useEffect(() => {
+    // Update state when the route parameter changes
+    dispatch({type:ACTION.SET_MODEL, payload:model});
+  }, [model]);
 
   if (isSuccess) {
     const { data: dt } = data;
@@ -189,9 +195,11 @@ dispatch({type:ACTION.REMOVE_LOT ,payload:index})
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...state.formval, output: state.lotDetails };
-    console.log(body);
-    // await createColtanEntry({ body, model: "coltan" });
+    // console.log(body);
+    console.log({ body, model })
+    // await createColtanEntry({ body, model });
     dispatch({type:ACTION.RETURN_TO_INITIAL });
+    // navigate(-1);
     
   };
   const handleCancel = () => {
@@ -216,8 +224,8 @@ dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}}
   return (
     <>
       <ActionsPagesContainer
-        title={"Register coltan entry test useReducer"}
-        subTitle={"Add new coltan entry test useReducer"}
+        title={`Register ${model} entry`}
+        subTitle={`Add new ${model} entry test`}
         actionsContainer={
           <AddComponent
             component={
