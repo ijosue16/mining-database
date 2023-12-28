@@ -1,4 +1,5 @@
-import React, { Fragment, useEffect, useState, useRef } from "react";
+import React, { Fragment, useEffect, useState, useRef, useReducer } from "react";
+import { formReducer,INITIAL_STATE,ACTION } from "./mineralRawEntryReducer";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import { DatePicker, TimePicker, Spin, message } from "antd";
@@ -17,10 +18,11 @@ import { ImSpinner2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
 import {
   FormatTolabelCase,
+  isTotalWeightGreater,
   validateWeightInEntry,
 } from "../../../components/helperFunctions";
 
-const ColtanEntryDynamicForm = () => {
+const MineralRawEntry = () => {
   let sup = [""];
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
@@ -34,45 +36,15 @@ const ColtanEntryDynamicForm = () => {
       isSuccess: isDone,
     },
   ] = useCreateEntryMutation();
-  const [formval, setFormval] = useState({
-    companyName: "",
-    email: "",
-    TINNumber: "",
-    licenseNumber: "",
-    companyRepresentative: "",
-    representativeId: "",
-    representativePhoneNumber: "",
-    mineralType: "coltan",
-    supplyDate: "",
-    time: "",
-    weightIn: "",
-    numberOfTags: "",
-    beneficiary: "",
-    mineTags: "",
-    supplierId: "",
-    //   negociantTags: "",
-    //   mineralgrade: "",
-    //   mineralprice: "",
-    //   shipmentnumber: "",
-    //   beneficiary: "",
-    isSupplierBeneficiary: false,
-  });
-  const [lotDetails, setlotDetails] = useState([
-    { lotNumber: "", weightOut: "" },
-  ]);
-  const [checked, setchecked] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedSupplierName, setSelectedSupplierName] = useState(null);
-  const [searchText, setSearchText] = useState("");
-  const [model, setModel] = useState("");
-  const [beneficial, setBeneficial] = useState("");
+
   const [admin, setAdmin] = useState({ role: "admin" });
+  const [state, dispatch] =useReducer(formReducer, INITIAL_STATE)
 
   let modalRef = useRef();
 
   const handleClickOutside = (event) => {
     if (!modalRef.current || !modalRef.current.contains(event.target)) {
-      setDropdownOpen(false);
+      dispatch({type:ACTION.DROP_DOWN_OUT})
     }
   };
 
@@ -90,112 +62,35 @@ const ColtanEntryDynamicForm = () => {
   }
 
   const handleEntry = (e) => {
-    setFormval((prevState) => ({
-      ...prevState,
-      [e.target.name]: e.target.value,
-    }));
-    if (e.target.name === "mineralType") {
-      setModel(e.target.value);
-    }
+ dispatch({type:ACTION.HANDLE_ENTRY, payload: { name: e.target.name, value: e.target.value },})
   };
 
   const handleAddDate = (e) => {
-    setFormval((prevState) => ({
-      ...prevState,
-      supplyDate: dayjs(e).format("MMM/DD/YYYY"),
-    }));
+    dispatch({type:ACTION.ADD_DATE ,payload:e});
   };
 
   const handleAddTime = (e) => {
-    setFormval((prevState) => ({
-      ...prevState,
-      time: dayjs(e).format("HH:mm"),
-    }));
+    dispatch({type:ACTION.ADD_TIME ,payload:e});
   };
-  const updateLotNumbers = () => {
-    setlotDetails((prevLotDetails) => {
-      return prevLotDetails.map((lot, index) => ({
-        ...lot,
-        lotNumber: index + 1,
-      }));
-    });
-  };
+
   const handleAddLot = () => {
-    setlotDetails((prevLotDetails) => [
-      ...prevLotDetails,
-      { lotNumber: "", weightOut: "" },
-    ]);
-    updateLotNumbers();
+   dispatch({type:ACTION.ADD_LOT })
   };
 
   // TODO: validate weightIn entry
   const handleLotEntry = (index, e) => {
-    validateWeightInEntry(index, lotDetails, e, formval.weightIn);
-    const values = [...lotDetails];
-    values[index][e.target.name] = e.target.value;
-    values[index].lotNumber = index + 1;
-    setlotDetails(values);
+    validateWeightInEntry(index, state.lotDetails, e, state.formval.weightIn);
+    dispatch({type:ACTION.HANDLE_LOT_ENTRY ,payload:{name:e.target.name,value:e.target.value,index:index}})
   };
 
   const handleLRemoveLot = (index) => {
-    const values = [...lotDetails];
-    values.splice(index, 1);
-    values.forEach((lot, i) => {
-      lot.lotNumber = i + 1;
-    });
-    setlotDetails(values);
+dispatch({type:ACTION.REMOVE_LOT ,payload:index})
   };
 
   const handleCheck = () => {
-    setchecked((prev) => !prev);
-    if (Boolean(checked) === false) {
-      setFormval({
-        ...formval,
-        beneficiary: beneficial,
-        isSupplierBeneficiary: true,
-      });
-    } else if (Boolean(checked) === true) {
-      setFormval({ ...formval, beneficiary: "", isSupplierBeneficiary: false });
-    }
-  };
-
-  function calculateTotalWeight(arr) {
-    // Ensure the input is an array
-    if (!Array.isArray(arr)) {
-      throw new Error("Input must be an array");
-    }
-
-    // Use reduce to sum the weightOut values
-    const totalWeight = arr.reduce((sum, entry) => {
-      // Convert the weightOut value to a number before adding
-      const weight = parseFloat(entry.weightOut);
-
-      // Check if the conversion is successful and add to the sum
-      if (!isNaN(weight)) {
-        return sum + weight;
-      } else {
-        return sum;
-      }
-    }, 0);
-
-    return totalWeight;
-  }
-
-  function isTotalWeightGreater(data, weightIn) {
-    const totalWeight = calculateTotalWeight(data);
-
-    // Convert weightIn to a number
-    const numericWeightIn = parseFloat(weightIn);
-
-    // Check if the conversion is successful and compare totalWeight with weightIn
-    if (!isNaN(numericWeightIn) && totalWeight > numericWeightIn) {
-      // message.error("Weight out can't be greater than weight in")
-      return true;
-    } else {
-      return false;
-    }
-  }
-
+    dispatch({type:ACTION.HANDLE_CHECK })
+};
+  
   const renderInputByType = (key) => {
     switch (key) {
       case "beneficiary":
@@ -205,7 +100,7 @@ const ColtanEntryDynamicForm = () => {
               <p>{FormatTolabelCase("beneficiary")}</p>
               <span
                 className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
-                  checked
+                    state.checked
                     ? " justify-end bg-green-400"
                     : " justify-start bg-slate-400"
                 }`}
@@ -217,11 +112,11 @@ const ColtanEntryDynamicForm = () => {
             <input
               type="text"
               autoComplete="off"
-              disabled={checked}
+              disabled={state.checked}
               className="focus:outline-none p-2 border rounded-md w-full"
               name="beneficiary"
               id="beneficiary"
-              value={formval.beneficiary || ""}
+              value={state.formval.beneficiary || ""}
               onChange={handleEntry}
             />
           </li>
@@ -231,7 +126,7 @@ const ColtanEntryDynamicForm = () => {
           <li className=" space-y-1" key="time">
             {<p className="pl-1">{FormatTolabelCase("time")}</p>}
             <TimePicker
-              value={formval.time ? dayjs(formval.time, "HH:mm") : null}
+              value={state.formval.time ? dayjs(state.formval.time, "HH:mm") : null}
               onChange={handleAddTime}
               format={"HH:mm"}
               id="time"
@@ -245,7 +140,7 @@ const ColtanEntryDynamicForm = () => {
           <li className=" space-y-1" key="supplyDate">
             {<p className="pl-1">{FormatTolabelCase("supplyDate")}</p>}
             <DatePicker
-              value={formval.supplyDate ? dayjs(formval.supplyDate) : null}
+              value={state.formval.supplyDate ? dayjs(state.formval.supplyDate) : null}
               onChange={handleAddDate}
               id="supplyDate"
               name="supplyDate"
@@ -262,7 +157,7 @@ const ColtanEntryDynamicForm = () => {
               autoComplete="off"
               className="focus:outline-none p-2 border rounded-md w-full"
               name="mineralType"
-              value={formval.mineralType || ""}
+              value={state.formval.mineralType || ""}
               disabled
               onChange={handleEntry}
             />
@@ -281,7 +176,7 @@ const ColtanEntryDynamicForm = () => {
               autoComplete="off"
               className="focus:outline-none p-2 border rounded-md w-full"
               name={key}
-              value={formval[key] || ""}
+              value={state.formval[key] || ""}
               onChange={handleEntry}
             />
           </li>
@@ -289,78 +184,40 @@ const ColtanEntryDynamicForm = () => {
     }
   };
 
-  const result = isTotalWeightGreater(lotDetails, formval.weightIn);
+  const result = isTotalWeightGreater(state.lotDetails, state.formval.weightIn);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = { ...formval, output: lotDetails };
+    const body = { ...state.formval, output: state.lotDetails };
     console.log(body);
     // await createColtanEntry({ body, model: "coltan" });
-    // navigate(-1);
+    dispatch({type:ACTION.RETURN_TO_INITIAL });
+    
   };
   const handleCancel = () => {
-    setFormval({
-      companyName: "",
-      email: "",
-      TINNumber: "",
-      licenseNumber: "",
-      companyRepresentative: "",
-      representativeId: "",
-      representativePhoneNumber: "",
-      mineralType: "coltan",
-      supplyDate: "",
-      time: "",
-      weightIn: "",
-      numberOfTags: "",
-      beneficiary: "",
-      mineTags: "",
-      supplierId: "",
-      //   negociantTags: "",
-      //   mineralgrade: "",
-      //   mineralprice: "",
-      //   shipmentnumber: "",
-      //   beneficiary: "",
-      isSupplierBeneficiary: false,
-    });
-    setlotDetails([{ lotNumber: "", weightOut: "" }]);
+    dispatch({type:ACTION.RETURN_TO_INITIAL });
   };
 
   const filteredSuppliers = sup.filter((supplier) => {
     const companyName = supplier.companyName || "";
-    return companyName.toLowerCase().includes(searchText.toLowerCase());
+    return companyName.toLowerCase().includes(state.searchText.toLowerCase());
   });
 
   const handleSearchInputChange = (e) => {
-    setSearchText(e.target.value);
+    dispatch({type:ACTION.SEARCH_TEXT ,payload:e.target.value});
+
   };
 
   const handleSupplierSelect = (supplier) => {
-    setSelectedSupplierName(supplier.companyName);
     const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
-    if (chosenSupplier) {
-      setFormval({
-        ...formval,
-        companyName: chosenSupplier.companyName,
-        licenseNumber: chosenSupplier.licenseNumber,
-        TINNumber: chosenSupplier.TINNumber,
-        email: chosenSupplier.email,
-        supplierId: chosenSupplier._id,
-        companyRepresentative: chosenSupplier.companyRepresentative,
-        representativePhoneNumber: chosenSupplier.phoneNumber,
-      });
-      setBeneficial(chosenSupplier.companyRepresentative);
-    }
-    setchecked(false);
-    setFormval((prev) => ({ ...prev, supplierId: supplier._id }));
-    setDropdownOpen(false);
-    setSearchText("");
+dispatch({type:ACTION.HANDLE_SUPPLIER_SELECT ,payload:{chosenSupplier,supplier}})
   };
 
   return (
     <>
       <ActionsPagesContainer
-        title={"Register coltan entry test"}
-        subTitle={"Add new coltan entry test"}
+        title={"Register coltan entry test useReducer"}
+        subTitle={"Add new coltan entry test useReducer"}
         actionsContainer={
           <AddComponent
             component={
@@ -376,23 +233,23 @@ const ColtanEntryDynamicForm = () => {
                         <div
                           className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
                           onClick={() => {
-                            setDropdownOpen((prev) => !prev);
+                           dispatch({type:ACTION.DROP_DOWN })
                           }}
                         >
                           <p className=" ">
-                            {selectedSupplierName
-                              ? selectedSupplierName
+                            {state.selectedSupplierName
+                              ? state.selectedSupplierName
                               : "select a supplier"}
                           </p>
                           <BsChevronDown
                             className={`text-md transition ease-in-out duration-500 ${
-                              dropdownOpen ? "rotate-180" : null
+                              state.dropdownOpen ? "rotate-180" : null
                             }`}
                           />
                         </div>
                         <motion.div
                           animate={
-                            dropdownOpen
+                            state.dropdownOpen
                               ? { opacity: 1, x: -8, y: 1, display: "block" }
                               : { opacity: 0, x: 0, y: 0, display: "none" }
                           }
@@ -411,7 +268,7 @@ const ColtanEntryDynamicForm = () => {
                               id="searchTextInput"
                               placeholder="Search"
                               className="w-full focus:outline-none"
-                              value={searchText}
+                              value={state.searchText}
                               onChange={handleSearchInputChange}
                             />
                           </div>
@@ -449,7 +306,7 @@ const ColtanEntryDynamicForm = () => {
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {/* CONTAINER WITH THE INITIAL DATA FORM */}
-                  {Object.keys(formval).map((key) => renderInputByType(key))}
+                  {Object.keys(state.formval).map((key) => renderInputByType(key))}
 
                   <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                     {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
@@ -459,7 +316,7 @@ const ColtanEntryDynamicForm = () => {
                       </p>
                     </span>
                     <div className="col-span-1 space-y-3">
-                      {lotDetails.map((lot, index) => (
+                      {state.lotDetails.map((lot, index) => (
                         <div
                           key={index}
                           className="flex gap-2 items-center w-full"
@@ -480,13 +337,13 @@ const ColtanEntryDynamicForm = () => {
                           <HiMinus
                             onClick={() => handleLRemoveLot(index)}
                             className={`${
-                              lotDetails.length - 1 == 0 ? "hidden" : ""
+                              state.lotDetails.length - 1 == 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus
                             onClick={handleAddLot}
                             className={`${
-                              lotDetails.length - 1 !== index ? "hidden" : ""
+                              state.lotDetails.length - 1 !== index ? "hidden" : ""
                             }`}
                           />
                         </div>
@@ -506,4 +363,4 @@ const ColtanEntryDynamicForm = () => {
     </>
   );
 };
-export default ColtanEntryDynamicForm;
+export default MineralRawEntry;

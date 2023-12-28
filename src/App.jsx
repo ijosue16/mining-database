@@ -98,6 +98,7 @@ import StyleTestPage from './test elements/DummyPage';
 import UnauthorizedPage from './Pages/UnauthorizedPage';
 import ParentComponent from './test elements/ParentComponentTest';
 import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm';
+import MineralRawEntry from './Pages/coltan/entry/MineralRawEntry';
 
 function App() {
 
@@ -142,6 +143,7 @@ function App() {
                                     <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
                                     <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
                                     <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
+                                    <Route path='/entry/add/:model' element={<BerylliumEntryForm/>}/>
 
 
                                     <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
@@ -219,7 +221,7 @@ function App() {
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/yoo" element={<StyleTestPage/>}/>
-                                    <Route path="/m" element={<ParentComponent/>}/>
+                                    <Route path="/m" element={<MineralRawEntry/>}/>
                                 </Route>
                                 {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>

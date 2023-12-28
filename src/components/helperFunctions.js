@@ -32,7 +32,71 @@ export function toInitialCase(camelCaseString) {
         .replace(/^./, function(str) {
             return str.toUpperCase();
         });
-}
+};
+
+
+ export function FormatTolabelCase(inputString) {
+    // Ensure the input is a non-empty string
+    if (typeof inputString !== 'string' || inputString.length === 0) {
+      return inputString;
+    }
+    if(inputString==="TINNumber"){
+        return 'TIN number'
+    } else if(inputString==="representativePhoneNumber"){
+        return 'Representative phone nbr'
+    }else if(inputString==="representativeId"){
+        return 'Representative ID number'
+    }
+     else{
+          // Replace capital letters with space + lowercase letter
+    const formattedString = inputString.replace(/[A-Z]/g, (match) => ` ${match.toLowerCase()}`);
+  
+    // Capitalize the first letter of the first word
+    const finalString = formattedString.charAt(0).toUpperCase() + formattedString.slice(1);
+  
+    // Trim leading space if any
+    return finalString.trim();  
+    }
+
+  };
+
+  
+ function calculateTotalWeight(arr) {
+    // Ensure the input is an array
+    if (!Array.isArray(arr)) {
+      throw new Error("Input must be an array");
+    }
+
+    // Use reduce to sum the weightOut values
+    const totalWeight = arr.reduce((sum, entry) => {
+      // Convert the weightOut value to a number before adding
+      const weight = parseFloat(entry.weightOut);
+
+      // Check if the conversion is successful and add to the sum
+      if (!isNaN(weight)) {
+        return sum + weight;
+      } else {
+        return sum;
+      }
+    }, 0);
+
+    return totalWeight;
+  }
+
+  export function isTotalWeightGreater(data, weightIn) {
+    const totalWeight = calculateTotalWeight(data);
+
+    // Convert weightIn to a number
+    const numericWeightIn = parseFloat(weightIn);
+
+    // Check if the conversion is successful and compare totalWeight with weightIn
+    if (!isNaN(numericWeightIn) && totalWeight > numericWeightIn) {
+      // message.error("Weight out can't be greater than weight in")
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 export function getBase64FromServer (fileUrl) {
     return new Promise((resolve) => {
@@ -42,7 +106,7 @@ export function getBase64FromServer (fileUrl) {
             resolve(fileUrl);
         };
     });
-}
+};
 
 export function filterColumns (restrictedColumns, userPermissions, columns, model) {
     for (const key in restrictedColumns) {
@@ -62,7 +126,7 @@ export function filterColumns (restrictedColumns, userPermissions, columns, mode
             }
         }
     }
-}
+};
 
 export function openNotification  ({message, description, type}) {
     notification.open({

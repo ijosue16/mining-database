@@ -1,21 +1,21 @@
-import React, { Fragment, useEffect, useState,useRef } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker, Spin,message } from "antd";
+import { DatePicker, TimePicker, Spin, message } from "antd";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useGetAllSuppliersQuery,
-    useCreateEntryMutation,
+  useCreateEntryMutation,
 } from "../../../states/apislice";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
-import {validateWeightInEntry} from "../../../components/helperFunctions";
+import { validateWeightInEntry } from "../../../components/helperFunctions";
 
 const ColtanEntryForm = () => {
   let sup = [""];
@@ -117,7 +117,6 @@ const ColtanEntryForm = () => {
     });
   };
   const handleAddLot = () => {
-
     setlotDetails((prevLotDetails) => [
       ...prevLotDetails,
       { lotNumber: "", weightOut: "" },
@@ -159,32 +158,31 @@ const ColtanEntryForm = () => {
   function calculateTotalWeight(arr) {
     // Ensure the input is an array
     if (!Array.isArray(arr)) {
-      throw new Error('Input must be an array');
+      throw new Error("Input must be an array");
     }
-  
+
     // Use reduce to sum the weightOut values
     const totalWeight = arr.reduce((sum, entry) => {
       // Convert the weightOut value to a number before adding
       const weight = parseFloat(entry.weightOut);
-  
+
       // Check if the conversion is successful and add to the sum
       if (!isNaN(weight)) {
         return sum + weight;
       } else {
-       
         return sum;
       }
     }, 0);
-  
+
     return totalWeight;
-  };
+  }
 
   function isTotalWeightGreater(data, weightIn) {
     const totalWeight = calculateTotalWeight(data);
-  
+
     // Convert weightIn to a number
     const numericWeightIn = parseFloat(weightIn);
-  
+
     // Check if the conversion is successful and compare totalWeight with weightIn
     if (!isNaN(numericWeightIn) && totalWeight > numericWeightIn) {
       // message.error("Weight out can't be greater than weight in")
@@ -248,8 +246,8 @@ const ColtanEntryForm = () => {
         TINNumber: chosenSupplier.TINNumber,
         email: chosenSupplier.email,
         supplierId: chosenSupplier._id,
-        companyRepresentative:chosenSupplier.companyRepresentative,
-        representativePhoneNumber:chosenSupplier.phoneNumber,
+        companyRepresentative: chosenSupplier.companyRepresentative,
+        representativePhoneNumber: chosenSupplier.phoneNumber,
       });
       setBeneficial(chosenSupplier.companyRepresentative);
     }
@@ -264,13 +262,12 @@ const ColtanEntryForm = () => {
       <ActionsPagesContainer
         title={"Register coltan entry"}
         subTitle={"Add new coltan entry"}
-        actionsContainer={ 
+        actionsContainer={
           <AddComponent
             component={
               <div className="grid grid-cols-1 gap-1">
                 {/* PARENT CONTAINER */}
                 <ul className="grid grid-cols-1 items-center gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
-
                   <li className=" space-y-2 flex items-end gap-3 col-span-full ">
                     {/* CONTAINER CONTAINING BUILT DROPDOWN */}
                     <div>
@@ -319,20 +316,26 @@ const ColtanEntryForm = () => {
                               onChange={handleSearchInputChange}
                             />
                           </div>
-                          {isLoading?<div className="w-full flex justify-start items-center gap-1">
-                          <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                          <p className=" text-slate-400">Fetching suppliers...</p>
-                          </div>:<ul className={`list-none  overflow-auto `}>
-                            {filteredSuppliers.map((supplier, index) => (
-                              <li
-                                key={index}
-                                className=" hover:bg-slate-300 rounded-md p-2"
-                                onClick={() => handleSupplierSelect(supplier)}
-                              >
-                                {supplier.companyName}
-                              </li>
-                            ))}
-                          </ul>}
+                          {isLoading ? (
+                            <div className="w-full flex justify-start items-center gap-1">
+                              <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
+                              <p className=" text-slate-400">
+                                Fetching suppliers...
+                              </p>
+                            </div>
+                          ) : (
+                            <ul className={`list-none  overflow-auto `}>
+                              {filteredSuppliers.map((supplier, index) => (
+                                <li
+                                  key={index}
+                                  className=" hover:bg-slate-300 rounded-md p-2"
+                                  onClick={() => handleSupplierSelect(supplier)}
+                                >
+                                  {supplier.companyName}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </motion.div>
                       </div>
                     </div>
@@ -501,7 +504,9 @@ const ColtanEntryForm = () => {
                         }`}
                         onClick={handleCheck}
                       >
-                        <span className={` w-4 h- border bg-white rounded-full `}/>
+                        <span
+                          className={` w-4 h- border bg-white rounded-full `}
+                        />
                       </span>
                     </span>
                     <input
