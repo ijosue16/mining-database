@@ -285,7 +285,7 @@ const AdvancedPaymentsList = () => {
                         </span>
                       </span>
 
-                            {permissions.entry.delete ? (
+                            {/* {permissions.entry.delete ? (
                                 <span>
                               <MdDelete
                                   className="text-lg"
@@ -310,7 +310,7 @@ const AdvancedPaymentsList = () => {
                                     showModal();
                                 }}
                             />
-                        </span>
+                        </span> */}
 
                             {/*{permissions.entry.edit ? (*/}
 

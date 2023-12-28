@@ -14,6 +14,7 @@ import {FaSave} from "react-icons/fa";
 
 import ListModalContainerHeader from "../../components/Listcomponents/ListModalContainerHeader";
 import { useAddShipmentMutation, useDetailedStockQuery, useGetOneShipmentQuery } from "../../states/apislice";
+import ConfirmFooter from "../../components/modalsfooters/ConfirmFooter";
 
 const ShipmentEdit = () => {
     const { model,shipmentId } = useParams();
@@ -677,27 +678,8 @@ const ShipmentEdit = () => {
             onCancel={handleConfirmModal}
             destroyOnClose
             footer={[
-              <span
-                key="actions"
-                className=" flex w-full justify-center gap-4 text-base text-white"
-              >
-                <button
-                  key="back"
-                  disabled={isSending}
-                  className=" bg-green-400 p-2 rounded-lg flex items-center gap-2 justify-center"
-                  onClick={handleShipmentSubmit}
-                >
-                  {isSending ? <Spin /> : "Confirm"}
-                </button>
-                <button
-                  key="submit"
-                  className=" bg-red-400 p-2 rounded-lg"
-                  type="primary"
-                  onClick={handleConfirmModal}
-                >
-                  Cancel
-                </button>
-              </span>,
+              <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={handleConfirmModal} handleConfirm={handleShipmentSubmit}/>
+              
             ]}
           >
             <div className=" p-2">

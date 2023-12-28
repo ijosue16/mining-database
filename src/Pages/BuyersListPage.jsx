@@ -22,6 +22,7 @@ import {
 } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import DeleteFooter from "../components/modalsfooters/DeleteFooter";
 
 const BuyersListPage = () => {
   const [dataz, setDataz] = useState([]);
@@ -228,39 +229,13 @@ const BuyersListPage = () => {
               }}
               destroyOnClose
               footer={[
-                <span
-                  key="actions"
-                  className=" flex w-full justify-center gap-4 text-base text-white"
-                >
-                  {isDeleting ? (
-                    <button
-                      key="back"
-                      className=" bg-green-200 flex items-center gap-1 p-2 text-gray-500 rounded-lg"
-                    >
-                      <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-                      Deleting
-                    </button>
-                  ) : (
-                    <button
-                      key="back"
-                      className=" bg-green-400 p-2 rounded-lg"
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </button>
-                  )}
-                  <button
-                    key="submit"
-                    className=" bg-red-400 p-2 rounded-lg"
-                    type="primary"
-                    onClick={() => {
-                      setShowmodal(!showmodal);
-                      SetSelectedRow("");
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </span>,
+                <DeleteFooter key={"actions"} isDeleting={isDeleting}
+                 defText={"Delete"} 
+                 dsText={"Deleting"}
+                  handleCancel={() => {
+                  setShowmodal(!showmodal);
+                  SetSelectedRow("");
+                }} handleDelete={handleDelete}/>
               ]}
             >
               <h2 className="modal-title text-center font-bold text-xl">
