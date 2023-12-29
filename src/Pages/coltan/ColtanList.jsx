@@ -350,7 +350,7 @@ const ColtanListPage = () => {
                                             <li
                                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                 onClick={() => {
-                                                    navigate(`/entry/edit/coltan/${record._id}`);
+                                                    navigate(`/entry/edit/${"coltan"}/${record._id}`);
                                                 }}
                                             >
                                                 <BiSolidEditAlt className=" text-lg"/>

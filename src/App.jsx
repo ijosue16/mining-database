@@ -99,6 +99,7 @@ import UnauthorizedPage from './Pages/UnauthorizedPage';
 import ParentComponent from './test elements/ParentComponentTest';
 import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm';
 import MineralRawEntry from './Pages/coltan/entry/MineralRawEntry';
+import MineralEntryEdit from './Pages/coltan/entry/MineralEntryEdit';
 
 function App() {
 
@@ -146,11 +147,12 @@ function App() {
                                     <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
 
 
-                                    <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
+                                    {/* <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
                                     <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
                                     <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
                                     <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/>
+                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/> */}
+                                    <Route path='/entry/edit/:model/:entryId/:requestId?' element={<MineralEntryEdit/>}/>
 
 
                                     <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
