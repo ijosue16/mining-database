@@ -1,24 +1,21 @@
 import React, { useEffect, useState, useRef, useReducer } from "react";
 import { formReducer, INITIAL_STATE, ACTION } from "./mineralRawEntryReducer";
-import dayjs from "dayjs";
 import { motion } from "framer-motion";
-import { DatePicker, TimePicker } from "antd";
-import { BsChevronDown } from "react-icons/bs";
-import { HiOutlineSearch } from "react-icons/hi";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useGetAllSuppliersQuery,
   useCreateEntryMutation,
 } from "../../../states/apislice";
-import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
+import { HiPlus, HiMinus,HiOutlineSearch } from "react-icons/hi";
+import { BsChevronDown } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  FormatTolabelCase,
   isTotalWeightGreater,
   validateWeightInEntry,
 } from "../../../components/helperFunctions";
+import RenderFormHelper from "../../../components/RenderHelpersFunctions";
 
 const MineralRawEntry = () => {
   const { model } = useParams();
@@ -108,7 +105,7 @@ const MineralRawEntry = () => {
     // console.log(body);
     console.log({ body, model });
     // await createColtanEntry({ body, model });
-    dispatch({ type: ACTION.RETURN_TO_INITIAL });
+    // dispatch({ type: ACTION.RETURN_TO_INITIAL });
     // navigate(-1);
   };
   const handleCancel = () => {
@@ -130,105 +127,6 @@ const MineralRawEntry = () => {
       type: ACTION.HANDLE_SUPPLIER_SELECT,
       payload: { chosenSupplier, supplier },
     });
-  };
-
-  const renderInputByType = (key) => {
-    switch (key) {
-      case "beneficiary":
-        return (
-          <li className=" space-y-1" key="beneficiary">
-            <span className=" flex gap-2 items-center">
-              <p>{FormatTolabelCase("beneficiary")}</p>
-              <span
-                className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
-                  state.checked
-                    ? " justify-end bg-green-400"
-                    : " justify-start bg-slate-400"
-                }`}
-                onClick={handleCheck}
-              >
-                <span className={` w-4 h- border bg-white rounded-full `} />
-              </span>
-            </span>
-            <input
-              type="text"
-              autoComplete="off"
-              disabled={state.checked}
-              className="focus:outline-none p-2 border rounded-md w-full"
-              name="beneficiary"
-              id="beneficiary"
-              value={state.formval.beneficiary || ""}
-              onChange={handleEntry}
-            />
-          </li>
-        );
-      case "time":
-        return (
-          <li className=" space-y-1" key="time">
-            {<p className="pl-1">{FormatTolabelCase("time")}</p>}
-            <TimePicker
-              value={
-                state.formval.time ? dayjs(state.formval.time, "HH:mm") : null
-              }
-              onChange={handleAddTime}
-              format={"HH:mm"}
-              id="time"
-              name="time"
-              className=" focus:outline-none p-2 border rounded-md w-full"
-            />
-          </li>
-        );
-      case "supplyDate":
-        return (
-          <li className=" space-y-1" key="supplyDate">
-            {<p className="pl-1">{FormatTolabelCase("supplyDate")}</p>}
-            <DatePicker
-              value={
-                state.formval.supplyDate
-                  ? dayjs(state.formval.supplyDate)
-                  : null
-              }
-              onChange={handleAddDate}
-              id="supplyDate"
-              name="supplyDate"
-              className=" focus:outline-none p-2 border rounded-md w-full"
-            />
-          </li>
-        );
-      case "mineralType":
-        return (
-          <li className=" space-y-1" key="mineralType">
-            {<p className="pl-1">{FormatTolabelCase("mineralType")}</p>}
-            <input
-              type="text"
-              autoComplete="off"
-              className="focus:outline-none p-2 border rounded-md w-full"
-              name="mineralType"
-              value={state.formval.mineralType || ""}
-              disabled
-              onChange={handleEntry}
-            />
-          </li>
-        );
-      case "mineTags":
-      case "supplierId":
-      case "isSupplierBeneficiary":
-        return null;
-      default:
-        return (
-          <li className=" space-y-1" key={key}>
-            {<p className="pl-1">{FormatTolabelCase(key)}</p>}
-            <input
-              type="text"
-              autoComplete="off"
-              className="focus:outline-none p-2 border rounded-md w-full"
-              name={key}
-              value={state.formval[key] || ""}
-              onChange={handleEntry}
-            />
-          </li>
-        );
-    }
   };
 
   return (
@@ -324,9 +222,17 @@ const MineralRawEntry = () => {
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {/* CONTAINER WITH THE INITIAL DATA FORM */}
-                  {Object.keys(state.formval).map((key) =>
-                    renderInputByType(key)
-                  )}
+                  {Object.keys(state.formval).map((key) => (
+                    <RenderFormHelper
+                      key={key}
+                      kase={key}
+                      state={state}
+                      handleAddDate={handleAddDate}
+                      handleAddTime={handleAddTime}
+                      handleCheck={handleCheck}
+                      handleEntry={handleEntry}
+                    />
+                  ))}
 
                   <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                     {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
