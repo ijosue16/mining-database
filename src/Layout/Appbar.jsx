@@ -3,13 +3,13 @@ import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
 import { FiChevronsLeft, } from "react-icons/fi"
 import { useNavigate } from "react-router-dom";
-import {Drawer, Space, Button, Badge, notification} from "antd";
-import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useGetOneUserQuery, useGetAllEditRequestsQuery } from "../states/apislice";
+import {Drawer, Space, Button, Badge, notification, message} from "antd";
+import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useVerifyTokenMutation,  useGetOneUserQuery, useGetAllEditRequestsQuery } from "../states/apislice";
 import { useSelector, useDispatch } from "react-redux";
 import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
 import { toInitialCase } from "../components/helperFunctions";
-import {setPermissions, setUserData} from "../states/slice";
+import {setPermissions, setUserData, setAuthToken} from "../states/slice";
 import {IoChatbubbleEllipsesOutline} from "react-icons/io5";
 
 
@@ -21,7 +21,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     const [notifications, setNotifications] = useState([]);
     const [user, setUser] = useState(null);
     const [open, setOpen] = useState(false);
-    const {userData, permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
+    const {userData, permissions: userPermissions, token } = useSelector(state => state.persistedReducer?.global);
     const [userId, setUserId] = useState(null);
     const socket = useContext(SocketContext);
     const dispatch = useDispatch();
@@ -50,11 +50,15 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         })
     }, [socket]);
 
+
+
     useEffect(() => {
         if (userData) {
             setUserId(userData._id);
         }
     }, [userData])
+
+    const [verifyToken, {data: verifyTokenData, isSuccess: verifyTokenSuccess}] = useVerifyTokenMutation();
     const {data, isLoading, isSuccess} = useGetNotificationsQuery(userId,
         {
             skip: userId === null,
@@ -83,6 +87,33 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
     }, [editRequestsSuccess, editRequests, updateSuccess]);
 
     useEffect(() => {
+        const verifyLoginToken = async () => {
+            if (token) {
+                const response = await verifyToken({ token });
+                if (response.data?.data) {
+                    const { userId: currentUserId } = response.data.data;
+                    if (!currentUserId) {
+                        dispatch(setUserData(null));
+                        dispatch(setPermissions(null));
+                        dispatch(setAuthToken(null));
+                        message.error("Your session has ended. Please login again");
+                        return navigate("/login");
+                    }
+                }
+            }
+        };
+
+        verifyLoginToken();
+
+        const intervalId = setInterval(() => {
+            verifyLoginToken();
+        }, 20000);
+
+        return () => clearInterval(intervalId);
+    }, [token]);
+
+
+    useEffect(() => {
         if (userSuccess || updateSuccess) {
             const { user } = userDataObj.data;
             if (user) {
@@ -93,6 +124,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         }
     }, [userId, userSuccess, userDataObj, updateSuccess]);
 
+
     let modalRef = useRef();
     const showDrawer = () => {
         setOpen(true);
@@ -100,7 +132,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
 
     const onClose = () => {
         setOpen(false);
-        // setNotifications(data.data.notifications[0].notifications.slice(0,10));
+        setNotifications(data.data.notifications[0].notifications.slice(0,10));
     };
 
 

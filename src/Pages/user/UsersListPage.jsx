@@ -16,6 +16,8 @@ import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { toInitialCase } from "../../components/helperFunctions";
+import {useSelector} from "react-redux";
+import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 
 const UsersListPage = () => {
   let dataz = [];

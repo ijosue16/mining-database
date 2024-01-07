@@ -13,14 +13,16 @@ import { setAuthToken, setPermissions, setUserData } from "../states/slice";
 import {GoFileDirectory} from "react-icons/go";
 
 const Layout = () => {
-    const { userData } = useSelector(state => state.persistedReducer.global);
-    const { permissions } = userData;
+    const { userData } = useSelector(state => state.persistedReducer?.global);
     const dispatch =useDispatch();
     const [open, setOpen] = useState(false);
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [userSubmenuMobile, setUserSubmenuMobile] = useState(false);
     const navigate = useNavigate();
     const[userLogout,{isLoading,isSuccess,isError,error}]=useLogoutMutation();
+    if (!userData) navigate('/login');
+    const { permissions } = userData;
+
 
     const decideShowMenu = (permissionKey) => {
         if (permissions && permissions[permissionKey]) {
