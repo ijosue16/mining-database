@@ -1,9 +1,9 @@
 import React, {useContext, useEffect, useState} from "react";
 import { PiEnvelopeBold, PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useLoginMutation } from "../states/apislice";
+import {useLoginMutation, useVerifyTokenMutation} from "../states/apislice";
 import { setAuthToken, setUserData, setPermissions } from "../states/slice";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { toast } from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
 import {SocketContext} from "../context files/socket";
@@ -27,6 +27,51 @@ const LoginPage = () => {
       return message.error(errorMessage);
     }
   }, [isSuccess, isError, error]);
+
+  const { token } = useSelector(state => state.persistedReducer?.global);
+  const [verifyToken, {data: verifyTokenData, isSuccess: verifyTokenSuccess, isError: isTokenError, error: tokenError}] = useVerifyTokenMutation();
+
+  useEffect(() => {
+    if (verifyTokenSuccess) {
+      return navigate('/dashboard' || "/coltan");
+    } else if (isTokenError) {
+      // const { message: errorMessage } = tokenError.data;
+      dispatch(setUserData(null));
+      dispatch(setPermissions(null));
+      dispatch(setAuthToken(null));
+      message.error(`Your session has ended. please log in again!`);
+      return navigate('/login');
+    }
+  }, [isTokenError, verifyTokenSuccess]);
+
+
+
+  useEffect(() => {
+    const verifyLoginToken = async () => {
+      if (token) {
+        const response = await verifyToken({ token });
+        if (response.data?.data) {
+          const { userId: currentUserId } = response.data.data;
+          if (!currentUserId) {
+            dispatch(setUserData(null));
+            dispatch(setPermissions(null));
+            dispatch(setAuthToken(null));
+            message.error("Your session has ended. Please login again");
+            return navigate("/login");
+          }
+        }
+      }
+    };
+
+    verifyLoginToken();
+
+    const intervalId = setInterval(() => {
+      verifyLoginToken();
+    }, 20000);
+
+    return () => clearInterval(intervalId);
+  }, [token]);
+
 
 
   const handleSubmit = async (e) => {

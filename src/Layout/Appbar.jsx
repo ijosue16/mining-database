@@ -58,7 +58,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         }
     }, [userData])
 
-    const [verifyToken, {data: verifyTokenData, isSuccess: verifyTokenSuccess}] = useVerifyTokenMutation();
+    const [verifyToken, {data: verifyTokenData, isSuccess: verifyTokenSuccess, isError: isTokenError, error: tokenError}] = useVerifyTokenMutation();
     const {data, isLoading, isSuccess} = useGetNotificationsQuery(userId,
         {
             skip: userId === null,
@@ -78,6 +78,17 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
         refetchOnMountOrArgChange: true,
         refetchOnReconnect: true
     })
+
+    useEffect(() => {
+        if (isTokenError) {
+            const { message: errorMessage } = tokenError.data;
+            dispatch(setUserData(null));
+            dispatch(setPermissions(null));
+            dispatch(setAuthToken(null));
+            message.error(`${errorMessage}, please log in again!`);
+            return navigate('/login');
+        }
+    }, [isTokenError, tokenError]);
 
     useEffect(() => {
         if (editRequestsSuccess || updateSuccess) {
@@ -111,6 +122,8 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
 
         return () => clearInterval(intervalId);
     }, [token]);
+
+
 
 
     useEffect(() => {
