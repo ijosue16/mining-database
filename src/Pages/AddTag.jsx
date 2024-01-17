@@ -7,6 +7,7 @@ import {ImSpinner2} from "react-icons/im";
 import {useNavigate} from "react-router-dom";
 import {useGetAllSuppliersQuery, useCreateTagMutation } from "../states/apislice";
 import LoadingButton from "./LoadingButton";
+import ActionsPagesContainer from "../components/Actions components/ActionsComponentcontainer";
 
 const AddTag = () => {
     const [tag, setTag] = useState({supplierId: "", tagNumber: "", sheetNumber: "", weight: ""});
@@ -87,9 +88,13 @@ const AddTag = () => {
     }
 
     return (
-        <div>
+        <ActionsPagesContainer
+        title={"Add new tag"}
+        subTitle={"Add/enter new tag information"}
+        actionsContainer={
+            <>
 
-            <ul className="grid grid-cols-1 items-center gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-12">
+            <ul className="grid grid-cols-1 items-center gap-1 gap-x-2 md:grid-cols-2 lg:grid-cols-3 pb-8">
                 <li className=" space-y-2 flex items-end gap-3 col-span-full ">
                     <div>
                         <div ref={modalRef} className="w-fit h-fit relative ">
@@ -162,7 +167,7 @@ const AddTag = () => {
                 </li>
             </ul>
 
-            <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4">
+            <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md py-4">
                 <li>
                     <p className="mb-1">Tag number</p>
                     <input
@@ -209,7 +214,10 @@ const AddTag = () => {
             <div className="mt-3">
                 <LoadingButton name={"Submit"} onClickFunction={handleCreateTag} isProcessing={isCreatingTag}/>
             </div>
-        </div>
+        </>
+        }
+
+        />
     )
 }
 

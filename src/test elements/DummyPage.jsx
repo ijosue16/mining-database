@@ -89,6 +89,8 @@ const[isDeleting,setIsDeleting]=useState(false)
                   Cancel
                 </button>
               </span>
+
+              <button className='py-1 px-4 rounded-full text-custom_blue-600 font-semibold bg-custom_blue-200 border-custom_blue-500 border-[0.1px] w-fit '> Disabled gradient</button>
     </div>
     
   );

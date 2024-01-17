@@ -8,20 +8,22 @@ export const INITIAL_STATE = {
   model: "",
   beneficial: "",
   formval: {
-    weightIn: "",
     companyName: "",
-    licenseNumber: "",
-    TINNumber: "",
     email: "",
-    supplierId: "",
+    TINNumber: "",
+    licenseNumber: "",
     companyRepresentative: "",
     representativeId: "",
     representativePhoneNumber: "",
+    mineralType: "",
     supplyDate: "",
     time: "",
+    weightIn: "",
     numberOfTags: "",
+    beneficiary: "",
     mineTags: "",
-    negociantTags: "",
+    supplierId: "",
+    mineTags: "",
     mineralType: "",
     mineralgrade: "",
     mineralprice: "",
@@ -72,27 +74,29 @@ export const formEditReducer = (state, action) => {
       const isNegotiantTags = entr.negociantTags?.length > 0;
       const isMineTags = entr.mineTags?.length > 0;
 
+      
+
       return {
         ...state,
         formval: {
           ...state.formval,
-          weightIn: entr.weightIn,
           companyName: entr.companyName,
-          licenseNumber: entr.licenseNumber,
           TINNumber: entr.TINNumber,
-          email: entr.email,
-          supplierId: entr.supplierId,
+          licenseNumber: entr.licenseNumber,
           companyRepresentative: entr.companyRepresentative,
           representativeId: entr.representativeId,
           representativePhoneNumber: entr.representativePhoneNumber,
+          mineralType: entr.mineralType,
           supplyDate: dayjs(entr.supplyDate),
           time: dayjs(entr.time, "HH:mm"),
+          weightIn: entr.weightIn,
           numberOfTags: entr.numberOfTags,
-          mineralType: entr.mineralType,
+          beneficiary: entr.beneficiary,
+          email: entr.email,
+          supplierId: entr.supplierId,
           mineralgrade: "",
           mineralprice: "",
           shipmentnumber: "",
-          beneficiary: entr.beneficiary,
           isSupplierBeneficiary: false,
         },
         lotDetails: entr.output,
@@ -132,7 +136,7 @@ export const formEditReducer = (state, action) => {
         checked: !state.checked,
         formval: {
           ...state.formval,
-          beneficiary: state.checked ? "" : state.beneficial,
+          beneficiary: state.checked ? state.formval.beneficiary : state.beneficial,
           isSupplierBeneficiary: !state.checked,
         },
       };
@@ -151,6 +155,7 @@ export const formEditReducer = (state, action) => {
               supplierId: chosenSupplier._id,
               companyRepresentative: chosenSupplier.companyRepresentative,
               representativePhoneNumber: chosenSupplier.phoneNumber,
+              beneficiary:chosenSupplier.companyRepresentative
             }
           : state.formval,
 

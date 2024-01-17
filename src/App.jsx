@@ -128,7 +128,7 @@ function App() {
                                     <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                     <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
-                                    <Route path='/report/:supplierId' element={<ReportPage/>}/>
+                                    <Route path='/report/dummy' element={<ReportPage/>}/>
 
                                     <Route path='/coltan' element={<ColtanListPage/>}/>
                                     <Route path='/cassiterite' element={<CassiteriteListPage/>}/>

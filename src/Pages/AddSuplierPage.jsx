@@ -4,7 +4,7 @@ import AddComponent from "../components/Actions components/AddComponent";
 import { useAddSupplierMutation } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
 import { HiPlus, HiMinus } from "react-icons/hi";
-
+ 
 const AddSuplierPage = () => {
     const navigate = useNavigate();
     const [formval, setFormval] = useState({ companyName: '', TINNumber: '', licenseNumber: '', email: '', nationalId: '', typeOfMinerals: '', phoneNumber: '', mineSites: [{ coordinates: { lat: '', long: '', }, name: '', code: '', }], address: { province: '', district: '', sector: '', cell: '' }, typeOfMining: '', equipmentList: [], surfaceArea: null, categoryOfMine: '', numberOfDiggers: '', numberOfWashers: '', numberOfTransporters: '',companyRepresentative:"" });
@@ -28,6 +28,15 @@ const AddSuplierPage = () => {
         setmineSitesDetails((prevmineSitesDetails) => [...prevmineSitesDetails, { coordinates: { lat: '', long: '', }, name: '', code: '', }]);
         updateLotNumbers();
     };
+    
+  const handleRemoveSite = (index) => {
+    const values = [...mineSitesDetails];
+    values.splice(index, 1);
+    values.forEach((lot, i) => {
+      lot.lotNumber = i + 1;
+    });
+    setmineSitesDetails(values);
+  };
 
 
     const handleSiteEntry =  (index, e) => {
@@ -207,7 +216,7 @@ const AddSuplierPage = () => {
                                 <ul className=" col-span-full grid grid-cols-1 mt-3 gap-x-4 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 h-fit list-none items-center relative p-2 bg-white rounded-md border py-4" key={index}>
                                     <span className="flex items-center gap-2 col-span-full justify-end">
                                         <p className=" font-semibold justify-self-start">Site {index + 1}</p>
-                                        <HiMinus onClick={() => handleSiteRemoveLot(index)} className={`${mineSitesDetails.length - 1 == 0 ? 'hidden' : ''}`} />
+                                        <HiMinus onClick={() => handleRemoveSite(index)} className={`${mineSitesDetails.length - 1 == 0 ? 'hidden' : ''}`} />
                                         <HiPlus onClick={handleAddSite} className={`${mineSitesDetails.length - 1 !== index ? 'hidden' : ''}`} />
                                     </span>
                                     <li>

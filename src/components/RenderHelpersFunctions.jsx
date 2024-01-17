@@ -1,7 +1,7 @@
 import React from "react";
 import { DatePicker, TimePicker } from "antd";
 import dayjs from "dayjs";
-import { FormatTolabelCase } from "./helperFunctions";
+import { FormatTolabelCase, toCamelCase } from "./helperFunctions";
 
 const RenderFormHelper = ({
   kase,
@@ -11,8 +11,20 @@ const RenderFormHelper = ({
   handleAddTime,
   handleEntry,
   handleCheck,
+  editableFields,
 }) => {
-  if (nullCases?.includes(key)) {
+  const decideEditable = (field) => {
+    if (editableFields) {
+      const editableField = editableFields.find(
+        (item) => toCamelCase(item.fieldname) === field
+      );
+      if (!editableField) {
+        return true;
+      }
+    }
+  };
+
+  if (nullCases?.includes(kase)) {
     return null;
   }
   switch (kase) {
@@ -35,7 +47,11 @@ const RenderFormHelper = ({
           <input
             type="text"
             autoComplete="off"
-            disabled={state.checked}
+            disabled={
+              (state.checked) ||( editableFields?.length > 0
+                ? decideEditable("beneficiary")
+                : false)
+            }
             className="focus:outline-none p-2 border rounded-md w-full"
             name="beneficiary"
             id="beneficiary"
@@ -52,6 +68,9 @@ const RenderFormHelper = ({
             value={
               state.formval.time ? dayjs(state.formval.time, "HH:mm") : null
             }
+            disabled={
+              editableFields?.length > 0 ? decideEditable("time") : false
+            }
             onChange={handleAddTime}
             format={"HH:mm"}
             id="time"
@@ -67,6 +86,9 @@ const RenderFormHelper = ({
           <DatePicker
             value={
               state.formval.supplyDate ? dayjs(state.formval.supplyDate) : null
+            }
+            disabled={
+              editableFields?.length > 0 ? decideEditable("supplyDate") : false
             }
             onChange={handleAddDate}
             id="supplyDate"
@@ -90,10 +112,6 @@ const RenderFormHelper = ({
           />
         </li>
       );
-    case "mineTags":
-    case "supplierId":
-    case "isSupplierBeneficiary":
-      return null;
     default:
       return (
         <li className=" space-y-1" key={kase}>
@@ -104,6 +122,9 @@ const RenderFormHelper = ({
             className="focus:outline-none p-2 border rounded-md w-full"
             name={kase}
             value={state.formval[kase] || ""}
+            disabled={
+              editableFields?.length > 0 ? decideEditable(kase) : false
+            }
             onChange={handleEntry}
           />
         </li>

@@ -120,15 +120,18 @@ const EditRequests = () => {
             render: (_, record) => {
                 let item;
                 if (record.requestStatus === "pending") {
-                    item = <span className="bg-blue-500 rounded-[4px] p-1 text-white">{record.requestStatus}</span>
+                    item = <span className=" text-center text-xs  font-medium py-1 px-2 rounded-full text-custom_blue-600 bg-custom_blue-200 border-custom_blue-500 border w-fit ">{record.requestStatus}</span>
                 } else if (record.requestStatus === "authorized") {
-                    item = <span className="bg-green-500 rounded-[4px] p-1 text-white">{record.requestStatus}</span>
+                    item = <span className=" text-center text-xs  font-medium py-1 px-2 rounded-full text-green-600 bg-green-200 border-green-500 border w-fit ">{record.requestStatus}</span>
                 } else if (record.requestStatus === "rejected") {
-                    item = <span className="bg-red-400 rounded-[4px] p-1 text-white">{record.requestStatus}</span>
+                    item = <span className=" text-center text-xs  font-medium py-1 px-2 rounded-full text-red-600 bg-red-200 border-red-500 border w-fit ">{record.requestStatus}</span>
                 } else {
-                    item = <span className="bg-gray-400 rounded-[4px] p-1 text-white">{record.requestStatus}</span>
+                    item = <span className=" text-center text-xs  font-medium py-1 px-2 rounded-full text-gray-600 bg-gray-200 border-gray-500 border w-fit ">{record.requestStatus}</span>
+                    
                 }
-                return item;
+                return (
+                    <div className=" text-start"> {item}</div>
+                );
             }
         },
         {
@@ -141,14 +144,14 @@ const EditRequests = () => {
                     <span className="flex gap-1">
                         <button
                             disabled={record.requestStatus !== "pending"}
-                            className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
+                            className="bg-green-500 p-1 pl-2 pr-2 rounded-[4px]"
                             onClick={() => handleUpdate({decision: true}, record)}
                         >
                             Authorize
                         </button>
                         <button
                             disabled={record.requestStatus !== "pending"}
-                            className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"
+                            className="bg-red-500 p-1 pl-2 pr-2 rounded-[4px]"
                             onClick={() => handleUpdate({decision: false}, record)}
                         >
                             Reject

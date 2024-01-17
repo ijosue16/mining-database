@@ -3,14 +3,8 @@ import dayjs from "dayjs";
 import moment from "moment";
 import { motion } from "framer-motion";
 import {
-  DatePicker,
-  TimePicker,
   message,
-  Spin,
-  notification,
-  Checkbox,
   Popover,
-  Result,
 } from "antd";
 import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
@@ -22,8 +16,6 @@ import {
   useGetSupplierTagsQuery,
   useGetAllSuppliersQuery,
 } from "../../../states/apislice";
-import { FiSearch } from "react-icons/fi";
-import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
@@ -36,8 +28,8 @@ import {
 import Countdown from "react-countdown";
 import { BsChevronDown } from "react-icons/bs";
 import { ImSpinner2 } from "react-icons/im";
-import ExistingMineTags from "../../ExistingMineTags";
 import { formEditReducer,INITIAL_STATE,ACTION } from "./mineralEntryEditReducer";
+import RenderFormHelper from "../../../components/RenderHelpersFunctions";
 
 const MineralEntryEdit = () => {
   let sup = [""];
@@ -96,6 +88,7 @@ const MineralEntryEdit = () => {
     const [state, dispatch] = useReducer(formEditReducer, INITIAL_STATE);
   
     let modalRef = useRef();
+    const nullcases=['email','mineralgrade','shipmentnumber','mineralprice','mineTags','supplierId','isSupplierBeneficiary'];
 
   if (isGot) {
     const { data: dt } = supps;
@@ -143,7 +136,7 @@ const MineralEntryEdit = () => {
       }
     }
   }, [isRequestSuccess]);
-
+  console.log(editableFields)
   const decideEditable = (field) => {
     if (editableFields) {
       const editableField = editableFields.find(
@@ -174,7 +167,7 @@ const MineralEntryEdit = () => {
   };
 
   const handleSupplierSelect = (supplier) => {
-    setSelectedSupplierName(supplier.companyName);
+    // setSelectedSupplierName(supplier.companyName);
     const chosenSupplier = sup.find((sup) => sup._id === supplier._id);
     dispatch({
         type: ACTION.HANDLE_SUPPLIER_SELECT,
@@ -427,213 +420,22 @@ const MineralEntryEdit = () => {
                         New supplier
                       </button>
                     </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Company name</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="companyName"
-                        id="companyName"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("companyName")
-                            : false
-                        }
-                        value={state.formval.companyName || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
+                    {/* TO MAKE COMPONENT WITH RENDERFORM  */}
+                    {Object.keys(state.formval).map((key) => (
+                    <RenderFormHelper
+                      key={key}
+                      kase={key}
+                      state={state}
+                      handleAddDate={handleAddDate}
+                      handleAddTime={handleAddTime}
+                      handleCheck={handleCheck}
+                      handleEntry={handleEntry}
+                      editableFields={editableFields}
+                      nullCases={nullcases}
+                    />
+                  ))}
 
-                    <li className=" space-y-1">
-                      <p className="pl-1">TIN Number</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="TINNumber"
-                        id="TINNumber"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("TINNumber")
-                            : false
-                        }
-                        value={state.formval.TINNumber || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Licence number</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="licenseNumber"
-                        id="licenseNumber"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("licenseNumber")
-                            : false
-                        }
-                        value={state.formval.licenseNumber || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Company representative</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="companyRepresentative"
-                        id="companyRepresentative"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("companyRepresentative")
-                            : false
-                        }
-                        value={state.formval.companyRepresentative || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Representative ID number</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="representativeId"
-                        id="representativeId"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("representativeId")
-                            : false
-                        }
-                        value={state.formval.representativeId || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Representative phone nbr</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="representativePhoneNumber"
-                        id="representativePhoneNumber"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("representativePhoneNumber")
-                            : false
-                        }
-                        value={state.formval.representativePhoneNumber || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Minerals Types</p>
-                      <input
-                        autoComplete="off"
-                        disabled
-                        name="mineralType"
-                        id="mineralType"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        value={state.formval.mineralType || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Date</p>
-                      <DatePicker
-                        value={
-                          state.formval.supplyDate ? dayjs(state.formval.supplyDate) : null
-                        }
-                        onChange={handleAddDate}
-                        id="supplyDate"
-                        name="supplyDate"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("supplyDate")
-                            : false
-                        }
-                        className=" focus:outline-none p-2 border rounded-md w-full"
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Time</p>
-                      <TimePicker
-                        value={
-                          state.formval.time ? dayjs(state.formval.time, "HH:mm") : null
-                        }
-                        onChange={handleAddTime}
-                        format={"HH:mm"}
-                        id="date"
-                        name="date"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("time")
-                            : false
-                        }
-                        className=" focus:outline-none p-2 border rounded-md w-full"
-                      />
-                    </li>
-
-                    <li className=" space-y-1">
-                      <p className="pl-1">Weight in</p>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="weightIn"
-                        id="weightIn"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("weightIn")
-                            : false
-                        }
-                        value={state.formval.weightIn || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <p className="pl-1">Number of Tags</p>
-                      <input
-                        type="number"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="numberOfTags"
-                        id="numberOfTags"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("numberOfTags")
-                            : false
-                        }
-                        value={state.formval.numberOfTags || ""}
-                        onWheelCapture={(e) => {
-                          e.target.blur();
-                        }}
-                        onChange={handleEntry}
-                      />
-                    </li>
-                    <li className=" space-y-1">
-                      <span className=" flex gap-2 items-center">
-                        <p>Beneficiary</p>
-                      </span>
-                      <input
-                        type="text"
-                        autoComplete="off"
-                        className="focus:outline-none p-2 border rounded-md w-full"
-                        name="beneficiary"
-                        id="beneficiary"
-                        disabled={
-                          editableFields.length > 0
-                            ? decideEditable("beneficiary")
-                            : false
-                        }
-                        value={state.formval.beneficiary || ""}
-                        onChange={handleEntry}
-                      />
-                    </li>
+                    {/* TO MAKE COMPONENT */}
 
                     <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full shadow-lg rounded-md p-4 mt-4 pb-6 bg-gray-100">
                       <span className=" border  border-b-0 relative col-span-full mb-3">

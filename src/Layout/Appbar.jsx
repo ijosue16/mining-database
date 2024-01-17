@@ -294,7 +294,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                         {notifications.length > 0 && notifications.map((notification, index) => {
                             if (notification.message.includes("**")) {
                                 return (
-                                    <Badge onClick={() => readMessage(notification._id)} className="p-3 border rounded-[4px] bg-purple-200" key={index} dot={notification.read ? true : false} offset={[7,7]}>
+                                    <Badge onClick={() => readMessage(notification._id)} className="p-3 border rounded-[4px] bg-purple-200  md:flex gap-2 items-center" key={index} dot={!notification.read} offset={[7,7]}>
                                         <span>{`${notification.message.split("**")[0]} ${notification.message.split("**")[2].trim()}`}</span>
                                         <button className="p-2 bg-gray-400 border rounded-[4px] mt-2 text-white" onClick={() => navigateToLink(notification.message.split("**")[1])}>Link</button>
                                     </Badge>

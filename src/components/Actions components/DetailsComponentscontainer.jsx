@@ -1,17 +1,10 @@
 import React from "react";
-import {PiCaretLeftLight } from "react-icons/pi"
-import Header from "../Header";
-import { useNavigate } from "react-router-dom";
 
-
-
-const ActionsPagesContainer = ({title,subTitle,actionsContainer}) => {
-    const navigate=useNavigate();
+const DetailsPageContainer = ({title,subTitle,actionsContainer}) => {
     return (
         <>
             <section className="space-y-3">
                 <span>
-                <PiCaretLeftLight className="mb-1" onClick={()=>navigate(-1)}/>
             <h4 className=" text-[18px] font-bold pl-1">{title}</h4>
             <h6 className="text-[14px] pl-1 ">{subTitle}</h6>
                 </span>
@@ -21,6 +14,5 @@ const ActionsPagesContainer = ({title,subTitle,actionsContainer}) => {
             </section>
         </>
     )
-
 }
-export default ActionsPagesContainer;
+export default DetailsPageContainer;

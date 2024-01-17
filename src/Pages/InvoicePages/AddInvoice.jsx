@@ -586,11 +586,11 @@ const AddInvoice = () => {
                                                        <textarea name="extraNotes" value={invoiceInfo.extraNotes || ''}
                                                                  className="focus:outline-none p-2 border rounded-lg w-full"
                                                                  onChange={handleChange}/>
-                                                       <div className="w-full flex justify-end ">
+                                                       {/* <div className="w-full flex justify-end ">
                                                            <button
                                                                className="p-2 bg-orange-300 rounded text-end justify-items-end">Preview
                                                            </button>
-                                                       </div>
+                                                       </div> */}
                                                    </li>
                                                    {/* ******* */}
                                                </ul>

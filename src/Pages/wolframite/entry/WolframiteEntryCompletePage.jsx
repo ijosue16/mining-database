@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
-import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {ImSpinner2} from "react-icons/im";
 import {FaImage, FaSave} from "react-icons/fa";
@@ -25,6 +24,7 @@ import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
+import DetailsPageContainer from "../../../components/Actions components/DetailsComponentscontainer";
 
 const WolframiteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
@@ -567,7 +567,7 @@ const WolframiteEntryCompletePage = ({entryId}) => {
          {isLoading ? (
         <FetchingPage />
       ) : (
-            <ActionsPagesContainer
+            <DetailsPageContainer
                 title={"LOT DETAILS"}
                 // subTitle={"View Wolframite detailes"}
                 actionsContainer={

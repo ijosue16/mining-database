@@ -9,9 +9,9 @@ import {FaSave} from "react-icons/fa";
 import {RiFileEditFill} from "react-icons/ri";
 import {ImSpinner2} from "react-icons/im";
 import FetchingPage from "../FetchingPage";
-import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import dayjs from "dayjs";
 import {CiCirclePlus} from "react-icons/ci";
+import DetailsPageContainer from '../../components/Actions components/DetailsComponentscontainer';
 
 const EditShipment = ({record: shipment}) => {
     const [form] = Form.useForm();
@@ -478,7 +478,7 @@ const EditShipment = ({record: shipment}) => {
             {isLoading ? (
                 <FetchingPage/>
             ) :  (
-                <ActionsPagesContainer
+                <DetailsPageContainer
                     title={`Shipment Lots`}
                     actionsContainer={
                         <>
