@@ -15,9 +15,12 @@ import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { useNavigate } from "react-router-dom";
-import { validateWeightInEntry } from "../../../components/helperFunctions";
+import {
+  FormatTolabelCase,
+  validateWeightInEntry,
+} from "../../../components/helperFunctions";
 
-const ColtanEntryForm = () => {
+const ColtanEntryDynamicForm = () => {
   let sup = [""];
   const navigate = useNavigate();
   const { data, isLoading, isError, error, isSuccess } =
@@ -32,25 +35,26 @@ const ColtanEntryForm = () => {
     },
   ] = useCreateEntryMutation();
   const [formval, setFormval] = useState({
-    weightIn: "",
     companyName: "",
-    licenseNumber: "",
-    TINNumber: "",
     email: "",
-    supplierId: "",
+    TINNumber: "",
+    licenseNumber: "",
     companyRepresentative: "",
     representativeId: "",
     representativePhoneNumber: "",
+    mineralType: "coltan",
     supplyDate: "",
     time: "",
+    weightIn: "",
     numberOfTags: "",
-    mineTags: "",
-    negociantTags: "",
-    mineralType: "coltan",
-    mineralgrade: "",
-    mineralprice: "",
-    shipmentnumber: "",
     beneficiary: "",
+    mineTags: "",
+    supplierId: "",
+    //   negociantTags: "",
+    //   mineralgrade: "",
+    //   mineralprice: "",
+    //   shipmentnumber: "",
+    //   beneficiary: "",
     isSupplierBeneficiary: false,
   });
   const [lotDetails, setlotDetails] = useState([
@@ -192,35 +196,130 @@ const ColtanEntryForm = () => {
     }
   }
 
+  const renderInputByType = (key) => {
+    switch (key) {
+      case "beneficiary":
+        return (
+          <li className=" space-y-1" key="beneficiary">
+            <span className=" flex gap-2 items-center">
+              <p>{FormatTolabelCase("beneficiary")}</p>
+              <span
+                className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
+                  checked
+                    ? " justify-end bg-green-400"
+                    : " justify-start bg-slate-400"
+                }`}
+                onClick={handleCheck}
+              >
+                <span className={` w-4 h- border bg-white rounded-full `} />
+              </span>
+            </span>
+            <input
+              type="text"
+              autoComplete="off"
+              disabled={checked}
+              className="focus:outline-none p-2 border rounded-md w-full"
+              name="beneficiary"
+              id="beneficiary"
+              value={formval.beneficiary || ""}
+              onChange={handleEntry}
+            />
+          </li>
+        );
+      case "time":
+        return (
+          <li className=" space-y-1" key="time">
+            {<p className="pl-1">{FormatTolabelCase("time")}</p>}
+            <TimePicker
+              value={formval.time ? dayjs(formval.time, "HH:mm") : null}
+              onChange={handleAddTime}
+              format={"HH:mm"}
+              id="time"
+              name="time"
+              className=" focus:outline-none p-2 border rounded-md w-full"
+            />
+          </li>
+        );
+      case "supplyDate":
+        return (
+          <li className=" space-y-1" key="supplyDate">
+            {<p className="pl-1">{FormatTolabelCase("supplyDate")}</p>}
+            <DatePicker
+              value={formval.supplyDate ? dayjs(formval.supplyDate) : null}
+              onChange={handleAddDate}
+              id="supplyDate"
+              name="supplyDate"
+              className=" focus:outline-none p-2 border rounded-md w-full"
+            />
+          </li>
+        );
+      case "mineralType":
+        return (
+          <li className=" space-y-1" key="mineralType">
+            {<p className="pl-1">{FormatTolabelCase("mineralType")}</p>}
+            <input
+              type="text"
+              autoComplete="off"
+              className="focus:outline-none p-2 border rounded-md w-full"
+              name="mineralType"
+              value={formval.mineralType || ""}
+              disabled
+              onChange={handleEntry}
+            />
+          </li>
+        );
+      case "mineTags":
+      case "supplierId":
+      case "isSupplierBeneficiary":
+        return null;
+      default:
+        return (
+          <li className=" space-y-1" key={key}>
+            {<p className="pl-1">{FormatTolabelCase(key)}</p>}
+            <input
+              type="text"
+              autoComplete="off"
+              className="focus:outline-none p-2 border rounded-md w-full"
+              name={key}
+              value={formval[key] || ""}
+              onChange={handleEntry}
+            />
+          </li>
+        );
+    }
+  };
+
   const result = isTotalWeightGreater(lotDetails, formval.weightIn);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const body = { ...formval, output: lotDetails };
-    await createColtanEntry({ body, model: "coltan" });
-    navigate(-1);
+    console.log(body);
+    // await createColtanEntry({ body, model: "coltan" });
+    // navigate(-1);
   };
   const handleCancel = () => {
     setFormval({
-      weightIn: "",
       companyName: "",
-      licenseNumber: "",
-      TINNumber: "",
       email: "",
-      supplierId: "",
+      TINNumber: "",
+      licenseNumber: "",
       companyRepresentative: "",
       representativeId: "",
       representativePhoneNumber: "",
+      mineralType: "coltan",
       supplyDate: "",
       time: "",
+      weightIn: "",
       numberOfTags: "",
-      mineTags: "",
-      negociantTags: "",
-      mineralType: "coltan",
-      mineralgrade: "",
-      mineralprice: "",
-      shipmentnumber: "",
       beneficiary: "",
+      mineTags: "",
+      supplierId: "",
+      //   negociantTags: "",
+      //   mineralgrade: "",
+      //   mineralprice: "",
+      //   shipmentnumber: "",
+      //   beneficiary: "",
       isSupplierBeneficiary: false,
     });
     setlotDetails([{ lotNumber: "", weightOut: "" }]);
@@ -260,8 +359,8 @@ const ColtanEntryForm = () => {
   return (
     <>
       <ActionsPagesContainer
-        title={"Register coltan entry"}
-        subTitle={"Add new coltan entry"}
+        title={"Register coltan entry test"}
+        subTitle={"Add new coltan entry test"}
         actionsContainer={
           <AddComponent
             component={
@@ -350,176 +449,7 @@ const ColtanEntryForm = () => {
 
                 <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {/* CONTAINER WITH THE INITIAL DATA FORM */}
-                  <li className=" space-y-1">
-                    <p className="pl-1">Company name</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="companyName"
-                      id="companyName"
-                      value={formval.companyName || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Email</p>
-                    <input
-                      type="email"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="email"
-                      id="email"
-                      value={formval.email || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">TIN Number</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="TINNumber"
-                      id="TINNumber"
-                      value={formval.TINNumber || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Licence number</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="licenseNumber"
-                      id="licenseNumber"
-                      value={formval.licenseNumber || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Company representative</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="companyRepresentative"
-                      id="companyRepresentative"
-                      value={formval.companyRepresentative || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Representative ID number</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="representativeId"
-                      id="representativeId"
-                      value={formval.representativeId || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Representative phone nbr</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="representativePhoneNumber"
-                      id="representativePhoneNumber"
-                      value={formval.representativePhoneNumber || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Minerals Types</p>
-                    <input
-                      autoComplete="off"
-                      disabled
-                      name="mineralType"
-                      id="mineralType"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      value={formval.mineralType || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Date</p>
-                    <DatePicker
-                      onChange={handleAddDate}
-                      id="supplyDate"
-                      name="supplyDate"
-                      className=" focus:outline-none p-2 border rounded-md w-full"
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Time</p>
-                    <TimePicker
-                      onChange={handleAddTime}
-                      format={"HH:mm"}
-                      id="date"
-                      name="date"
-                      className=" focus:outline-none p-2 border rounded-md w-full"
-                    />
-                  </li>
-
-                  <li className=" space-y-1">
-                    <p className="pl-1">Weight in</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="weightIn"
-                      id="weightIn"
-                      value={formval.weightIn || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Number of Tags</p>
-                    <input
-                      type="number"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="numberOfTags"
-                      id="numberOfTags"
-                      value={formval.numberOfTags || ""}
-                      onWheelCapture={(e) => {
-                        e.target.blur();
-                      }}
-                      onChange={handleEntry}
-                    />
-                  </li>
-                  <li className=" space-y-1">
-                    <span className=" flex gap-2 items-center">
-                      <p>Beneficiary</p>
-                      <span
-                        className={`border h-4 w-9 rounded-xl p-[0.5px] duration-200 transform ease-in-out flex ${
-                          checked
-                            ? " justify-end bg-green-400"
-                            : " justify-start bg-slate-400"
-                        }`}
-                        onClick={handleCheck}
-                      >
-                        <span
-                          className={` w-4 h- border bg-white rounded-full `}
-                        />
-                      </span>
-                    </span>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      disabled={checked}
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="beneficiary"
-                      id="beneficiary"
-                      value={formval.beneficiary || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
+                  {Object.keys(formval).map((key) => renderInputByType(key))}
 
                   <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
                     {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
@@ -576,4 +506,4 @@ const ColtanEntryForm = () => {
     </>
   );
 };
-export default ColtanEntryForm;
+export default ColtanEntryDynamicForm;

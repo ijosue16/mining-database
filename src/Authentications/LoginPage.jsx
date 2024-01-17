@@ -169,7 +169,7 @@ const LoginPage = () => {
                 Login
               </button>
             )}
-              <p className=" mt-8 hover:underline bg-blue-400 p-2 w-fit rounded shadow-sm cursor-pointer text-md" onClick={()=>navigate("/login/supplier")}>Login as Kanzamin supplier</p>
+              <p className=" mt-8 hover:underline border bg-custom_blue-100 border-custom_blue-500 p-2 w-fit rounded shadow-sm cursor-pointer text-md text-custom_blue-600" onClick={()=>navigate("/login/supplier")}>Login as Kanzamin supplier</p>
             {/*<span className="flex items-center justify-center gap-2">*/}
             {/*  <p>Don’t have an account?</p>*/}
             {/*  <p*/}

@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
@@ -18,6 +17,7 @@ import {decidePricingGrade, filterColumns, getBase64FromServer} from "../../../c
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
+import DetailsPageContainer from "../../../components/Actions components/DetailsComponentscontainer";
 
 
 const LithiumEntryCompletePage = ({entryId}) => {
@@ -559,7 +559,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
             {isLoading ? (
                 <FetchingPage/>
             ) : (
-                <ActionsPagesContainer
+                <DetailsPageContainer
                     title={"LOT DETAILS"}
                     actionsContainer={
                         <AddComponent

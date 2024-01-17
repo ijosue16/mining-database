@@ -319,7 +319,7 @@ const CassiteriteListPage = () => {
                             <li
                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                 onClick={() => {
-                                  navigate(`/entry/edit/cassiterite/${record._id}`);
+                                  navigate(`/entry/edit/${"cassiterite"}/${record._id}`);
                                 }}
                             >
                               <BiSolidEditAlt className=" text-lg" />
@@ -426,7 +426,7 @@ const CassiteriteListPage = () => {
         <ListContainer
             title={"Cassiterite entries list"}
             subTitle={"Manage your cassiterite  entries"}
-            navLinktext={"entry/add/cassiterite"}
+            navLinktext={`entry/add/${"cassiterite"}`}
             navtext={"Add new Entry"}
             isAllowed={permissions.entry?.create}
             table={

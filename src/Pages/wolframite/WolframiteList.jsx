@@ -314,6 +314,16 @@ const WolframiteListPage = () => {
                           }
                           className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                       >
+
+                        <li
+                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              navigate(`/entry/edit/${"wolframite"}/${record._id}`);
+                            }}
+                        >
+                          <BiSolidEditAlt className=" text-lg" />
+                          <p>edit</p>
+                        </li>
                         {userPermissions.entry?.edit && (
                             <li
                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -396,7 +406,7 @@ const WolframiteListPage = () => {
         <ListContainer
             title={"Wolframite entries list"}
             subTitle={"Manage your wolframite  entries"}
-            navLinktext={"entry/add/wolframite"}
+            navLinktext={`entry/add/${"wolframite"}`}
             navtext={"Add new Entry"}
             isAllowed={userPermissions.entry?.create}
             table={

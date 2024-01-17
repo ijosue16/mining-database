@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
 import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
-import ActionsPagesContainer from "../../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../../components/Actions components/AddComponent";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
@@ -24,6 +23,7 @@ import {getBase64FromServer, filterColumns, AppUrls, decidePricingGrade} from ".
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
+import DetailsPageContainer from "../../../components/Actions components/DetailsComponentscontainer";
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
@@ -599,7 +599,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
          {isLoading ? (
         <FetchingPage />
       ) : (
-            <ActionsPagesContainer
+            <DetailsPageContainer
                 title={"LOT DETAILS"}
                 // subTitle={"View Cassiterite detailes"}
                 actionsContainer={

@@ -96,6 +96,10 @@ import SupplierLogin from './Pages/SupplierLogin';
 import SuppliersDueDiligence from "./Pages/SuppliersDueDiligence";
 import StyleTestPage from './test elements/DummyPage';
 import UnauthorizedPage from './Pages/UnauthorizedPage';
+import ParentComponent from './test elements/ParentComponentTest';
+import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm';
+import MineralRawEntry from './Pages/coltan/entry/MineralRawEntry';
+import MineralEntryEdit from './Pages/coltan/entry/MineralEntryEdit';
 
 function App() {
 
@@ -124,7 +128,7 @@ function App() {
                                     <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                     <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
-                                    <Route path='/report/:supplierId' element={<ReportPage/>}/>
+                                    <Route path='/report/dummy' element={<ReportPage/>}/>
 
                                     <Route path='/coltan' element={<ColtanListPage/>}/>
                                     <Route path='/cassiterite' element={<CassiteriteListPage/>}/>
@@ -134,18 +138,21 @@ function App() {
                                     <Route path='/mixed' element={<MixedEntryForm/>}/>
 
                                     {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
-                                    <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
+                                    {/* <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
+                                    <Route path='/entry/add/coltan/test' element={<ColtanEntryDynamicForm/>}/>
                                     <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
                                     <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
                                     <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
-                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/>
+                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/> */}
+                                    <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
 
 
-                                    <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
+                                    {/* <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
                                     <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
                                     <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
                                     <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/>
+                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/> */}
+                                    <Route path='/entry/edit/:model/:entryId/:requestId?' element={<MineralEntryEdit/>}/>
 
 
                                     <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
@@ -216,7 +223,7 @@ function App() {
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/yoo" element={<StyleTestPage/>}/>
-                                    <Route path="/m" element={<UnauthorizedPage/>}/>
+                                    <Route path="/m" element={<MineralRawEntry/>}/>
                                 </Route>
                                 {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>

@@ -316,7 +316,7 @@ const BerylliumListPage = () => {
                                         <li
                                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                             onClick={() => {
-                                              navigate(`/entry/edit/beryllium/${record._id}`);
+                                              navigate(`/entry/edit/${"beryllium"}/${record._id}`);
                                             }}
                                         >
                                           <BiSolidEditAlt className=" text-lg"/>
@@ -421,7 +421,7 @@ const BerylliumListPage = () => {
         <ListContainer
             title={"beryllium entries list"}
             subTitle={"Manage your beryllium  entries"}
-            navLinktext={"entry/add/beryllium"}
+            navLinktext={`entry/add/${"beryllium"}`}
             navtext={"Add new Entry"}
             isAllowed={permissions.entry?.create}
             table={
