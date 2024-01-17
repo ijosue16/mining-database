@@ -53,8 +53,9 @@ const NewUSerChart = ({ chats, currentUser, setChats, visible, position, setNewU
   };
   const handleNewChartUser = async (id) => {
     const body={senderId:userData._id,receiverId:id};
-    const user = filteredUsers.find(user => user._id === id);
-    if (user) {
+    console.log(body);
+    const existingChats = chats.map(chat => chat.members.find(member => member.toString() !== userData._id.toString()));
+    if (existingChats.includes(id.toString())) {
       setNewUserModal(!visible);
       return;
     }
@@ -71,7 +72,7 @@ const NewUSerChart = ({ chats, currentUser, setChats, visible, position, setNewU
   return (
     <>
       <div
-        className={`rounded-md shadow-lg h-96 max-w-72 absolute ${position} z-50 p-2 space-y-1 ${
+        className={`rounded-md shadow-lg h-96 max-w-72 absolute ${position} bg-gray-200 z-50 p-2 space-y-1 ${
           visible ? "block" : "hidden"
         }`}
         ref={newChatRef}
@@ -86,7 +87,7 @@ const NewUSerChart = ({ chats, currentUser, setChats, visible, position, setNewU
         />
 
         <div className=" space-y-2 max-h-[290px] w-full overflow-y-auto">
-          <p>all contacts</p>
+          <p>All Contacts</p>
           {filteredUsers.length > 0 ? (
             filteredUsers.map(({ name, role, _id }) => (
               <div

@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { Modal, Spin, Table, message } from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import { useGetAllUsersQuery, useDeleteUserMutation } from "../../states/apislice";
 import {
@@ -17,11 +16,12 @@ import { MdDelete } from "react-icons/md";
 import { RiFileEditFill } from "react-icons/ri";
 import { HiOutlinePrinter } from "react-icons/hi";
 import { toInitialCase } from "../../components/helperFunctions";
+import {useSelector} from "react-redux";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 
 const UsersListPage = () => {
   let dataz = [];
-  const { loginData } = useMyContext();
+  const { permissions, userData } = useSelector(state => state.persistedReducer?.global);
   const { data, isLoading, isSuccess, isError, error } = useGetAllUsersQuery("", {
     refetchOnMountOrArgChange: true,
     refetchOnReconnect: true
@@ -144,7 +144,7 @@ const UsersListPage = () => {
               <div className=" text-center">
                 <label htmlFor={`check${record._id }`} className={`bg-gray-100 px-1 py-1 rounded-full flex flex-col justify-center w-12 ${record.active===true?'items-end':'items-start'}`}>
                 <input type="checkbox" name="" id={`check${record._id }`} className=" sr-only peer" />
-                <div className={`rounded-full p-[7.8px]  ${record.active===true?'bg-orange-400':' bg-slate-400'}`}></div>
+                <div className={`rounded-full p-[7.8px]  ${record.active === true ? 'bg-orange-400' : ' bg-slate-400'}`}/>
                 </label>
               {/* <div className={`bg-gray-100 px-1 py-1 rounded-full flex flex-col justify-center w-12 ${ghee===true?'items-end':'items-start'}`} onClick={()=>record.active=false}>
               <div className={`rounded-full p-[7.8px]  ${ghee===true?'bg-orange-400':' bg-slate-400'}`}></div>
@@ -181,72 +181,38 @@ const UsersListPage = () => {
                       }
                       className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                     >
-                      <li
-                        className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                        onClick={() => {
-                          navigate(`/user/edit/${record._id}`);
-                        }}
-                      >
-                        <BiSolidEditAlt className=" text-lg" />
-                        <p>edit</p>
-                      </li>
-                      {loginData !== "storekeeper" &&
-                      "traceabilityOfficer" &&
-                      "managingDirector" &&
-                      "operationsManager " ? (
-                        <>
-                          {/* <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              {
-                                navigate(`/complete/cassiterite/${record._id}`);
-                              }
-                            }}
-                          >
-                            <RiFileEditFill className=" text-lg" />
-                            <p>complete entry</p>
-                          </li> */}
+                      {permissions.users?.edit && record._id.toString() !== userData._id.toString() && (
                           <li
-                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              SetSelectedRow(record._id);
-                              SetSelectedRowInfo({
-                                ...selectedRowInfo,
-                                name: record.companyName,
-                                date: record.supplyDate,
-                              });
-                              setShowmodal(!showmodal);
-                            }}
+                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                              onClick={() => {
+                                navigate(`/user/edit/${record._id}`);
+                              }}
                           >
-                            <MdDelete className=" text-lg" />
-                            <p>delete</p>
+                            <BiSolidEditAlt className=" text-lg" />
+                            <p>edit</p>
                           </li>
-                        </>
-                      ) : null}
+                      )}
                     </motion.ul>
                   ) : null}
                 </span>
               </span>
 
-              {loginData !== "storekeeper" &&
-              "traceabilityOfficer" &&
-              "managingDirector" &&
-              "operationsManager " ? (
-                <span>
+              {permissions.users.delete && record._id.toString() !== userData._id.toString() && (
+                  <span>
                   <MdDelete
-                    className="text-lg"
-                    onClick={() => {
-                      SetSelectedRow(record._id);
-                      SetSelectedRowInfo({
-                        ...selectedRowInfo,
-                        name: record.name,
-                        date: record.supplyDate,
-                      });
-                      setShowmodal(!showmodal);
-                    }}
+                      className="text-lg"
+                      onClick={() => {
+                        SetSelectedRow(record._id);
+                        SetSelectedRowInfo({
+                          ...selectedRowInfo,
+                          name: record.name,
+                          date: record.supplyDate,
+                        });
+                        setShowmodal(!showmodal);
+                      }}
                   />
                 </span>
-              ) : null}
+              )}
             </div>
           </>
         );
@@ -261,7 +227,7 @@ const UsersListPage = () => {
         subTitle={"Manage your users"}
         navLinktext={"add/user"}
         navtext={"Add new User"}
-        isAllowed={true}
+        isAllowed={permissions.users?.create}
         table={
           <>
             <Modal
@@ -274,7 +240,7 @@ const UsersListPage = () => {
               destroyOnClose
               footer={[
                 <DeleteFooter key={"actions"} isDeleting={isDeleting}
-                defText={"Delete"} 
+                defText={"Delete"}
                 dsText={"Deleting"}
                  handleCancel={() => {
                  setShowmodal(!showmodal);

@@ -112,6 +112,13 @@ export const apiSlice = createApi({
                 body
             })
         }),
+        verifyToken: builder.mutation({
+            query: ({token}) => ({
+                url: `/users/verify-token`,
+                method: 'POST',
+                body: {token}
+            })
+        }),
         getAllDueDiligence: builder.query({
             query: () => `/duediligence`,
             providesTags: ['dueDiligence', 'buyers']
@@ -761,6 +768,7 @@ export const {
     useSignupMutation,
     useLoginMutation,
     useLogoutMutation,
+    useVerifyTokenMutation,
     useGetAllBuyersQuery,
     useCreateBuyerMutation,
     useGetOneBuyerQuery,

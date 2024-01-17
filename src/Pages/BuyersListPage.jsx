@@ -21,15 +21,12 @@ import {
   useDeleteBuyerMutation,
 } from "../states/apislice";
 import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../context files/LoginDatacontextProvider";
 import { useSelector } from "react-redux";
 import DeleteFooter from "../components/modalsfooters/DeleteFooter";
 
 const BuyersListPage = () => {
   const [dataz, setDataz] = useState([]);
-  const { loginData } = useMyContext();
   const { permissions } = useSelector(state => state.persistedReducer?.global);
-  // const { profile, permissions } = loginData;
   const { data, isLoading, isSuccess, isError, error } = useGetAllBuyersQuery();
   const [
     deleteBuyer,

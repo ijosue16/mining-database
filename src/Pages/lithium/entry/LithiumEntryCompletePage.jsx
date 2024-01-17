@@ -10,7 +10,6 @@ import {FaImage, FaSave} from "react-icons/fa";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {useDeleteGradeImgMutation, useGetEntryQuery, useUpdateEntryMutation,} from "../../../states/apislice";
 import {useNavigate} from "react-router-dom";
-import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";
@@ -25,8 +24,6 @@ const LithiumEntryCompletePage = ({entryId}) => {
     const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const [imageAvailable, setImageAvailable] = useState(false);

@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import { Table,Modal } from "antd";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import { ImSpinner2 } from "react-icons/im";
 import {motion} from "framer-motion";
 import {BiSolidDetail} from "react-icons/bi";
@@ -17,8 +16,6 @@ const SuppliersInvoice =()=>{
     let dataz=[];
     // const {data, isLoading, isSuccess, isError, error} = useGetSuppliersInvoiceQuery();
     const { data, isLoading, isSuccess, isError, error } = useGetSuppliersInvoiceQuery(supplierId);
-    const { loginData } = useMyContext();
-    const{profile,permissions}=loginData;
     const [showActions, SetShowActions] = useState(false);
     const [selectedRow, SetSelectedRow] = useState(null);
     const [showmodal, setShowmodal] = useState(false);

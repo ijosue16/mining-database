@@ -76,7 +76,6 @@ const ShipmentPage = () => {
             const {data: dt} = data;
             const {shipments: ships} = dt;
             SetDataz(ships);
-            console.log(ships)
         }
     }, [isSuccess]);
 
@@ -449,7 +448,7 @@ const ShipmentPage = () => {
                             </Form>
                         </div>
 
-                        <Modal
+{/*                         <Modal
                             open={showmodal}
                             onOk={() => handleDelete(selectedRow)}
                             onCancel={() => {
@@ -478,7 +477,7 @@ const ShipmentPage = () => {
                             <li className=" text-lg">{`Supply date: ${dayjs(
                                 selectedRow.date
                             ).format("MMM/DD/YYYY")}`}</li>
-                        </Modal>
+                        </Modal> */}
                         {/* select mineral type modal */}
                         <Modal
                             open={mineralModal}

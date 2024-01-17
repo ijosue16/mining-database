@@ -154,7 +154,7 @@ const ContractsistPage = () => {
                 subTitle={'Manage your contracts'}
                 navLinktext={'add/contract'}
                 navtext={'add new contract'}
-                isAllowed={true}
+                isAllowed={permissions.contracts?.create}
                 table={
                     <div>
                         <Table

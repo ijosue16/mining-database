@@ -4,7 +4,6 @@ import isBetween from "dayjs/plugin/isBetween"
 import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
 import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
-import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
   useGetAllEntriesQuery,
@@ -34,9 +33,7 @@ const BerylliumListPage = () => {
   const {userData} = useSelector(state => state.persistedReducer?.global);
   const socket = useContext(SocketContext);
   const [dataz, setDataz] = useState([]);
-  const {loginData} = useMyContext();
   const {permissions} = userData;
-  // const {profile, permissions} = loginData;
   const [createEditRequest, {
     isLoading: isCreateRequestLoading,
     isSuccess: isCreateRequestSuccess,
@@ -327,51 +324,22 @@ const BerylliumListPage = () => {
                                         </li>
                                     )}
                                     {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
-                                    <li
-                                        className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                                        onClick={() => {
-                                          if (record.supplierId) {
-                                            navigate(`/add/invoice/${record.supplierId}/beryllium/${record._id}`);
-                                          } else {
-                                            return message.warning("You have assign supplier to this entry");
-                                          }
-                                        }}
-                                    >
-                                      <FaFileInvoiceDollar className=" text-xl" />
-                                      <p>Make invoice</p>
-                                    </li>
+                                    {permissions?.invoices?.create && (
+                                        <li
+                                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                            onClick={() => {
+                                              if (record.supplierId) {
+                                                navigate(`/add/invoice/${record.supplierId}/beryllium/${record._id}`);
+                                              } else {
+                                                return message.warning("You have assign supplier to this entry");
+                                              }
+                                            }}
+                                        >
+                                          <FaFileInvoiceDollar className=" text-xl" />
+                                          <p>Make invoice</p>
+                                        </li>
+                                    )}
 
-
-                                    {permissions.entry?.edit ? (
-                                        <>
-                                          {/* <li
-                                                    className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                                    onClick={() => {
-                                                        {
-                                                            navigate(`/complete/coltan/${record._id}`);
-                                                        }
-                                                    }}
-                                                >
-                                                    <RiFileEditFill className=" text-lg"/>
-                                                    <p>complete entry</p>
-                                                </li> */}
-                                          {permissions.entry?.delete ? (<li
-                                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                              onClick={() => {
-                                                SetSelectedRow(record._id);
-                                                SetSelectedRowInfo({
-                                                  ...selectedRowInfo,
-                                                  name: record.companyName,
-                                                  date: record.supplyDate,
-                                                });
-                                                setShowmodal(!showmodal);
-                                              }}
-                                          >
-                                            <MdDelete className=" text-lg"/>
-                                            <p>delete</p>
-                                          </li>) : null}
-                                        </>
-                                    ) : null}
                                   </motion.ul>
                               ) : null}
                             </span>

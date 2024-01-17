@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import {Checkbox, DatePicker, message, Modal, Space, Spin, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
   useGetAllEntriesQuery,
@@ -35,7 +34,6 @@ const CassiteriteListPage = () => {
   const { userData } = useSelector(state => state.persistedReducer.global);
   const socket = useContext(SocketContext);
   const [dataz, setDataz] = useState([]);
-  const { loginData } = useMyContext();
   const{permissions} = userData;
   const [createEditRequest, {
     isLoading: isCreateRequestLoading,

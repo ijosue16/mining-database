@@ -1,6 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import {useMyContext} from "../../context files/LoginDatacontextProvider";
 import {useNavigate} from "react-router-dom";
 import {motion} from "framer-motion";
 import dayjs from "dayjs";
@@ -18,12 +17,12 @@ import {
     useSaveFileMutation,
 } from "../../states/apislice";
 import ViewDocumentEditor from "../ViewDocumentEditor";
+import {useSelector} from "react-redux";
 
 const AdvancedPaymentsList = () => {
     let dataz = [];
     const navigate = useNavigate();
-    const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
+    const { permissions } = useSelector(state => state.persistedReducer?.global);
     const [searchText, SetSearchText] = useState("");
     const [selectedRow, SetSelectedRow] = useState("");
     const [showActions, SetShowActions] = useState(false);
@@ -330,7 +329,7 @@ const AdvancedPaymentsList = () => {
                 subTitle={"Advanced payments list"}
                 navLinktext={"payment/advanced/entry"}
                 navtext={"Add new advanced payment Entry"}
-                isAllowed={true}
+                isAllowed={permissions.payments?.create}
                 table={
                     <>
                         <Modal

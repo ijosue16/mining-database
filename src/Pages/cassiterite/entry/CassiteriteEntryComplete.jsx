@@ -15,7 +15,6 @@ import {
     useUpdateEntryMutation
 } from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
-import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
@@ -28,10 +27,7 @@ import DetailsPageContainer from "../../../components/Actions components/Details
 
 const CassiteriteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
-    // const {entryId} = useParams();
     const navigate = useNavigate();
-    // const {loginData} = useMyContext();
-    // const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
 

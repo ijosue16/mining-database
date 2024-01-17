@@ -10,7 +10,6 @@ import {FaImage, FaSave} from "react-icons/fa";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
 import {useDeleteGradeImgMutation, useGetEntryQuery, useUpdateEntryMutation,} from "../../../states/apislice";
 import {useNavigate} from "react-router-dom";
-import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
 import {IoClose} from "react-icons/io5";

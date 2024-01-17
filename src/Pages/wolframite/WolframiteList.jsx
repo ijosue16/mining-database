@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import {Checkbox, DatePicker, message, Modal, Space, Table} from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useMyContext } from "../../context files/LoginDatacontextProvider";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
   useGetAllEntriesQuery,
@@ -41,8 +40,6 @@ const WolframiteListPage = () => {
     error: createRequestError
   }] = useCreateEditRequestMutation();
   const [dataz, setDataz] = useState([]);
-  const { loginData } = useMyContext();
-  // const{profile,permissions}=loginData;
   const { data, isLoading, isSuccess, isError, error } =
       useGetAllEntriesQuery({model: "wolframite"}, {
         refetchOnMountOrArgChange: true,
@@ -317,6 +314,7 @@ const WolframiteListPage = () => {
                           }
                           className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                       >
+
                         <li
                             className="flex gap-4 p-2 items-center hover:bg-slate-100"
                             onClick={() => {
@@ -326,53 +324,36 @@ const WolframiteListPage = () => {
                           <BiSolidEditAlt className=" text-lg" />
                           <p>edit</p>
                         </li>
+                        {userPermissions.entry?.edit && (
+                            <li
+                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                onClick={() => {
+                                  navigate(`/entry/edit/wolframite/${record._id}`);
+                                }}
+                            >
+                              <BiSolidEditAlt className=" text-lg" />
+                              <p>edit</p>
+                            </li>
+                        )}
 
 
                         {/* TODO 16: SHOW MENU BASED ON PERMISSIONS*/}
-                        <li
-                            className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                            onClick={() => {
-                              if (record.supplierId) {
-                                navigate(`/add/invoice/${record.supplierId}/wolframite/${record._id}`);
-                              } else {
-                                return message.warning("You have assign supplier to this entry");
-                              }
-                            }}
-                        >
-                          <FaFileInvoiceDollar className=" text-xl" />
-                          <p>Make invoice</p>
-                        </li>
+                        {userPermissions.invoices?.create && (
+                            <li
+                                className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                onClick={() => {
+                                  if (record.supplierId) {
+                                    navigate(`/add/invoice/${record.supplierId}/wolframite/${record._id}`);
+                                  } else {
+                                    return message.warning("You have assign supplier to this entry");
+                                  }
+                                }}
+                            >
+                              <FaFileInvoiceDollar className=" text-xl" />
+                              <p>Make invoice</p>
+                            </li>
+                        )}
 
-                        {userPermissions.entry?.edit ? (
-                            <>
-                              {/*<li*/}
-                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                              {/*    onClick={() => {*/}
-                              {/*      {*/}
-                              {/*        navigate(`/complete/wolframite/${record._id}`);*/}
-                              {/*      }*/}
-                              {/*    }}*/}
-                              {/*>*/}
-                              {/*  <RiFileEditFill className=" text-lg" />*/}
-                              {/*  <p>complete entry</p>*/}
-                              {/*</li>*/}
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => {
-                                    SetSelectedRow(record._id);
-                                    SetSelectedRowInfo({
-                                      ...selectedRowInfo,
-                                      name: record.companyName,
-                                      date: record.supplyDate,
-                                    });
-                                    setShowmodal(!showmodal);
-                                  }}
-                              >
-                                <MdDelete className=" text-lg" />
-                                <p>delete</p>
-                              </li>
-                            </>
-                        ) : null}
                       </motion.ul>
                   ) : null}
                 </span>
@@ -449,7 +430,7 @@ const WolframiteListPage = () => {
                     Confirm Delete
                   </h2>
                   <p className=" text-lg">
-                    Are you sure you want to delete transaction with:
+                    Are you sure you want to delete entry with:
                   </p>
                   <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
                   <li className=" text-lg">{`Supply date: ${dayjs(

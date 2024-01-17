@@ -12,7 +12,6 @@ import {
     useDeleteGradeImgMutation,
 } from "../../../states/apislice";
 import {useNavigate, useParams} from "react-router-dom";
-import {useMyContext} from "../../../context files/LoginDatacontextProvider";
 import FetchingPage from "../../FetchingPage";
 import {getBase64FromServer, filterColumns, decidePricingGrade, AppUrls} from "../../../components/helperFunctions";
 import {IoClose} from "react-icons/io5";
@@ -30,8 +29,6 @@ const WolframiteEntryCompletePage = ({entryId}) => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
-    const {loginData} = useMyContext();
-    const {profile, permissions} = loginData;
     const [form] = Form.useForm();
     const [selectedLotNumber, setSelectedLotNumber] = useState(null);
     const {data, isLoading, isError, isSuccess, error} =
