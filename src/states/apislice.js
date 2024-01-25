@@ -6,7 +6,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        baseUrl: "http://localhost:5001/api/v1/",
         prepareHeaders: (headers, {getState}) => {
             const token = getState().persistedReducer?.global?.token
             if (token) {
@@ -108,6 +108,27 @@ export const apiSlice = createApi({
         logout: builder.mutation({
             query: ({body}) => ({
                 url: `/users/logout`,
+                method: 'POST',
+                body
+            })
+        }),
+        setup2FA: builder.mutation({
+            query: ({body}) => ({
+                url: `/users/setup-2fa`,
+                method: 'POST',
+                body
+            })
+        }),
+        verify2FA: builder.mutation({
+            query: ({body}) => ({
+                url: `/users/verify-2fa`,
+                method: 'POST',
+                body
+            })
+        }),
+        verifyCode: builder.mutation({
+            query: ({body}) => ({
+                url: `/users/verify-code`,
                 method: 'POST',
                 body
             })
@@ -887,4 +908,7 @@ export const {
     useConvertToSFDTMutation,
     useGenerateLabReportMutation,
     useGenerateForwardNoteMutation,
+    useSetup2FAMutation,
+    useVerify2FAMutation,
+    useVerifyCodeMutation
 } = apiSlice

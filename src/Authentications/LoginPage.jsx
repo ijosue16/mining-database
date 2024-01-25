@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
 import { PiEnvelopeBold, PiEyeFill, PiEyeSlashFill } from "react-icons/pi";
 import { useNavigate, useLocation } from "react-router-dom";
-import {useLoginMutation, useVerifyTokenMutation} from "../states/apislice";
+import {useLoginMutation, useVerifyTokenMutation, useVerifyCodeMutation } from "../states/apislice";
 import { setAuthToken, setUserData, setPermissions } from "../states/slice";
 import {useDispatch, useSelector} from "react-redux";
 import { toast } from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
 import {SocketContext} from "../context files/socket";
-import { message } from "antd";
+import {message, Modal} from "antd";
 
 
 const LoginPage = () => {
@@ -18,6 +18,8 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const socket = useContext(SocketContext);
   const location = useLocation();
+  const [show2fa, setShow2fa] = useState(false);
+  const [twoFACode, setTwoFACode] = useState({ code: "", email: "" });
   const from = location.state?.from?.pathname || "/dashboard";
   useEffect(() => {
     if (isSuccess) {
@@ -30,6 +32,7 @@ const LoginPage = () => {
 
   const { token } = useSelector(state => state.persistedReducer?.global);
   const [verifyToken, {data: verifyTokenData, isSuccess: verifyTokenSuccess, isError: isTokenError, error: tokenError}] = useVerifyTokenMutation();
+  const [verifyCode, {isSuccess: isVerifyCodeSuccess, isError: isVerifyCodeError, error: verifyCodeError}] = useVerifyCodeMutation();
 
   useEffect(() => {
     if (verifyTokenSuccess) {
@@ -78,18 +81,42 @@ const LoginPage = () => {
     e.preventDefault();
     const response = await login({ body: user });
     if (response.data) {
-      const { token } = response.data;
-      const { user } = response.data.data;
-      dispatch(setAuthToken(token));
-      dispatch(setUserData(user));
-      dispatch(setPermissions(user.permissions));
-      // localStorage.setItem("profile", JSON.stringify(user));
-      // localStorage.setItem("role", user.role);
-      // localStorage.setItem("permissions", JSON.stringify(user.permissions));
-      socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
-      navigate(from, {replace: true});
+      if (response.data?.token) {
+        const { token } = response.data;
+        const { user } = response.data.data;
+        dispatch(setAuthToken(token));
+        dispatch(setUserData(user));
+        dispatch(setPermissions(user.permissions));
+        // localStorage.setItem("profile", JSON.stringify(user));
+        // localStorage.setItem("role", user.role);
+        // localStorage.setItem("permissions", JSON.stringify(user.permissions));
+        socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
+        navigate(from, {replace: true});
+      } else {
+        const { user } = response.data.data;
+        setTwoFACode(prevState => ({ ...prevState, email: user.email }));
+        setShow2fa(true);
+      }
     }
   };
+
+  const handle2faSubmit = async () => {
+    const response = await verifyCode({ body: { code: twoFACode.code, email: twoFACode.email }});
+    if (response.data) {
+      if (response.data?.token) {
+        const { token } = response.data;
+        const { user } = response.data.data;
+        dispatch(setAuthToken(token));
+        dispatch(setUserData(user));
+        dispatch(setPermissions(user.permissions));
+        // localStorage.setItem("profile", JSON.stringify(user));
+        // localStorage.setItem("role", user.role);
+        // localStorage.setItem("permissions", JSON.stringify(user.permissions));
+        socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
+        navigate(from, {replace: true});
+      }
+    }
+  }
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -159,11 +186,12 @@ const LoginPage = () => {
              type="submit"
            >
              <ImSpinner2 className="h-[20px] w-[20px] animate-spin text-gray-500" />
-             Loging in
+             Logging in
            </button>
             ) : (
                 <button
-                type="submit"
+                // type="submit"
+                onClick={() => setShow2fa(true)}
                 className="w-full px-2 py-3 bg-blue-400 rounded"
               >
                 Login
@@ -183,6 +211,27 @@ const LoginPage = () => {
         </div>
 
         <div className=" col-span-3 sm:col-span-3 lg:col-span-4 hidden sm:block h-full bg-origin-border bg-center bg-no-repeat bg-cover bg-[url('https://img.freepik.com/free-vector/landscape-coal-mining-scene-with-crane-trucks_1308-55217.jpg?w=2000')]" />
+        <Modal
+            open={show2fa}
+            destroyOnClose
+            // onOk={}
+            onCancel={() => setShow2fa(!show2fa)}
+            okButtonProps={{className: "bg-blue-500"}}
+            cancelButtonProps={{className: "bg-red-500 text-white"}}
+        >
+          <div>
+            <p className="text-center text-xl font-bold">Enter 2FA code</p>
+            <input
+                type="number"
+                name="code"
+                id="code"
+                placeholder="Enter the 6 digit code from the app"
+                className="w-full border p-2 rounded mt-2 focus:outline-none"
+                onChange={(e) => setTwoFACode(prevState => ({...prevState, code: e.target.value}))}
+                onWheelCapture={(e) => e.target.blur()}
+            />
+          </div>
+        </Modal>
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import { Modal, Spin, Table, message } from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import { useGetAllUsersQuery, useDeleteUserMutation } from "../../states/apislice";
+import { useGetAllUsersQuery, useDeleteUserMutation, useVerify2FAMutation, useSetup2FAMutation } from "../../states/apislice";
 import {
   PiMagnifyingGlassDuotone,
   PiDotsThreeVerticalBold,
@@ -18,6 +18,7 @@ import { HiOutlinePrinter } from "react-icons/hi";
 import { toInitialCase } from "../../components/helperFunctions";
 import {useSelector} from "react-redux";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
+import { Tb2Fa } from "react-icons/tb";
 
 const UsersListPage = () => {
   let dataz = [];
@@ -31,6 +32,12 @@ const UsersListPage = () => {
     { isLoading: isDeleting, isSuccess: isdone, isError: isproblem,error:problem },
   ] = useDeleteUserMutation();
 
+  const [setup2FA, { isLoading: isSettingUp, isSuccess: is2FA, isError: is2FAError, error: error2FA }] = useSetup2FAMutation();
+  const [verify2FA, { isLoading: isVerifying, isSuccess: isVerified, isError: isVerifyError, error: errorVerify }] = useVerify2FAMutation()
+
+
+
+
   const navigate = useNavigate();
   const [searchText, SetSearchText] = useState("");
   const [showActions, SetShowActions] = useState(false);
@@ -41,6 +48,19 @@ const UsersListPage = () => {
   const [selectedRow, SetSelectedRow] = useState("");
   const [model, Setmodel] = useState(null);
   const [showmodal, setShowmodal] = useState(false);
+  const [show2fa, setShow2fa] = useState(false);
+  const [qrcode, setQrcode] = useState("");
+  const [twoFA, setTwoFA] = useState({code:"", email:""});
+
+
+  useEffect(() => {
+    if (isVerified) {
+        message.success("2FA verified successfully");
+    } else if (isVerifyError) {
+        const { message: errorMessage } = errorVerify.data;
+        message.error(errorMessage);
+    }
+  }, [isVerified]);
 
   let modalRef = useRef();
 
@@ -49,6 +69,17 @@ const UsersListPage = () => {
       SetShowActions(false);
     }
   };
+
+  const setup2FactorAuth = async (email) => {
+    const response = await setup2FA({body: {email}});
+    const data = response.data;
+    setQrcode(data.imageUrl);
+  }
+
+  const verify2FactorAuth = async ({email, code}) => {
+    await verify2FA({body: {email, code}});
+    setShow2fa(false);
+  }
 
   useEffect(() => {
     if (isdone) {
@@ -181,6 +212,16 @@ const UsersListPage = () => {
                       }
                       className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                     >
+                      <li onClick={() => {
+                        setShow2fa(true);
+                        setup2FactorAuth(record.email);
+                        setTwoFA(prevState => ({...prevState, email: record.email}));
+                      }} className="flex gap-4 p-2 items-center hover:bg-slate-100">
+                        <button className="flex gap-4 p-2 items-center">
+                          <Tb2Fa/>
+                          Enable 2FA
+                        </button>
+                      </li>
                       {permissions.users?.edit && record._id.toString() !== userData._id.toString() && (
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -292,6 +333,32 @@ const UsersListPage = () => {
                 columns={columns}
                 rowKey="_id"
               />
+              <Modal
+                  open={show2fa}
+                  destroyOnClose
+                  onOk={() => verify2FactorAuth(twoFA)}
+                  onCancel={() => setShow2fa(!show2fa)}
+                  okButtonProps={{className: "bg-blue-500"}}
+                  cancelButtonProps={{className: "bg-red-500 text-white"}}
+              >
+                <div>
+                    <p>Scan the QR code below with your Google Authenticator app</p>
+                    <div className="flex justify-center">
+                        <img src={qrcode} alt="qr code"/>
+                    </div>
+                </div>
+                <div>
+                  <input
+                      type="number"
+                      name="code"
+                      id="code"
+                      placeholder="Enter the 6 digit code from the app"
+                      className="w-full border p-2 rounded mt-2 focus:outline-none"
+                      onChange={(e) => setTwoFA(prevState => ({...prevState, code: e.target.value}))}
+                      onWheelCapture={(e) => e.target.blur()}
+                  />
+                </div>
+              </Modal>
             </div>
           </>
         }
