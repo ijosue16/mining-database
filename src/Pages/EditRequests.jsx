@@ -161,7 +161,7 @@ const EditRequests = () => {
                             Reject
                         </button>
 
-                        {permissions.editRequests.authorize && (
+                        {permissions.editRequests?.authorize && (
                             <button
                                 disabled={record.requestStatus !== "pending"}
                                 className="bg-green-300 p-1 pl-2 pr-2 rounded-[4px]"
@@ -170,7 +170,7 @@ const EditRequests = () => {
                                 Authorize
                             </button>
                         )}
-                        {permissions.editRequests.reject && (
+                        {permissions.editRequests?.reject && (
                             <button
                                 disabled={record.requestStatus !== "pending"}
                                 className="bg-red-400 p-1 pl-2 pr-2 rounded-[4px]"

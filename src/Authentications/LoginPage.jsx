@@ -11,7 +11,7 @@ import {message, Modal} from "antd";
 
 
 const LoginPage = () => {
-  const [login, { isLoading, isSuccess, isError, error }] = useLoginMutation();
+  const [login, { data,  isLoading, isSuccess, isError, error }] = useLoginMutation();
   const [show, setShow] = useState(false);
   const [user, setUser] = useState({ email: "", password: "" });
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const LoginPage = () => {
   const from = location.state?.from?.pathname || "/dashboard";
   useEffect(() => {
     if (isSuccess) {
-      return message.success("Logged in Successfully")
+      if (data?.token) return message.success("Logged in Successfully");
     } else if (isError) {
       const { message: errorMessage } = error.data;
       return message.error(errorMessage);
@@ -46,6 +46,15 @@ const LoginPage = () => {
       return navigate('/login');
     }
   }, [isTokenError, verifyTokenSuccess]);
+
+  useEffect(() => {
+    if (isVerifyCodeSuccess) {
+      return message.success("Logged in Successfully");
+    } else if (isVerifyCodeError) {
+      const { message: errorMessage } = verifyCodeError.data;
+      return message.error(errorMessage);
+    }
+  }, [isVerifyCodeSuccess, isVerifyCodeError, verifyCodeError]);
 
 
 
@@ -101,6 +110,7 @@ const LoginPage = () => {
   };
 
   const handle2faSubmit = async () => {
+    if (!twoFACode.code) return message.error("Please enter the code from your device");
     const response = await verifyCode({ body: { code: twoFACode.code, email: twoFACode.email }});
     if (response.data) {
       if (response.data?.token) {
@@ -113,6 +123,7 @@ const LoginPage = () => {
         // localStorage.setItem("role", user.role);
         // localStorage.setItem("permissions", JSON.stringify(user.permissions));
         socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
+        setShow2fa(false);
         navigate(from, {replace: true});
       }
     }
@@ -190,8 +201,7 @@ const LoginPage = () => {
            </button>
             ) : (
                 <button
-                // type="submit"
-                onClick={() => setShow2fa(true)}
+                type="submit"
                 className="w-full px-2 py-3 bg-blue-400 rounded"
               >
                 Login
@@ -214,7 +224,7 @@ const LoginPage = () => {
         <Modal
             open={show2fa}
             destroyOnClose
-            // onOk={}
+            onOk={() => handle2faSubmit()}
             onCancel={() => setShow2fa(!show2fa)}
             okButtonProps={{className: "bg-blue-500"}}
             cancelButtonProps={{className: "bg-red-500 text-white"}}
