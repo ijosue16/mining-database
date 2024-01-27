@@ -50,6 +50,7 @@ const UsersListPage = () => {
   const [showmodal, setShowmodal] = useState(false);
   const [show2fa, setShow2fa] = useState(false);
   const [qrcode, setQrcode] = useState("");
+  const [secret, setSecret] = useState("");
   const [twoFA, setTwoFA] = useState({code:"", email:""});
 
 
@@ -74,10 +75,11 @@ const UsersListPage = () => {
     const response = await setup2FA({body: {email}});
     const data = response.data;
     setQrcode(data.imageUrl);
+    setSecret(data.secret);
   }
 
   const verify2FactorAuth = async ({email, code}) => {
-    await verify2FA({body: {email, code}});
+    await verify2FA({body: {email, code, secret}});
     setShow2fa(false);
   }
 
@@ -160,7 +162,7 @@ const UsersListPage = () => {
       sorter: (a, b) => a.email.localeCompare(b.email),
     },
     {
-      title: "phoneNumber",
+      title: "Phone Number",
       dataIndex: "phoneNumber",
       key: "phoneNumber",
       sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),

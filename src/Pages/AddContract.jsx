@@ -125,7 +125,7 @@ const AddContract = () => {
         // setBeneficial(chosenBuyer.buyerName);
       }
       // setchecked(false);
-      setContractInfo((prev) => ({ ...prev, buyerIdId: setShipmentDetails._id }));
+      setContractInfo((prev) => ({ ...prev, buyerIdId: chosenBuyer._id }));
       setDropdownOpen(false);
       setSearchText("");
     };
