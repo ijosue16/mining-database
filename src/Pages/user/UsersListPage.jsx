@@ -4,7 +4,7 @@ import { Modal, Spin, Table, message } from "antd";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ListContainer from "../../components/Listcomponents/ListContainer";
-import { useGetAllUsersQuery, useDeleteUserMutation, useVerify2FAMutation, useSetup2FAMutation } from "../../states/apislice";
+import { useGetAllUsersQuery, useDeleteUserMutation, useVerify2FAMutation, useSetup2FAMutation, useUpdateUserMutation } from "../../states/apislice";
 import {
   PiMagnifyingGlassDuotone,
   PiDotsThreeVerticalBold,
@@ -35,7 +35,7 @@ const UsersListPage = () => {
   const [setup2FA, { isLoading: isSettingUp, isSuccess: is2FA, isError: is2FAError, error: error2FA }] = useSetup2FAMutation();
   const [verify2FA, { isLoading: isVerifying, isSuccess: isVerified, isError: isVerifyError, error: errorVerify }] = useVerify2FAMutation()
 
-
+  const [updateUser, { isLoading: isUpdating, isSuccess: isUpdated, isError: isUpdateError, error: errorUpdate }] = useUpdateUserMutation();
 
 
   const navigate = useNavigate();
@@ -70,6 +70,13 @@ const UsersListPage = () => {
       SetShowActions(false);
     }
   };
+
+  const handleDisable2FA = async () => {
+    const userId = selectedRow;
+    await updateUser({userId, body:{secretCodeVerified: false}});
+    return message.success("User updated successfully");
+    // SetSelectedRow("");
+  }
 
   const setup2FactorAuth = async (email) => {
     const response = await setup2FA({body: {email}});
@@ -214,14 +221,22 @@ const UsersListPage = () => {
                       }
                       className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                     >
-                      <li onClick={() => {
-                        setShow2fa(true);
-                        setup2FactorAuth(record.email);
-                        setTwoFA(prevState => ({...prevState, email: record.email}));
-                      }} className="flex gap-4 p-2 items-center hover:bg-slate-100">
+                      {!record.secretCode && (
+                          <li onClick={() => {
+                            setShow2fa(true);
+                            setup2FactorAuth(record.email);
+                            setTwoFA(prevState => ({...prevState, email: record.email}));
+                          }} className="flex gap-4 p-2 items-center hover:bg-slate-100">
+                            <button className="flex gap-4 p-2 items-center">
+                              <Tb2Fa/>
+                              Enable 2FA
+                            </button>
+                          </li>
+                      )}
+                      <li onClick={handleDisable2FA} className="flex gap-4 p-2 items-center hover:bg-slate-100">
                         <button className="flex gap-4 p-2 items-center">
                           <Tb2Fa/>
-                          Enable 2FA
+                          {record?.secretCode && record?.secretCodeVerified ? "Disable 2FA" : "2FA Disabled"}
                         </button>
                       </li>
                       {permissions.users?.edit && record._id.toString() !== userData._id.toString() && (
