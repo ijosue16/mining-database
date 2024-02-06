@@ -16,6 +16,7 @@ import {
   validateWeightInEntry,
 } from "../../../components/helperFunctions";
 import RenderFormHelper from "../../../components/RenderHelpersFunctions";
+import {message} from "antd";
 
 const MineralRawEntry = () => {
   const { model } = useParams();
@@ -33,10 +34,18 @@ const MineralRawEntry = () => {
     },
   ] = useCreateEntryMutation();
 
+  useEffect(() => {
+    if (isDone) {
+      return message.success(`${model} entry created successfully`);
+    } else if (isFail) {
+      const { message: errorMessage } = failError.data;
+      return message.error(errorMessage);
+    }
+  }, [isDone, isFail, failError]);
+
   const [state, dispatch] = useReducer(formReducer, INITIAL_STATE);
 
   let modalRef = useRef();
-
   const handleClickOutside = (event) => {
     if (!modalRef.current || !modalRef.current.contains(event.target)) {
       dispatch({ type: ACTION.DROP_DOWN_OUT });
@@ -103,10 +112,10 @@ const MineralRawEntry = () => {
     e.preventDefault();
     const body = { ...state.formval, output: state.lotDetails };
     // console.log(body);
-    console.log({ body, model });
-    // await createColtanEntry({ body, model });
-    // dispatch({ type: ACTION.RETURN_TO_INITIAL });
-    // navigate(-1);
+    // console.log({ body, model });
+    await createColtanEntry({ body, model });
+    dispatch({ type: ACTION.RETURN_TO_INITIAL });
+    navigate(-1);
   };
   const handleCancel = () => {
     dispatch({ type: ACTION.RETURN_TO_INITIAL });
