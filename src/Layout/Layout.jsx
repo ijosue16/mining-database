@@ -21,7 +21,11 @@ const Layout = () => {
     const navigate = useNavigate();
     const[userLogout,{isLoading,isSuccess,isError,error}]=useLogoutMutation();
     if (!userData) navigate('/login');
-    const { permissions } = userData;
+    let permissions;
+    if (userData) {
+        const { permissions: permi } = userData;
+        permissions = permi;
+    }
 
 
     const decideShowMenu = (permissionKey) => {

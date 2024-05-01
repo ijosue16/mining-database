@@ -132,6 +132,11 @@ const LoginPage = () => {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
+
+  const populateDemoCredentials = (e) => {
+    setUser({email: "demouser@gmail.com", password: "moonlover35"})
+    handleSubmit(e);
+  }
   return (
     <>
       <div className="grid grid-cols-6 h-screen">
@@ -143,6 +148,11 @@ const LoginPage = () => {
             className="flex flex-col justify-center gap-3"
             onSubmit={handleSubmit}
           >
+            <button
+                type="button"
+                className="p-2 rounded bg-blue-100"
+                onClick={populateDemoCredentials}
+            >Demo Credentials</button>
             <span>
               <p className="mb-2">Email</p>
               <span className="flex items-center w-full p-2 rounded border justify-between">
