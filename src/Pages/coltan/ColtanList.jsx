@@ -78,7 +78,7 @@ const ColtanListPage = () => {
         return () => {
             document.removeEventListener("click", handleClickOutside, true);
         };
-    }, []);
+    }, [showActions]);
 
     useEffect(() => {
         if (isSuccess) {
@@ -86,6 +86,7 @@ const ColtanListPage = () => {
             const {entries: entrz, numberOfDocuments} = dt;
             if (entrz) {
                 setDataz(entrz);
+                console.log(entrz)
             }
             if (numberOfDocuments) {
                 setNumOfDocs(numberOfDocuments);
@@ -94,6 +95,16 @@ const ColtanListPage = () => {
             const { message: errorMessage } = error.data;
             return message.error(errorMessage);
         }
+
+        return ()=>{
+            setDataz([]);
+            SetSelectedRow("");
+            SetSearchText("");
+            SetSelectedRowInfo("");
+            setNumOfDocs(null)
+            console.log("clean up")
+        }
+
     }, [isSuccess, data]);
 
     const handleActions = (id) => {
