@@ -25,6 +25,14 @@ cy.get('aside').find('ul')
 
 cy.url().should('include','/coltan')
 
+cy.get('button').contains('Add new Entry').click()
+cy.get('[type="text"]').eq(1).type('DEMIKARU')
+cy.get('[type="text"]').eq(2).type('demikaru@gmail.com')
+cy.get('[type="text"]').eq(3).type('20231457')
+cy.get('[type="text"]').eq(4).type('Nkumbuye eden')
+cy.get('[type="text"]').eq(5).type('20021300587410')
+cy.get('[type="text"]').eq(6).type('+250785478696')
+
 })
 
 })
