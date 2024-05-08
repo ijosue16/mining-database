@@ -100,6 +100,7 @@ import ParentComponent from './test elements/ParentComponentTest';
 import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm';
 import MineralRawEntry from './Pages/coltan/entry/MineralRawEntry';
 import MineralEntryEdit from './Pages/coltan/entry/MineralEntryEdit';
+import MineSiteGeolocation from "./components/MineSiteGeolocation.jsx";
 
 function App() {
 
@@ -136,22 +137,7 @@ function App() {
                                     <Route path='/lithium' element={<LithiumListPage/>}/>
                                     <Route path='/beryllium' element={<BerylliumListPage/>}/>
                                     <Route path='/mixed' element={<MixedEntryForm/>}/>
-
-                                    {/* <Route path='/entry/add/coltan' element={<ColtanEntryForm/>}/> */}
-                                    {/* <Route path='/entry/add/coltan' element={<RoleBasedRoute element={<ColtanEntryForm />} permissionKey="shipments"/>}/>
-                                    <Route path='/entry/add/coltan/test' element={<ColtanEntryDynamicForm/>}/>
-                                    <Route path='/entry/add/cassiterite' element={<CassiteriteEntryForm/>}/>
-                                    <Route path='/entry/add/wolframite' element={<WolframiteEntryForm/>}/>
-                                    <Route path='/entry/add/lithium' element={<LithiumEntryForm/>}/>
-                                    <Route path='/entry/add/beryllium' element={<BerylliumEntryForm/>}/> */}
                                     <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
-
-
-                                    {/* <Route path='/entry/edit/coltan/:entryId/:requestId?' element={<ColtanEditForm/>}/>
-                                    <Route path='/entry/edit/cassiterite/:entryId/:requestId?' element={<CassiteriteEditForm/>}/>
-                                    <Route path='/entry/edit/wolframite/:entryId/:requestId?' element={<WolframiteEditForm/>}/>
-                                    <Route path='/entry/edit/lithium/:entryId' element={<LithiumEditForm/>}/>
-                                    <Route path='/entry/edit/beryllium/:entryId' element={<BerylliumEditForm/>}/> */}
                                     <Route path='/entry/edit/:model/:entryId/:requestId?' element={<MineralEntryEdit/>}/>
 
 
@@ -202,8 +188,6 @@ function App() {
 
                                     <Route path="/add/invoice/:supplierId/:model/:entryId" element={<AddInvoice/>}/>
                                     <Route path="/invoice" element={<InvoiceList/>}/>
-                                    {/*<Route path="/invoice/temp" element={<InvoiceTemp/>}/>*/}
-                                    {/* <Route path="/invoice/:supplierName/:supplierId" element={<SuppliersInvoice/>}/> */}
 
                                     <Route path="/edit-requests" element={<EditRequests/>}/>
                                     <Route path="/user" element={<UserPermissionPage/>}/>
@@ -222,18 +206,11 @@ function App() {
                                     <Route path='/add/tag' element={<AddTag/>}/>
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
-                                    <Route path="/yoo" element={<StyleTestPage/>}/>
-                                    <Route path="/m" element={<MineralRawEntry/>}/>
+                                    <Route path="/supplier/mine-site-geolocation" element={<MineSiteGeolocation/>}/>
                                 </Route>
-                                {/*<Route path='*' element={<Navigate to="" replace/>}/>*/}
                             </Route>
                         </Route>
 
-                        {/* <Route element={<Layout/>}>
-        <Route  path='/' element={<ListContainer/>}/>
-        <Route  path='/add/product' element={<ActionsPagesContainer/>}/>
-       
-      </Route> */}
                     </Routes>
                 </SocketContext.Provider>
             </BrowserRouter>
