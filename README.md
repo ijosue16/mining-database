@@ -122,7 +122,7 @@ You can deploy this project by using this command:
 You can run tests by using the following command:
 
 ```shell
-    npm run test
+    npx cypress open
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
