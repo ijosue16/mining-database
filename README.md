@@ -100,31 +100,11 @@ Install this project with:
 ```
 ### Usage
 
-Before running the project, make sure you add .env file with the following variables
-```shell
-NODE_ENV = 
-PORT = 
-MONGO_URL = 
-JWT_SECRET_KEY = 
-MONGO_URI_TEST=
-EXPIRES_IN = 
-JWT_COOKIE_EXPIRES_IN = 
-EMAIL_PUBLIC_KEY = 
-EMAIL_PRIVATE_KEY = 
-EMAIL_SERVICE_ID = 
-PASSWORD_RESET_EMAIL_TEMPLATE_ID = 
-EMAIL_FROM = 
-IMAGEKIT_ID = 
-IMAGEKIT_PRIVATE_KEY = 
-IMAGEKIT_PUBLIC_KEY = 
-TOTP_SECRET = 
-SESSION_KEY = 
-```
 To run the project in development mode, execute the following command:
 
 
 ```sh
-  npm start
+  npm run dev
 ```
 
 
