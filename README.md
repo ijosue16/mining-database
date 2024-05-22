@@ -20,7 +20,7 @@
 - [📝 License](#license)
 
 
-# 📖 [Mineral Traceability & Inventory Management Software backend] <a name="about-project"></a>
+# 📖 [Mineral Traceability & Inventory Management Software ] <a name="about-project"></a>
 
 
 **[Mineral Traceability * Inventory Management Software]** This software was designed to meet the needs for ICGLR local mineral processors. It has a number of features from recording new mineral entries from miners to making shipment to international buyers. It has great user-friendly interface for smooth navigation. 
