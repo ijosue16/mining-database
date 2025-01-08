@@ -133,15 +133,15 @@ const LoginPage = () => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const populateDemoCredentials = (e) => {
+  const populateDemoCredentials = async (e) => {
     setUser({email: "demouser@gmail.com", password: "moonlover35"})
-    handleSubmit(e);
+    await handleSubmit(e);
   }
   return (
     <>
       <div className="grid grid-cols-6 h-screen">
         <div className="col-span-6 sm:col-span-3 lg:col-span-2 h-full gap-3 flex flex-col bg-white p-3 lg:pt-16">
-          <h2 className=" text-xl font-bold">Kanzamin staff sign in</h2>
+          <h2 className=" text-xl font-bold">SOEMC staff sign in</h2>
           <p>Please login to your account</p>
           <form
             action=""
@@ -217,7 +217,7 @@ const LoginPage = () => {
                 Login
               </button>
             )}
-              <p className=" mt-8 hover:underline border bg-custom_blue-100 border-custom_blue-500 p-2 w-fit rounded shadow-sm cursor-pointer text-md text-custom_blue-600" onClick={()=>navigate("/login/supplier")}>Login as Kanzamin supplier</p>
+              <p className=" mt-8 hover:underline border bg-custom_blue-100 border-custom_blue-500 p-2 w-fit rounded shadow-sm cursor-pointer text-md text-custom_blue-600" onClick={()=>navigate("/login/supplier")}>Login as SOEMC LTD supplier</p>
             {/*<span className="flex items-center justify-center gap-2">*/}
             {/*  <p>Don’t have an account?</p>*/}
             {/*  <p*/}

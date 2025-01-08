@@ -103,7 +103,7 @@ const InvoiceTemp=()=>{
             ],
             beneficiary: "Gilbert",
             supplierCompanyName: "KOPEMINYA",
-            processorCompanyName: "Kanzamin",
+            processorCompanyName: "SOEMC LTD",
             mineralsSupplied: [],
             extraNotes: "amabuye meza yumwimerere",
             createdAt: "2023-10-30T03:41:40.024Z",

@@ -1,21 +1,18 @@
 import React, {useState, useRef, useEffect, useMemo, useContext} from "react";
 import { BsSearch, BsThreeDots } from "react-icons/bs";
 import { PiGlobeSimpleLight, PiCaretRightLight, PiUser, PiBellSimpleLight, PiEnvelopeLight, PiGearLight } from "react-icons/pi";
-import { FiChevronsLeft, } from "react-icons/fi"
 import { useNavigate } from "react-router-dom";
 import {Drawer, Space, Button, Badge, notification, message} from "antd";
 import { useGetNotificationsQuery, useUpdateNotificationStatusMutation, useVerifyTokenMutation,  useGetOneUserQuery, useGetAllEditRequestsQuery } from "../states/apislice";
 import { useSelector, useDispatch } from "react-redux";
 import {SocketContext} from "../context files/socket";
 import {BiSolidCalendarEdit} from "react-icons/bi";
-import { toInitialCase } from "../components/helperFunctions";
 import {setPermissions, setUserData, setAuthToken} from "../states/slice";
 import {IoChatbubbleEllipsesOutline} from "react-icons/io5";
 
 
 
 const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
-    const [userMenu, setUserMenu] = useState(false);
     const navigate=useNavigate();
     const [userSubmenu, setUserSubmenu] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -202,7 +199,7 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
             {/* App bar */}
             <div className="  w-full fixed flex z-10 bg-white p-2 items-center justify-between h-16 px-10 border-b">
                 <div className={`logo ml-12 dark:text-white  transform ease-in-out duration-300 flex-none h-full flex items-center justify-center`} >
-                    KANZAMIN
+                    SOEMC LTD
                 </div>
 
 
@@ -293,23 +290,6 @@ const Appbar = ({ handleUserSubmenuMobile,userSubmenuMobile }) => {
                         </div>
                         <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
 
-                        {/* <ul className=" list-none">
-                            <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
-                                <PiUser />
-                                <p className="text-[14px]">My profile</p>
-                            </li>
-                            <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
-                                <PiUser />
-                                <p className="text-[14px]">Settings</p>
-                            </li>
-                        </ul>
-                        <div className="w-full bg-gray-500 h-[0.5px] divider"></div>
-                        <ul className="list-none">
-                            <li className="flex gap-2 items-center hover:bg-slate-100 py-2 pl-2">
-                                <PiUser />
-                                <p className="text-[14px]">My profile</p>
-                            </li>
-                        </ul> */}
                     </div>
                 </div>
 

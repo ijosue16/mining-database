@@ -98,7 +98,7 @@ const EditInvoice = ({invoiceId, supplierId}) => {
             setInvoiceInfo({
                 ...invoiceInfo,
                 supplierCompanyName: sup.companyName,
-                processorCompanyName: "KANZAMIN LTD",
+                processorCompanyName: "SOEMC LTD",
                 supplierAddress: {
                     province: sup.address.province,
                     district: sup.address.district,
