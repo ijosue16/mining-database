@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Button, Checkbox, Popover, Radio, message} from "antd";
-import {toInitialCase} from "../components/helperFunctions";
+import {hasPermission, toInitialCase} from "../components/helperFunctions";
 import dayjs from "dayjs";
 import LoadingButton from "./LoadingButton";
 import {useShipmentReportMutation, useShipmentReportSpreadsheetMutation} from "../states/apislice";
@@ -45,7 +45,7 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
             .filter(([key]) => !excludedFields.includes(key))
             .reduce((acc, [key, value]) => {
                 if (Object.keys(restrictedColumns).includes(key) && Object.keys(userPermissions).includes(key)) {
-                    if (!restrictedColumns[key].table && userPermissions[key].view) {
+                    if (!restrictedColumns[key].table && hasPermission(userPermissions, `${key}:view`)) {
                         if (key !== "nonSellAgreement") {
                             acc[key] = value;
                         }
@@ -158,14 +158,14 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
                 {Object.entries(record).map(([key, value]) => {
                     if (!excludedFields.includes(key)) {
                         if (Object.keys(restrictedColumns).includes(key) && Object.keys(userPermissions).includes(key)) {
-                            if (!restrictedColumns[key].table && userPermissions[key].view) {
+                            if (!restrictedColumns[key].table && hasPermission(userPermissions, `${key}:view`)) {
                                 return (
                                     <span key={key}
                                           className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">
                                         <p className=" font-semibold col-span-1 p-2 w-full border text-start bg-slate-50">
                                             {toInitialCase(key)}
                                         </p>
-                                        {decideFieldType(key, lot[key], userPermissions[key].edit)}
+                                        {decideFieldType(key, lot[key], hasPermission(userPermissions, `${key}:edit`))}
                                     </span>
                                 )
                             }
@@ -175,7 +175,7 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
                 <LoadingButton name={"Submit"} onClickFunction={handleUpdate} isProcessing={isProcessing} />
             </div>
 
-            {userPermissions.shipmentHistory?.view && (
+            {hasPermission(userPermissions, "shipmentHistory:view") && (
                 <div className="w-full flex flex-col items-end bg-white rounded-md p-2">
                 <span
                     className="grid grid-cols-3 items-center justify-between w-full md:w-1/2  rounded-sm">

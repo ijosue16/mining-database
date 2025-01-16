@@ -101,6 +101,9 @@ import ColtanEntryDynamicForm from './Pages/coltan/entry/ColtanEnteryDynamicForm
 import MineralRawEntry from './Pages/coltan/entry/MineralRawEntry';
 import MineralEntryEdit from './Pages/coltan/entry/MineralEntryEdit';
 import MineSiteGeolocation from "./components/MineSiteGeolocation.jsx";
+import PermissionDenied from "./Authentications/PermissionDenied.jsx";
+import CompanyInfoPage from "./Pages/CompanyInfoPage.jsx";
+import {hasPermission} from "./components/helperFunctions.js";
 
 function App() {
 
@@ -121,22 +124,22 @@ function App() {
                             <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
                             <Route element={<Layout/>}>
                                 <Route element={<RequireAuth/>}>
-                                    <Route path='/payment/:model/:entryId/:lotNumber?' element={<PaymentsPage/>}/>
-                                    <Route path='/advanced-payment' element={<AdvancedPaymentsList/>}/>
+                                    <Route path='/payment/:model/:entryId/:lotNumber?' element={<RoleBasedRoute element={<PaymentsPage/>} permissionKey={"payments:create"}/>}/>
+                                    <Route path='/advanced-payment' element={<RoleBasedRoute element={<AdvancedPaymentsList/>} permissionKey={"payments:create"}/>}/>
                                     <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
                                     <Route path='/shipment/add/:model' element={<StockPage/>}/>
-                                    <Route path='/shipments' element={<ShipmentPage/>}/>
-                                    <Route path='/shipment/edit/:model/:shipmentId' element={<ShipmentEdit/>}/>
+                                    <Route path='/shipments' element={<RoleBasedRoute element={<ShipmentPage/>} permissionKey={"shipments:view"}/>}/>
+                                    <Route path='/shipment/edit/:model/:shipmentId' element={<RoleBasedRoute element={<ShipmentEdit/>} permissionKey={"shipments:edit"}/>}/>
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                     <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
                                     <Route path='/report/dummy' element={<ReportPage/>}/>
 
-                                    <Route path='/coltan' element={<ColtanListPage/>}/>
-                                    <Route path='/cassiterite' element={<CassiteriteListPage/>}/>
-                                    <Route path='/wolframite' element={<WolframiteListPage/>}/>
-                                    <Route path='/lithium' element={<LithiumListPage/>}/>
-                                    <Route path='/beryllium' element={<BerylliumListPage/>}/>
-                                    <Route path='/mixed' element={<MixedEntryForm/>}/>
+                                    <Route path='/coltan' element={<RoleBasedRoute element={<ColtanListPage/>} permissionKey={"entry:view"}/>}/>
+                                    <Route path='/cassiterite' element={<RoleBasedRoute element={<CassiteriteListPage/>} permissionKey={"entry:view"}/>}/>
+                                    <Route path='/wolframite' element={<RoleBasedRoute element={<WolframiteListPage/>} permissionKey={"entry:view"}/>}/>
+                                    <Route path='/lithium' element={<RoleBasedRoute element={<LithiumListPage/>} permissionKey={"entry:view"}/>}/>
+                                    <Route path='/beryllium' element={<RoleBasedRoute element={<BerylliumListPage/>} permissionKey={"entry:view"}/>}/>
+                                    <Route path='/mixed' element={<RoleBasedRoute element={<MixedEntryForm/>} permissionKey={"entry:view"}/>}/>
                                     <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
                                     <Route path='/entry/edit/:model/:entryId/:requestId?' element={<MineralEntryEdit/>}/>
 
@@ -162,7 +165,7 @@ function App() {
                                     <Route path='/supplier/details/:supplierId' element={<SupplierDetailsPage/>}/>
                                     <Route path='/edit/supplier/:supplierId' element={<EditSuplierPage/>}/>
                                     <Route path='/edit/supplier/minesite/:supplierId' element={<EditMinesitePage/>}/>
-                                    <Route path='/payments' element={<RoleBasedRoute element={<PaymentsListPage />} permissionKey="payments"/>}/>
+                                    <Route path='/payments' element={<RoleBasedRoute element={<PaymentsListPage />} permissionKey="payments:view"/>}/>
                                     <Route path='/edit/payment/:paymentId' element={<EditPaymentPage/>}/>
                                     <Route path='/add/payment' element={<AddPaymentPage/>}/>
                                     <Route path='/buyers' element={<BuyersListPage/>}/>
@@ -195,7 +198,7 @@ function App() {
                                     <Route path="/new" element={<NewUSerChart/>}/>
                                     <Route path="/structure" element={<FileStructure/>}/>
                                     <Route path="/simbo" element={<SingleImageUpload/>}/>
-                                    <Route path="/dashboard" element={<DashboardPage/>}/>
+                                    <Route path="/dashboard" element={ <DashboardPage/>}/>
                                     <Route path="/due-diligence-report/:supplierId/:startDate/:endDate" element={<PrepareDDReport/>}/>
                                     <Route path="/structure/:url/:filePath/:fileId" element={<EditExistingFile/>}/>
                                     <Route path="/lab-report/:model/:entryId/:lotNumber" element={<GenerateLabReport/>}/>
@@ -207,8 +210,11 @@ function App() {
                                     <Route path="/supplier/invoices/:supplierId" element={<InvoiceList/>}/>
                                     <Route path="/advance-payment/edit/:paymentId" element={<EditAdvancePayment/>}/>
                                     <Route path="/supplier/mine-site-geolocation" element={<MineSiteGeolocation/>}/>
+                                    <Route path="/company" element={<CompanyInfoPage/>}/>
                                 </Route>
                             </Route>
+                            <Route path="*" element={<PermissionDenied/>}/>
+                            <Route path="/permissions-denied" element={<PermissionDenied/>}/>
                         </Route>
 
                     </Routes>

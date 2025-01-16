@@ -217,3 +217,11 @@ export const fields = [
   "representative Id",
   "TIN Number",
 ];
+
+export function hasPermission(permissions, action) {
+  const [module, operation] = action.split(":");
+  if (permissions[module] && permissions[module][operation] !== undefined) {
+    return permissions[module][operation];
+  }
+  return false;
+}

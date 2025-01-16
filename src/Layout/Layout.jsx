@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "../states/apislice";
 import { setAuthToken, setPermissions, setUserData } from "../states/slice";
 import {GoFileDirectory} from "react-icons/go";
+import {hasPermission} from "../components/helperFunctions.js";
 
 const Layout = () => {
     const { userData } = useSelector(state => state.persistedReducer?.global);
@@ -60,7 +61,7 @@ const Layout = () => {
     const menu = [
         {
             heading: "Main", hId: 1, subHeaders: [
-                { title: "Dashboard", show: permissions.dashboard?.view, icon: <PiSquaresFourDuotone />, id: 10,navtext:'dashboard' },
+                { title: "Dashboard", show: hasPermission(permissions, "dashboard:view"), icon: <PiSquaresFourDuotone />, id: 10,navtext:'dashboard' },
                 {
                     title: "Application", id: 11, icon: <PiDeviceMobileCameraDuotone />, submenu: true,
                     submenuItems: [
@@ -72,13 +73,13 @@ const Layout = () => {
             ]
         },
         {
-            heading: "Entry", show: permissions?.entry.view,  hId:2 , subHeaders: [
-                { title: "Coltan", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
-                { title: "Cassiterite", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
-                { title: "Wolframite", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
-                { title: "Lithium", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
-                { title: "Beryllium", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
-                { title: "Mixed", show: permissions?.entry.view, icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
+            heading: "Entry", show: hasPermission(permissions, "entry:view"),  hId:2 , subHeaders: [
+                { title: "Coltan", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
+                { title: "Cassiterite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
+                { title: "Wolframite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
+                { title: "Lithium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
+                { title: "Beryllium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
+                { title: "Mixed", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
                     { title: "Cassiterite and Coltan ", show: permissions?.entry.view, id: 86,navtext:"mixed" },
                     // { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" }
                 ]},
@@ -86,9 +87,9 @@ const Layout = () => {
             ]
         },
         {
-            heading: "Shipments", show: permissions.shipments?.view, hId: 3, subHeaders: [
-                { title: "Shipments list", show: permissions.shipments?.view, icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
-                { title: "Add", show: permissions.shipments?.create && permissions.shipments?.view, icon: <PiFileTextDuotone />, submenu: true, id: 23,submenuItems: [
+            heading: "Shipments", show: hasPermission(permissions, "shipments:view"), hId: 3, subHeaders: [
+                { title: "Shipments list", show: hasPermission(permissions, "shipments:view"), icon: <PiShoppingCartSimpleDuotone />, id: 22,navtext:"shipments",},
+                { title: "Add", show: hasPermission(permissions, "shipments:create") && hasPermission(permissions, "shipments:view"), icon: <PiFileTextDuotone />, submenu: true, id: 23,submenuItems: [
                     { title: "Coltan", id: 24,navtext:"shipment/add/coltan" },
                     { title: "Cassiterite", id: 25,navtext:"shipment/add/cassiterite" },
                     { title: "Wolframite", id: 26,navtext:"shipment/add/wolframite" },

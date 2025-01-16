@@ -20,7 +20,7 @@ import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
 import { IoTrashBinOutline } from "react-icons/io5";
 import {useSelector} from "react-redux";
-import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
+import {toCamelCase, toInitialCase, fields, hasPermission} from "../../components/helperFunctions";
 import {SocketContext} from "../../context files/socket";
 import {GiGiftOfKnowledge} from "react-icons/gi";
 dayjs.extend(isBetween);
@@ -52,6 +52,8 @@ const ColtanListPage = () => {
         deleteEntry,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
     ] = useDeleteEntryMutation();
+
+    console.log('permissions', permissions);
 
     const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
@@ -183,19 +185,6 @@ const ColtanListPage = () => {
     const {RangePicker} = DatePicker;
 
     const columns = [
-        // {
-        //     title: "Supply date",
-        //     dataIndex: "supplyDate",
-        //     key: "supplyDate",
-        //     sorter: (a, b) => a.supplyDate.localeCompare(b.supplyDate),
-        //     render: (text) => {
-        //         return (
-        //             <>
-        //                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
-        //             </>
-        //         );
-        //     },
-        // },
         {
             title: "Supply date",
             dataIndex: "supplyDate",
@@ -356,7 +345,7 @@ const ColtanListPage = () => {
                                         className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                                     >
 
-                                        {permissions?.entry?.edit && (
+                                        {hasPermission(permissions, "entry:edit") && (
                                             <li
                                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                 onClick={() => {
@@ -368,7 +357,7 @@ const ColtanListPage = () => {
                                             </li>
                                         )}
                                         {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
-                                        {permissions?.invoices?.create && (
+                                        {hasPermission(permissions, "invoices:create") && (
                                             <li
                                                 className="flex gap-2 p-2 items-center hover:bg-slate-100"
                                                 onClick={() => {
@@ -385,7 +374,7 @@ const ColtanListPage = () => {
                                         )}
 
 
-                                        {permissions.entry?.edit ? (
+                                        {hasPermission(permissions, "entry:edit") ? (
                                             <>
                                                 {/* <li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -398,7 +387,7 @@ const ColtanListPage = () => {
                                                     <RiFileEditFill className=" text-lg"/>
                                                     <p>complete entry</p>
                                                 </li> */}
-                                                {permissions.entry?.delete ? (<li
+                                                {hasPermission(permissions, "entry:delete") ? (<li
                                                     className="flex gap-4 p-2 items-center hover:bg-slate-100"
                                                     onClick={() => {
                                                         SetSelectedRow(record._id);
@@ -469,26 +458,6 @@ const ColtanListPage = () => {
     };
 
 
-    function toCamelCaseArray(strings) {
-        // Check if the input is an array and has at least one element
-        if (!Array.isArray(strings) || strings.length === 0) {
-            return [];
-        }
-
-        // Helper function to convert a single string to camel case
-        function toCamelCase(str) {
-            return str.split(' ').map((word, index) => {
-                if (index === 0) {
-                    return word.toLowerCase();
-                } else {
-                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-                }
-            }).join('');
-        }
-
-        // Map the array to camel case strings
-        return strings.map(toCamelCase);
-    }
 
     const handlePagination = (page, pageSize) => {
         // const offset = pagination.current * pagination.pageSize - pagination.pageSize;
@@ -502,9 +471,9 @@ const ColtanListPage = () => {
             <ListContainer
                 title={"Coltan entries list"}
                 subTitle={"Manage your coltan  entries"}
-                navLinktext={`entry/add/${"coltan"}`}
+                navLinktext={`entry/add/coltan`}
                 navtext={"Add new Entry"}
-                isAllowed={permissions.entry?.create}
+                isAllowed={hasPermission(permissions, "entry:create")}
                 table={
                     <>
                         <Modal
@@ -590,8 +559,7 @@ const ColtanListPage = () => {
                                 columns={columns}
                                 pagination={{pageSize: 100, size: "small", total: numOfDocs}}
                                 expandable={{
-                                    expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>,
-                                    rowExpandable: record1 => record1.output?.length > 0,
+                                    expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>, rowExpandable: record1 => record1.output?.length > 0,
                                 }}
                                 rowKey="_id"
                             />

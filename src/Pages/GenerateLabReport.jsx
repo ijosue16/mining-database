@@ -34,7 +34,7 @@ const GenerateLabReport = () => {
             }
         }
         fetchLabReport();
-    }, [entryId, lotNumber])
+    }, [entryId, generateLabReport, lotNumber, model, navigate])
     return (
         <div>
             {!sfdt ? <FetchingPage/> : (

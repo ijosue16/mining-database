@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { ImSpinner2 } from "react-icons/im";
 import {SocketContext} from "../context files/socket";
 import {message, Modal} from "antd";
+import {hasPermission} from "../components/helperFunctions.js";
 
 
 const LoginPage = () => {
@@ -20,7 +21,7 @@ const LoginPage = () => {
   const location = useLocation();
   const [show2fa, setShow2fa] = useState(false);
   const [twoFACode, setTwoFACode] = useState({ code: "", email: "" });
-  const from = location.state?.from?.pathname || "/dashboard";
+  const from = location.state?.from?.pathname;
   useEffect(() => {
     if (isSuccess) {
       if (data?.token) return message.success("Logged in Successfully");
@@ -100,7 +101,12 @@ const LoginPage = () => {
         // localStorage.setItem("role", user.role);
         // localStorage.setItem("permissions", JSON.stringify(user.permissions));
         socket.emit("new-user-add", {_id: user._id, username: user.username, role: user.role, permissions: user.permissions});
-        navigate(from, {replace: true});
+        if (from) navigate(from, {replace: true});
+        if (hasPermission(user.permissions, "dashboard:view")) {
+          navigate("/dashboard");
+        } else {
+          navigate("/company")
+        }
       } else {
         const { user } = response.data.data;
         setTwoFACode(prevState => ({ ...prevState, email: user.email }));

@@ -3,10 +3,12 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 // const existingUrl = "https://mining-company-management-system.onrender.com/api/v1/";
 // "http://localhost:5001/api/v1/"
 
+const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL;
+
 export const apiSlice = createApi({
     reducerPath: "adminApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: "https://mining-company-management-system.onrender.com/api/v1/",
+        baseUrl: BASE_URL,
         prepareHeaders: (headers, {getState}) => {
             const token = getState().persistedReducer?.global?.token
             if (token) {
@@ -770,7 +772,7 @@ export const apiSlice = createApi({
         }),
         generateLabReport: builder.mutation({
             query: ({body, model}) => ({
-                url: `/coltan/lab-report/${model}`,
+                url: `/entry/lab-report/${model}`,
                 method: "POST",
                 body,
             })

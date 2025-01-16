@@ -484,15 +484,15 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
                               { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
 
-                              {userPermissions.entry?.create ? (
-                                  <li
-                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                      onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}
-                                  >
-                                      <TbReport className=" text-lg"/>
-                                      <p>Lab Report</p>
-                                  </li>
-                              ) : null}
+                              {/*{userPermissions.entry?.create ? (*/}
+                              {/*    <li*/}
+                              {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                              {/*        onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}*/}
+                              {/*    >*/}
+                              {/*        <TbReport className=" text-lg"/>*/}
+                              {/*        <p>Lab Report</p>*/}
+                              {/*    </li>*/}
+                              {/*) : null}*/}
 
                               {userPermissions.payments?.create ? (
                                   <li
