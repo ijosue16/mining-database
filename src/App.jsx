@@ -104,6 +104,7 @@ import MineSiteGeolocation from "./components/MineSiteGeolocation.jsx";
 import PermissionDenied from "./Authentications/PermissionDenied.jsx";
 import CompanyInfoPage from "./Pages/CompanyInfoPage.jsx";
 import {hasPermission} from "./components/helperFunctions.js";
+import EntryDetailsPage from "@/Pages/coltan/entry/EntryDetailsPage.jsx";
 
 function App() {
 
@@ -142,7 +143,7 @@ function App() {
                                     <Route path='/mixed' element={<RoleBasedRoute element={<MixedEntryForm/>} permissionKey={"entry:view"}/>}/>
                                     <Route path='/entry/add/:model' element={<MineralRawEntry/>}/>
                                     <Route path='/entry/edit/:model/:entryId/:requestId?' element={<MineralEntryEdit/>}/>
-
+                                    <Route path="/entry/:model/:entryId" element={<EntryDetailsPage/>}/>
 
                                     <Route path='/complete/coltan/:entryId' element={<ColtanEntryCompletePage/>}/>
                                     <Route path='/complete/cassiterite/:entryId' element={<CassiteriteEntryCompletePage/>}/>

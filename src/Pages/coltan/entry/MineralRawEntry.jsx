@@ -6,7 +6,7 @@ import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useGetAllSuppliersQuery,
   useCreateEntryMutation,
-} from "../../../states/apislice";
+} from "@/states/apislice.js";
 import { ImSpinner2 } from "react-icons/im";
 import { HiPlus, HiMinus,HiOutlineSearch } from "react-icons/hi";
 import { BsChevronDown } from "react-icons/bs";
@@ -14,7 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   isTotalWeightGreater,
   validateWeightInEntry,
-} from "../../../components/helperFunctions";
+} from "@/components/helperFunctions.js";
 import RenderFormHelper from "../../../components/RenderHelpersFunctions";
 import {message} from "antd";
 
@@ -272,7 +272,7 @@ const MineralRawEntry = () => {
                           <HiMinus
                             onClick={() => handleLRemoveLot(index)}
                             className={`${
-                              state.lotDetails.length - 1 == 0 ? "hidden" : ""
+                              state.lotDetails?.length - 1 === 0 ? "hidden" : ""
                             }`}
                           />
                           <HiPlus

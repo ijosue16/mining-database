@@ -279,7 +279,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
             table: true,
         },
         mineralGrade: {
-            title: "Grade-KZM(%)",
+            title: "Grade-SMC(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             table: true,

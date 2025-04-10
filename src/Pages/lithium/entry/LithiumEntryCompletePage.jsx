@@ -262,7 +262,7 @@ const LithiumEntryCompletePage = ({entryId}) => {
             table: true,
         },
         mineralGrade: {
-            title: "Grade-KZM(%)",
+            title: "Grade-SMC(%)",
             dataIndex: "mineralGrade",
             key: "mineralGrade",
             table: true,
@@ -438,56 +438,56 @@ const LithiumEntryCompletePage = ({entryId}) => {
                         <div className="flex items-center gap-2">
                             {editable ? null : (
                                 <>
-                  <span className="relative">
-                    <PiDotsThreeVerticalBold
-                        className=" text-xl"
-                        onClick={() => handleActions(record._id)}
-                    />
-                      {selectedRow === record._id && (
-                          <motion.ul
-                              ref={modalRef}
-                              animate={
-                                  show
-                                      ? {opacity: 1, x: -10, display: "block"}
-                                      : {opacity: 0, x: 0, display: "none"}
-                              }
-                              className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                          >
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => edit(record)}
-                              >
-                                  <BiSolidEditAlt className=" text-lg"/>
-                                  <p>edit</p>
-                              </li>
+                                  <span className="relative">
+                                    <PiDotsThreeVerticalBold
+                                        className=" text-xl"
+                                        onClick={() => handleActions(record._id)}
+                                    />
+                                      {selectedRow === record._id && (
+                                          <motion.ul
+                                              ref={modalRef}
+                                              animate={
+                                                  show
+                                                      ? {opacity: 1, x: -10, display: "block"}
+                                                      : {opacity: 0, x: 0, display: "none"}
+                                              }
+                                              className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+                                          >
+                                              <li
+                                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                  onClick={() => edit(record)}
+                                              >
+                                                  <BiSolidEditAlt className=" text-lg"/>
+                                                  <p>edit</p>
+                                              </li>
 
-                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
+                                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
 
-                              {userPermissions.entry?.create ? (
-                                  <li
-                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                      onClick={() => navigate(`/lab-report/lithium/${entryId}/${record.lotNumber}`)}
-                                  >
-                                      <TbReport className=" text-lg"/>
-                                      <p>Lab Report</p>
-                                  </li>
-                              ) : null}
+                                              {userPermissions.entry?.create ? (
+                                                  <li
+                                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                      onClick={() => navigate(`/lab-report/lithium/${entryId}/${record.lotNumber}`)}
+                                                  >
+                                                      <TbReport className=" text-lg"/>
+                                                      <p>Lab Report</p>
+                                                  </li>
+                                              ) : null}
 
-                              {userPermissions.payments?.create ? (
-                                  <li
-                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                      onClick={() => {
-                                          setSelectedLotNumber(record.lotNumber);
-                                          setShowPayModel(true);
-                                      }}
-                                  >
-                                      <MdPayments className=" text-lg"/>
-                                      <p>Pay</p>
-                                  </li>
-                              ) : null}
-                          </motion.ul>
-                      )}
-                  </span>
+                                              {userPermissions.payments?.create ? (
+                                                  <li
+                                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                      onClick={() => {
+                                                          setSelectedLotNumber(record.lotNumber);
+                                                          setShowPayModel(true);
+                                                      }}
+                                                  >
+                                                      <MdPayments className=" text-lg"/>
+                                                      <p>Pay</p>
+                                                  </li>
+                                              ) : null}
+                                          </motion.ul>
+                                      )}
+                                  </span>
                                 </>
                             )}
 
@@ -690,7 +690,10 @@ const LithiumEntryCompletePage = ({entryId}) => {
                           Cancel
                         </button>
                       </span>,
-                     <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)} handleConfirm={handleModelAdvance}/>
+                                            <ConfirmFooter key={"actions"} isSending={isSending} defText={"Confirm"}
+                                                           dsText={"Sending"}
+                                                           handleCancel={() => setShowPayModel(!showPayModel)}
+                                                           handleConfirm={handleModelAdvance}/>
                                         ]}
                                     >
                                         <h2 className="modal-title text-center font-bold text-xl">

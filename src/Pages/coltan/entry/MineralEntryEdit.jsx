@@ -1,6 +1,5 @@
 import React, { Fragment, useEffect, useReducer, useRef, useState } from "react";
 import dayjs from "dayjs";
-import moment from "moment";
 import { motion } from "framer-motion";
 import {
   message,
@@ -15,7 +14,7 @@ import {
   useUpdateEditRequestMutation,
   useGetSupplierTagsQuery,
   useGetAllSuppliersQuery,
-} from "../../../states/apislice";
+} from "@/states/apislice.js";
 import { HiPlus, HiMinus, HiOutlineSearch } from "react-icons/hi";
 import { useNavigate, useParams } from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
@@ -24,7 +23,7 @@ import {
   openNotification,
   validateWeightInEntry,
   isTotalWeightGreater,
-} from "../../../components/helperFunctions";
+} from "@/components/helperFunctions.js";
 import Countdown from "react-countdown";
 import { BsChevronDown } from "react-icons/bs";
 import { ImSpinner2 } from "react-icons/im";
@@ -64,6 +63,7 @@ const MineralEntryEdit = () => {
         refetchOnReconnect: true,
       }
     );
+
   const [
     updateEntry,
     {
@@ -135,8 +135,7 @@ const MineralEntryEdit = () => {
         }
       }
     }
-  }, [isRequestSuccess]);
-  console.log(editableFields)
+  }, [isRequestSuccess, navigate]);
   const decideEditable = (field) => {
     if (editableFields) {
       const editableField = editableFields.find(
@@ -155,7 +154,7 @@ const MineralEntryEdit = () => {
       // sup = sups;
       dispatch({type:ACTION.SET_TO_SERVER_DATA,payload:{entr}});
     }
-  }, [isSuccess]);
+  }, [isSuccess, data]);
 
   const filteredSuppliers = sup.filter((supplier) => {
     const companyName = supplier.companyName || "";
@@ -278,10 +277,11 @@ const MineralEntryEdit = () => {
         }
       }
     }
-    console.log({ model: model, entryId, body: requestId ? newBody : body })
-    // await updateEntry({ model: "coltan", entryId, body: requestId ? newBody : body });
+    // console.log(state.mineTags);
+    // console.log('body', body);
+    await updateEntry({ model: "coltan", entryId, body: requestId ? newBody : body });
     dispatch({type:ACTION.RETURN_TO_INITIAL});
-    // navigate(-1);
+    navigate(-1);
   };
   const handleCancel = () => {
     dispatch({type:ACTION.RETURN_TO_INITIAL});

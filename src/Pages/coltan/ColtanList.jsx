@@ -27,6 +27,7 @@ dayjs.extend(isBetween);
 import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
+import { View } from 'lucide-react';
 
 
 const ColtanListPage = () => {
@@ -63,7 +64,7 @@ const ColtanListPage = () => {
         date: "",
     });
     const [selectedRow, SetSelectedRow] = useState("");
-    const [model, Setmodel] = useState(null);
+    const [model, Setmodel] = useState("coltan");
     const [showmodal, setShowmodal] = useState(false);
     const [record, setRecord] = useState(null);
 
@@ -368,7 +369,7 @@ const ColtanListPage = () => {
                                                     }
                                                 }}
                                             >
-                                                <FaFileInvoiceDollar className=" text-xl" />
+                                                <FaFileInvoiceDollar className=" text-xl"/>
                                                 <p>Make invoice</p>
                                             </li>
                                         )}
@@ -427,7 +428,7 @@ const ColtanListPage = () => {
                             ) : null}
 
                             {!permissions.entry?.edit &&
-                            <span>
+                                <span>
                                 <FiEdit
                                     className="text-lg"
                                     onClick={() => {
@@ -437,6 +438,15 @@ const ColtanListPage = () => {
                                 />
                             </span>
                             }
+
+                            <span>
+                                <View
+                                    className="text-lg"
+                                    onClick={() => {
+                                        navigate(`/entry/${model}/${record._id}`);
+                                    }}
+                                />
+                            </span>
 
                             {/*{permissions.entry.edit ? (*/}
 
@@ -456,7 +466,6 @@ const ColtanListPage = () => {
             [itemName]: !checkboxValues[itemName], // Toggle the checkbox value
         });
     };
-
 
 
     const handlePagination = (page, pageSize) => {
