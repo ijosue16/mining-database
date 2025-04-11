@@ -270,15 +270,15 @@ const ShipmentPage = () => {
                           </li>
 
 
-                          {!["beryllium", "lithium"].includes(record.model) && (
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => navigate(`/shipment/forward-note/${record._id}`)}
-                              >
-                                  <HiOutlineClipboardDocumentCheck className=" text-lg"/>
-                                  <p>Forward Note</p>
-                              </li>
-                          )}
+                          {/*{!["beryllium", "lithium"].includes(record.model) && (*/}
+                          {/*    <li*/}
+                          {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                          {/*        onClick={() => navigate(`/shipment/forward-note/${record._id}`)}*/}
+                          {/*    >*/}
+                          {/*        <HiOutlineClipboardDocumentCheck className=" text-lg"/>*/}
+                          {/*        <p>Forward Note</p>*/}
+                          {/*    </li>*/}
+                          {/*)}*/}
 
 
                           <li

@@ -39,7 +39,7 @@ const GenerateForwardNote = () => {
             }
         }
         fetchForwardNote();
-    }, [shipmentId]);
+    }, [generateForwardNote, navigate, shipmentId]);
 
 
 
