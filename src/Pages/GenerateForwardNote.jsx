@@ -6,7 +6,7 @@ import DocumentEditorComponent from "./DocumentEditor";
 import FetchingPage from "./FetchingPage";
 
 
-
+// TODO 1: FIX FORWARD NOTE
 const GenerateForwardNote = () => {
     const { shipmentId } = useParams();
     const [generateForwardNote, {isSuccess, isLoading, isError, error}] = useGenerateForwardNoteMutation();
