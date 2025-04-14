@@ -1,43 +1,46 @@
-import React, {useState, useRef, useEffect, useContext} from "react";
+
+import React, {useContext, useEffect, useRef, useState} from "react";
 import dayjs from "dayjs";
-import {Checkbox, DatePicker, message, Modal, Space, Spin, Table} from "antd";
+import isBetween from "dayjs/plugin/isBetween"
+import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
 import {motion} from "framer-motion";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
     useGetAllEntriesQuery,
     useDeleteEntryMutation,
     useCreateEditRequestMutation,
-} from "../../states/apislice";
-import {
-    PiMagnifyingGlassDuotone,
-    PiDotsThreeVerticalBold,
-} from "react-icons/pi";
-import {BiSolidFilePdf, BiSolidEditAlt} from "react-icons/bi";
+} from "@/states/apislice.js";
+import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
+import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
 import {ImSpinner2} from "react-icons/im";
 import {BsCardList} from "react-icons/bs";
 import {MdDelete} from "react-icons/md";
 import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
-import {useSelector} from "react-redux";
-import {SocketContext} from "../../context files/socket";
-import {toCamelCase, toInitialCase, fields} from "../../components/helperFunctions";
 import {FiEdit} from "react-icons/fi";
-import CassiteriteEntryComplete from "./entry/CassiteriteEntryComplete";
-import isBetween from "dayjs/plugin/isBetween"
+import { IoTrashBinOutline } from "react-icons/io5";
+import {useSelector} from "react-redux";
+import {toCamelCase, toInitialCase, fields, hasPermission} from "@/components/helperFunctions.js";
+import {SocketContext} from "@/context files/socket.js";
+import {GiGiftOfKnowledge} from "react-icons/gi";
+dayjs.extend(isBetween);
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
-import {View} from "lucide-react";
+import { View } from 'lucide-react';
 import LotManagement from "@/Pages/LotManagement.jsx";
+import EntryCompletePage from "./EntryComplete";
 
-dayjs.extend(isBetween);
 
-
-const CassiteriteListPage = () => {
-    const {userData} = useSelector(state => state.persistedReducer.global);
+const EntriesListPage = () => {
+    const dummyarch=[''];
+    const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
+    const { model } = useParams();
     const [dataz, setDataz] = useState([]);
+    const [numOfDocs, setNumOfDocs] = useState(null);
     const {permissions} = userData;
+    // const {profile, permissions} = loginData;
     const [createEditRequest, {
         isLoading: isCreateRequestLoading,
         isSuccess: isCreateRequestSuccess,
@@ -45,14 +48,15 @@ const CassiteriteListPage = () => {
         error: createRequestError
     }] = useCreateEditRequestMutation();
     const {data, isLoading, isSuccess, isError, error} =
-        useGetAllEntriesQuery({model: "cassiterite"}, {
+        useGetAllEntriesQuery({model}, {
             refetchOnMountOrArgChange: true,
-            refetchOnReconnect: true
+            refetchOnReconnect: true,
         });
     const [
         deleteEntry,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
     ] = useDeleteEntryMutation();
+
 
     const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
@@ -62,20 +66,8 @@ const CassiteriteListPage = () => {
         date: "",
     });
     const [selectedRow, SetSelectedRow] = useState("");
-    const [model, Setmodel] = useState(null);
     const [showmodal, setShowmodal] = useState(false);
     const [record, setRecord] = useState(null);
-
-    useEffect(() => {
-        if (isSuccess) {
-            const {data: dt} = data;
-            const {entries: entrz} = dt;
-            setDataz(entrz);
-        }
-    }, [isSuccess]);
-
-    const {RangePicker} = DatePicker;
-
 
     let modalRef = useRef();
 
@@ -90,8 +82,41 @@ const CassiteriteListPage = () => {
         return () => {
             document.removeEventListener("click", handleClickOutside, true);
         };
-    }, []);
+    }, [showActions]);
 
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         const {data: dt} = data;
+    //         const {entries: entrz} = dt;
+    //         setDataz(entrz);
+    //     }
+    // }, [isSuccess]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            const {data: dt} = data;
+            const {entries: entrz, numberOfDocuments} = dt;
+            if (entrz) {
+                setDataz(entrz);
+            }
+            if (numberOfDocuments) {
+                setNumOfDocs(numberOfDocuments);
+            }
+        } else if (isError) {
+            const { message: errorMessage } = error.data;
+            return message.error(errorMessage);
+        }
+
+        return ()=>{
+            setDataz([]);
+            SetSelectedRow("");
+            SetSearchText("");
+            SetSelectedRowInfo("");
+            setNumOfDocs(null)
+            console.log("clean up")
+        }
+
+    }, [isSuccess, data, model]);
 
     const handleActions = (id) => {
         if (selectedRow === id) {
@@ -105,7 +130,7 @@ const CassiteriteListPage = () => {
 
     const handleDelete = async () => {
         const entryId = selectedRow;
-        await deleteEntry({model: "cassiterite", entryId});
+        await deleteEntry({entryId, model});
         SetSelectedRow("");
         setShowmodal(!showmodal);
     };
@@ -117,25 +142,24 @@ const CassiteriteListPage = () => {
     }, {});
 
     const [checkboxValues, setCheckboxValues] = useState(initialCheckboxValues);
+
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [requestId, setRequestId] = useState(null);
     const showModal = () => {
         setIsModalOpen(true);
     }
 
     useEffect(() => {
         if (isCreateRequestSuccess) {
-            message.success("Edit Request created successfully");
+            return message.success("Edit Request was created successfully");
         } else if (isCreateRequestError) {
             const {message: errorMessage} = createRequestError.data;
-            message.error(errorMessage);
+            return message.error(errorMessage);
         }
     }, [isCreateRequestSuccess, isCreateRequestError, createRequestError])
 
     const handleOk = async () => {
-        const finalBody = {editableFields: [], model: "cassiterite", recordId: "", username: userData.username};
-        setCheckboxValues(initialCheckboxValues);
-        setIsModalOpen(false);
+        const finalBody = {editableFields: [], model: "coltan", recordId: "", username: userData.username};
         for (const key of Object.keys(checkboxValues)) {
             if (checkboxValues[key] === true) {
                 finalBody.editableFields.push({
@@ -150,12 +174,15 @@ const CassiteriteListPage = () => {
             return;
         }
         await createEditRequest({body: finalBody});
+        setIsModalOpen(false);
+        setCheckboxValues(initialCheckboxValues);
         socket.emit("new-edit-request", {username: userData.username});
+        message.success("Edit Request sent successfully");
         // if (response) {
-        //   const { editRequest } = response.data.data;
-        //   if (editRequest) {
-        //     setRequestId(editRequest._id);
-        //   }
+        //     const {editRequest} = response.data.data;
+        //     if (editRequest) {
+        //         setRequestId(editRequest._id);
+        //     }
         // }
     }
 
@@ -163,7 +190,7 @@ const CassiteriteListPage = () => {
         setIsModalOpen(false);
         setCheckboxValues(initialCheckboxValues);
     }
-
+    const {RangePicker} = DatePicker;
 
     const columns = [
         {
@@ -174,8 +201,8 @@ const CassiteriteListPage = () => {
             render: (text) => (
                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
             ),
-            filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
-                <div style={{padding: 8}}>
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+                <div style={{ padding: 8 }}>
                     <Space>
                         <RangePicker
                             value={selectedKeys}
@@ -183,7 +210,7 @@ const CassiteriteListPage = () => {
                         />
                         <button
                             className="px-6 py-1 bg-orange-300 rounded-md"
-                            type="button"
+                            type= "button"
                             onClick={() => {
                                 if (isSuccess && selectedKeys.length > 0) {
                                     const {data: dt} = data;
@@ -203,7 +230,7 @@ const CassiteriteListPage = () => {
                         </button>
                         <button
                             className="px-6 py-1 bg-red-300 rounded-md"
-                            type="button"
+                            type= "button"
                             onClick={() => {
                                 if (isSuccess) {
                                     const {data: dt} = data;
@@ -233,11 +260,14 @@ const CassiteriteListPage = () => {
             title: "Company name",
             dataIndex: "companyName",
             key: "companyName",
-            sorter: (a, b) => a.companyName.localeCompare(b.companyName),
+            render: (_, record) => {
+                return <p>{record.supplierId?.companyName}</p>
+            },
+            sorter: (a, b) => a.supplierId?.companyName.localeCompare(b.supplierId?.companyName),
             filteredValue: [searchText],
             onFilter: (value, record) => {
                 return (
-                    String(record.companyName)
+                    String(record.supplierId?.companyName)
                         .toLowerCase()
                         .includes(value.toLowerCase()) ||
                     String(record.beneficiary)
@@ -257,6 +287,10 @@ const CassiteriteListPage = () => {
             title: "Beneficiary",
             dataIndex: "beneficiary",
             key: "beneficiary",
+            render: (_, record) => {
+                console.log('record', record);
+                return <p>{record.beneficiary || record?.supplierId?.companyRepresentative}</p>
+            },
             sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
         },
         {
@@ -280,9 +314,9 @@ const CassiteriteListPage = () => {
                 if (record.output) {
                     let sum = 0;
                     record.output.forEach((item) => {
-                        if (item.cumulativeAmount) {
+                        if(item.cumulativeAmount){
                             sum += parseFloat(item.cumulativeAmount);
-                        } else {
+                        } else{
                             sum += parseFloat(item.weightOut);
                         }
 
@@ -291,151 +325,173 @@ const CassiteriteListPage = () => {
                 }
             }
         },
-
         {
-            title: "Action",
+            title: (
+                <div className=" grid grid-cols-1 gap-1 lg:grid-cols-2 items-center">
+                    <p>Action</p>
+                    <IoTrashBinOutline className=" text-lg" onClick={()=>{
+                        if(dataz!==dummyarch){
+                            setDataz(dummyarch);
+                        }
+                    }}/>
+                </div>
+            ),
             dataIndex: "action",
             key: "action",
             render: (_, record) => {
                 return (
                     <>
                         <div className="flex items-center gap-4">
-              <span>
-                <span className="relative">
-                  <PiDotsThreeVerticalBold
-                      className="text-lg"
-                      onClick={() => handleActions(record._id)}
-                  />
-                    {selectedRow === record._id ? (
-                        <motion.ul
-                            ref={modalRef}
-                            animate={
-                                showActions
-                                    ? {opacity: 1, x: -10, y: 1, display: "block"}
-                                    : {opacity: 0, x: 0, y: 0, display: "none"}
-                            }
-                            className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                        >
-                            {permissions?.entry?.edit && (
-                                <li
-                                    className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                    onClick={() => {
-                                        navigate(`/entry/edit/${"cassiterite"}/${record._id}`);
-                                    }}
-                                >
-                                    <BiSolidEditAlt className=" text-lg"/>
-                                    <p>edit</p>
-                                </li>
-                            )}
-
-                            {/* TODO 15: SHOW MENU BASED ON PERMISSIONS*/}
-                            {permissions?.invoices?.create && (
-                                <li
-                                    className="flex gap-2 p-2 items-center hover:bg-slate-100"
-                                    onClick={() => {
-                                        if (record.supplierId) {
-                                            navigate(`/add/invoice/${record.supplierId}/cassiterite/${record._id}`);
-                                        } else {
-                                            return message.warning("You have assign supplier to this entry");
+                          <span>
+                            <span className="relative">
+                              <PiDotsThreeVerticalBold
+                                  className="text-lg"
+                                  onClick={() => handleActions(record._id)}
+                              />
+                                {selectedRow === record._id ? (
+                                    <motion.ul
+                                        ref={modalRef}
+                                        animate={
+                                            showActions
+                                                ? {opacity: 1, x: -10, y: 1, display: "block"}
+                                                : {opacity: 0, x: 0, y: 0, display: "none"}
                                         }
-                                    }}
-                                >
-                                    <FaFileInvoiceDollar className=" text-xl"/>
-                                    <p>Make invoice</p>
-                                </li>
-                            )}
+                                        className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+                                    >
 
-                            {/*{permissions.entry?.delete ? (*/}
-                            {/*    <>*/}
-                            {/*      /!*<li*!/*/}
-                            {/*      /!*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*!/*/}
-                            {/*      /!*    onClick={() => {*!/*/}
-                            {/*      /!*      {*!/*/}
-                            {/*      /!*        navigate(`/complete/cassiterite/${record._id}`);*!/*/}
-                            {/*      /!*      }*!/*/}
-                            {/*      /!*    }}*!/*/}
-                            {/*      /!*>*!/*/}
-                            {/*      /!*  <RiFileEditFill className=" text-lg" />*!/*/}
-                            {/*      /!*  <p>complete entry</p>*!/*/}
-                            {/*      /!*</li>*!/*/}
-                            {/*      <li*/}
-                            {/*          className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                            {/*          onClick={() => {*/}
-                            {/*            SetSelectedRow(record._id);*/}
-                            {/*            SetSelectedRowInfo({*/}
-                            {/*              ...selectedRowInfo,*/}
-                            {/*              name: record.companyName,*/}
-                            {/*              date: record.supplyDate,*/}
-                            {/*            });*/}
-                            {/*            setShowmodal(!showmodal);*/}
-                            {/*          }}*/}
-                            {/*      >*/}
-                            {/*        <MdDelete className=" text-lg" />*/}
-                            {/*        <p>delete</p>*/}
-                            {/*      </li>*/}
-                            {/*    </>*/}
-                            {/*) : null}*/}
-                        </motion.ul>
-                    ) : null}
-                </span>
-              </span>
+                                        {hasPermission(permissions, "entry:edit") && (
+                                            <li
+                                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                onClick={() => {
+                                                    navigate(`/entry/edit/${"coltan"}/${record._id}`);
+                                                }}
+                                            >
+                                                <BiSolidEditAlt className=" text-lg"/>
+                                                <p>edit</p>
+                                            </li>
+                                        )}
+
+                                        <li
+                                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                            onClick={() => {
+                                                navigate(`/entries/tags/${record._id}`);
+                                            }}
+                                        >
+                                            <BiSolidEditAlt className=" text-lg"/>
+                                            <p>Tags</p>
+                                        </li>
+
+
+                                        {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
+                                        {hasPermission(permissions, "invoices:create") && (
+                                            <li
+                                                className="flex gap-2 p-2 items-center hover:bg-slate-100"
+                                                onClick={() => {
+                                                    if (record.supplierId) {
+                                                        navigate(`/add/invoice/${record.supplierId}/coltan/${record._id}`);
+                                                    } else {
+                                                        return message.warning("You have assign supplier to this entry");
+                                                    }
+                                                }}
+                                            >
+                                                <FaFileInvoiceDollar className=" text-xl"/>
+                                                <p>Make invoice</p>
+                                            </li>
+                                        )}
+
+
+                                        {hasPermission(permissions, "entry:edit") ? (
+                                            <>
+                                                {/* <li
+                                                    className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        {
+                                                            navigate(`/complete/coltan/${record._id}`);
+                                                        }
+                                                    }}
+                                                >
+                                                    <RiFileEditFill className=" text-lg"/>
+                                                    <p>complete entry</p>
+                                                </li> */}
+                                                {hasPermission(permissions, "entry:delete") ? (<li
+                                                    className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        SetSelectedRow(record._id);
+                                                        SetSelectedRowInfo({
+                                                            ...selectedRowInfo,
+                                                            name: record.companyName,
+                                                            date: record.supplyDate,
+                                                        });
+                                                        setShowmodal(!showmodal);
+                                                    }}
+                                                >
+                                                    <MdDelete className=" text-lg"/>
+                                                    <p>delete</p>
+                                                </li>) : null}
+                                            </>
+                                        ) : null}
+                                    </motion.ul>
+                                ) : null}
+                            </span>
+                          </span>
 
                             {permissions.entry?.delete ? (
                                 <span>
-                  <MdDelete
-                      className="text-lg"
-                      onClick={() => {
-                          SetSelectedRow(record._id);
-                          SetSelectedRowInfo({
-                              ...selectedRowInfo,
-                              name: record.companyName,
-                              date: record.supplyDate,
-                          });
-                          setShowmodal(!showmodal);
-                      }}
-                  />
-                </span>
+                                  <MdDelete
+                                      className="text-lg"
+                                      onClick={() => {
+                                          SetSelectedRow(record._id);
+                                          SetSelectedRowInfo({
+                                              ...selectedRowInfo,
+                                              name: record.companyName,
+                                              date: record.supplyDate,
+                                          });
+                                          setShowmodal(!showmodal);
+                                      }}
+                                  />
+                                </span>
                             ) : null}
 
                             {!permissions.entry?.edit &&
                                 <span>
-                                      <FiEdit
-                                          className="text-lg"
-                                          onClick={() => {
-                                              setRecord(record);
-                                              showModal();
-                                          }}
-                                      />
-                                </span>
+                                <FiEdit
+                                    className="text-lg"
+                                    onClick={() => {
+                                        setRecord(record);
+                                        showModal();
+                                    }}
+                                />
+                            </span>
                             }
 
                             <span>
-                                <LotManagement initialLots={record.output} entryId={record._id} model={model}/>
+                                <LotManagement
+                                    initialLots={record.output}
+                                    entryId={record._id}
+                                    model={record.model}
+                                />
                             </span>
-
-                            {/*<span>*/}
-                            {/*    <View*/}
-                            {/*        className="text-lg"*/}
-                            {/*        onClick={() => {*/}
-                            {/*            navigate(`/entry/${model}/${record._id}`);*/}
-                            {/*        }}*/}
-                            {/*    />*/}
-                            {/*</span>*/}
 
                             <span>
                                 <View
                                     className="text-lg"
                                     onClick={() => {
-                                        navigate(`/entry/cassiterite/${record._id}`);
+                                        navigate(`/entry/${model}/${record._id}`);
                                     }}
                                 />
                             </span>
+
+                            {/*{permissions.entry.edit ? (*/}
+
+                            {/*) : null}*/}
                         </div>
                     </>
                 );
             },
         },
     ];
+    // const [field, setField] = useState()
+
 
     const handleCheckboxChange = (itemName) => {
         setCheckboxValues({
@@ -444,14 +500,22 @@ const CassiteriteListPage = () => {
         });
     };
 
+
+    const handlePagination = (page, pageSize) => {
+        // const offset = pagination.current * pagination.pageSize - pagination.pageSize;
+        // const limit = pagination.pageSize;
+        // const params = {};
+    }
+
+
     return (
         <>
             <ListContainer
-                title={"Cassiterite entries list"}
-                subTitle={"Manage your cassiterite  entries"}
-                navLinktext={`entry/add/${"cassiterite"}`}
+                title={"Coltan entries list"}
+                subTitle={"Manage your coltan  entries"}
+                navLinktext={`entry/add/${model}`}
                 navtext={"Add new Entry"}
-                isAllowed={permissions.entry?.create}
+                isAllowed={hasPermission(permissions, "entry:create")}
                 table={
                     <>
                         <Modal
@@ -463,8 +527,8 @@ const CassiteriteListPage = () => {
                             }}
                             destroyOnClose
                             footer={[
-                                <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"}
-                                              dsText={"Deleting"} handleCancel={() => {
+
+                                <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"} dsText={"Deleting"} handleCancel={() => {
                                     setShowmodal(!showmodal);
                                     SetSelectedRow("");
                                 }} handleDelete={handleDelete}/>
@@ -476,10 +540,10 @@ const CassiteriteListPage = () => {
                             <p className=" text-lg">
                                 Are you sure you want to delete entry with:
                             </p>
-                            <li className=" text-lg">{`company name: ${selectedRowInfo.name}`}</li>
-                            <li className=" text-lg">{`Supply date: ${dayjs(
+                            <p className=" text-lg">{`company name: ${selectedRowInfo.name}`}</p>
+                            <p className=" text-lg">{`Supply date: ${dayjs(
                                 selectedRowInfo.date
-                            ).format("MMM/DD/YYYY")}`}</li>
+                            ).format("MMM/DD/YYYY")}`}</p>
                         </Modal>
 
                         <Modal
@@ -489,8 +553,6 @@ const CassiteriteListPage = () => {
                             onCancel={handleCancel}
                             destroyOnClose
                             okButtonProps={{className: "bg-green-400 p-2 rounded-lg"}}
-                            // cancelButtonProps={{className: "py-[5px] px-[20px] shadow-md shadow-[#A6A6A6] bg-punch-500 hover:bg-punch-700 text-white rounded-md", type: "default"}}
-                            // okButtonProps={{className: "bg-custom_blue-500 hover:bg-custom_blue-600 text-white shadow-md shadow-[#A6A6A6] py-[7px] px-[15px] rounded-md"}}
                         >
                             {fields.map((item, index) => (
                                 <div key={index}>
@@ -525,7 +587,7 @@ const CassiteriteListPage = () => {
                 </span>
                             </div>
                             <Table
-                                className=" w-full"
+                                className=" w-full overflow-x-auto"
                                 loading={{
                                     indicator: (
                                         <ImSpinner2
@@ -537,9 +599,12 @@ const CassiteriteListPage = () => {
                                 }}
                                 dataSource={dataz}
                                 columns={columns}
+                                pagination={{pageSize: 100, size: "small", total: numOfDocs}}
                                 expandable={{
-                                    expandedRowRender: (record) => <CassiteriteEntryComplete entryId={record._id}/>,
-                                    rowExpandable: (record) => record.output?.length > 0,
+                                    expandedRowRender: record1 => <EntryCompletePage entryId={record1._id} model={model}/>,
+                                    rowExpandable: record1 => record1.output?.length > 0,
+                                    // expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>,
+                                    // rowExpandable: record1 => record1.output?.length > 0,
                                 }}
                                 rowKey="_id"
                             />
@@ -550,4 +615,4 @@ const CassiteriteListPage = () => {
         </>
     );
 };
-export default CassiteriteListPage;
+export default EntriesListPage;

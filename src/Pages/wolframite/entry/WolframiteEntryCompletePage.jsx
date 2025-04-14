@@ -10,10 +10,10 @@ import {
     useUpdateEntryMutation,
     useGetEntryQuery,
     useDeleteGradeImgMutation,
-} from "../../../states/apislice";
+} from "@/states/apislice.js";
 import {useNavigate, useParams} from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
-import {getBase64FromServer, filterColumns, decidePricingGrade, AppUrls} from "../../../components/helperFunctions";
+import {getBase64FromServer, filterColumns, decidePricingGrade} from "@/components/helperFunctions.js";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";

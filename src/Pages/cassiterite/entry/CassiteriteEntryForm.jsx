@@ -7,7 +7,7 @@ import AddComponent from "../../../components/Actions components/AddComponent";
 import {
   useCreateEntryMutation,
   useGetAllSuppliersQuery,
-} from "../../../states/apislice";
+} from "@/states/apislice.js";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { HiPlus, HiMinus } from "react-icons/hi";
@@ -15,7 +15,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { BsChevronDown } from "react-icons/bs";
 import { HiOutlineSearch } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import { validateWeightInEntry } from "../../../components/helperFunctions";
+import { validateWeightInEntry } from "@/components/helperFunctions.js";
 
 const CassiteriteEntryForm = () => {
   let sup = [""];
@@ -39,7 +39,7 @@ const CassiteriteEntryForm = () => {
     email: "",
     supplierId: "",
     companyRepresentative: "",
-    representativeId: "",
+    // representativeId: "",
     representativePhoneNumber: "",
     supplyDate: "",
     time: "",
@@ -212,7 +212,7 @@ const CassiteriteEntryForm = () => {
       email: "",
       supplierId: "",
       companyRepresentative: "",
-      representativeId: "",
+      // representativeId: "",
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
@@ -407,18 +407,18 @@ const CassiteriteEntryForm = () => {
                       onChange={handleEntry}
                     />
                   </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Representative ID number</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="representativeId"
-                      id="representativeId"
-                      value={formval.representativeId || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
+                  {/*<li className=" space-y-1">*/}
+                  {/*  <p className="pl-1">Representative ID number</p>*/}
+                  {/*  <input*/}
+                  {/*    type="text"*/}
+                  {/*    autoComplete="off"*/}
+                  {/*    className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*    name="representativeId"*/}
+                  {/*    id="representativeId"*/}
+                  {/*    value={formval.representativeId || ""}*/}
+                  {/*    onChange={handleEntry}*/}
+                  {/*  />*/}
+                  {/*</li>*/}
                   <li className=" space-y-1">
                     <p className="pl-1">Representative phone nbr</p>
                     <input

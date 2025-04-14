@@ -13,13 +13,13 @@ import {
     useGetEntryQuery,
     useDeleteGradeImgMutation,
     useUpdateEntryMutation
-} from "../../../states/apislice";
+} from "@/states/apislice.js";
 import {useNavigate, useParams} from "react-router-dom";
 import FetchingPage from "../../FetchingPage";
 import {IoClose} from "react-icons/io5";
 import {UploadOutlined} from "@ant-design/icons";
 import {useSelector} from "react-redux";
-import {getBase64FromServer, filterColumns, AppUrls, decidePricingGrade} from "../../../components/helperFunctions";
+import {getBase64FromServer, filterColumns, decidePricingGrade} from "@/components/helperFunctions.js";
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "../../HelpersJsx";
 import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
@@ -192,6 +192,7 @@ const CassiteriteEntryCompletePage = ({entryId}) => {
         setShow(false);
     };
 
+    // cassiterite save method
     const calculatePricePerUnit = (LME, grade, TC) => {
         if (LME && grade && TC) {
             return (((LME * grade/100) - TC)/1000).toFixed(5);

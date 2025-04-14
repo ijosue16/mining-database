@@ -10,7 +10,7 @@ import dayjs from "dayjs";
 
 const ListTags = () => {
     const { permissions: userPermissions } = useSelector(state => state.persistedReducer.global);
-    const { data, isLoading, isSuccess } = useGetListTagsQuery();
+    const { data, isLoading, isSuccess } = useGetListTagsQuery({query: ""});
     const [tags, setTags] = useState([]);
     const [modifiedTags, setModifiedTags] = useState([]);
     const [storeTags, setStoreTags] = useState(0);

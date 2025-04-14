@@ -67,7 +67,7 @@ const EntryDetailsPage = () => {
     // }, [id]);
 
     if (isLoading) return <FetchingPage/>;
-    if (isError) return <div className="text-red-500 p-4">Error: {entryError.message}</div>;
+    if (isError) return <div className="text-red-500 p-4">Error: {entryError.data?.message}</div>;
     if (!entry) return <div className="p-4">No entry found</div>;
 
     // Determine mineral type specific fields and display logic
@@ -152,7 +152,7 @@ const EntryDetailsPage = () => {
                     <div className="flex justify-between items-center">
                         <div>
                             <CardTitle className="text-xl">
-                                {entry.companyName}{" "}
+                                {entry.supplierId?.companyName}{" "}
                                 <Badge className="ml-2">{entry.mineralType || "Unknown Type"}</Badge>
                             </CardTitle>
                             <CardDescription className="mt-1">
@@ -178,27 +178,27 @@ const EntryDetailsPage = () => {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell className="font-medium">Company Name</TableCell>
-                                        <TableCell>{entry.companyName}</TableCell>
+                                        <TableCell>{entry.supplierId?.companyName}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">License Number</TableCell>
-                                        <TableCell>{entry.licenseNumber || "N/A"}</TableCell>
+                                        <TableCell>{entry.supplierId?.licenseNumber || "N/A"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">TIN Number</TableCell>
-                                        <TableCell>{entry.TINNumber || "N/A"}</TableCell>
+                                        <TableCell>{entry.supplierId?.TINNumber || "N/A"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">Company Representative</TableCell>
-                                        <TableCell>{entry.companyRepresentative || "N/A"}</TableCell>
+                                        <TableCell>{entry.supplierId?.companyRepresentative || "N/A"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">Phone Number</TableCell>
-                                        <TableCell>{entry.representativePhoneNumber || "N/A"}</TableCell>
+                                        <TableCell>{entry.supplierId?.representativePhoneNumber || "N/A"}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">Beneficiary</TableCell>
-                                        <TableCell>{entry.beneficiary || "N/A"}</TableCell>
+                                        <TableCell>{entry.beneficiary || entry.supplierId?.companyRepresentative || "N/A"}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

@@ -3,13 +3,13 @@ import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween"
 import {Checkbox, message, Modal, Space, Table, DatePicker, Button} from "antd";
 import {motion} from "framer-motion";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import ListContainer from "../../components/Listcomponents/ListContainer";
 import {
     useGetAllEntriesQuery,
     useDeleteEntryMutation,
     useCreateEditRequestMutation,
-} from "../../states/apislice";
+} from "@/states/apislice.js";
 import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
 import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
 import {ImSpinner2} from "react-icons/im";
@@ -20,20 +20,22 @@ import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
 import { IoTrashBinOutline } from "react-icons/io5";
 import {useSelector} from "react-redux";
-import {toCamelCase, toInitialCase, fields, hasPermission} from "../../components/helperFunctions";
-import {SocketContext} from "../../context files/socket";
+import {toCamelCase, toInitialCase, fields, hasPermission} from "@/components/helperFunctions.js";
+import {SocketContext} from "@/context files/socket.js";
 import {GiGiftOfKnowledge} from "react-icons/gi";
 dayjs.extend(isBetween);
 import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 import { View } from 'lucide-react';
+import LotManagement from "@/Pages/LotManagement.jsx";
 
 
 const ColtanListPage = () => {
     const dummyarch=[''];
     const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
+    const { model } = useParams();
     const [dataz, setDataz] = useState([]);
     const [numOfDocs, setNumOfDocs] = useState(null);
     const {permissions} = userData;
@@ -45,16 +47,15 @@ const ColtanListPage = () => {
         error: createRequestError
     }] = useCreateEditRequestMutation();
     const {data, isLoading, isSuccess, isError, error} =
-        useGetAllEntriesQuery({model: "coltan"}, {
+        useGetAllEntriesQuery({model}, {
             refetchOnMountOrArgChange: true,
-            refetchOnReconnect: true
+            refetchOnReconnect: true,
         });
     const [
         deleteEntry,
         {isLoading: isDeleting, isSuccess: isdone, isError: isproblem},
     ] = useDeleteEntryMutation();
 
-    console.log('permissions', permissions);
 
     const navigate = useNavigate();
     const [searchText, SetSearchText] = useState("");
@@ -64,7 +65,6 @@ const ColtanListPage = () => {
         date: "",
     });
     const [selectedRow, SetSelectedRow] = useState("");
-    const [model, Setmodel] = useState("coltan");
     const [showmodal, setShowmodal] = useState(false);
     const [record, setRecord] = useState(null);
 
@@ -83,13 +83,20 @@ const ColtanListPage = () => {
         };
     }, [showActions]);
 
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         const {data: dt} = data;
+    //         const {entries: entrz} = dt;
+    //         setDataz(entrz);
+    //     }
+    // }, [isSuccess]);
+
     useEffect(() => {
         if (isSuccess) {
             const {data: dt} = data;
             const {entries: entrz, numberOfDocuments} = dt;
             if (entrz) {
                 setDataz(entrz);
-                console.log(entrz)
             }
             if (numberOfDocuments) {
                 setNumOfDocs(numberOfDocuments);
@@ -122,7 +129,7 @@ const ColtanListPage = () => {
 
     const handleDelete = async () => {
         const entryId = selectedRow;
-        await deleteEntry({entryId, model: "coltan"});
+        await deleteEntry({entryId, model});
         SetSelectedRow("");
         setShowmodal(!showmodal);
     };
@@ -253,11 +260,14 @@ const ColtanListPage = () => {
             title: "Company name",
             dataIndex: "companyName",
             key: "companyName",
-            sorter: (a, b) => a.companyName.localeCompare(b.companyName),
+            render: (_, record) => {
+                return <p>{record.supplierId?.companyName}</p>
+            },
+            sorter: (a, b) => a.supplierId?.companyName.localeCompare(b.supplierId?.companyName),
             filteredValue: [searchText],
             onFilter: (value, record) => {
                 return (
-                    String(record.companyName)
+                    String(record.supplierId?.companyName)
                         .toLowerCase()
                         .includes(value.toLowerCase()) ||
                     String(record.beneficiary)
@@ -277,6 +287,10 @@ const ColtanListPage = () => {
             title: "Beneficiary",
             dataIndex: "beneficiary",
             key: "beneficiary",
+            render: (_, record) => {
+                console.log('record', record);
+                return <p>{record.beneficiary || record?.supplierId?.companyRepresentative}</p>
+            },
             sorter: (a, b) => a.beneficiary.localeCompare(b.beneficiary),
         },
         {
@@ -440,6 +454,10 @@ const ColtanListPage = () => {
                             }
 
                             <span>
+                                <LotManagement initialLots={record.output} entryId={record._id} model={model} />
+                            </span>
+
+                            <span>
                                 <View
                                     className="text-lg"
                                     onClick={() => {
@@ -569,6 +587,8 @@ const ColtanListPage = () => {
                                 pagination={{pageSize: 100, size: "small", total: numOfDocs}}
                                 expandable={{
                                     expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>, rowExpandable: record1 => record1.output?.length > 0,
+                                    // expandedRowRender: record1 => <ColtanEntryCompletePage entryId={record1._id}/>,
+                                    // rowExpandable: record1 => record1.output?.length > 0,
                                 }}
                                 rowKey="_id"
                             />

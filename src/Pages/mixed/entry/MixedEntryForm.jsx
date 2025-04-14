@@ -34,7 +34,7 @@ const MixedEntryForm = () => {
     email: "",
     supplierId: "",
     companyRepresentative: "",
-    representativeId: "",
+    // representativeId: "",
     representativePhoneNumber: "",
     supplyDate: "",
     time: "",
@@ -225,9 +225,10 @@ const MixedEntryForm = () => {
     e.preventDefault();
     const body = {
       ...formval,
-      coltanOutput: coltanLotDetails,
-      cassiteriteOutput: cassiteriteLotDetails,
+      // coltanOutput: coltanLotDetails,
+      // cassiteriteOutput: cassiteriteLotDetails,
     };
+    // console.log('body', body);
     await createEntry({ body, model: "mixed" });
   };
   const handleCancel = () => {
@@ -239,7 +240,7 @@ const MixedEntryForm = () => {
       email: "",
       supplierId: "",
       companyRepresentative: "",
-      representativeId: "",
+      // representativeId: "",
       representativePhoneNumber: "",
       supplyDate: "",
       time: "",
@@ -399,18 +400,18 @@ const MixedEntryForm = () => {
                       onChange={handleEntry}
                     />
                   </li>
-                  <li className=" space-y-1">
-                    <p className="pl-1">Representative ID number</p>
-                    <input
-                      type="text"
-                      autoComplete="off"
-                      className="focus:outline-none p-2 border rounded-md w-full"
-                      name="representativeId"
-                      id="representativeId"
-                      value={formval.representativeId || ""}
-                      onChange={handleEntry}
-                    />
-                  </li>
+                  {/*<li className=" space-y-1">*/}
+                  {/*  <p className="pl-1">Representative ID number</p>*/}
+                  {/*  <input*/}
+                  {/*    type="text"*/}
+                  {/*    autoComplete="off"*/}
+                  {/*    className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*    name="representativeId"*/}
+                  {/*    id="representativeId"*/}
+                  {/*    value={formval.representativeId || ""}*/}
+                  {/*    onChange={handleEntry}*/}
+                  {/*  />*/}
+                  {/*</li>*/}
                   <li className=" space-y-1">
                     <p className="pl-1">Representative phone nbr</p>
                     <input
@@ -507,97 +508,99 @@ const MixedEntryForm = () => {
                     />
                   </li>
 
-                  <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                    <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                      <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">
-                        Lot coltan number (output)
-                      </p>
-                    </span>
-                    <div className="col-span-1 space-y-3">
-                      {coltanLotDetails.map((lot, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-2 items-center w-full"
-                        >
-                          <p className=" font-semibold">{index+1}</p>
-                          <input
-                            animate={{}}
-                            type="number"
-                            autoComplete="off"
-                            className="focus:outline-none p-2 border rounded-md w-full"
-                            name="weightOut"
-                            value={lot.weightOut || ""}
-                            onWheelCapture={(e) => {
-                              e.target.blur();
-                            }}
-                            onChange={(e) => handleLotEntry(index, e)}
-                          />
-                          <HiMinus
-                            onClick={() => handleLRemoveLot(index)}
-                            className={`${
-                              coltanLotDetails.length - 1 == 0 ? "hidden" : ""
-                            }`}
-                          />
-                          <HiPlus
-                            onClick={handleAddLot}
-                            className={`${
-                              coltanLotDetails.length - 1 !== index
-                                ? "hidden"
-                                : ""
-                            }`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </li>
+                  {/*<li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">*/}
+                  {/*  <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">*/}
+                  {/*    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">*/}
+                  {/*      Lot coltan number (output)*/}
+                  {/*    </p>*/}
+                  {/*  </span>*/}
+                  {/*  <div className="col-span-1 space-y-3">*/}
+                  {/*    {coltanLotDetails.map((lot, index) => (*/}
+                  {/*      <div*/}
+                  {/*        key={index}*/}
+                  {/*        className="flex gap-2 items-center w-full"*/}
+                  {/*      >*/}
+                  {/*        <p className=" font-semibold">{index+1}</p>*/}
+                  {/*        <input*/}
+                  {/*          animate={{}}*/}
+                  {/*          type="number"*/}
+                  {/*          autoComplete="off"*/}
+                  {/*          className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*          name="weightOut"*/}
+                  {/*          value={lot.weightOut || ""}*/}
+                  {/*          onWheelCapture={(e) => {*/}
+                  {/*            e.target.blur();*/}
+                  {/*          }}*/}
+                  {/*          onChange={(e) => handleLotEntry(index, e)}*/}
+                  {/*        />*/}
+                  {/*        <HiMinus*/}
+                  {/*          onClick={() => handleLRemoveLot(index)}*/}
+                  {/*          className={`${*/}
+                  {/*            coltanLotDetails.length - 1 == 0 ? "hidden" : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*        <HiPlus*/}
+                  {/*          onClick={handleAddLot}*/}
+                  {/*          className={`${*/}
+                  {/*            coltanLotDetails.length - 1 !== index*/}
+                  {/*              ? "hidden"*/}
+                  {/*              : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*      </div>*/}
+                  {/*    ))}*/}
+                  {/*  </div>*/}
+                  {/*</li>*/}
+
                   {/* CASSITERITE */}
-                  <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                    <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                      <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">
-                        Lot cassiterie number (output)
-                      </p>
-                    </span>
-                    <div className="col-span-1 space-y-3">
-                      {cassiteriteLotDetails.map((lot, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-2 items-center w-full"
-                        >
-                          <p className=" font-semibold">{index+1}</p>
-                          <input
-                            animate={{}}
-                            type="number"
-                            autoComplete="off"
-                            className="focus:outline-none p-2 border rounded-md w-full"
-                            name="weightOut"
-                            value={lot.weightOut || ""}
-                            onWheelCapture={(e) => {
-                              e.target.blur();
-                            }}
-                            onChange={(e) =>
-                              handleCassiteriteLotEntry(index, e)
-                            }
-                          />
-                          <HiMinus
-                            onClick={() => handleCassiteriteRemoveLot(index)}
-                            className={`${
-                              cassiteriteLotDetails.length - 1 == 0
-                                ? "hidden"
-                                : ""
-                            }`}
-                          />
-                          <HiPlus
-                            onClick={handleAddCassiteriteLot}
-                            className={`${
-                              cassiteriteLotDetails.length - 1 !== index
-                                ? "hidden"
-                                : ""
-                            }`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </li>
+
+                  {/*<li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">*/}
+                  {/*  <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">*/}
+                  {/*    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">*/}
+                  {/*      Lot cassiterie number (output)*/}
+                  {/*    </p>*/}
+                  {/*  </span>*/}
+                  {/*  <div className="col-span-1 space-y-3">*/}
+                  {/*    {cassiteriteLotDetails.map((lot, index) => (*/}
+                  {/*      <div*/}
+                  {/*        key={index}*/}
+                  {/*        className="flex gap-2 items-center w-full"*/}
+                  {/*      >*/}
+                  {/*        <p className=" font-semibold">{index+1}</p>*/}
+                  {/*        <input*/}
+                  {/*          animate={{}}*/}
+                  {/*          type="number"*/}
+                  {/*          autoComplete="off"*/}
+                  {/*          className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*          name="weightOut"*/}
+                  {/*          value={lot.weightOut || ""}*/}
+                  {/*          onWheelCapture={(e) => {*/}
+                  {/*            e.target.blur();*/}
+                  {/*          }}*/}
+                  {/*          onChange={(e) =>*/}
+                  {/*            handleCassiteriteLotEntry(index, e)*/}
+                  {/*          }*/}
+                  {/*        />*/}
+                  {/*        <HiMinus*/}
+                  {/*          onClick={() => handleCassiteriteRemoveLot(index)}*/}
+                  {/*          className={`${*/}
+                  {/*            cassiteriteLotDetails.length - 1 == 0*/}
+                  {/*              ? "hidden"*/}
+                  {/*              : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*        <HiPlus*/}
+                  {/*          onClick={handleAddCassiteriteLot}*/}
+                  {/*          className={`${*/}
+                  {/*            cassiteriteLotDetails.length - 1 !== index*/}
+                  {/*              ? "hidden"*/}
+                  {/*              : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*      </div>*/}
+                  {/*    ))}*/}
+                  {/*  </div>*/}
+                  {/*</li>*/}
                 </ul>
               </div>
             }

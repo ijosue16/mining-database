@@ -6,20 +6,21 @@ import LoadingButton from "./LoadingButton";
 import {useShipmentReportMutation, useShipmentReportSpreadsheetMutation} from "../states/apislice";
 
 
-export const PricingGrade = ({updateEntry, value, entryId, lotNumber, model}) => {
+export const PricingGrade = ({createAndUpdateLots, value, entryId, lotNumber, model, record}) => {
     const [pricingGrade, setPricingGrade] = useState(null);
     useEffect(() => {
-        if (value) setPricingGrade(value)
+        if (value) setPricingGrade(value);
     }, [value])
     const updatePricingGrade = async (value) => {
         setPricingGrade(value);
-        const body = {output: [{lotNumber, pricingGrade: value}]};
-        await updateEntry({body, entryId, model});
+        // const body = {output: [{lotNumber, pricingGrade: value}]};
+        const body = {lots: [{...record, pricingGrade: value}]};
+        await createAndUpdateLots({body, model});
     }
     const content = (
         <div className="flex flex-col">
             <Radio.Group value={pricingGrade} onChange={(e) => updatePricingGrade(e.target.value)}>
-                <Radio value="KZM">SMC</Radio>
+                <Radio value="SMC">SMC</Radio>
                 <Radio value="ASIR">ASIR</Radio>
             </Radio.Group>
         </div>

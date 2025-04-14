@@ -2,25 +2,35 @@ import React, {useEffect, useRef, useState} from "react";
 import {motion} from "framer-motion";
 import {Button, Form, Input, message, Modal, Table, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import AddComponent from "../../../components/Actions components/AddComponent";
+import AddComponent from "@/components/Actions components/AddComponent.jsx";
 import {BiSolidEditAlt} from "react-icons/bi";
 import {PiDotsThreeVerticalBold} from "react-icons/pi";
 import {ImSpinner2} from "react-icons/im";
 import {FaImage, FaSave} from "react-icons/fa";
 import {MdOutlineClose, MdPayments} from "react-icons/md";
-import {useDeleteGradeImgMutation, useGetEntryQuery, useUpdateEntryMutation, useUpdateLotMutation} from "@/states/apislice.js";
+import {
+    useCreateLotsMutation,
+    useDeleteGradeImgMutation,
+    useGetEntryQuery,
+    useUpdateEntryMutation,
+    useUpdateLotMutation
+} from "@/states/apislice.js";
 import {useNavigate} from "react-router-dom";
-import FetchingPage from "../../FetchingPage";
 import {useSelector} from "react-redux";
+import FetchingPage from "@/Pages/FetchingPage.jsx";
 import {IoClose} from "react-icons/io5";
-import {decidePricingGrade, filterColumns, getBase64FromServer} from "@/components/helperFunctions.js";
+import {
+    calculatePricePerUnit,
+    decidePricingGrade,
+    filterColumns,
+    getBase64FromServer
+} from "@/components/helperFunctions.js";
 import {TbReport} from "react-icons/tb";
-import {LotExpandable, PricingGrade} from "../../HelpersJsx";
-import ConfirmFooter from "../../../components/modalsfooters/ConfirmFooter";
-import DetailsPageContainer from "../../../components/Actions components/DetailsComponentscontainer";
+import {LotExpandable, PricingGrade} from "@/Pages/HelpersJsx.jsx";
+import ConfirmFooter from "@/components/modalsfooters/ConfirmFooter.jsx";
+import DetailsPageContainer from "@/components/Actions components/DetailsComponentscontainer.jsx";
 
-
-const ColtanEntryCompletePage = ({entryId}) => {
+const EntryCompletePage = ({entryId, model}) => {
     const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
     // const {entryId} = useParams();
     const navigate = useNavigate();
@@ -29,7 +39,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
     const [imageAvailable, setImageAvailable] = useState(false);
     // const [decision, setDecision] = useState("");
     const {data, isLoading, isError, isSuccess, error,} =
-        useGetEntryQuery({entryId, model: "coltan"},
+        useGetEntryQuery({entryId, model},
             {
                 skip: entryId === undefined,
                 refetchOnMountOrArgChange: true,
@@ -55,6 +65,13 @@ const ColtanEntryCompletePage = ({entryId}) => {
 
     const [updateLot, { isSuccess: isUpdateLotSuccess, isLoading: isUpdatingLot }] = useUpdateLotMutation();
 
+    const [createAndUpdateLots, {
+        isSuccess: isCreateDone,
+        isLoading: isCreating,
+        isError: isCreateError,
+        error: createError
+    }] = useCreateLotsMutation();
+
     let modalRef = useRef();
 
     const handleClickOutside = (event) => {
@@ -71,13 +88,13 @@ const ColtanEntryCompletePage = ({entryId}) => {
     }, []);
 
     useEffect(() => {
-        if (isUpdateSuccess) {
-            return message.success("Entry updated successfully");
-        } else if (isUpdateError) {
-            const {message: errorMessage} = updateError.data;
+        if (isCreateDone) {
+            return message.success("Lot updated successfully");
+        } else if (isCreateError) {
+            const {message: errorMessage} = createError.data;
             return message.error(errorMessage);
         }
-    }, [isUpdateError, isUpdateSuccess, updateError]);
+    }, [isCreateError, isCreateDone, createError]);
     const [formval, setFormval] = useState({
         lat: "",
         long: "",
@@ -189,21 +206,83 @@ const ColtanEntryCompletePage = ({entryId}) => {
         setEditRowKey(record._id);
         setShow(false);
     };
-    const calculatePricePerUnit = (tantal, grade) => {
-        if (tantal && grade) {
-            return (tantal * grade);
-        }
-    }
+    // const calculatePricePerUnit = (tantal, grade) => {
+    //     if (tantal && grade) {
+    //         return (tantal * grade);
+    //     }
+    // }
+    // const save = async (key) => {
+    //     const row = await form.validateFields();
+    //     const newData = [...lotInfo];
+    //     const index = newData.findIndex((item) => key === item._id);
+    //     if (index > -1) {
+    //         const item = newData[index];
+    //         const updatedItem = {
+    //             ...item,
+    //             ...row,
+    //         };
+    //         if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
+    //             if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
+    //                 return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
+    //             }
+    //             if (Boolean(item.nonSellAgreement) === true && Boolean(updatedItem.nonSellAgreement) === false) {
+    //                 return message.error("Non Sell Agreement Amount cannot be empty", 5);
+    //             }
+    //             if (updatedItem.nonSellAgreement > 0) {
+    //                 updatedItem.nonSellAgreement = {weight: updatedItem.weightOut};
+    //                 updatedItem.cumulativeAmount = 0;
+    //             } else {
+    //                 updatedItem.nonSellAgreement = {weight: 0};
+    //                 updatedItem.cumulativeAmount = updatedItem.weightOut;
+    //             }
+    //         }
+    //         if (item.mineralGrade !== updatedItem.mineralGrade) {
+    //             if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
+    //             if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
+    //                 return message.error("Mineral Grade cannot be empty or zero", 5);
+    //         }
+    //         if (item.ASIR !== updatedItem.ASIR) {
+    //             if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
+    //             if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
+    //                 return message.error("ASIR cannot be empty or zero", 5);
+    //         }
+    //         if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+    //             if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
+    //             if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
+    //                 return message.error("USD rate cannot be empty or zero", 5);
+    //         }
+    //         if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+    //             if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be zero", 5);
+    //             if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
+    //                 return message.error("Tantal cannot be empty or zero", 5);
+    //         }
+    //         if (Boolean(updatedItem.tantalum) === true && updatedItem.pricingGrade && Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true && parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
+    //             updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])).toFixed(5) || null;
+    //         }
+    //         if (Boolean(updatedItem.pricePerUnit) === true) {
+    //             updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
+    //         }
+    //         newData.splice(index, 1, updatedItem);
+    //         setLotInfo(newData);
+    //         setEditRowKey("");
+    //         const body = {output: [updatedItem]};
+    //         await updateEntry({body, entryId, model: "coltan"});
+    //     }
+    // };
     const save = async (key) => {
         const row = await form.validateFields();
         const newData = [...lotInfo];
         const index = newData.findIndex((item) => key === item._id);
+
         if (index > -1) {
             const item = newData[index];
             const updatedItem = {
                 ...item,
                 ...row,
             };
+            // const model = updatedItem.docModel?.toLowerCase() || row.model; // Get model from the item or passed parameter
+
+            // Common validation for non-sell agreement
             if (item.nonSellAgreement !== updatedItem.nonSellAgreement) {
                 if (parseFloat(updatedItem.nonSellAgreement) > parseFloat(updatedItem.cumulativeAmount)) {
                     return message.error("Non Sell Agreement Amount cannot be greater than Weight Out", 5);
@@ -219,39 +298,120 @@ const ColtanEntryCompletePage = ({entryId}) => {
                     updatedItem.cumulativeAmount = updatedItem.weightOut;
                 }
             }
+
+            // Common validations for all mineral types
             if (item.mineralGrade !== updatedItem.mineralGrade) {
                 if (parseFloat(updatedItem.mineralGrade) === 0) return message.error("Mineral Grade cannot be zero", 5);
                 if (Boolean(item.mineralGrade) === true && Boolean(updatedItem.mineralGrade) === false)
                     return message.error("Mineral Grade cannot be empty or zero", 5);
             }
+
             if (item.ASIR !== updatedItem.ASIR) {
                 if (parseFloat(updatedItem.ASIR) === 0) return message.error("ASIR cannot be zero", 5);
                 if (Boolean(item.ASIR) === true && Boolean(updatedItem.ASIR) === false)
                     return message.error("ASIR cannot be empty or zero", 5);
             }
-            if (parseFloat(item.USDRate) !== parseFloat(updatedItem.USDRate)) {
+
+            if (item.USDRate !== updatedItem.USDRate) {
                 if (parseFloat(updatedItem.USDRate) === 0) return message.error("USD rate cannot be zero", 5);
                 if (Boolean(item.USDRate) === true && Boolean(updatedItem.USDRate) === false)
                     return message.error("USD rate cannot be empty or zero", 5);
             }
-            if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
-                if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be zero", 5);
-                if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
-                    return message.error("Tantal cannot be empty or zero", 5);
+
+            // Mineral-specific validations and calculations
+            switch (model) {
+                case "cassiterite":
+                    if (item.londonMetalExchange !== updatedItem.londonMetalExchange) {
+                        if (parseFloat(updatedItem.londonMetalExchange) === 0) return message.error("LME cannot be zero", 5);
+                        if (Boolean(item.londonMetalExchange) === true && Boolean(updatedItem.londonMetalExchange) === false)
+                            return message.error("LME cannot be empty or zero", 5);
+                    }
+                    if (item.treatmentCharges !== updatedItem.treatmentCharges) {
+                        if (parseFloat(updatedItem.treatmentCharges) === 0) return message.error("Treatment Charges cannot be zero", 5);
+                        if (Boolean(item.treatmentCharges) === true && Boolean(updatedItem.treatmentCharges) === false)
+                            return message.error("Treatment Charges cannot be empty or zero", 5);
+                    }
+                    if (Boolean(parseFloat(updatedItem.londonMetalExchange)) === true &&
+                        updatedItem.pricingGrade &&
+                        Boolean(parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])) === true &&
+                        Boolean(parseFloat(updatedItem.treatmentCharges)) === true) {
+                        updatedItem.pricePerUnit = calculatePricePerUnit(model, {
+                            LME: parseFloat(updatedItem.londonMetalExchange),
+                            grade: parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]),
+                            TC: parseFloat(updatedItem.treatmentCharges)
+                        });
+                    }
+                    break;
+
+                case "coltan":
+                    if (parseFloat(item.tantalum) !== parseFloat(updatedItem.tantalum)) {
+                        if (parseFloat(updatedItem.tantalum) === 0) return message.error("Tantal cannot be zero", 5);
+                        if (Boolean(item.tantalum) === true && Boolean(updatedItem.tantalum) === false)
+                            return message.error("Tantal cannot be empty or zero", 5);
+                    }
+                    if (Boolean(updatedItem.tantalum) === true &&
+                        updatedItem.pricingGrade &&
+                        Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true &&
+                        parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) !== 0 &&
+                        parseFloat(updatedItem.tantalum) !== 0) {
+                        console.log(calculatePricePerUnit(model, {
+                            tantal: parseFloat(updatedItem.tantalum),
+                            grade: parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])
+                        }));
+                        updatedItem.pricePerUnit = calculatePricePerUnit(model, {
+                            tantal: parseFloat(updatedItem.tantalum),
+                            grade: parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])
+                        });
+                    }
+                    break;
+
+                case "wolframite":
+                    if (item.metricTonUnit !== updatedItem.metricTonUnit) {
+                        if (Boolean(updatedItem.metricTonUnit) === false)
+                            return message.error("MTU cannot be empty or zero", 5);
+                        if ((Boolean(item.metricTonUnit) === true && Boolean(updatedItem.metricTonUnit) === false))
+                            return message.error("MTU cannot be empty or zero", 5);
+                        updatedItem.metricTonUnit = parseFloat(updatedItem.metricTonUnit);
+                    }
+                    if (Boolean(updatedItem.metricTonUnit) === true &&
+                        updatedItem.pricingGrade &&
+                        Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true) {
+                        updatedItem.pricePerUnit = calculatePricePerUnit(model, {
+                            MTU: parseFloat(updatedItem.metricTonUnit),
+                            grade: parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])
+                        });
+                    }
+                    break;
+
+                case "lithium":
+                case "beryllium":
+                    // For lithium and beryllium, use the direct price per unit
+                    if (item.pricePerUnit !== updatedItem.pricePerUnit) {
+                        if (parseFloat(updatedItem.pricePerUnit) === 0) return message.error("Price Per Unit cannot be zero", 5);
+                        if (Boolean(item.pricePerUnit) === true && Boolean(updatedItem.pricePerUnit) === false)
+                            return message.error("Price Per Unit cannot be empty or zero", 5);
+                    }
+                    // pricePerUnit is already set directly in these cases
+                    break;
             }
-            if (Boolean(updatedItem.tantalum) === true && updatedItem.pricingGrade && Boolean(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) === true && parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)]) !== 0 && parseFloat(updatedItem.tantalum) !== 0) {
-                updatedItem.pricePerUnit = calculatePricePerUnit(parseFloat(updatedItem.tantalum), parseFloat(updatedItem[decidePricingGrade(updatedItem.pricingGrade)])).toFixed(5) || null;
-            }
+
+            // Calculate mineral price if price per unit is available
             if (Boolean(updatedItem.pricePerUnit) === true) {
-                updatedItem.mineralPrice = (updatedItem.pricePerUnit * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
+                updatedItem.mineralPrice = (parseFloat(updatedItem.pricePerUnit) * parseFloat(updatedItem.weightOut)).toFixed(5) || null;
             }
+
+            // Update state and save to database
             newData.splice(index, 1, updatedItem);
             setLotInfo(newData);
             setEditRowKey("");
-            const body = {output: [updatedItem]};
-            await updateEntry({body, entryId, model: "coltan"});
+
+            console.log(updatedItem, model);
+            await createAndUpdateLots({body: {lots: [updatedItem]}, model});
+            // const body = { output: [updatedItem] };
+            // await updateEntry({ model, body, entryId });
         }
     };
+
     const handleActions = (id) => {
         setShow(!show);
         SetSelectedRow(id);
@@ -275,7 +435,15 @@ const ColtanEntryCompletePage = ({entryId}) => {
             dataIndex: "tantal",
             key: "tantal",
             table: true,
+            model: 'coltan'
             // sorter: (a, b) => a.tantalum - b.tantalum,
+        },
+        metricTonUnit: {
+            title: "MTU ($)",
+            dataIndex: "metricTonUnit",
+            key: "metricTonUnit",
+            table: true,
+            model: 'wolframite'
         },
         gradeImg: {
             title: "Grade Img",
@@ -327,13 +495,29 @@ const ColtanEntryCompletePage = ({entryId}) => {
                     <PricingGrade
                         value={record.pricingGrade ? record.pricingGrade : ""}
                         lotNumber={record.lotNumber}
-                        updateEntry={updateEntry}
+                        createAndUpdateLots={createAndUpdateLots}
+                        record={record}
                         entryId={entryId}
-                        model={"coltan"}
+                        model={model}
                     />
                 )
 
             }
+        },
+        londonMetalExchange: {
+            title: "LME ($)",
+            dataIndex: "londonMetalExchange",
+            key: "londonMetalExchange",
+            table: true,
+            model: 'cassiterite'
+        },
+        treatmentCharges: {
+            title: "T.C ($)",
+            dataIndex: "treatmentCharges",
+            key: "treatmentCharges",
+            width: 90,
+            table: true,
+            model: 'cassiterite'
         },
         pricePerUnit: {
             title: "price/kg ($)",
@@ -404,12 +588,14 @@ const ColtanEntryCompletePage = ({entryId}) => {
             dataIndex: "niobium",
             key: "niobium",
             table: false,
+            model: 'coltan'
         },
         iron: {
             title: "Iron",
             dataIndex: "iron",
             key: "iron",
             table: false,
+            model: 'coltan'
         },
         rmaFeeDecision: {
             title: "RMA Fee Decision",
@@ -450,7 +636,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
     ];
 
     if (restrictedColumns && userPermissions && columns) {
-        filterColumns(restrictedColumns, userPermissions, columns, "coltan");
+        filterColumns(restrictedColumns, userPermissions, columns, model);
         columns.push({
             title: "Action",
             dataIndex: "action",
@@ -600,7 +786,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
                                                 loading={{
                                                     indicator: (<ImSpinner2 style={{width: "60px", height: "60px"}}
                                                                             className="animate-spin text-gray-500"/>),
-                                                    spinning: isLoading
+                                                    spinning: isLoading || isCreating
                                                 }}
                                                 dataSource={lotInfo}
                                                 columns={mergedColumns}
@@ -681,7 +867,7 @@ const ColtanEntryCompletePage = ({entryId}) => {
         </>
     );
 }
-export default ColtanEntryCompletePage;
+export default EntryCompletePage;
 
 
 // import React, { useEffect, useState } from "react";

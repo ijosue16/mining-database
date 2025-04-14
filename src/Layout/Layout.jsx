@@ -74,11 +74,11 @@ const Layout = () => {
         },
         {
             heading: "Entry", show: hasPermission(permissions, "entry:view"),  hId:2 , subHeaders: [
-                { title: "Coltan", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 15,navtext:'coltan' },
-                { title: "Cassiterite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 16,navtext:'cassiterite' },
-                { title: "Wolframite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 17,navtext:'wolframite' },
-                { title: "Lithium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 18,navtext:'lithium' },
-                { title: "Beryllium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 19,navtext:'beryllium' },
+                { title: "Coltan", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 15,navtext:'entries/coltan' },
+                { title: "Cassiterite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 16,navtext:'entries/cassiterite' },
+                { title: "Wolframite", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 17,navtext:'entries/wolframite' },
+                { title: "Lithium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 18,navtext:'entries/lithium' },
+                { title: "Beryllium", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />, id: 19,navtext:'entries/beryllium' },
                 { title: "Mixed", show: hasPermission(permissions, "entry:view"), icon: <PiCurrencyEthDuotone />,submenu: true, id: 20,submenuItems: [
                     { title: "Cassiterite and Coltan ", show: permissions?.entry.view, id: 86,navtext:"mixed" },
                     // { title: "Cassiterite and Wolframite", id: 87,navtext:"mixed" }

@@ -17,7 +17,7 @@ export const apiSlice = createApi({
             return headers;
         },
     }),
-    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', "tags", 'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
+    tagTypes: ['buyers', 'contracts', 'advance-payment', 'messages', "tags", 'lots', 'lot-shipments',  'notifications', 'shipments', 'dueDiligence', 'payments', 'entries','suppliers', 'invoice', "dd-reports", "statistics", "settings", "editRequest"],
     endpoints: (builder) => ({
 
         endpointname: builder.query({
@@ -270,7 +270,7 @@ export const apiSlice = createApi({
         }),
         getAllEntries: builder.query({
             query: ({model}) => `/entry/${model}`,
-            providesTags: ['entries', 'payments', 'buyers']
+            providesTags: ['entries', 'payments', 'buyers', 'lots']
         }),
         getEntry: builder.query({
             query: ({model, entryId}) => `/entry/${model}/${entryId}`,
@@ -282,7 +282,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments', 'lots']
         }),
         updateEntry: builder.mutation({
             query: ({body, model, entryId}) => ({
@@ -290,7 +290,7 @@ export const apiSlice = createApi({
                 method: 'PATCH',
                 body
             }),
-            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments']
+            invalidatesTags: ['entries', 'payments', 'buyers', 'shipments', 'lots']
         }),
         deleteEntry: builder.mutation({
             query: ({model, entryId}) => ({
@@ -511,7 +511,7 @@ export const apiSlice = createApi({
             })
         }),
         getListTags: builder.query({
-            query: () => `/tags`,
+            query: ({query}) => `/tags${query ? "?"+query : ""}`,
             providesTags: ["tags"]
         }),
         createTag: builder.mutation({
@@ -522,6 +522,24 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ["tags"]
         }),
+        deleteTag: builder.mutation({
+            query: ({tagNumber}) => ({
+                url: `/tags/${tagNumber}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ["tags"]
+        }),
+        createAndUpdateTags: builder.mutation({
+            query: ({body}) => ({
+                url: `/tags/create-update`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['tags']
+        }),
+        // getEntryTags: builder.query({
+        //     query: ({entryId})
+        // }),
         getSupplierTags: builder.query({
             query: ({supplierId}) => `/tags/supplier/${supplierId}`,
             providesTags: ["tags"]
@@ -784,6 +802,55 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['shipments']
         }),
+        createLots: builder.mutation({
+            query: ({body}) => ({
+                url: `/lots`,
+                method: "POST",
+                body
+            }),
+            invalidatesTags: ['lots', 'entries']
+        }),
+        updateLot: builder.mutation({
+            query: ({lotId, body}) => ({
+                url: `/lots/${lotId}`,
+                method: "PATCH",
+                body
+            }),
+            invalidatesTags: ['lots', 'entries']
+        }),
+        deleteLot: builder.mutation({
+            query: ({lotId}) => ({
+                url: `/lots/${lotId}`,
+                method: "DELETE",
+                invalidatesTags: ['lots', 'entries']
+            }),
+        }),
+        createLotShipments: builder.mutation({
+            query: ({body}) => ({
+                url: '/lot-shipments',
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['lot-shipments']
+        }),
+        updateLotShipments: builder.mutation({
+            query: ({body, id}) => ({
+                url: `/lot-shipments/${id}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['lot-shipments']
+        }),
+        deleteLotShipments: builder.mutation({
+            query: ({body, id}) => ({
+                url: `/lot-shipments/${id}`,
+                method: 'DELETE',
+                body
+            }),
+            invalidatesTags: ['lot-shipments']
+        }),
+
+
     })
 })
 export const {
@@ -912,5 +979,15 @@ export const {
     useGenerateForwardNoteMutation,
     useSetup2FAMutation,
     useVerify2FAMutation,
-    useVerifyCodeMutation
+    useVerifyCodeMutation,
+    // new hooks
+    useCreateLotsMutation,
+    useUpdateLotMutation,
+    useDeleteLotMutation,
+    useCreateLotShipmentsMutation,
+    useUpdateLotShipmentsMutation,
+    useDeleteLotShipmentsMutation,
+    // tags
+    useDeleteTagMutation,
+    useCreateAndUpdateTagsMutation
 } = apiSlice

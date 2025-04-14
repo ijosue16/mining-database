@@ -110,7 +110,7 @@ const MineralRawEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const body = { ...state.formval, output: state.lotDetails };
+    const body = { ...state.formval };
     // console.log(body);
     // console.log({ body, model });
     await createColtanEntry({ body, model });
@@ -243,50 +243,50 @@ const MineralRawEntry = () => {
                     />
                   ))}
 
-                  <li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">
-                    {/* CONTAINER HAVING LOTS DYNAMICY FORM */}
-                    <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">
-                      <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">
-                        Lots
-                      </p>
-                    </span>
-                    <div className="col-span-1 space-y-3">
-                      {state.lotDetails.map((lot, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-2 items-center w-full"
-                        >
-                          <p className=" font-semibold">{index + 1}</p>
-                          <input
-                            animate={{}}
-                            type="number"
-                            autoComplete="off"
-                            className="focus:outline-none p-2 border rounded-md w-full"
-                            name="weightOut"
-                            value={lot.weightOut || ""}
-                            onWheelCapture={(e) => {
-                              e.target.blur();
-                            }}
-                            onChange={(e) => handleLotEntry(index, e)}
-                          />
-                          <HiMinus
-                            onClick={() => handleLRemoveLot(index)}
-                            className={`${
-                              state.lotDetails?.length - 1 === 0 ? "hidden" : ""
-                            }`}
-                          />
-                          <HiPlus
-                            onClick={handleAddLot}
-                            className={`${
-                              state.lotDetails.length - 1 !== index
-                                ? "hidden"
-                                : ""
-                            }`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </li>
+                  {/*<li className=" space-y-3 grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-span-full ">*/}
+                  {/*  /!* CONTAINER HAVING LOTS DYNAMICY FORM *!/*/}
+                  {/*  <span className=" bg-slate-800 p-[0.5px] relative col-span-full mb-3">*/}
+                  {/*    <p className="pl-1 bg-white absolute -top-4 left-2 font-semibold">*/}
+                  {/*      Lots*/}
+                  {/*    </p>*/}
+                  {/*  </span>*/}
+                  {/*  <div className="col-span-1 space-y-3">*/}
+                  {/*    {state.lotDetails.map((lot, index) => (*/}
+                  {/*      <div*/}
+                  {/*        key={index}*/}
+                  {/*        className="flex gap-2 items-center w-full"*/}
+                  {/*      >*/}
+                  {/*        <p className=" font-semibold">{index + 1}</p>*/}
+                  {/*        <input*/}
+                  {/*          // animate={{}}*/}
+                  {/*          type="number"*/}
+                  {/*          autoComplete="off"*/}
+                  {/*          className="focus:outline-none p-2 border rounded-md w-full"*/}
+                  {/*          name="weightOut"*/}
+                  {/*          value={lot.weightOut || ""}*/}
+                  {/*          onWheelCapture={(e) => {*/}
+                  {/*            e.target.blur();*/}
+                  {/*          }}*/}
+                  {/*          onChange={(e) => handleLotEntry(index, e)}*/}
+                  {/*        />*/}
+                  {/*        <HiMinus*/}
+                  {/*          onClick={() => handleLRemoveLot(index)}*/}
+                  {/*          className={`${*/}
+                  {/*            state.lotDetails?.length - 1 === 0 ? "hidden" : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*        <HiPlus*/}
+                  {/*          onClick={handleAddLot}*/}
+                  {/*          className={`${*/}
+                  {/*            state.lotDetails.length - 1 !== index*/}
+                  {/*              ? "hidden"*/}
+                  {/*              : ""*/}
+                  {/*          }`}*/}
+                  {/*        />*/}
+                  {/*      </div>*/}
+                  {/*    ))}*/}
+                  {/*  </div>*/}
+                  {/*</li>*/}
                 </ul>
               </div>
             }

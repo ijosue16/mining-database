@@ -105,6 +105,10 @@ import PermissionDenied from "./Authentications/PermissionDenied.jsx";
 import CompanyInfoPage from "./Pages/CompanyInfoPage.jsx";
 import {hasPermission} from "./components/helperFunctions.js";
 import EntryDetailsPage from "@/Pages/coltan/entry/EntryDetailsPage.jsx";
+import {Toaster} from "@/components/ui/toaster.jsx";
+import ColtanEntryDetailPage from "./Pages/coltan/entry/ColtanEntryComplete";
+import EntriesList from "@/Pages/Entry/EntriesList.jsx";
+import TagManagementPage from "@/Pages/Tags/TagManagementPage.jsx";
 
 function App() {
 
@@ -116,6 +120,7 @@ function App() {
                     pauseOnHover
                     autoClose={3000}
                 />
+                <Toaster/>
                 <SocketContext.Provider value={socket}>
                     <Routes>
                         <Route element={<LoginDatacontextProvider/>}>
@@ -134,6 +139,9 @@ function App() {
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
                                     <Route path="/shipment/tags/:shipmentId" element={<TagsList/>} />
                                     <Route path='/report/dummy' element={<ReportPage/>}/>
+                                    <Route path='/entry/complete/:entryId/:model' element={<ColtanEntryDetailPage/>}/>
+                                    <Route path='/entries/:model' element={<EntriesList/>}/>
+                                    <Route path='/entries/tags/:entryId' element={<TagManagementPage/>}/>
 
                                     <Route path='/coltan' element={<RoleBasedRoute element={<ColtanListPage/>} permissionKey={"entry:view"}/>}/>
                                     <Route path='/cassiterite' element={<RoleBasedRoute element={<CassiteriteListPage/>} permissionKey={"entry:view"}/>}/>
@@ -217,7 +225,6 @@ function App() {
                             <Route path="*" element={<PermissionDenied/>}/>
                             <Route path="/permissions-denied" element={<PermissionDenied/>}/>
                         </Route>
-
                     </Routes>
                 </SocketContext.Provider>
             </BrowserRouter>
