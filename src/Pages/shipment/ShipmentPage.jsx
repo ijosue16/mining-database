@@ -124,6 +124,18 @@ const ShipmentPage = () => {
             },
         },
         {
+            title: "Shipment N0",
+            dataIndex: "shipmentNumber",
+            key: "shipmentNumber",
+            editTable: true,
+        },
+        {
+            title: "iTSCi Shipment N0",
+            dataIndex: "iTSCiShipmentNumber",
+            key: "iTSCiShipmentNumber",
+            editTable: true,
+        },
+        {
             title: "Net Weight",
             dataIndex: "netWeight",
             key: "netWeight",
@@ -137,6 +149,7 @@ const ShipmentPage = () => {
             key: "averageGrade",
             sorter: (a, b) => a.averageGrade - b.averageGrade,
             render: (_, record) => {
+                console.log('record', record);
                 return (
                     <span>{record.averageGrade}</span>
                 )
@@ -232,7 +245,7 @@ const ShipmentPage = () => {
                 )}
                   {selectedRow === record._id && (
                       <motion.ul
-                      ref={modalRef}
+                          ref={modalRef}
                           animate={
                               showActions
                                   ? {opacity: 1, x: -10, display: "block"}
@@ -259,6 +272,15 @@ const ShipmentPage = () => {
                           {/*    <BiSolidEditAlt className=" text-lg"/>*/}
                           {/*    <p>edit</p>*/}
                           {/*</li>*/}
+                          <li
+                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                              onClick={() => {
+                                  navigate(`/shipment/create/${record.model}/${record._id}`)
+                              }}
+                          >
+                              <RiFileEditFill className=" text-lg"/>
+                              <p>Prepare Shipment</p>
+                          </li>
                           <li
                               className="flex gap-4 p-2 items-center hover:bg-slate-100"
                               onClick={() => {

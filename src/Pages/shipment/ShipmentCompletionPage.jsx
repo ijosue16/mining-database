@@ -9,7 +9,7 @@ import {
   useUpdateShipmentMutation,
   useGetAllBuyersQuery,
   useGetOneShipmentQuery,
-} from "../../states/apislice";
+} from "@/states/apislice.js";
 import { FiSearch } from "react-icons/fi";
 import { GrClose } from "react-icons/gr";
 import { GrDocumentUpload } from "react-icons/gr";
@@ -195,7 +195,7 @@ const ShipmentCompletionPage = () => {
     }
   };
 
-  
+
   const filteredBuyers = buyerz.filter((buyer) => {
     const companyName = buyer.companyName || "";
     return companyName.toLowerCase().includes(searchText.toLowerCase());
@@ -309,7 +309,7 @@ const ShipmentCompletionPage = () => {
                 <div className="grid grid-cols-1 gap-1">
                   <ul className="list-none grid gap-4 items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   <li className=" space-y-2 flex items-end gap-3 col-span-full ">
-                      
+
                       <div ref={modalRef} className="w-fit h-fit relative ">
                         <div
                           className="border p-2 w-[240px] rounded-md flex items-center justify-between gap-6 bg-white"
@@ -692,7 +692,7 @@ const ShipmentCompletionPage = () => {
                         <AiOutlineFile/>
                         <p>Cerifcate of analysis</p>
                       </span>
-  
+
                     </div> */}
                     </li>
                   </ul>
@@ -709,3 +709,461 @@ const ShipmentCompletionPage = () => {
   );
 };
 export default ShipmentCompletionPage;
+
+
+// import React, { useState, useEffect } from 'react';
+// import { useForm } from 'react-hook-form';
+// import { format } from 'date-fns';
+// import { Check, ChevronsUpDown, CalendarIcon, Loader2 } from 'lucide-react';
+// import { cn } from '@/lib/utils';
+//
+// import { Button } from '@/components/ui/button';
+// import { Calendar } from '@/components/ui/calendar';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+// import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+// import { Alert, AlertDescription } from '@/components/ui/alert';
+// import { Separator } from '@/components/ui/separator';
+//
+// export default function ShipmentForm({ shipmentData, buyers, isEditing = false }) {
+//   const [stage, setStage] = useState(1);
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [message, setMessage] = useState({ type: '', content: '' });
+//   const [openBuyerCombobox, setOpenBuyerCombobox] = useState(false);
+//
+//   // Mock data for buyers if not provided
+//   const mockBuyers = [
+//     { _id: '1', name: 'Buyer A' },
+//     { _id: '2', name: 'Buyer B' },
+//     { _id: '3', name: 'Buyer C' },
+//   ];
+//
+//   const buyersList = buyers || mockBuyers;
+//
+//   const defaultValues = {
+//     shipmentNumber: '',
+//     iTSCiShipmentNumber: '',
+//     shipmentDate: null,
+//     buyerId: '',
+//     buyerName: '',
+//     shipmentGrade: '',
+//     shipmentPrice: '',
+//     shipmentMinerals: '',
+//     shipmentSamplingDate: null,
+//     shipmentContainerLoadingDate: '',
+//     sampleWeight: '',
+//     dustWeight: '',
+//     analysisCertificate: '',
+//     containerForwardNote: { fileId: '', url: '' },
+//     certificateOfOrigin: '',
+//     rmbIcglrCertificate: { fileId: '', url: '' },
+//     tagListFile: { fileId: '', url: '' },
+//     negociantTagListFile: { fileId: '', url: '' },
+//     packingListFile: { fileId: '', url: '' },
+//     ...shipmentData
+//   };
+//
+//   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm({ defaultValues });
+//
+//   const watchBuyerId = watch('buyerId');
+//
+//   // Set buyer name when buyerId changes
+//   useEffect(() => {
+//     if (watchBuyerId) {
+//       const selectedBuyer = buyersList.find(buyer => buyer._id === watchBuyerId);
+//       if (selectedBuyer) {
+//         setValue('buyerName', selectedBuyer.name);
+//       }
+//     }
+//   }, [watchBuyerId, buyersList, setValue]);
+//
+//   const onSubmit = async (data) => {
+//     setIsLoading(true);
+//
+//     try {
+//       // In a real app, you would send data to your API
+//       console.log('Submitting form data:', data);
+//
+//       // Simulate API call
+//       await new Promise(resolve => setTimeout(resolve, 1000));
+//
+//       setMessage({
+//         type: 'success',
+//         content: `Shipment successfully ${isEditing ? 'updated' : 'created'}!`
+//       });
+//
+//       // If in stage 1 and not editing, move to stage 2
+//       if (stage === 1 && !isEditing) {
+//         setStage(2);
+//       }
+//     } catch (error) {
+//       setMessage({
+//         type: 'error',
+//         content: `Failed to ${isEditing ? 'update' : 'create'} shipment. Please try again.`
+//       });
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+//
+//   return (
+//       <div className="container mx-auto py-6">
+//         <Card className="w-full max-w-4xl mx-auto">
+//           <CardHeader>
+//             <CardTitle className="text-2xl font-bold">
+//               {isEditing ? 'Edit Shipment' : 'Create Shipment'}
+//             </CardTitle>
+//             <CardDescription>
+//               {stage === 1
+//                   ? 'Provide basic shipment information'
+//                   : 'Complete shipment details for export'
+//               }
+//             </CardDescription>
+//           </CardHeader>
+//
+//           <Tabs defaultValue={`stage-${stage}`} onValueChange={(value) => setStage(parseInt(value.split('-')[1]))}>
+//             <div className="px-6">
+//               <TabsList className="grid w-full grid-cols-2">
+//                 <TabsTrigger value="stage-1">Basic Information</TabsTrigger>
+//                 <TabsTrigger value="stage-2" disabled={!isEditing && stage === 1}>Complete Details</TabsTrigger>
+//               </TabsList>
+//             </div>
+//
+//             <form onSubmit={handleSubmit(onSubmit)}>
+//               <TabsContent value="stage-1">
+//                 <CardContent className="space-y-6 pt-4">
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentNumber">Shipment Number <span className="text-red-500">*</span></Label>
+//                       <Input
+//                           id="shipmentNumber"
+//                           {...register('shipmentNumber', { required: "Shipment number is required" })}
+//                       />
+//                       {errors.shipmentNumber && (
+//                           <p className="text-sm text-red-500">{errors.shipmentNumber.message}</p>
+//                       )}
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="iTSCiShipmentNumber">ITSCi Shipment Number</Label>
+//                       <Input
+//                           id="iTSCiShipmentNumber"
+//                           {...register('iTSCiShipmentNumber')}
+//                       />
+//                     </div>
+//                   </div>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentDate">Shipment Date</Label>
+//                       <Popover>
+//                         <PopoverTrigger asChild>
+//                           <Button
+//                               variant="outline"
+//                               className="w-full justify-start text-left font-normal"
+//                           >
+//                             <CalendarIcon className="mr-2 h-4 w-4" />
+//                             {watch('shipmentDate') ? (
+//                                 format(new Date(watch('shipmentDate')), 'PPP')
+//                             ) : (
+//                                 <span>Select date</span>
+//                             )}
+//                           </Button>
+//                         </PopoverTrigger>
+//                         <PopoverContent className="w-auto p-0">
+//                           <Calendar
+//                               mode="single"
+//                               selected={watch('shipmentDate') ? new Date(watch('shipmentDate')) : undefined}
+//                               onSelect={(date) => setValue('shipmentDate', date)}
+//                               initialFocus
+//                           />
+//                         </PopoverContent>
+//                       </Popover>
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="buyerId">Buyer</Label>
+//                       <Popover open={openBuyerCombobox} onOpenChange={setOpenBuyerCombobox}>
+//                         <PopoverTrigger asChild>
+//                           <Button
+//                               variant="outline"
+//                               role="combobox"
+//                               aria-expanded={openBuyerCombobox}
+//                               className="w-full justify-between"
+//                           >
+//                             {watchBuyerId
+//                                 ? buyersList.find(buyer => buyer._id === watchBuyerId)?.name
+//                                 : "Select buyer"}
+//                             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+//                           </Button>
+//                         </PopoverTrigger>
+//                         <PopoverContent className="w-full p-0">
+//                           <Command>
+//                             <CommandInput placeholder="Search buyers..." />
+//                             <CommandEmpty>No buyer found.</CommandEmpty>
+//                             <CommandGroup>
+//                               {buyersList.map((buyer) => (
+//                                   <CommandItem
+//                                       key={buyer._id}
+//                                       value={buyer._id}
+//                                       onSelect={() => {
+//                                         setValue('buyerId', buyer._id);
+//                                         setValue('buyerName', buyer.name);
+//                                         setOpenBuyerCombobox(false);
+//                                       }}
+//                                   >
+//                                     <Check
+//                                         className={cn(
+//                                             "mr-2 h-4 w-4",
+//                                             watchBuyerId === buyer._id ? "opacity-100" : "opacity-0"
+//                                         )}
+//                                     />
+//                                     {buyer.name}
+//                                   </CommandItem>
+//                               ))}
+//                             </CommandGroup>
+//                           </Command>
+//                         </PopoverContent>
+//                       </Popover>
+//                     </div>
+//                   </div>
+//                 </CardContent>
+//
+//                 <CardFooter className="flex justify-between">
+//                   <Button variant="outline" type="button">Cancel</Button>
+//                   <Button type="submit" disabled={isLoading}>
+//                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+//                     {isEditing ? 'Update Basic Info' : 'Continue to Details'}
+//                   </Button>
+//                 </CardFooter>
+//               </TabsContent>
+//
+//               <TabsContent value="stage-2">
+//                 <CardContent className="space-y-6 pt-4">
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentGrade">Shipment Grade</Label>
+//                       <Input
+//                           id="shipmentGrade"
+//                           type="number"
+//                           step="0.01"
+//                           min="0"
+//                           {...register('shipmentGrade')}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentPrice">Shipment Price</Label>
+//                       <Input
+//                           id="shipmentPrice"
+//                           type="number"
+//                           step="0.01"
+//                           min="0"
+//                           {...register('shipmentPrice')}
+//                       />
+//                     </div>
+//                   </div>
+//
+//                   <div className="space-y-2">
+//                     <Label htmlFor="shipmentMinerals">Shipment Minerals</Label>
+//                     <Input id="shipmentMinerals" {...register('shipmentMinerals')} />
+//                   </div>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentSamplingDate">Sampling Date</Label>
+//                       <Popover>
+//                         <PopoverTrigger asChild>
+//                           <Button
+//                               variant="outline"
+//                               className="w-full justify-start text-left font-normal"
+//                           >
+//                             <CalendarIcon className="mr-2 h-4 w-4" />
+//                             {watch('shipmentSamplingDate') ? (
+//                                 format(new Date(watch('shipmentSamplingDate')), 'PPP')
+//                             ) : (
+//                                 <span>Select date</span>
+//                             )}
+//                           </Button>
+//                         </PopoverTrigger>
+//                         <PopoverContent className="w-auto p-0">
+//                           <Calendar
+//                               mode="single"
+//                               selected={watch('shipmentSamplingDate') ? new Date(watch('shipmentSamplingDate')) : undefined}
+//                               onSelect={(date) => setValue('shipmentSamplingDate', date)}
+//                               initialFocus
+//                           />
+//                         </PopoverContent>
+//                       </Popover>
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="shipmentContainerLoadingDate">Container Loading Date</Label>
+//                       <Input id="shipmentContainerLoadingDate" {...register('shipmentContainerLoadingDate')} />
+//                     </div>
+//                   </div>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="sampleWeight">Sample Weight</Label>
+//                       <Input
+//                           id="sampleWeight"
+//                           type="number"
+//                           step="0.01"
+//                           min="0"
+//                           {...register('sampleWeight')}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="dustWeight">Dust Weight</Label>
+//                       <Input
+//                           id="dustWeight"
+//                           type="number"
+//                           step="0.01"
+//                           min="0"
+//                           {...register('dustWeight')}
+//                       />
+//                     </div>
+//                   </div>
+//
+//                   <Separator className="my-4" />
+//
+//                   <h3 className="text-lg font-medium">Documents</h3>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="analysisCertificate">Analysis Certificate</Label>
+//                       <Input
+//                           id="analysisCertificate"
+//                           type="file"
+//                           onChange={(e) => setValue('analysisCertificate', e.target.files[0])}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="certificateOfOrigin">Certificate of Origin</Label>
+//                       <Input
+//                           id="certificateOfOrigin"
+//                           type="file"
+//                           onChange={(e) => setValue('certificateOfOrigin', e.target.files[0])}
+//                       />
+//                     </div>
+//                   </div>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="containerForwardNote">Container Forward Note</Label>
+//                       <Input
+//                           id="containerForwardNote"
+//                           type="file"
+//                           onChange={(e) => {
+//                             const file = e.target.files[0];
+//                             if (file) {
+//                               setValue('containerForwardNote', {
+//                                 fileId: `file-${Date.now()}`, // Placeholder ID
+//                                 url: URL.createObjectURL(file) // Create temp URL
+//                               });
+//                             }
+//                           }}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="rmbIcglrCertificate">RMB ICGLR Certificate</Label>
+//                       <Input
+//                           id="rmbIcglrCertificate"
+//                           type="file"
+//                           onChange={(e) => {
+//                             const file = e.target.files[0];
+//                             if (file) {
+//                               setValue('rmbIcglrCertificate', {
+//                                 fileId: `file-${Date.now()}`, // Placeholder ID
+//                                 url: URL.createObjectURL(file) // Create temp URL
+//                               });
+//                             }
+//                           }}
+//                       />
+//                     </div>
+//                   </div>
+//
+//                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+//                     <div className="space-y-2">
+//                       <Label htmlFor="tagListFile">Tag List File</Label>
+//                       <Input
+//                           id="tagListFile"
+//                           type="file"
+//                           onChange={(e) => {
+//                             const file = e.target.files[0];
+//                             if (file) {
+//                               setValue('tagListFile', {
+//                                 fileId: `file-${Date.now()}`, // Placeholder ID
+//                                 url: URL.createObjectURL(file) // Create temp URL
+//                               });
+//                             }
+//                           }}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="negociantTagListFile">Negociant Tag List File</Label>
+//                       <Input
+//                           id="negociantTagListFile"
+//                           type="file"
+//                           onChange={(e) => {
+//                             const file = e.target.files[0];
+//                             if (file) {
+//                               setValue('negociantTagListFile', {
+//                                 fileId: `file-${Date.now()}`, // Placeholder ID
+//                                 url: URL.createObjectURL(file) // Create temp URL
+//                               });
+//                             }
+//                           }}
+//                       />
+//                     </div>
+//
+//                     <div className="space-y-2">
+//                       <Label htmlFor="packingListFile">Packing List File</Label>
+//                       <Input
+//                           id="packingListFile"
+//                           type="file"
+//                           onChange={(e) => {
+//                             const file = e.target.files[0];
+//                             if (file) {
+//                               setValue('packingListFile', {
+//                                 fileId: `file-${Date.now()}`, // Placeholder ID
+//                                 url: URL.createObjectURL(file) // Create temp URL
+//                               });
+//                             }
+//                           }}
+//                       />
+//                     </div>
+//                   </div>
+//                 </CardContent>
+//
+//                 <CardFooter className="flex justify-between">
+//                   <Button variant="outline" type="button" onClick={() => setStage(1)}>Back</Button>
+//                   <Button type="submit" disabled={isLoading}>
+//                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+//                     {isEditing ? 'Update Shipment' : 'Create Shipment'}
+//                   </Button>
+//                 </CardFooter>
+//               </TabsContent>
+//
+//               {message.content && (
+//                   <div className="px-6 pb-4">
+//                     <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
+//                       <AlertDescription>{message.content}</AlertDescription>
+//                     </Alert>
+//                   </div>
+//               )}
+//             </form>
+//           </Tabs>
+//         </Card>
+//       </div>
+//   );
+// }

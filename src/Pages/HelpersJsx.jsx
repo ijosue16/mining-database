@@ -33,7 +33,7 @@ export const PricingGrade = ({createAndUpdateLots, value, entryId, lotNumber, mo
 
 }
 
-export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, userPermissions, isProcessing, model}) => {
+export const LotExpandable = ({record, createAndUpdateLots, entryId, restrictedColumns, userPermissions, isProcessing, model}) => {
     const [nonSellAgreement, setNonSellAgreement] = useState(record.nonSellAgreement?.weight > 0);
 
     const excludedFields = ["shipments", "comment", "tantal", "weightOut", "lotNumber", "cumulativeAmount", "paymentHistory", "_id", "id", "createdAt", "updatedAt", "__v"];
@@ -71,8 +71,9 @@ export const LotExpandable = ({record, updateEntry, entryId, restrictedColumns, 
         //     await updateEntry({body, entryId, model});
         //     return;
         // }
-        const body = {output: [{...lot, lotNumber: record.lotNumber}]};
-        await updateEntry({body, entryId, model});
+        const body = {lots: [{...record, ...lot}]};
+        console.log(body);
+        await createAndUpdateLots({body, model});
 
     }
 

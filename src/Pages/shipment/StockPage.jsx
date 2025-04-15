@@ -12,9 +12,9 @@ import { useParams } from "react-router-dom";
 import {
   useDetailedStockQuery,
   useAddShipmentMutation,
-} from "../../states/apislice";
+} from "@/states/apislice.js";
 import dayjs from "dayjs";
-import {getModelAcronym} from "../../components/helperFunctions";
+import {getModelAcronym} from "@/components/helperFunctions.js";
 import ConfirmFooter from "../../components/modalsfooters/ConfirmFooter";
 
 const StockPage = () => {

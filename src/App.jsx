@@ -109,6 +109,8 @@ import {Toaster} from "@/components/ui/toaster.jsx";
 import ColtanEntryDetailPage from "./Pages/coltan/entry/ColtanEntryComplete";
 import EntriesList from "@/Pages/Entry/EntriesList.jsx";
 import TagManagementPage from "@/Pages/Tags/TagManagementPage.jsx";
+import ShipmentCreationPage from "@/Pages/shipment/ShipmentCreationPage.jsx";
+import ShipmentForm from "@/Pages/shipment/NewShipment.jsx";
 
 function App() {
 
@@ -133,7 +135,7 @@ function App() {
                                     <Route path='/payment/:model/:entryId/:lotNumber?' element={<RoleBasedRoute element={<PaymentsPage/>} permissionKey={"payments:create"}/>}/>
                                     <Route path='/advanced-payment' element={<RoleBasedRoute element={<AdvancedPaymentsList/>} permissionKey={"payments:create"}/>}/>
                                     <Route path='/payment/advanced/entry' element={<AdvancedPaymentEntry/>}/>
-                                    <Route path='/shipment/add/:model' element={<StockPage/>}/>
+                                    {/*<Route path='/shipment/add/:model' element={<StockPage/>}/>*/}
                                     <Route path='/shipments' element={<RoleBasedRoute element={<ShipmentPage/>} permissionKey={"shipments:view"}/>}/>
                                     <Route path='/shipment/edit/:model/:shipmentId' element={<RoleBasedRoute element={<ShipmentEdit/>} permissionKey={"shipments:edit"}/>}/>
                                     <Route path='/shipment/complete/:shipmentId' element={<ShipmentCompletionPage/>}/>
@@ -142,6 +144,8 @@ function App() {
                                     <Route path='/entry/complete/:entryId/:model' element={<ColtanEntryDetailPage/>}/>
                                     <Route path='/entries/:model' element={<EntriesList/>}/>
                                     <Route path='/entries/tags/:entryId' element={<TagManagementPage/>}/>
+                                    <Route path="/shipment/create/:model/:shipmentId" element={<ShipmentCreationPage/>}/>
+                                    <Route path="/shipment/add/:model" element={<ShipmentForm/>}/>
 
                                     <Route path='/coltan' element={<RoleBasedRoute element={<ColtanListPage/>} permissionKey={"entry:view"}/>}/>
                                     <Route path='/cassiterite' element={<RoleBasedRoute element={<CassiteriteListPage/>} permissionKey={"entry:view"}/>}/>

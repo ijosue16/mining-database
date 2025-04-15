@@ -88,13 +88,14 @@ const EntryCompletePage = ({entryId, model}) => {
     }, []);
 
     useEffect(() => {
-        if (isCreateDone) {
+        if (isCreateDone || isUpdateLotSuccess) {
             return message.success("Lot updated successfully");
         } else if (isCreateError) {
             const {message: errorMessage} = createError.data;
             return message.error(errorMessage);
         }
-    }, [isCreateError, isCreateDone, createError]);
+    }, [isCreateError, isCreateDone, createError, isUpdateLotSuccess]);
+
     const [formval, setFormval] = useState({
         lat: "",
         long: "",
@@ -155,7 +156,7 @@ const EntryCompletePage = ({entryId, model}) => {
 
     const removeFile = async (lotId, entryId) => {
         const body = {lotId};
-        await deleteGradeImg({body, entryId, model: "coltan"});
+        await deleteGradeImg({body, entryId, model});
     };
 
     useEffect(() => {
@@ -802,11 +803,11 @@ const EntryCompletePage = ({entryId, model}) => {
                                                             <LotExpandable
                                                                 entryId={entryId}
                                                                 record={record}
-                                                                updateEntry={updateEntry}
+                                                                createAndUpdateLots={createAndUpdateLots}
                                                                 userPermissions={userPermissions}
                                                                 restrictedColumns={restrictedColumns}
-                                                                isProcessing={isSending}
-                                                                model={"coltan"}
+                                                                isProcessing={isCreating}
+                                                                model={record.docModel?.toLowerCase()}
                                                             />
                                                         )
 
