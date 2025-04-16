@@ -19,12 +19,14 @@ import {useUpdateEntryMutation, useCreateLotsMutation} from "@/states/apislice.j
 import FetchingPage from "@/Pages/FetchingPage.jsx";
 import {message} from "antd";
 import {capitalizeFirstLetter} from "@/components/helperFunctions.js";
+import {Badge} from "@/components/ui/badge.jsx";
 
 // [{entry: entryId, lotNumber: "", weightOut: "", weightIn: "", _id: null, docModel: capitalizeFirstLetter(model)}]
 
 const LotManagementDialog = ({
                                  entryId,
                                  model,
+                                 existingTotalWeightIn,
                                  initialLots = []
                              }) => {
     const [open, setOpen] = useState(false);
@@ -102,6 +104,7 @@ const LotManagementDialog = ({
             lotNumber: "",
             weightOut: "",
             weightIn: "",
+            beneficiary: "",
             _id: null,
             docModel: capitalizeFirstLetter(model)
         };
@@ -135,7 +138,20 @@ const LotManagementDialog = ({
         try {
             // API call to save the lots
             // Make sure we're sending extensible objects
+            const totalWeightIn = lots.reduce((previousValue, currentValue) => {
+                return previousValue + parseFloat(currentValue.weightOut);
+            }, 0);
+
+            if (existingTotalWeightIn < totalWeightIn) {
+                toast({
+                    title: "Error",
+                    description: `Total weightIn ${totalWeightIn} cannot be greater than original weightIn ${existingTotalWeightIn}`,
+                    variant: "destructive"
+                });
+                return;
+            }
             const lotsToSubmit = lots.map(lot => ({...lot}));
+            // console.log('lots', lotsToSubmit);
             // console.log('lots', lotsToSubmit);
             // console.log('LOTS', lotsToSubmit, model);
             await createAndUpdateLots({body: {lots: lotsToSubmit, model}});
@@ -172,7 +188,7 @@ const LotManagementDialog = ({
             <DialogTrigger asChild>
                 <Button variant="outline">Manage Lots</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md md:max-w-lg">
+            <DialogContent className="sm:max-w-md md:max-w-3xl">
                 <DialogHeader>
                     <DialogTitle>Manage Lots</DialogTitle>
                     <DialogDescription>
@@ -184,10 +200,11 @@ const LotManagementDialog = ({
                     <Separator className="absolute w-full"/>
                     <span className="absolute -top-3 left-2 px-2 bg-white font-medium text-xs">
                         Lot Details
+                        <Badge>Total WeightIn: {existingTotalWeightIn} Kgs</Badge>
                     </span>
                 </div>
 
-                <div className="max-h-80 overflow-y-auto pr-1">
+                <div className="max-h-96 overflow-y-auto pr-1">
                     <div className="space-y-4">
                         {lots.map((lot, index) => (
                             <div key={index} className="flex items-center gap-3">
@@ -196,7 +213,7 @@ const LotManagementDialog = ({
                                     {index + 1}
                                 </div>
 
-                                <div className="grid grid-cols-3 gap-3 flex-1">
+                                <div className="grid grid-cols-4 gap-3 flex-1">
                                     <div>
                                         <Label htmlFor={`lotNumber-${index}`} className="text-xs mb-1 block">Lot
                                             Number</Label>
@@ -211,7 +228,8 @@ const LotManagementDialog = ({
                                     </div>
 
                                     <div>
-                                        <Label htmlFor={`weightIn-${index}`} className="text-xs mb-1 block">Weight In</Label>
+                                        <Label htmlFor={`weightIn-${index}`} className="text-xs mb-1 block">Weight
+                                            In</Label>
                                         <Input
                                             id={`weightIn-${index}`}
                                             type="number"
@@ -235,6 +253,19 @@ const LotManagementDialog = ({
                                                 }
                                                 handleLotChange(index, "weightOut", e.target.value)
                                             }}
+                                            className="w-full"
+                                            onWheel={(e) => e.target.blur()}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <Label htmlFor={`beneficiary-${index}`}
+                                               className="text-xs mb-1 block">Beneficiary</Label>
+                                        <Input
+                                            id={`beneficiary-${index}`}
+                                            type="text"
+                                            value={lot.beneficiary}
+                                            onChange={(e) => handleLotChange(index, "beneficiary", e.target.value)}
                                             className="w-full"
                                             onWheel={(e) => e.target.blur()}
                                         />
@@ -290,7 +321,6 @@ const LotManagementDialog = ({
 };
 
 export default LotManagementDialog;
-
 
 
 // import React, {useEffect, useState} from "react";

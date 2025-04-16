@@ -29,6 +29,7 @@ import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "@/Pages/HelpersJsx.jsx";
 import ConfirmFooter from "@/components/modalsfooters/ConfirmFooter.jsx";
 import DetailsPageContainer from "@/components/Actions components/DetailsComponentscontainer.jsx";
+import {Trash} from 'lucide-react';
 
 const EntryCompletePage = ({entryId, model}) => {
     const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
@@ -154,9 +155,10 @@ const EntryCompletePage = ({entryId, model}) => {
         return isPNG || Upload.LIST_IGNORE;
     };
 
-    const removeFile = async (lotId, entryId) => {
-        const body = {lotId};
-        await deleteGradeImg({body, entryId, model});
+    const removeFile = async (lotId) => {
+        // const body = {lotId};
+        // console.log('lotId', lotId);
+        await deleteGradeImg({lotId});
     };
 
     useEffect(() => {
@@ -461,7 +463,7 @@ const EntryCompletePage = ({entryId, model}) => {
                                 <Button onClick={() => handlePreview(record.gradeImg.filePath)}
                                         icon={<FaImage title="Preview" className="text-lg"/>}/>
                                 {userPermissions.gradeImg.edit && (<IoClose title="Delete" className="text-lg"
-                                                                            onClick={() => removeFile(record.lotNumber, entryId)}/>)}
+                                                                            onClick={() => removeFile(record._id)}/>)}
                             </div>
                         </div>
                     )
@@ -476,7 +478,7 @@ const EntryCompletePage = ({entryId, model}) => {
                                 onError,
                                 lotId: record._id
                             })}
-                            onRemove={() => removeFile(record._id, entryId)}
+                            onRemove={() => removeFile(record._id)}
                         >
                             <Button icon={<UploadOutlined/>}/>
                         </Upload>
@@ -696,6 +698,16 @@ const EntryCompletePage = ({entryId, model}) => {
                                       <p>Pay</p>
                                   </li>
                               ) : null}
+
+                              <li
+                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                  onClick={() => {
+                                      console.log('The feature to be implemented soon');
+                                  }}
+                              >
+                                  <Trash  size={16}/>
+                                  <p>Delete</p>
+                              </li>
                           </motion.ul>
                       )}
                   </span>

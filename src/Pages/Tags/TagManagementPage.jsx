@@ -548,12 +548,41 @@ const TagManagementPage = () => {
         error: createUpdateError
     }] = useCreateAndUpdateTagsMutation();
 
+
+
     const [deleteTag, {
         isSuccess: isDeleteDone,
         isLoading: isDeleting,
         isError: isDeleteError,
         error: deleteError
     }] = useDeleteTagMutation();
+
+    useEffect(() => {
+        if (isCreateUpdateError) {
+            toast({
+                title: "Success",
+                description: createUpdateError.data?.message
+            })
+        }
+        if (isCreateUpdateDone) {
+            toast({
+                title: "Success",
+                description: "Lots updated successfully"
+            })
+        }
+        if (isDeleteDone) {
+            toast({
+                title: "Success",
+                description: "Lot deleted successfully"
+            })
+        }
+        if (isDeleteError) {
+            toast({
+                title: "Success",
+                description: deleteError.data?.message
+            })
+        }
+    }, [createUpdateError, isCreateUpdateError, isCreateUpdateDone, deleteError, isDeleteError, isDeleteDone]);
 
     const [initialFormState, setInitialFormState] = useState({
         sheetNumber: "",
@@ -777,20 +806,21 @@ const TagManagementPage = () => {
         if (!tagToDelete) return;
 
         try {
-            await deleteTag({ id: tagToDelete.id }).unwrap();
-            toast({
-                title: "Success",
-                description: `Tag ${tagToDelete.tagNumber} deleted successfully.`
-            });
+            // console.log('tagNumber', tagToDelete);
+            await deleteTag({ tagNumber: tagToDelete.tagNumber }).unwrap();
+            // toast({
+            //     title: "Success",
+            //     description: `Tag ${tagToDelete.tagNumber} deleted successfully.`
+            // });
 
             // Refresh tag list
             refetch();
         } catch (err) {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: `Failed to delete tag: ${err.message || "Unknown error"}`
-            });
+            // toast({
+            //     variant: "destructive",
+            //     title: "Error",
+            //     description: `Failed to delete tag: ${err.message || "Unknown error"}`
+            // });
         } finally {
             setShowDeleteDialog(false);
             setTagToDelete(null);
@@ -804,10 +834,10 @@ const TagManagementPage = () => {
 
             await createAndUpdateTags({body: { tags: allTags }}).unwrap();
 
-            toast({
-                title: "Success",
-                description: "Tags saved successfully"
-            });
+            // toast({
+            //     title: "Success",
+            //     description: "Tags saved successfully"
+            // });
 
             setIsEditMode(false);
             refetch();

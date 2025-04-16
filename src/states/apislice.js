@@ -726,10 +726,9 @@ export const apiSlice = createApi({
             invalidatesTags: ['editRequest', 'notifications']
         }),
         deleteGradeImg: builder.mutation({
-            query: ({body, entryId, model}) => ({
-                url: `/entry/delete-grade-image/${model}/${entryId}`,
+            query: ({lotId}) => ({
+                url: `/lots/delete-grade-image/${lotId}`,
                 method: "DELETE",
-                body
             }),
             invalidatesTags: ['entries']
         }),

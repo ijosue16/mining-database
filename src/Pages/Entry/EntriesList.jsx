@@ -21,13 +21,19 @@ import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
 import { IoTrashBinOutline } from "react-icons/io5";
 import {useSelector} from "react-redux";
-import {toCamelCase, toInitialCase, fields, hasPermission} from "@/components/helperFunctions.js";
+import {
+    toCamelCase,
+    toInitialCase,
+    fields,
+    hasPermission,
+    capitalizeFirstLetter
+} from "@/components/helperFunctions.js";
 import {SocketContext} from "@/context files/socket.js";
 import {GiGiftOfKnowledge} from "react-icons/gi";
 dayjs.extend(isBetween);
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
-import { View } from 'lucide-react';
+import { View, Tags } from 'lucide-react';
 import LotManagement from "@/Pages/LotManagement.jsx";
 import EntryCompletePage from "./EntryComplete";
 
@@ -377,7 +383,7 @@ const EntriesListPage = () => {
                                                 navigate(`/entries/tags/${record._id}`);
                                             }}
                                         >
-                                            <BiSolidEditAlt className=" text-lg"/>
+                                            <Tags className=" text-lg"/>
                                             <p>Tags</p>
                                         </li>
 
@@ -468,6 +474,7 @@ const EntriesListPage = () => {
                                 <LotManagement
                                     initialLots={record.output}
                                     entryId={record._id}
+                                    existingTotalWeightIn={record.weightIn}
                                     model={record.model}
                                 />
                             </span>
@@ -511,8 +518,8 @@ const EntriesListPage = () => {
     return (
         <>
             <ListContainer
-                title={"Coltan entries list"}
-                subTitle={"Manage your coltan  entries"}
+                title={`${capitalizeFirstLetter(model)} entries list`}
+                subTitle={`Manage your ${model}  entries`}
                 navLinktext={`entry/add/${model}`}
                 navtext={"Add new Entry"}
                 isAllowed={hasPermission(permissions, "entry:create")}
