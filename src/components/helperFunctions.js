@@ -7,7 +7,7 @@ import {BiSolidEditAlt} from "react-icons/bi";
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import {MdDelete} from "react-icons/md";
 import {FiEdit} from "react-icons/fi";
-import LotManagement from "@/Pages/LotManagement.jsx";
+import LotManagement from "@/Pages/Lot/LotManagement.jsx";
 import {View} from "lucide-react";
 import React from "react";
 

@@ -28,7 +28,7 @@ import ColtanEntryCompletePage from "./entry/ColtanEntryComplete";
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 import { View } from 'lucide-react';
-import LotManagement from "@/Pages/LotManagement.jsx";
+import LotManagement from "@/Pages/Lot/LotManagement.jsx";
 
 
 const ColtanListPage = () => {

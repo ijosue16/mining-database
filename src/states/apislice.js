@@ -730,7 +730,7 @@ export const apiSlice = createApi({
                 url: `/lots/delete-grade-image/${lotId}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ['entries']
+            invalidatesTags: ['entries', 'lots']
         }),
         getMessages: builder.query({
             query: ({chatId}) => `/message/${chatId}`,
@@ -801,6 +801,10 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['shipments']
         }),
+        getLotById: builder.query({
+            query: ({id}) => `/lots/${id}`,
+            providesTags: ['lots']
+        }),
         createLots: builder.mutation({
             query: ({body}) => ({
                 url: `/lots`,
@@ -848,6 +852,67 @@ export const apiSlice = createApi({
             }),
             invalidatesTags: ['lot-shipments']
         }),
+        getAllFeeTypes: builder.query({
+            query: () => `/fee-types`,
+            providesTags: ['fee-type']
+        }),
+        getFeeTypeById: builder.query({
+            query: ({id}) => `/fee-types/${id}`,
+            providesTags: ['fee-type']
+        }),
+        createFeeType: builder.mutation({
+            query: ({body}) => ({
+                url: `/fee-types`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['fee-type']
+        }),
+        updateFeeType: builder.mutation({
+            query: ({body, id}) => ({
+                url: `/fee-types/${id}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['fee-type']
+        }),
+        deleteFeeType: builder.mutation({
+            query: ({id}) => ({
+                url: `/fee-types/${id}`,
+                method: 'DELETE'
+            }),
+            invalidatesTags: ['fee-type']
+        }),
+        getFeesByLot: builder.query({
+            query: ({lotId}) => `/fees/lot/${lotId}`,
+            providesTags: ['fees']
+        }),
+        createFee: builder.mutation({
+            query: ({body}) => ({
+                url: `/fees`,
+                method: 'POST',
+                body
+            }),
+            invalidatesTags: ['fees', 'lots']
+        }),
+        updateFee: builder.mutation({
+            query: ({body, id}) => ({
+                url: `/fees/${id}`,
+                method: 'PATCH',
+                body
+            }),
+            invalidatesTags: ['fees', 'lots']
+        }),
+        deleteFee: builder.mutation({
+            query: ({id}) => ({
+                url: `/fees/${id}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['fees', 'lots']
+        })
+
+
+
 
 
     })
@@ -980,6 +1045,7 @@ export const {
     useVerify2FAMutation,
     useVerifyCodeMutation,
     // new hooks
+    useGetLotByIdQuery,
     useCreateLotsMutation,
     useUpdateLotMutation,
     useDeleteLotMutation,
@@ -988,5 +1054,14 @@ export const {
     useDeleteLotShipmentsMutation,
     // tags
     useDeleteTagMutation,
-    useCreateAndUpdateTagsMutation
+    useCreateAndUpdateTagsMutation,
+    useGetAllFeeTypesQuery,
+    useGetFeeTypeByIdQuery,
+    useUpdateFeeTypeMutation,
+    useCreateFeeTypeMutation,
+    useDeleteFeeTypeMutation,
+    useGetFeesByLotQuery,
+    useCreateFeeMutation,
+    useUpdateFeeMutation,
+    useDeleteFeeMutation,
 } = apiSlice

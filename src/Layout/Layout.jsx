@@ -219,6 +219,27 @@ const Layout = () => {
         },
 
         {
+            heading: "Fee Types", show: true, hId: 178, subHeaders: [
+                {
+                    title: "List Fee Types",
+                    show: true,
+                    icon: <PiTagDuotone/>,
+                    id: 187,
+                    navtext: "fee-types",
+                    line: true
+                },
+                // {
+                //     title: "Add",
+                //     show: permissions.tags?.create && permissions.tags?.view,
+                //     icon: <PiTagDuotone/>,
+                //     id: 80,
+                //     navtext: "add/tag",
+                //     line: true
+                // },
+            ]
+        },
+
+        {
             heading: "Suppliers", show: permissions.suppliers?.view, hId: 4, subHeaders: [
                 {
                     title: "Suppliers List",
@@ -283,6 +304,7 @@ const Layout = () => {
                 },
             ]
         },
+
         {
             heading: "Contracts", show: permissions.contracts?.view, hId: 7, subHeaders: [
                 {
@@ -299,6 +321,7 @@ const Layout = () => {
                 // { title: "Customer Report", icon: <PiChartPieDuotone />, line: true, id: 45 }
             ]
         },
+
         {
             heading: "Finance", show: permissions.payments?.view, hId: 8, subHeaders: [
                 {
@@ -319,18 +342,20 @@ const Layout = () => {
                 // { title: "Invoice ", icon: <PiFileDuotone />, id: 43,navtext:'invoice', line: true, },
             ]
         },
-        {
-            heading: "File Directory", show: permissions.fileDirectory?.view, hId: 84, subHeaders: [
-                {
-                    title: "Directory",
-                    show: permissions.fileDirectory?.view,
-                    icon: <GoFileDirectory/>,
-                    id: 85,
-                    navtext: "structure",
-                    line: true
-                },
-            ]
-        },
+
+        // {
+        //     heading: "File Directory", show: permissions.fileDirectory?.view, hId: 84, subHeaders: [
+        //         {
+        //             title: "Directory",
+        //             show: permissions.fileDirectory?.view,
+        //             icon: <GoFileDirectory/>,
+        //             id: 85,
+        //             navtext: "structure",
+        //             line: true
+        //         },
+        //     ]
+        // },
+
         {
             heading: "Settings", show: permissions.settings?.view, hId: 9, subHeaders: [
                 {
@@ -397,16 +422,17 @@ const Layout = () => {
     const userId = 123; // Change this to the actual user ID
 
     // Filter the original menu based on the user's role and restrictions
-    const filteredMenu = menu.filter(section => roleMenus[userRole].allowedSections.includes(section.hId))
-        .map(section => {
-            if (section.subHeaders && section.subHeaders.length > 0) {
-                const restrictedItems = roleMenus[userRole].restrictedItems[section.hId];
-                if (restrictedItems) {
-                    section.subHeaders = section.subHeaders.filter(item => !restrictedItems.includes(item.id));
-                }
-            }
-            return section;
-        });
+    const filteredMenu = menu;
+        // .filter(section => roleMenus[userRole].allowedSections.includes(section.hId))
+        // .map(section => {
+        //     if (section.subHeaders && section.subHeaders.length > 0) {
+        //         const restrictedItems = roleMenus[userRole].restrictedItems[section.hId];
+        //         if (restrictedItems) {
+        //             section.subHeaders = section.subHeaders.filter(item => !restrictedItems.includes(item.id));
+        //         }
+        //     }
+        //     return section;
+        // });
 
     // Output the filtered menu
 

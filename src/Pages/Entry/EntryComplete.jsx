@@ -29,7 +29,7 @@ import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "@/Pages/HelpersJsx.jsx";
 import ConfirmFooter from "@/components/modalsfooters/ConfirmFooter.jsx";
 import DetailsPageContainer from "@/components/Actions components/DetailsComponentscontainer.jsx";
-import {Trash} from 'lucide-react';
+import {Trash, Calculator} from 'lucide-react';
 
 const EntryCompletePage = ({entryId, model}) => {
     const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
@@ -408,7 +408,6 @@ const EntryCompletePage = ({entryId, model}) => {
             setLotInfo(newData);
             setEditRowKey("");
 
-            console.log(updatedItem, model);
             await createAndUpdateLots({body: {lots: [updatedItem]}, model});
             // const body = { output: [updatedItem] };
             // await updateEntry({ model, body, entryId });
@@ -666,13 +665,23 @@ const EntryCompletePage = ({entryId, model}) => {
                               }
                               className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                           >
+
                               <li
                                   className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => edit(record)}
+                                  onClick={() => {
+                                      navigate(`/lots/${record._id}`)
+                                  }}
                               >
-                                  <BiSolidEditAlt className=" text-lg"/>
-                                  <p>edit</p>
+                                  <Calculator size={16}/>
+                                  <p>Price Calculations</p>
                               </li>
+                              {/*<li*/}
+                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                              {/*    onClick={() => edit(record)}*/}
+                              {/*>*/}
+                              {/*    <BiSolidEditAlt className=" text-lg"/>*/}
+                              {/*    <p>edit</p>*/}
+                              {/*</li>*/}
 
                               { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
 
@@ -705,9 +714,10 @@ const EntryCompletePage = ({entryId, model}) => {
                                       console.log('The feature to be implemented soon');
                                   }}
                               >
-                                  <Trash  size={16}/>
+                                  <Trash size={16}/>
                                   <p>Delete</p>
                               </li>
+
                           </motion.ul>
                       )}
                   </span>
@@ -804,7 +814,7 @@ const EntryCompletePage = ({entryId, model}) => {
                                                 dataSource={lotInfo}
                                                 columns={mergedColumns}
                                                 rowClassName={(record) => {
-                                                    if (record.status === "non-sell agreement") {
+                                                    if (record.nonSellAgreement?.decision === true) {
                                                         return "bg-red-200";
                                                     }
                                                 }}

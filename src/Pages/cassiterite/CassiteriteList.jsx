@@ -28,7 +28,7 @@ import isBetween from "dayjs/plugin/isBetween"
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
 import {View} from "lucide-react";
-import LotManagement from "@/Pages/LotManagement.jsx";
+import LotManagement from "@/Pages/Lot/LotManagement.jsx";
 
 dayjs.extend(isBetween);
 

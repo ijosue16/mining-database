@@ -111,6 +111,8 @@ import EntriesList from "@/Pages/Entry/EntriesList.jsx";
 import TagManagementPage from "@/Pages/Tags/TagManagementPage.jsx";
 import ShipmentCreationPage from "@/Pages/shipment/ShipmentCreationPage.jsx";
 import ShipmentForm from "@/Pages/shipment/NewShipment.jsx";
+import LotInformationPage from "@/Pages/Lot/LotInformationPage.jsx";
+import FeeTypesList from "@/Pages/FeeTypes/FeeTypesList.jsx";
 
 function App() {
 
@@ -146,6 +148,9 @@ function App() {
                                     <Route path='/entries/tags/:entryId' element={<TagManagementPage/>}/>
                                     <Route path="/shipment/create/:model/:shipmentId" element={<ShipmentCreationPage/>}/>
                                     <Route path="/shipment/add/:model" element={<ShipmentForm/>}/>
+                                    <Route path="/lots/:lotId" element={<LotInformationPage/>} />
+
+                                    <Route path="/fee-types" element={<FeeTypesList/>} />
 
                                     <Route path='/coltan' element={<RoleBasedRoute element={<ColtanListPage/>} permissionKey={"entry:view"}/>}/>
                                     <Route path='/cassiterite' element={<RoleBasedRoute element={<CassiteriteListPage/>} permissionKey={"entry:view"}/>}/>

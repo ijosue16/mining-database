@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
+import {Input} from "@/components/ui/input.jsx";
+import {Button} from "@/components/ui/button.jsx";
+import {Card, CardContent} from "@/components/ui/card.jsx";
 import {Plus, Trash2, Loader2} from "lucide-react";
-import {Separator} from "@/components/ui/separator";
-import {Label} from "@/components/ui/label";
+import {Separator} from "@/components/ui/separator.jsx";
+import {Label} from "@/components/ui/label.jsx";
 import {
     Dialog,
     DialogContent,
@@ -13,7 +13,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog.jsx";
 import {useToast} from "@/hooks/use-toast.js";
 import {useUpdateEntryMutation, useCreateLotsMutation} from "@/states/apislice.js";
 import FetchingPage from "@/Pages/FetchingPage.jsx";
