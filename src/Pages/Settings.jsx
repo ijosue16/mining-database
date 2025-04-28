@@ -9,7 +9,7 @@ import { message } from "antd";
 import FetchingPage from "./FetchingPage";
 
 const Settings = () => {
-  const { data, isSuccess, isloading } = useGetSettingsQuery();
+  const { data, isSuccess, isloading: isLoading } = useGetSettingsQuery();
   const [
     updateSettings,
     {
@@ -116,7 +116,7 @@ const Settings = () => {
 
   return (
     <>
-      {isloading ? (
+      {isLoading ? (
         <FetchingPage />
       ) : (
         <ActionsPagesContainer

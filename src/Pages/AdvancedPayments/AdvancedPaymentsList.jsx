@@ -107,6 +107,13 @@ const AdvancedPaymentsList = () => {
         }
     }
 
+    // useEffect(() => {
+    //     if (isSuccess) {
+    //         const { payments } = data.data;
+    //         dataz = payments;
+    //     }
+    // }, [isSuccess]);
+
 
     if (isSuccess) {
         const {payments} = data.data;
@@ -133,6 +140,7 @@ const AdvancedPaymentsList = () => {
             dataIndex: "companyName",
             // key: "companyName",
             Key: "_id",
+            render: (_, record) => <p>{record.supplierId?.companyName}</p>,
             sorter: (a, b) => a.companyName.localeCompare(b.companyName),
             filteredValue: [searchText],
             onFilter: (value, record) => {

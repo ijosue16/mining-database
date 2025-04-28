@@ -212,45 +212,54 @@ const UsersListPage = () => {
                     onClick={() => handleActions(record._id)}
                   />
                   {selectedRow === record._id ? (
-                    <motion.ul
-                      ref={modalRef}
-                      animate={
-                        showActions
-                          ? { opacity: 1, x: -10, y: 1, display: "block" }
-                          : { opacity: 0, x: 0, y: 0, display: "none" }
-                      }
-                      className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                    >
-                      {!record.secretCode && (
-                          <li onClick={() => {
-                            setShow2fa(true);
-                            setup2FactorAuth(record.email);
-                            setTwoFA(prevState => ({...prevState, email: record.email}));
-                          }} className="flex gap-4 p-2 items-center hover:bg-slate-100">
-                            <button className="flex gap-4 p-2 items-center">
-                              <Tb2Fa/>
-                              Enable 2FA
-                            </button>
-                          </li>
-                      )}
-                      <li onClick={handleDisable2FA} className="flex gap-4 p-2 items-center hover:bg-slate-100">
-                        <button className="flex gap-4 p-2 items-center">
-                          <Tb2Fa/>
-                          {record?.secretCode && record?.secretCodeVerified ? "Disable 2FA" : "2FA Disabled"}
-                        </button>
-                      </li>
-                      {permissions.users?.edit && record._id.toString() !== userData._id.toString() && (
-                          <li
-                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                              onClick={() => {
-                                navigate(`/user/edit/${record._id}`);
-                              }}
-                          >
-                            <BiSolidEditAlt className=" text-lg" />
-                            <p>edit</p>
-                          </li>
-                      )}
-                    </motion.ul>
+                      <motion.ul
+                          ref={modalRef}
+                          animate={
+                            showActions
+                                ? {opacity: 1, x: -10, y: 1, display: "block"}
+                                : {opacity: 0, x: 0, y: 0, display: "none"}
+                          }
+                          className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
+                      >
+                        {!record.secretCode && (
+                            <li onClick={() => {
+                              setShow2fa(true);
+                              setup2FactorAuth(record.email);
+                              setTwoFA(prevState => ({...prevState, email: record.email}));
+                            }} className="flex gap-4 p-2 items-center hover:bg-slate-100">
+                              <button className="flex gap-4 p-2 items-center">
+                                <Tb2Fa/>
+                                Enable 2FA
+                              </button>
+                            </li>
+                        )}
+                        <li onClick={handleDisable2FA} className="flex gap-4 p-2 items-center hover:bg-slate-100">
+                          <button className="flex gap-4 p-2 items-center">
+                            <Tb2Fa/>
+                            {record?.secretCode && record?.secretCodeVerified ? "Disable 2FA" : "2FA Disabled"}
+                          </button>
+                        </li>
+                        <li
+                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                            onClick={() => {
+                              navigate(`/user/edit/${record._id}`);
+                            }}
+                        >
+                          <BiSolidEditAlt className=" text-lg"/>
+                          <p>edit</p>
+                        </li>
+                        {/*{permissions.users?.edit && record._id.toString() !== userData._id.toString() && (*/}
+                        {/*    <li*/}
+                        {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                        {/*        onClick={() => {*/}
+                        {/*          navigate(`/user/edit/${record._id}`);*/}
+                        {/*        }}*/}
+                        {/*    >*/}
+                        {/*      <BiSolidEditAlt className=" text-lg"/>*/}
+                        {/*      <p>edit</p>*/}
+                        {/*    </li>*/}
+                        {/*)}*/}
+                      </motion.ul>
                   ) : null}
                 </span>
               </span>

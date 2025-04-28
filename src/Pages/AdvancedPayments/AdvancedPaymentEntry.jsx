@@ -4,7 +4,7 @@ import {motion} from "framer-motion";
 import {DatePicker, message} from "antd";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
-import {useAddAdvancePaymentMutation, useGetAllSuppliersQuery, useSaveFileMutation} from "../../states/apislice";
+import {useAddAdvancePaymentMutation, useGetAllSuppliersQuery, useSaveFileMutation} from "@/states/apislice.js";
 import {BsChevronDown} from "react-icons/bs";
 import {HiOutlineSearch} from "react-icons/hi";
 import {ImSpinner2} from "react-icons/im";
@@ -59,7 +59,7 @@ const AdvancedPaymentEntry = () => {
 
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isDone) {
             const {suppliers: sups} = data.data;
             setSup(sups);
         }

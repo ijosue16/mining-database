@@ -68,7 +68,6 @@ import {
 import {Image, message, Modal, Tooltip} from "antd";
 import FetchingPage from "@/Pages/FetchingPage.jsx";
 import {getBase64FromServer, handleConvertToUSD} from "@/components/helperFunctions.js";
-import {FaImage} from "react-icons/fa";
 import {IoClose} from "react-icons/io5";
 import {useSelector} from "react-redux";
 
@@ -515,119 +514,143 @@ const LotInformationPage = () => {
 
         const commonFields = (
             <>
-                <FormField
-                    control={form.control}
-                    name="weightOut"
-                    disabled={true}
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Weight Out (Kg)</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="mineralGrade"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Mineral Grade (%)</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="ASIR"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>ASIR Grade</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="USDRate"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>USD Rate (RWF)</FormLabel>
-                            <FormControl>
-                                <Input type="number" step="0.01" {...field} />
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="pricingGrade"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Pricing Grade</FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                            >
+                {userPermissions.weightOut?.view && (
+                    <FormField
+                        control={form.control}
+                        name="weightOut"
+                        disabled={true}
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Weight Out (Kg)</FormLabel>
                                 <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a pricing grade"/>
-                                    </SelectTrigger>
+                                    <Input type="number" step="0.01" {...field} />
                                 </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="SMC">SMC</SelectItem>
-                                    <SelectItem value="ASIR">ASIR</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="nonSellAgreement"
-                    render={({field}) => (
-                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                                <FormLabel className="text-base">Is this lot non sell agreement?</FormLabel>
-                                <FormDescription>
-                                    Mark this mineral lot as non sell agreement
-                                </FormDescription>
-                            </div>
-                            <FormControl>
-                                <Switch
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                />
-                            </FormControl>
-                        </FormItem>
-                    )}
-                />
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
 
-                {lot.gradeImg?.filePath !== null ? (
+                {userPermissions.mineralGrade?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="mineralGrade"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Mineral Grade (%)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
+
+                {userPermissions.ASIR?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="ASIR"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>ASIR Grade</FormLabel>
+                                <FormControl>
+                                    <Input type="number" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
+
+                {userPermissions.USDRate?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="USDRate"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>USD Rate (RWF)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" step="0.01" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
+
+                {userPermissions.pricingGrade?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="pricingGrade"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Pricing Grade</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a pricing grade"/>
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="SMC">SMC</SelectItem>
+                                        <SelectItem value="ASIR">ASIR</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
+
+                {userPermissions.nonSellAgreement?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="nonSellAgreement"
+                        render={({field}) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5">
+                                    <FormLabel className="text-base">Is this lot non sell agreement?</FormLabel>
+                                    <FormDescription>
+                                        Mark this mineral lot as non sell agreement
+                                    </FormDescription>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
+
+                {userPermissions.gradeImg?.view && userPermissions.gradeImg?.edit ? (
                     <div className="flex items-center">
-                        <Image loading="lazy" width={64} height={64} src={lot.gradeImg.filePath}/>
-                        {userPermissions.gradeImg.edit && (
-                            <IoClose
-                                title="Delete"
-                                className="text-lg"
-                                onClick={() => removeFile(lot._id)}
-                            />
+                        {lot.gradeImg?.filePath !== null && (
+                            <>
+                                <Image loading="lazy" width={64} height={64} src={lot.gradeImg.filePath}/>
+                                {userPermissions.gradeImg?.edit && (
+                                    <IoClose
+                                        title="Delete"
+                                        className="text-lg"
+                                        onClick={() => removeFile(lot._id)}
+                                    />
+                                )}
+                            </>
                         )}
                     </div>
                 ) : (
+
                     <FormField
                         control={form.control}
                         name="documentFile"
@@ -657,19 +680,23 @@ const LotInformationPage = () => {
                         )}
                     />
                 )}
-                <FormField
-                    control={form.control}
-                    name="sampleIdentification"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Sample Identification</FormLabel>
-                            <FormControl>
-                                <Input type="text" {...field} />
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
+
+                {userPermissions.sampleIdentification?.edit && (
+                    <FormField
+                        control={form.control}
+                        name="sampleIdentification"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Sample Identification</FormLabel>
+                                <FormControl>
+                                    <Input type="text" {...field} />
+                                </FormControl>
+                                <FormMessage/>
+                            </FormItem>
+                        )}
+                    />
+                )}
+
             </>
         );
 
@@ -679,33 +706,39 @@ const LotInformationPage = () => {
             case 'cassiterite':
                 specificFields = (
                     <>
-                        <FormField
-                            control={form.control}
-                            name="londonMetalExchange"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>London Metal Exchange Price</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+                        {userPermissions.londonMetalExchange?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="londonMetalExchange"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>London Metal Exchange Price</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
-                        <FormField
-                            control={form.control}
-                            name="treatmentCharges"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Treatment Charges</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+
+                        {userPermissions.treatmentCharges?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="treatmentCharges"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Treatment Charges</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
                     </>
                 );
                 break;
@@ -713,65 +746,77 @@ const LotInformationPage = () => {
             case 'coltan':
                 specificFields = (
                     <>
-                        <FormField
-                            control={form.control}
-                            name="tantal"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Tantal Price</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="niobium"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Niobium</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+                        {userPermissions.tantal?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="tantal"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Tantal Price</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
-                        <FormField
-                            control={form.control}
-                            name="iron"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Iron</FormLabel>
-                                    <FormControl>
-                                        <Input type="number" step="0.01" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
+                        {userPermissions.niobium?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="niobium"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Niobium</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
+                        {userPermissions.iron?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="iron"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Iron</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                        )}
+
                     </>
                 );
                 break;
 
             case 'wolframite':
                 specificFields = (
-                    <FormField
-                        control={form.control}
-                        name="metricTonUnit"
-                        render={({field}) => (
-                            <FormItem>
-                                <FormLabel>Metric Ton Unit (MTU) Price</FormLabel>
-                                <FormControl>
-                                    <Input type="number" step="0.01" {...field} />
-                                </FormControl>
-                                <FormMessage/>
-                            </FormItem>
+                    <>
+                        {userPermissions.metricTonUnit?.edit && (
+                            <FormField
+                                control={form.control}
+                                name="metricTonUnit"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Metric Ton Unit (MTU) Price</FormLabel>
+                                        <FormControl>
+                                            <Input type="number" step="0.01" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
                         )}
-                    />
+                    </>
                 );
                 break;
 
@@ -790,6 +835,7 @@ const LotInformationPage = () => {
                 <FormField
                     control={form.control}
                     name="pricePerUnit"
+                    disabled={userPermissions.pricePerUnit?.edit}
                     render={({field}) => (
                         <FormItem>
                             <FormLabel>Price Per Unit</FormLabel>
@@ -814,6 +860,7 @@ const LotInformationPage = () => {
                 <FormField
                     control={form.control}
                     name="comment"
+                    disabled={userPermissions.comment?.edit}
                     render={({field}) => (
                         <FormItem>
                             <FormLabel>Comment</FormLabel>
@@ -835,7 +882,7 @@ const LotInformationPage = () => {
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">
                         Lot Information {lot.nonSellAgreement?.decision === true ?
-                            <span className="text-3xl text-red-800 flex items-center gap-3">
+                        <span className="text-3xl text-red-800 flex items-center gap-3">
                                 This lot is marked as non sell agreement <TriangleAlert size={30}/>
                             </span> : ''}
                     </h1>
@@ -880,44 +927,72 @@ const LotInformationPage = () => {
 
                                 <TabsContent value="details" className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <Label>Weight In</Label>
-                                            <div className="text-lg font-medium">{lot.weightIn} kg</div>
-                                        </div>
-                                        <div>
-                                            <Label>Weight Out</Label>
-                                            <div className="text-lg font-medium">{lot.weightOut || 'Not set'} kg</div>
-                                        </div>
-                                        <div>
-                                            <Label>Mineral Grade</Label>
-                                            <div className="text-lg font-medium">{lot.mineralGrade || 'Not set'}%</div>
-                                        </div>
-                                        <div>
-                                            <Label>ASIR Grade</Label>
-                                            <div className="text-lg font-medium">{lot.ASIR || 'Not set'}</div>
-                                        </div>
-                                        <div>
-                                            <Label>Pricing Grade</Label>
-                                            <div className="text-lg font-medium">{lot.pricingGrade || 'Not set'}</div>
-                                        </div>
-                                        <div>
-                                            <Label>Price Per Unit</Label>
-                                            <div className="text-lg font-medium">${lot.pricePerUnit || '0.00'}</div>
-                                        </div>
-                                        <div>
-                                            <Label>Mineral Price</Label>
-                                            <div className="text-lg font-medium">${lot.mineralPrice || '0.00'}</div>
-                                        </div>
-                                        {lot.USDRate && (
+                                        {userPermissions.weightIn?.view && (
+                                            <div>
+                                                <Label>Weight In</Label>
+                                                <div className="text-lg font-medium">{lot.weightIn} kg</div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.weightOut?.view && (
+                                            <div>
+                                                <Label>Weight Out</Label>
+                                                <div className="text-lg font-medium">{lot.weightOut || 'Not set'} kg
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.mineralGrade?.view && (
+                                            <div>
+                                                <Label>Mineral Grade</Label>
+                                                <div className="text-lg font-medium">{lot.mineralGrade || 'Not set'}%
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.ASIR?.view && (
+                                            <div>
+                                                <Label>ASIR Grade</Label>
+                                                <div className="text-lg font-medium">{lot.ASIR || 'Not set'}</div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.pricingGrade?.view && (
+                                            <div>
+                                                <Label>Pricing Grade</Label>
+                                                <div
+                                                    className="text-lg font-medium">{lot.pricingGrade || 'Not set'}</div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.pricePerUnit?.view && (
+                                            <div>
+                                                <Label>Price Per Unit</Label>
+                                                <div className="text-lg font-medium">${lot.pricePerUnit || '0.00'}</div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.mineralPrice?.view && (
+                                            <div>
+                                                <Label>Mineral Price</Label>
+                                                <div className="text-lg font-medium">${lot.mineralPrice || '0.00'}</div>
+                                            </div>
+                                        )}
+
+                                        {userPermissions.weightIn?.view && lot.USDRate && (
                                             <div>
                                                 <Label>USD Rate</Label>
                                                 <div className="text-lg font-medium">{lot.USDRate || '0'} RWF</div>
                                             </div>
                                         )}
-                                        <div>
-                                            <Label>Beneficiary</Label>
-                                            <div className="text-lg font-medium">{lot.beneficiary}</div>
-                                        </div>
+
+                                        {userPermissions.beneficiary?.view && (
+                                            <div>
+                                                <Label>Beneficiary</Label>
+                                                <div className="text-lg font-medium">{lot.beneficiary}</div>
+                                            </div>
+                                        )}
+
                                         {lot.comment && (
                                             <div className="md:col-span-2">
                                                 <Label>Comment</Label>
