@@ -113,6 +113,7 @@ import ShipmentCreationPage from "@/Pages/shipment/ShipmentCreationPage.jsx";
 import ShipmentForm from "@/Pages/shipment/NewShipment.jsx";
 import LotInformationPage from "@/Pages/Lot/LotInformationPage.jsx";
 import FeeTypesList from "@/Pages/FeeTypes/FeeTypesList.jsx";
+import LotPaymentsPage from "@/Pages/Lot/LotPaymentsPage.jsx";
 
 function App() {
 
@@ -149,6 +150,7 @@ function App() {
                                     <Route path="/shipment/create/:model/:shipmentId" element={<ShipmentCreationPage/>}/>
                                     <Route path="/shipment/add/:model" element={<ShipmentForm/>}/>
                                     <Route path="/lots/:lotId" element={<LotInformationPage/>} />
+                                    <Route path="/lots/payments/:lotId" element={<LotPaymentsPage/>} />
 
                                     <Route path="/fee-types" element={<FeeTypesList/>} />
 

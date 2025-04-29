@@ -225,7 +225,7 @@ export const apiSlice = createApi({
                 method: 'POST',
                 body
             }),
-            invalidatesTags: ['payments', "statistics", "advance-payment"]
+            invalidatesTags: ['payments', "statistics", "advance-payment", 'lots']
         }),
         getOnePayment: builder.query({
             query: ({paymentId}) => `/payments/${paymentId}`,
@@ -240,11 +240,11 @@ export const apiSlice = createApi({
             invalidatesTags: ['payments', "statistics", "advance-payment"]
         }),
         getAllAdvancePayments: builder.query({
-            query: () => `/advance-payment`,
+            query: ({query = ""}) => `/advance-payment?${query}`,
             providesTags: ["advance-payment", "payments", "entries", "statistics"]
         }),
         getAllAdvancePaymentsBySupplier: builder.query({
-            query: () => `/advance-payment/${supplierId}`,
+            query: ({supplierId}) => `/advance-payment/${supplierId}`,
             providesTags: ["advance-payment", "payments", "entries", "statistics"]
         }),
         addAdvancePayment: builder.mutation({
@@ -302,6 +302,10 @@ export const apiSlice = createApi({
         getOneEntry: builder.query({
             query: ({entryId, model}) => `/stock/entry-info/${model}/${entryId}`,
             providesTags: ['entries', 'payments', 'buyers']
+        }),
+        getEntriesPayments: builder.query({
+            query: ({query}) => `/entry/finance/payments/summary${query ? '?' + query : ''}`,
+            providesTags: ['entries', 'payments', 'buyers', 'lots', 'fees']
         }),
         createColtanEntry: builder.mutation({
             query: ({body}) => ({
@@ -1064,4 +1068,5 @@ export const {
     useCreateFeeMutation,
     useUpdateFeeMutation,
     useDeleteFeeMutation,
+    useLazyGetEntriesPaymentsQuery,
 } = apiSlice

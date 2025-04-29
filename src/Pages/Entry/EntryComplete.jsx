@@ -64,7 +64,7 @@ const EntryCompletePage = ({entryId, model}) => {
         },
     ] = useDeleteGradeImgMutation();
 
-    const [updateLot, { isSuccess: isUpdateLotSuccess, isLoading: isUpdatingLot }] = useUpdateLotMutation();
+    const [updateLot, {isSuccess: isUpdateLotSuccess, isLoading: isUpdatingLot}] = useUpdateLotMutation();
 
     const [createAndUpdateLots, {
         isSuccess: isCreateDone,
@@ -666,15 +666,33 @@ const EntryCompletePage = ({entryId, model}) => {
                               className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                           >
 
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => {
-                                      navigate(`/lots/${record._id}`)
-                                  }}
-                              >
-                                  <Calculator size={16}/>
-                                  <p>Price Calculations</p>
-                              </li>
+                              {record.nonSellAgreement?.decision !== true && (
+                                  <>
+                                      <li
+                                          className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                          onClick={() => {
+                                              navigate(`/lots/${record._id}`)
+                                          }}
+                                      >
+                                          <Calculator size={16}/>
+                                          <p>Price Calculations</p>
+                                      </li>
+
+                                      {userPermissions.payments?.create ? (
+                                          <li
+                                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                              onClick={() => {
+                                                  setSelectedLotNumber(record.lotNumber);
+                                                  setShowPayModel(true);
+                                              }}
+                                          >
+                                              <MdPayments className=" text-lg"/>
+                                              <p>Pay</p>
+                                          </li>
+                                      ) : null}
+                                  </>
+                              )}
+
                               {/*<li*/}
                               {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
                               {/*    onClick={() => edit(record)}*/}
@@ -695,18 +713,6 @@ const EntryCompletePage = ({entryId, model}) => {
                               {/*    </li>*/}
                               {/*) : null}*/}
 
-                              {userPermissions.payments?.create ? (
-                                  <li
-                                      className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                      onClick={() => {
-                                          setSelectedLotNumber(record.lotNumber);
-                                          setShowPayModel(true);
-                                      }}
-                                  >
-                                      <MdPayments className=" text-lg"/>
-                                      <p>Pay</p>
-                                  </li>
-                              ) : null}
 
                               <li
                                   className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -819,23 +825,23 @@ const EntryCompletePage = ({entryId, model}) => {
                                                     }
                                                 }}
                                                 bordered={true}
-                                                expandable={{
-                                                    expandedRowRender: record => {
-                                                        return (
-                                                            <LotExpandable
-                                                                entryId={entryId}
-                                                                record={record}
-                                                                createAndUpdateLots={createAndUpdateLots}
-                                                                userPermissions={userPermissions}
-                                                                restrictedColumns={restrictedColumns}
-                                                                isProcessing={isCreating}
-                                                                model={record.docModel?.toLowerCase()}
-                                                            />
-                                                        )
-
-                                                    },
-                                                    rowExpandable: (record) => record,
-                                                }}
+                                                // expandable={{
+                                                //     expandedRowRender: record => {
+                                                //         return (
+                                                //             <LotExpandable
+                                                //                 entryId={entryId}
+                                                //                 record={record}
+                                                //                 createAndUpdateLots={createAndUpdateLots}
+                                                //                 userPermissions={userPermissions}
+                                                //                 restrictedColumns={restrictedColumns}
+                                                //                 isProcessing={isCreating}
+                                                //                 model={record.docModel?.toLowerCase()}
+                                                //             />
+                                                //         )
+                                                //
+                                                //     },
+                                                //     rowExpandable: (record) => record,
+                                                // }}
                                                 components={{
                                                     body: {
                                                         cell: EditableCell,
@@ -853,7 +859,8 @@ const EntryCompletePage = ({entryId, model}) => {
                                         footer={[
                                             <ConfirmFooter
                                                 key={"actions"
-                                                } isSending={isSending} defText={"Confirm"} dsText={"Sending"} handleCancel={() => setShowPayModel(!showPayModel)}
+                                                } isSending={isSending} defText={"Confirm"} dsText={"Sending"}
+                                                handleCancel={() => setShowPayModel(!showPayModel)}
                                                 handleConfirm={handleModelAdvance}/>
                                         ]}
                                     >
@@ -1617,7 +1624,6 @@ export default EntryCompletePage;
 // };
 //
 // export default ColtanEntryCompletePage;
-
 
 
 // GOOD CANDIDATE

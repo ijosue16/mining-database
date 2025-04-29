@@ -400,7 +400,7 @@ const LoginPage = () => {
           <div className="col-span-6 sm:col-span-3 lg:col-span-2 h-full flex flex-col bg-white p-6 lg:pt-12">
             <div className="flex flex-col items-center mb-8">
               <img
-                  src="/public/soemc-logo.png"
+                  src="/soemc-logo.png"
                   alt="SOEMC Logo"
                   className="h-20 mb-6"
               />
