@@ -114,6 +114,7 @@ import ShipmentForm from "@/Pages/shipment/NewShipment.jsx";
 import LotInformationPage from "@/Pages/Lot/LotInformationPage.jsx";
 import FeeTypesList from "@/Pages/FeeTypes/FeeTypesList.jsx";
 import LotPaymentsPage from "@/Pages/Lot/LotPaymentsPage.jsx";
+import ResetPassword from "./Authentications/ResetPassword";
 
 function App() {
 
@@ -131,6 +132,7 @@ function App() {
                         <Route element={<LoginDatacontextProvider/>}>
                             <Route exact path="/" element={<Navigate to="/login"/>}/>
                             <Route path='/login' element={<LoginPage/>}/>
+                            <Route path="/reset-password" element={<ResetPassword />} />
                             <Route path="/login/supplier" element={<SupplierLogin/>}/>
                             <Route path="/suppliers/due-diligence" element={<SuppliersDueDiligence/>}/>
                             <Route element={<Layout/>}>

@@ -321,7 +321,7 @@
 // export default AddSuplierPage;
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiPlus, HiMinus } from "react-icons/hi";
 import { useAddSupplierMutation } from "../states/apislice";
@@ -334,9 +334,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
+import {useToast} from "@/hooks/use-toast.js";
 
 const AddSupplierPage = () => {
     const navigate = useNavigate();
+    const { toast } = useToast();
     const [formVal, setFormVal] = useState({
         companyName: "",
         TINNumber: "",
@@ -347,7 +349,7 @@ const AddSupplierPage = () => {
         phoneNumber: "",
         mineSites: [{ coordinates: { lat: "", long: "" }, name: "", code: "" }],
         address: { province: "", district: "", sector: "", cell: "" },
-        typeOfMining: "",
+        typeOfMining: "Underground",
         equipmentList: [],
         surfaceArea: null,
         categoryOfMine: "",
@@ -362,6 +364,21 @@ const AddSupplierPage = () => {
     ]);
 
     const [createNewSupplier, { isSuccess, isLoading, isError, error }] = useAddSupplierMutation();
+
+    useEffect(() => {
+        if (isSuccess) {
+            toast({
+                title: 'Success',
+                description: 'Supplier added successfully',
+            })
+        }
+    }, [isSuccess, toast]);
+
+    useEffect(() => {
+        if (isError) {
+            console.log('Error', error.data.message);
+        }
+    }, [isError, error]);
 
     const updateLotNumbers = () => {
         setMineSitesDetails((prevMineSitesDetails) => {
@@ -490,10 +507,6 @@ const AddSupplierPage = () => {
         };
         await createNewSupplier({...formVal, body});
 
-        if (!isError) {
-            resetForm();
-            navigate(-1);
-        }
     }
 
     const resetForm = () => {

@@ -1426,6 +1426,7 @@ const FinancialEntries = () => {
                             rowKey="_id"
                             expandable={{
                                 expandedRowRender,
+                                rowExpandable: record => record.numberOfLots > 0,
                                 expandRowByClick: false
                             }}
                             pagination={{

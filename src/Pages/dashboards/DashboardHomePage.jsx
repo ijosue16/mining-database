@@ -5,14 +5,13 @@ import {
     useGetStockSummaryQuery,
     useGetYearStockSummaryQuery,
     useShipmentSuppliersGraphQuery
-} from "../../states/apislice";
+} from "@/states/apislice.js";
 import companyLogo from "../../assets/companyLogo.png";
 import {useSelector} from "react-redux";
-import {hasPermission} from "../../components/helperFunctions.js";
+import {hasPermission} from "@/components/helperFunctions.js";
 import CompanyInfoPage from "../CompanyInfoPage.jsx";
 
 const DashboardPage = () => {
-    // const shipmentId="658046954a131843477411b0"
     const {permissions: userPermissions } = useSelector(state => state.persistedReducer?.global);
     const [pieArray, SetPieArray] = useState([]);
     const [optionPie, setOptionPie] = useState({});
@@ -169,89 +168,7 @@ const DashboardPage = () => {
         ],
     };
 
-    // CONFIGURATION FOR THE STACKED BAR CHARTS
 
-    // let xAxisData = [];
-    // let data1 = [];
-    // let data2 = [];
-    // let data3 = [];
-    // let data4 = [];
-    // for (let i = 0; i < 10; i++) {
-    //   xAxisData.push('Class' + i);
-    //   data1.push(+(Math.random() * 2).toFixed(2));
-    //   data2.push(+(Math.random() * 5).toFixed(2));
-    //   data3.push(+(Math.random() + 0.3).toFixed(2));
-    //   data4.push(+Math.random().toFixed(2));
-    // }
-    // var emphasisStyle = {
-    //   itemStyle: {
-    //     shadowBlur: 10,
-    //     shadowColor: 'rgba(0,0,0,0.3)'
-    //   }
-    // };
-
-    // OPTION FOR STACKED BAR CHARTS
-
-    //  const optionStackedBar = {
-    //     legend: {
-    //       data: ['bar', 'bar2', 'bar3', 'bar4'],
-    //       left: '10%'
-    //     },
-    //     brush: {
-    //       toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
-    //       xAxisIndex: 0
-    //     },
-    //     toolbox: {
-    //       feature: {
-    //         magicType: {
-    //           type: ['stack']
-    //         },
-    //         dataView: {}
-    //       }
-    //     },
-    //     tooltip: {},
-    //     xAxis: {
-    //       data: xAxisData,
-    //       name: 'X Axis',
-    //       axisLine: { onZero: true },
-    //       splitLine: { show: false },
-    //       splitArea: { show: false }
-    //     },
-    //     yAxis: {},
-    //     grid: {
-    //       bottom: 100
-    //     },
-    //     series: [
-    //       {
-    //         name: 'bar',
-    //         type: 'bar',
-    //         stack: 'one',
-    //         emphasis: emphasisStyle,
-    //         data: data1
-    //       },
-    //       {
-    //         name: 'bar2',
-    //         type: 'bar',
-    //         stack: 'one',
-    //         emphasis: emphasisStyle,
-    //         data: data2
-    //       },
-    //       {
-    //         name: 'bar3',
-    //         type: 'bar',
-    //         stack: 'two',
-    //         emphasis: emphasisStyle,
-    //         data: data3
-    //       },
-    //       {
-    //         name: 'bar4',
-    //         type: 'bar',
-    //         stack: 'two',
-    //         emphasis: emphasisStyle,
-    //         data: data4
-    //       }
-    //     ]
-    //   };
 
     //   OPTION FOR THE PIE CHART GRAPH
     useEffect(() => {
@@ -343,7 +260,6 @@ const DashboardPage = () => {
                     {isLoading ? (<ImSpinner2 className="h-[80px] w-[80px] animate-spin text-gray-500 text-center"/>) :
                         <TestChart showLoading={true} options={optionStack}/>}
                 </div>
-                {/* <p>yooola</p> */}
             </div>
         </div>
     )

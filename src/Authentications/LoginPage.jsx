@@ -348,10 +348,45 @@ const LoginPage = () => {
     return () => clearInterval(intervalId);
   }, [token]);
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const response = await login({ body: user });
+  //   if (response.data) {
+  //     if (response.data?.token) {
+  //       const { token } = response.data;
+  //       const { user } = response.data.data;
+  //       dispatch(setAuthToken(token));
+  //       dispatch(setUserData(user));
+  //       dispatch(setPermissions(user.permissions));
+  //       socket.emit("new-user-add", { _id: user._id, username: user.username, role: user.role, permissions: user.permissions });
+  //       if (from) navigate(from, { replace: true });
+  //       if (hasPermission(user.permissions, "dashboard:view")) {
+  //         navigate("/dashboard");
+  //       } else {
+  //         navigate("/company")
+  //       }
+  //     } else {
+  //       const { user } = response.data.data;
+  //       setTwoFACode(prevState => ({ ...prevState, email: user.email }));
+  //       setShow2fa(true);
+  //     }
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await login({ body: user });
     if (response.data) {
+      // Check if password reset is required
+      if (response.data.status === "PasswordReset") {
+        message.info("You need to reset your password before continuing.");
+        navigate("/reset-password", {
+          state: { userId: response.data.data.userId }
+        });
+        return;
+      }
+
+      // Original login flow continues...
       if (response.data?.token) {
         const { token } = response.data;
         const { user } = response.data.data;

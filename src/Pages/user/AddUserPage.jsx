@@ -588,11 +588,12 @@ const AddUserPage = () => {
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         <SelectItem value="ceo">CEO</SelectItem>
-                                                        <SelectItem value="managingDirector">Managing director office</SelectItem>
-                                                        <SelectItem value="operationsManager">Operations manager office</SelectItem>
+                                                        <SelectItem value="managingDirector">Managing Director</SelectItem>
+                                                        <SelectItem value="operationsManager">Operations manager</SelectItem>
                                                         <SelectItem value="accountant">Accountancy office</SelectItem>
-                                                        <SelectItem value="traceabilityOfficer">Traceability office</SelectItem>
-                                                        <SelectItem value="laboratoryOfficer">Laboratory officer</SelectItem>
+                                                        <SelectItem value="traceabilityOfficer">Traceability Officer</SelectItem>
+                                                        <SelectItem value="dueDiligenceOfficer">Due Diligence Officer</SelectItem>
+                                                        <SelectItem value="laboratoryOfficer">Laboratory Officer</SelectItem>
                                                         <SelectItem value="storekeeper">Storekeeper</SelectItem>
                                                     </SelectContent>
                                                 </Select>

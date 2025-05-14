@@ -5,24 +5,23 @@ import {motion} from "framer-motion";
 import dayjs from "dayjs";
 import {Modal, Table} from "antd";
 import {ImSpinner2} from "react-icons/im";
-import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone,} from "react-icons/pi";
+import {PiDotsThreeVerticalBold, PiMagnifyingGlassDuotone} from "react-icons/pi";
 import {BiSolidFilePdf} from "react-icons/bi";
 import {BsCardList} from "react-icons/bs";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FaClipboardList} from "react-icons/fa";
-import {MdDelete} from "react-icons/md";
-import {FiEdit} from "react-icons/fi";
 import {
     useGetAllAdvancePaymentsQuery,
     useSaveFileMutation,
-} from "../../states/apislice";
-import ViewDocumentEditor from "../ViewDocumentEditor";
+} from "@/states/apislice.js";
 import {useSelector} from "react-redux";
+import {Button} from "@/components/ui/button.jsx";
+import {Link} from "react-router-dom";
 
 const AdvancedPaymentsList = () => {
     let dataz = [];
     const navigate = useNavigate();
-    const { permissions } = useSelector(state => state.persistedReducer?.global);
+    const {permissions} = useSelector(state => state.persistedReducer?.global);
     const [searchText, SetSearchText] = useState("");
     const [selectedRow, SetSelectedRow] = useState("");
     const [showActions, SetShowActions] = useState(false);
@@ -229,7 +228,7 @@ const AdvancedPaymentsList = () => {
                                                 paymentAmount: record.paymentAmount,
                                                 currency: record.currency,
                                                 paymentDate: record.paymentDate,
-                                                consumed: record.consumed,
+                                                consumed: record.fullyConsumed,
                                                 remainingAmount: record.remainingAmount,
                                                 consumptionDetails: "",
                                                 id: record._id
@@ -249,80 +248,11 @@ const AdvancedPaymentsList = () => {
                                         <FaClipboardList className=" text-lg"/>
                                         <p>Edit Contract</p>
                                     </li>
-                                    {/* <li
-                                        className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                        onClick={() => {
-                                            navigate(`/entry/edit/coltan/${record._id}`);
-                                        }}
-                                    >
-                                        <BiSolidEditAlt className=" text-lg"/>
-                                        <p>edit</p>
-                                    </li> */}
-                                    {/* {permissions.entry.edit ? (
-                                        <>
-                                            <li
-                                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                                onClick={() => {
-                                                    {
-                                                        navigate(`/complete/coltan/${record._id}`);
-                                                    }
-                                                }}
-                                            >
-                                                <RiFileEditFill className=" text-lg"/>
-                                                <p>complete entry</p>
-                                            </li>
-                                            {permissions.entry.delete ? (<li
-                                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                                onClick={() => {
-                                                    SetSelectedRow(record._id);
-                                                    SetSelectedRowInfo({
-                                                        ...selectedRowInfo,
-                                                        name: record.companyName,
-                                                        date: record.supplyDate,
-                                                    });
-                                                    setShowmodal(!showmodal);
-                                                }}
-                                            >
-                                                <MdDelete className=" text-lg"/>
-                                                <p>delete</p>
-                                            </li>) : null}
-                                        </>
-                                    ) : null} */}
                                 </motion.ul>
                             ) : null}
                         </span>
                       </span>
 
-                            {/* {permissions.entry.delete ? (
-                                <span>
-                              <MdDelete
-                                  className="text-lg"
-                                  onClick={() => {
-                                      SetSelectedRow(record._id);
-                                      SetSelectedRowInfo({
-                                          ...selectedRowInfo,
-                                          name: record.companyName,
-                                          date: record.supplyDate,
-                                      });
-                                      setShowmodal(!showmodal);
-                                  }}
-                              />
-                            </span>
-                            ) : null}
-
-                            <span>
-                            <FiEdit
-                                className="text-lg"
-                                onClick={() => {
-                                    setRecord(record);
-                                    showModal();
-                                }}
-                            />
-                        </span> */}
-
-                            {/*{permissions.entry.edit ? (*/}
-
-                            {/*) : null}*/}
                         </div>
                     </>
                 );
@@ -396,7 +326,7 @@ const AdvancedPaymentsList = () => {
                                         </li>
                                         <li className="items-baseline">
                                             <p className=" text-slate-800 text-[16px]">Consumed</p>
-                                            <p className="font-semibold text-[16px]">{`${paymentDetailsModal.consumed}`}</p>
+                                            <p className="font-semibold text-[16px]">{`${paymentDetailsModal.remainingAmount  <= 0 ? "Yes" : "No"}`}</p>
                                         </li>
                                     </ul>
 
@@ -420,10 +350,10 @@ const AdvancedPaymentsList = () => {
                 </span>
 
                                 <span className="flex w-fit justify-evenly items-center gap-6 pr-1">
-                  <BiSolidFilePdf className=" text-2xl"/>
-                  <BsCardList className=" text-2xl"/>
-                  <HiOutlinePrinter className=" text-2xl"/>
-                </span>
+                                  <BiSolidFilePdf className=" text-2xl"/>
+                                  <BsCardList className=" text-2xl"/>
+                                  <HiOutlinePrinter className=" text-2xl"/>
+                                </span>
                             </div>
                             <Table
                                 className=" w-full"
@@ -438,30 +368,44 @@ const AdvancedPaymentsList = () => {
                                 }}
                                 dataSource={dataz}
                                 columns={columns}
-                                rowClassName={record => record.consumed && "bg-green-100"}
+                                rowClassName={record => record.fullyConsumed && "bg-green-100"}
                                 expandable={{
                                     expandedRowRender: record => {
                                         return (
                                             <div>
                                                 <p className="text-lg font-semibold">Payment details</p>
-                                                <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-stretch">
-                                                    {record.consumptionDetails && record.consumptionDetails.map((item, index) => (
+                                                <div
+                                                    className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 items-stretch">
+                                                    {record.usage?.length > 0 && record.usage.map((item, index) => (
                                                         <ul className="space-y-1" key={index}>
                                                             <li className="items-baseline">
-                                                                <p className=" text-slate-800 text-[16px]">Payment date</p>
+                                                                <p className=" text-slate-800 text-[16px]">Payment
+                                                                    date</p>
                                                                 <p className="font-semibold text-[16px]">{`${dayjs(record.date).format("MMM DD, YYYY")}`}</p>
                                                             </li>
                                                             <li className="items-baseline">
-                                                                <p className=" text-slate-800 text-[16px]">Comment</p>
-                                                                <p className="font-semibold text-[16px]">{`${item.comment}`}</p>
+                                                                <p className=" text-slate-800 text-[16px]">Description</p>
+                                                                <p className="font-semibold text-[16px]">{`${item.description}`}</p>
                                                             </li>
+                                                            <div className="flex flex-row gap-3">
+                                                                <Link to={`/lots/${item.lotId}`}>
+                                                                    <Button>
+                                                                        Link to Lot
+                                                                    </Button>
+                                                                </Link>
+                                                                <Link to={`/payments`}>
+                                                                    <Button>
+                                                                        Link to Payment
+                                                                    </Button>
+                                                                </Link>
+                                                            </div>
                                                         </ul>
                                                     ))}
                                                 </div>
                                             </div>
                                         )
                                     },
-                                    rowExpandable: record => record.consumptionDetails?.length > 0,
+                                    rowExpandable: record => record.usage?.length > 0,
                                 }}
                                 rowKey="_id"
                             />

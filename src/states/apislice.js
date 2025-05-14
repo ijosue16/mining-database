@@ -107,6 +107,13 @@ export const apiSlice = createApi({
                 body
             })
         }),
+        resetPassword: builder.mutation({
+            query: ({ body }) => ({
+                url: '/users/reset-password/manual',
+                method: 'PATCH',
+                body
+            })
+        }),
         logout: builder.mutation({
             query: ({body}) => ({
                 url: `/users/logout`,
@@ -925,6 +932,7 @@ export const {
     useEndpointnameQuery,
     useSignupMutation,
     useLoginMutation,
+    useResetPasswordMutation,
     useLogoutMutation,
     useVerifyTokenMutation,
     useGetAllBuyersQuery,

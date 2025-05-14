@@ -67,7 +67,7 @@ import {
 } from "@/states/apislice.js";
 import {Image, message, Modal, Tooltip} from "antd";
 import FetchingPage from "@/Pages/FetchingPage.jsx";
-import {getBase64FromServer, handleConvertToUSD} from "@/components/helperFunctions.js";
+import {formatCurrency, getBase64FromServer, handleConvertToUSD} from "@/components/helperFunctions.js";
 import {IoClose} from "react-icons/io5";
 import {useSelector} from "react-redux";
 
@@ -341,7 +341,7 @@ const LotInformationPage = () => {
                 lot: lotId,
                 amount,
                 feeType: selectedFeeType,
-                status: 'not paid'
+                status: 'paid'
             };
 
             await createFee({body});
@@ -469,7 +469,7 @@ const LotInformationPage = () => {
         if (pricePerUnit && weightOut) {
             return (pricePerUnit * weightOut).toFixed(2);
         }
-        return '0.00';
+        return 0.00;
     };
 
     const getTotalFees = () => {
@@ -969,21 +969,21 @@ const LotInformationPage = () => {
                                         {userPermissions.pricePerUnit?.view && (
                                             <div>
                                                 <Label>Price Per Unit</Label>
-                                                <div className="text-lg font-medium">${lot.pricePerUnit || '0.00'}</div>
+                                                <div className="text-lg font-medium">{formatCurrency(lot.pricePerUnit || 0.00)}</div>
                                             </div>
                                         )}
 
                                         {userPermissions.mineralPrice?.view && (
                                             <div>
                                                 <Label>Mineral Price</Label>
-                                                <div className="text-lg font-medium">${lot.mineralPrice || '0.00'}</div>
+                                                <div className="text-lg font-medium">{formatCurrency(lot.mineralPrice || 0.00)}</div>
                                             </div>
                                         )}
 
                                         {userPermissions.weightIn?.view && lot.USDRate && (
                                             <div>
                                                 <Label>USD Rate</Label>
-                                                <div className="text-lg font-medium">{lot.USDRate || '0'} RWF</div>
+                                                <div className="text-lg font-medium">{formatCurrency(lot.USDRate  || 0.00)} RWF</div>
                                             </div>
                                         )}
 
@@ -1128,15 +1128,15 @@ const LotInformationPage = () => {
                                                 <TableCell>
                                                     {fee.feeType?.currency === 'USD' ? (
                                                         <span className="font-medium">
-                                                        -${fee.amount.toFixed(2)}
+                                                        - {formatCurrency(fee.amount)}
                                                     </span>
                                                     ) : (
                                                         <div>
                                                         <span className="font-medium">
-                                                            -RWF {fee.amount.toFixed(2)} &gt;
+                                                            - {formatCurrency(fee.amount,'RWF')} &gt;
                                                         </span>
                                                             <span className="font-medium">
-                                                            ${handleConvertToUSD(fee.amount, form.getValues('USDRate') || lot.USDRate)?.toFixed(2) || null}
+                                                            {formatCurrency(handleConvertToUSD(fee.amount, form.getValues('USDRate') || lot.USDRate)) || null}
                                                         </span>
                                                         </div>
                                                     )}
@@ -1188,7 +1188,7 @@ const LotInformationPage = () => {
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Price Per Unit</span>
                                     <span
-                                        className="font-medium">${form.getValues('pricePerUnit') || lot.pricePerUnit || '0.00'}</span>
+                                        className="font-medium">{formatCurrency(form.getValues('pricePerUnit') || lot.pricePerUnit || 0.00)}</span>
                                 </div>
 
                                 <Separator className="my-2"/>
@@ -1196,7 +1196,7 @@ const LotInformationPage = () => {
                                 <div className="flex justify-between text-lg">
                                     <span>Mineral Price</span>
                                     <span className="font-bold">
-                                        ${isEditing ? calculateMineralPrice() : (lot.mineralPrice || '0.00')}
+                                        {isEditing ? calculateMineralPrice() : (formatCurrency(lot.mineralPrice) || '0.00')}
                                     </span>
                                 </div>
 
@@ -1211,15 +1211,15 @@ const LotInformationPage = () => {
                                                 <span>{fee.feeType?.title || 'Custom Fee'}</span>
                                                 {fee.feeType?.currency === 'USD' ? (
                                                     <span className="font-medium text-red-500">
-                                                        -${fee.amount.toFixed(2)}
+                                                        -{formatCurrency(fee.amount)}
                                                     </span>
                                                 ) : (
                                                     <div>
                                                         <span className="font-medium text-red-500">
-                                                            -RWF {fee.amount.toFixed(2)} &gt;
+                                                            -{formatCurrency(fee.amount, 'RWF')} &gt;
                                                         </span>
                                                         <span className="font-medium text-red-500">
-                                                            ${handleConvertToUSD(fee.amount, form.getValues('USDRate') || lot.USDRate)?.toFixed(2) || null}
+                                                            {formatCurrency(handleConvertToUSD(fee.amount, form.getValues('USDRate') || lot.USDRate)) || null}
                                                         </span>
                                                     </div>
                                                 )}
@@ -1232,7 +1232,7 @@ const LotInformationPage = () => {
 
                                     <div className="flex justify-between pt-2">
                                         <span>Total Fees</span>
-                                        <span className="font-medium text-red-500">-${getTotalFees()}</span>
+                                        <span className="font-medium text-red-500">-{formatCurrency(getTotalFees() || 0.00)}</span>
                                     </div>
                                 </div>
 
@@ -1240,24 +1240,24 @@ const LotInformationPage = () => {
 
                                 <div className="flex justify-between text-lg pt-2">
                                     <span>Net Amount</span>
-                                    <span className="font-bold text-green-600">${getNetAmount()}</span>
+                                    <span className="font-bold text-green-600">{formatCurrency(getNetAmount() || 0.00)}</span>
                                 </div>
                             </div>
                         </CardContent>
                         <CardFooter className="flex-col gap-4">
-                            <div className="w-full">
-                                <Label>Payment Status</Label>
-                                <Select defaultValue="not-paid">
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select status"/>
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="paid">Paid</SelectItem>
-                                        <SelectItem value="partially-paid">Partially Paid</SelectItem>
-                                        <SelectItem value="not-paid">Not Paid</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                            {/*<div className="w-full">*/}
+                            {/*    <Label>Payment Status</Label>*/}
+                            {/*    <Select defaultValue="not-paid">*/}
+                            {/*        <SelectTrigger>*/}
+                            {/*            <SelectValue placeholder="Select status"/>*/}
+                            {/*        </SelectTrigger>*/}
+                            {/*        <SelectContent>*/}
+                            {/*            <SelectItem value="paid">Paid</SelectItem>*/}
+                            {/*            <SelectItem value="partially-paid">Partially Paid</SelectItem>*/}
+                            {/*            <SelectItem value="not-paid">Not Paid</SelectItem>*/}
+                            {/*        </SelectContent>*/}
+                            {/*    </Select>*/}
+                            {/*</div>*/}
 
                             <Button className="w-full" onClick={() => {
                                 navigate(`/lots/payments/${lotId}`);
@@ -1267,30 +1267,30 @@ const LotInformationPage = () => {
                         </CardFooter>
                     </Card>
 
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center">
-                                <Tag className="mr-2 h-5 w-5"/>
-                                Lot Metadata
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Created On</span>
-                                    <span>{new Date(lot.createdAt).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Last Updated</span>
-                                    <span>{new Date(lot.updatedAt).toLocaleDateString()}</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Lot ID</span>
-                                    <span className="text-xs">{lot._id}</span>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {/*<Card>*/}
+                    {/*    <CardHeader>*/}
+                    {/*        <CardTitle className="flex items-center">*/}
+                    {/*            <Tag className="mr-2 h-5 w-5"/>*/}
+                    {/*            Lot Metadata*/}
+                    {/*        </CardTitle>*/}
+                    {/*    </CardHeader>*/}
+                    {/*    <CardContent>*/}
+                    {/*        <div className="space-y-2">*/}
+                    {/*            <div className="flex justify-between">*/}
+                    {/*                <span className="text-muted-foreground">Created On</span>*/}
+                    {/*                <span>{new Date(lot.createdAt).toLocaleDateString()}</span>*/}
+                    {/*            </div>*/}
+                    {/*            <div className="flex justify-between">*/}
+                    {/*                <span className="text-muted-foreground">Last Updated</span>*/}
+                    {/*                <span>{new Date(lot.updatedAt).toLocaleDateString()}</span>*/}
+                    {/*            </div>*/}
+                    {/*            <div className="flex justify-between">*/}
+                    {/*                <span className="text-muted-foreground">Lot ID</span>*/}
+                    {/*                <span className="text-xs">{lot._id}</span>*/}
+                    {/*            </div>*/}
+                    {/*        </div>*/}
+                    {/*    </CardContent>*/}
+                    {/*</Card>*/}
                 </div>
             </div>
 

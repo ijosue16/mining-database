@@ -697,7 +697,6 @@
 
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import ActionsPagesContainer from "../../components/Actions components/ActionsComponentcontainer";
 import AddComponent from "../../components/Actions components/AddComponent";
 import { useGetOneUserQuery, useUpdateUserMutation } from "@/states/apislice.js";
@@ -759,6 +758,7 @@ const UserPermissionPage = () => {
         { value: "operationsManager", label: "Operations Manager Office" },
         { value: "accountant", label: "Accountancy Office" },
         { value: "traceabilityOfficer", label: "Traceability Office" },
+        { value: "dueDiligenceOfficer", label: "Due Diligence Officer" },
         { value: "laboratoryOfficer", label: "Laboratory Officer" },
         { value: "storekeeper", label: "Storekeeper" },
     ];
@@ -1045,13 +1045,13 @@ const UserPermissionPage = () => {
                                                         {isEdit && (
                                                             <button
                                                                 onClick={() => handlePermissionChange(category, action)}
-                                                                className="ml-1 p-0.5 rounded-full hover:bg-primary-foreground"
+                                                                className="ml-1 p-0.5 rounded-full hover:bg-blue-900"
                                                                 type="button" // Explicitly set to button to prevent form submission
                                                             >
                                                                 {editedPermissions[category][action] ? (
-                                                                    <Check className="h-3 w-3" />
+                                                                    <Check className="h-15 w-15" />
                                                                 ) : (
-                                                                    <X className="h-3 w-3" />
+                                                                    <X className="h-15 w-15" />
                                                                 )}
                                                             </button>
                                                         )}

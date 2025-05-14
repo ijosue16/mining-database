@@ -75,7 +75,7 @@ import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import {useToast} from "@/hooks/use-toast.js";
 import {useAddPaymentMutation, useGetAllAdvancePaymentsQuery, useGetLotByIdQuery} from "@/states/apislice.js";
-import {handleConvertToUSD} from "@/components/helperFunctions.js";
+import {formatCurrency, handleConvertToUSD} from "@/components/helperFunctions.js";
 
 
 const PaymentModes = {
@@ -377,13 +377,6 @@ const LotPaymentsPage = () => {
         }
     };
 
-    const formatCurrency = (amount, currency = 'USD') => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: 2
-        }).format(amount);
-    };
 
     if (isLoadingLot || isSending || isFetching) {
         return (
@@ -462,7 +455,7 @@ const LotPaymentsPage = () => {
                                             >
                                                 Settlement
                                                 <Badge variant="outline" className="ml-2">
-                                                    {formatCurrency(settlementRemainingAmount)}
+                                                    {formatCurrency(settlementRemainingAmount, 'USD')}
                                                 </Badge>
                                             </Button>
                                         </div>

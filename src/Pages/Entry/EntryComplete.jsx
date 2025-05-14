@@ -23,13 +23,15 @@ import {
     calculatePricePerUnit,
     decidePricingGrade,
     filterColumns,
-    getBase64FromServer
+    getBase64FromServer, hasPermission
 } from "@/components/helperFunctions.js";
 import {TbReport} from "react-icons/tb";
 import {LotExpandable, PricingGrade} from "@/Pages/HelpersJsx.jsx";
 import ConfirmFooter from "@/components/modalsfooters/ConfirmFooter.jsx";
 import DetailsPageContainer from "@/components/Actions components/DetailsComponentscontainer.jsx";
 import {Trash, Calculator} from 'lucide-react';
+import RequestEditButton from "@/Pages/EditRequest/RequestEditButton.jsx";
+import {useToast} from "@/hooks/use-toast.js";
 
 const EntryCompletePage = ({entryId, model}) => {
     const {permissions: userPermissions} = useSelector(state => state.persistedReducer?.global);
@@ -630,11 +632,11 @@ const EntryCompletePage = ({entryId, model}) => {
             key: "weightOut",
             // editTable: true,
         },
-        {
-            title: "balance (KG)",
-            dataIndex: "cumulativeAmount",
-            key: "cumulativeAmount",
-        },
+        // {
+        //     title: "balance (KG)",
+        //     dataIndex: "cumulativeAmount",
+        //     key: "cumulativeAmount",
+        // },
     ];
 
     if (restrictedColumns && userPermissions && columns) {
@@ -650,83 +652,83 @@ const EntryCompletePage = ({entryId, model}) => {
                         <div className="flex items-center gap-2">
                             {editable ? null : (
                                 <>
-                  <span className="relative">
-                    <PiDotsThreeVerticalBold
-                        className=" text-xl"
-                        onClick={() => handleActions(record._id)}
-                    />
-                      {selectedRow === record._id && (
-                          <motion.ul
-                              ref={modalRef}
-                              animate={
-                                  show
-                                      ? {opacity: 1, x: -10, display: "block"}
-                                      : {opacity: 0, x: 0, display: "none"}
-                              }
-                              className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
-                          >
-
-                              {record.nonSellAgreement?.decision !== true && (
-                                  <>
-                                      <li
-                                          className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                          onClick={() => {
-                                              navigate(`/lots/${record._id}`)
-                                          }}
-                                      >
-                                          <Calculator size={16}/>
-                                          <p>Price Calculations</p>
-                                      </li>
-
-                                      {userPermissions.payments?.create ? (
-                                          <li
-                                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                              onClick={() => {
-                                                  setSelectedLotNumber(record.lotNumber);
-                                                  setShowPayModel(true);
-                                              }}
+                                  <span className="relative">
+                                    <PiDotsThreeVerticalBold
+                                        className=" text-xl"
+                                        onClick={() => handleActions(record._id)}
+                                    />
+                                      {selectedRow === record._id && (
+                                          <motion.ul
+                                              ref={modalRef}
+                                              animate={
+                                                  show
+                                                      ? {opacity: 1, x: -10, display: "block"}
+                                                      : {opacity: 0, x: 0, display: "none"}
+                                              }
+                                              className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                                           >
-                                              <MdPayments className=" text-lg"/>
-                                              <p>Pay</p>
-                                          </li>
-                                      ) : null}
-                                  </>
-                              )}
 
-                              {/*<li*/}
-                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                              {/*    onClick={() => edit(record)}*/}
-                              {/*>*/}
-                              {/*    <BiSolidEditAlt className=" text-lg"/>*/}
-                              {/*    <p>edit</p>*/}
-                              {/*</li>*/}
+                                              {record.nonSellAgreement?.decision !== true && (
+                                                  <>
+                                                      <li
+                                                          className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                          onClick={() => {
+                                                              navigate(`/lots/${record._id}`)
+                                                          }}
+                                                      >
+                                                          <Calculator size={16}/>
+                                                          <p>Price Calculations</p>
+                                                      </li>
 
-                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
+                                                      {userPermissions.payments?.create ? (
+                                                          <li
+                                                              className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                              onClick={() => {
+                                                                  setSelectedLotNumber(record.lotNumber);
+                                                                  setShowPayModel(true);
+                                                              }}
+                                                          >
+                                                              <MdPayments className=" text-lg"/>
+                                                              <p>Pay</p>
+                                                          </li>
+                                                      ) : null}
+                                                  </>
+                                              )}
 
-                              {/*{userPermissions.entry?.create ? (*/}
-                              {/*    <li*/}
-                              {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
-                              {/*        onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}*/}
-                              {/*    >*/}
-                              {/*        <TbReport className=" text-lg"/>*/}
-                              {/*        <p>Lab Report</p>*/}
-                              {/*    </li>*/}
-                              {/*) : null}*/}
+                                              {/*<li*/}
+                                              {/*    className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                                              {/*    onClick={() => edit(record)}*/}
+                                              {/*>*/}
+                                              {/*    <BiSolidEditAlt className=" text-lg"/>*/}
+                                              {/*    <p>edit</p>*/}
+                                              {/*</li>*/}
+
+                                              { /* // TODO 8: USE CORRECT PERMISSION OBJECT INSTEAD OF ENTRY */}
+
+                                              {/*{userPermissions.entry?.create ? (*/}
+                                              {/*    <li*/}
+                                              {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                                              {/*        onClick={() => navigate(`/lab-report/coltan/${entryId}/${record.lotNumber}`)}*/}
+                                              {/*    >*/}
+                                              {/*        <TbReport className=" text-lg"/>*/}
+                                              {/*        <p>Lab Report</p>*/}
+                                              {/*    </li>*/}
+                                              {/*) : null}*/}
 
 
-                              <li
-                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                  onClick={() => {
-                                      console.log('The feature to be implemented soon');
-                                  }}
-                              >
-                                  <Trash size={16}/>
-                                  <p>Delete</p>
-                              </li>
+                                              <li
+                                                  className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                  onClick={() => {
+                                                      console.log('The feature to be implemented soon');
+                                                  }}
+                                              >
+                                                  <Trash size={16}/>
+                                                  <p>Delete</p>
+                                              </li>
 
-                          </motion.ul>
-                      )}
-                  </span>
+                                          </motion.ul>
+                                      )}
+                                  </span>
                                 </>
                             )}
 

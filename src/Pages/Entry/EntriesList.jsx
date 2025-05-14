@@ -641,10 +641,9 @@ import {BiSolidEditAlt, BiSolidFilePdf} from "react-icons/bi";
 import {ImSpinner2} from "react-icons/im";
 import {BsCardList, BsExclamationTriangle} from "react-icons/bs";
 import {MdDelete} from "react-icons/md";
-import {RiFileEditFill} from "react-icons/ri";
 import {HiOutlinePrinter} from "react-icons/hi";
 import {FiEdit} from "react-icons/fi";
-import { IoTrashBinOutline } from "react-icons/io5";
+import {IoTrashBinOutline} from "react-icons/io5";
 import {useSelector} from "react-redux";
 import {
     toCamelCase,
@@ -654,20 +653,21 @@ import {
     capitalizeFirstLetter
 } from "@/components/helperFunctions.js";
 import {SocketContext} from "@/context files/socket.js";
-import {GiGiftOfKnowledge} from "react-icons/gi";
+
 dayjs.extend(isBetween);
 import {FaFileInvoiceDollar} from "react-icons/fa";
 import DeleteFooter from "../../components/modalsfooters/DeleteFooter";
-import { View, Tags, AlertCircle } from 'lucide-react';
+import {View, Tags, AlertCircle} from 'lucide-react';
 import LotManagement from "@/Pages/Lot/LotManagement.jsx";
 import EntryCompletePage from "./EntryComplete";
+import RequestEditButton from "@/Pages/EditRequest/RequestEditButton.jsx";
 
 
 const EntriesListPage = () => {
-    const dummyarch=[''];
+    const dummyarch = [''];
     const {userData} = useSelector(state => state.persistedReducer?.global);
     const socket = useContext(SocketContext);
-    const { model } = useParams();
+    const {model} = useParams();
     const [dataz, setDataz] = useState([]);
     const [numOfDocs, setNumOfDocs] = useState(null);
     const {permissions} = userData;
@@ -734,11 +734,11 @@ const EntriesListPage = () => {
                 setNumOfDocs(numberOfDocuments);
             }
         } else if (isError) {
-            const { message: errorMessage } = error.data;
+            const {message: errorMessage} = error.data;
             return message.error(errorMessage);
         }
 
-        return ()=>{
+        return () => {
             setDataz([]);
             SetSelectedRow("");
             SetSearchText("");
@@ -832,8 +832,8 @@ const EntriesListPage = () => {
             render: (text) => (
                 <p>{dayjs(text).format("MMM DD, YYYY")}</p>
             ),
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
-                <div style={{ padding: 8 }}>
+            filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters}) => (
+                <div style={{padding: 8}}>
                     <Space>
                         <RangePicker
                             value={selectedKeys}
@@ -841,7 +841,7 @@ const EntriesListPage = () => {
                         />
                         <button
                             className="px-6 py-1 bg-orange-300 rounded-md"
-                            type= "button"
+                            type="button"
                             onClick={() => {
                                 if (isSuccess && selectedKeys.length > 0) {
                                     const {data: dt} = data;
@@ -861,7 +861,7 @@ const EntriesListPage = () => {
                         </button>
                         <button
                             className="px-6 py-1 bg-red-300 rounded-md"
-                            type= "button"
+                            type="button"
                             onClick={() => {
                                 if (isSuccess) {
                                     const {data: dt} = data;
@@ -897,7 +897,7 @@ const EntriesListPage = () => {
                         <p>{record.supplierId?.companyName}</p>
                         {(!record.output || record.output.length === 0) && (
                             <Tooltip title="No lots created for this entry">
-                                <AlertCircle className="text-amber-500 h-4 w-4" />
+                                <AlertCircle className="text-amber-500 h-4 w-4"/>
                             </Tooltip>
                         )}
                     </div>
@@ -953,9 +953,9 @@ const EntriesListPage = () => {
                 if (record.output && record.output.length > 0) {
                     let sum = 0;
                     record.output.forEach((item) => {
-                        if(item.cumulativeAmount){
+                        if (item.cumulativeAmount) {
                             sum += parseFloat(item.cumulativeAmount);
-                        } else{
+                        } else {
                             sum += parseFloat(item.weightOut);
                         }
                     });
@@ -965,7 +965,7 @@ const EntriesListPage = () => {
                         <Tooltip title="No lots created - needs attention">
                             <div className="flex items-center gap-1 text-amber-600 font-medium">
                                 <p>0</p>
-                                <BsExclamationTriangle />
+                                <BsExclamationTriangle/>
                             </div>
                         </Tooltip>
                     );
@@ -976,8 +976,8 @@ const EntriesListPage = () => {
             title: (
                 <div className=" grid grid-cols-1 gap-1 lg:grid-cols-2 items-center">
                     <p>Action</p>
-                    <IoTrashBinOutline className=" text-lg" onClick={()=>{
-                        if(dataz!==dummyarch){
+                    <IoTrashBinOutline className=" text-lg" onClick={() => {
+                        if (dataz !== dummyarch) {
                             setDataz(dummyarch);
                         }
                     }}/>
@@ -990,7 +990,41 @@ const EntriesListPage = () => {
                 return (
                     <>
                         <div className="flex items-center gap-4">
-                          <span>
+                            {/*{!permissions.entry?.edit &&*/}
+                                <span>
+                                    <FiEdit
+                                        className="text-lg"
+                                        onClick={() => {
+                                            setRecord(record);
+                                            showModal();
+                                        }}
+                                    />
+                                </span>
+                            {/*}*/}
+
+                            <span>
+                                <Badge dot={needsAttention} color="orange">
+                                    <Tooltip title={needsAttention ? "No lots created - create lots" : "Manage lots"}>
+                                        <LotManagement
+                                            initialLots={record.output}
+                                            entryId={record._id}
+                                            existingTotalWeightIn={record.weightIn}
+                                            model={record.model}
+                                        />
+                                    </Tooltip>
+                                </Badge>
+                            </span>
+
+                            <span>
+                                <View
+                                    className="text-lg"
+                                    onClick={() => {
+                                        navigate(`/entry/${model}/${record._id}`);
+                                    }}
+                                />
+                            </span>
+
+                            <span>
                             <span className="relative">
                               <PiDotsThreeVerticalBold
                                   className="text-lg"
@@ -1007,6 +1041,19 @@ const EntriesListPage = () => {
                                         className={` border bg-white z-20 shadow-md rounded absolute -left-[200px] w-[200px] space-y-2`}
                                     >
 
+                                        {/*{!hasPermission(permissions, "entry:edit") && (*/}
+                                        {/*    <li*/}
+                                        {/*        className="flex gap-4 p-2 items-center hover:bg-slate-100"*/}
+                                        {/*        onClick={() => {*/}
+                                        {/*            navigate(`/entry/edit/${model}/${record._id}`);*/}
+                                        {/*        }}*/}
+                                        {/*    >*/}
+                                        {/*        <RequestEditButton record={record} modelName={"entry"} />*/}
+                                        {/*        /!*<BiSolidEditAlt className=" text-lg"/>*!/*/}
+                                        {/*        /!*<p>edit</p>*!/*/}
+                                        {/*    </li>*/}
+                                        {/*)}*/}
+
                                         {hasPermission(permissions, "entry:edit") && (
                                             <li
                                                 className="flex gap-4 p-2 items-center hover:bg-slate-100"
@@ -1019,15 +1066,17 @@ const EntriesListPage = () => {
                                             </li>
                                         )}
 
-                                        <li
-                                            className="flex gap-4 p-2 items-center hover:bg-slate-100"
-                                            onClick={() => {
-                                                navigate(`/entries/tags/${record._id}`);
-                                            }}
-                                        >
-                                            <Tags className=" text-lg"/>
-                                            <p>Tags</p>
-                                        </li>
+                                        {hasPermission(permissions, 'tags:edit') && (
+                                            <li
+                                                className="flex gap-4 p-2 items-center hover:bg-slate-100"
+                                                onClick={() => {
+                                                    navigate(`/entries/tags/${record._id}`);
+                                                }}
+                                            >
+                                                <Tags className=" text-lg"/>
+                                                <p>Tags</p>
+                                            </li>
+                                        )}
 
 
                                         {/* TODO 12: SHOW MENU BASED ON PERMISSIONS*/}
@@ -1100,40 +1149,6 @@ const EntriesListPage = () => {
                                 </span>
                             ) : null}
 
-                            {!permissions.entry?.edit &&
-                                <span>
-                                <FiEdit
-                                    className="text-lg"
-                                    onClick={() => {
-                                        setRecord(record);
-                                        showModal();
-                                    }}
-                                />
-                            </span>
-                            }
-
-                            <span>
-                                <Badge dot={needsAttention} color="orange">
-                                    <Tooltip title={needsAttention ? "No lots created - create lots" : "Manage lots"}>
-                                        <LotManagement
-                                            initialLots={record.output}
-                                            entryId={record._id}
-                                            existingTotalWeightIn={record.weightIn}
-                                            model={record.model}
-                                        />
-                                    </Tooltip>
-                                </Badge>
-                            </span>
-
-                            <span>
-                                <View
-                                    className="text-lg"
-                                    onClick={() => {
-                                        navigate(`/entry/${model}/${record._id}`);
-                                    }}
-                                />
-                            </span>
-
                             {/*{permissions.entry.edit ? (*/}
 
                             {/*) : null}*/}
@@ -1183,7 +1198,8 @@ const EntriesListPage = () => {
                             destroyOnClose
                             footer={[
 
-                                <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"} dsText={"Deleting"} handleCancel={() => {
+                                <DeleteFooter key={"actions"} isDeleting={isDeleting} defText={"Delete"}
+                                              dsText={"Deleting"} handleCancel={() => {
                                     setShowmodal(!showmodal);
                                     SetSelectedRow("");
                                 }} handleDelete={handleDelete}/>
@@ -1223,16 +1239,19 @@ const EntriesListPage = () => {
 
                         <div className=" w-full overflow-x-auto h-full min-h-[320px]">
                             {entriesWithoutLots > 0 && (
-                                <div className="flex items-center mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
-                                    <AlertCircle className="text-amber-500 mr-2" />
+                                <div
+                                    className="flex items-center mb-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                                    <AlertCircle className="text-amber-500 mr-2"/>
                                     <p className="text-amber-700">
-                                        {entriesWithoutLots} {entriesWithoutLots === 1 ? 'entry needs' : 'entries need'} attention - no lots created
+                                        {entriesWithoutLots} {entriesWithoutLots === 1 ? 'entry needs' : 'entries need'} attention
+                                        - no lots created
                                     </p>
                                 </div>
                             )}
 
                             <div className="w-full flex flex-col sm:flex-row justify-between items-center mb-4 gap-3">
-                                <span className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
+                                <span
+                                    className="max-w-[220px] border rounded flex items-center p-1 justify-between gap-2">
                                   <PiMagnifyingGlassDuotone className="h-4 w-4"/>
                                   <input
                                       type="text"
@@ -1265,7 +1284,8 @@ const EntriesListPage = () => {
                                 columns={columns}
                                 pagination={{pageSize: 100, size: "small", total: numOfDocs}}
                                 expandable={{
-                                    expandedRowRender: record1 => <EntryCompletePage entryId={record1._id} model={model}/>,
+                                    expandedRowRender: record1 => <EntryCompletePage entryId={record1._id}
+                                                                                     model={model}/>,
                                     rowExpandable: record1 => record1.output?.length > 0,
                                 }}
                                 rowKey="_id"

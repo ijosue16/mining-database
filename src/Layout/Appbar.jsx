@@ -477,6 +477,7 @@ const Appbar = ({handleUserSubmenuMobile, userSubmenuMobile}) => {
     )
 
 }
+
 export default Appbar;
 
 
